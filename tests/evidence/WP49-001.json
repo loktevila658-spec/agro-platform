@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "workPackage": "WP49-001",
+  "title": "Monorepo bootstrap",
+  "date": "2026-09-27",
+  "result": "PASS",
+  "checks": {
+    "dependencyInstall": "PASS",
+    "typecheck": "PASS",
+    "build": "PASS",
+    "tests": {
+      "result": "PASS",
+      "passed": 5,
+      "failed": 0
+    },
+    "ciSmoke": "PASS",
+    "composeConfig": "PASS",
+    "composeRuntime": "PASS",
+    "requiredImages": "PASS_4_OF_4",
+    "requiredServices": "PASS_4_OF_4_RUNNING",
+    "composeTeardown": "PASS"
+  },
+  "determinism": {
+    "seed": 27001,
+    "referenceClock": "2026-01-01T00:00:00.000Z",
+    "domainScenario": "NOT_APPLICABLE_WP49_001"
+  },
+  "allowBuilds": {
+    "@nestjs/core": "REQUIRED_BY_BOOTSTRAP_API_DIRECT_DEPENDENCY",
+    "sharp": "REQUIRED_BY_NEXTJS_BOOTSTRAP_IMAGE"
+  },
+  "unlock": [
+    "WP49-002"
+  ]
+}

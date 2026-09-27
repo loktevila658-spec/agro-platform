@@ -1,0 +1,21 @@
+{
+  "name": "@agroplatform/workspace",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "cd .. && node --test tests/*.test.mjs",
+    "validate": "cd .. && node tests/validate-bootstrap.mjs",
+    "compose:smoke": "cd .. && node tests/compose-smoke.mjs --require-engine",
+    "ci:smoke": "pnpm typecheck && pnpm build && pnpm test && pnpm validate && cd .. && node tests/compose-smoke.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.1",
+    "typescript": "5.9.2"
+  }
+}

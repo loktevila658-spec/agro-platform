@@ -3,12 +3,13 @@ info:
   title: AgroPlatform API
   version: 0.0.0-bootstrap
 servers:
-- url: http://localhost
-  description: Bootstrap placeholder; WP49-001/contract packages own final dev URL.
+  - url: http://localhost:3000
+    description: WP49-001 local bootstrap shell
 paths: {}
 components:
   schemas: {}
 x-status: BOOTSTRAP
 x-sources:
-- DOC14
-- DOC50
+  - DOC28
+  - DOC49
+  - DOC50
