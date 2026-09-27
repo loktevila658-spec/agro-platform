@@ -1,0 +1,66 @@
+schema_version: '1.0'
+source: DOC50
+baseline:
+- baseline: MASTER functions
+  value: 315/315
+  status: COMMITTED; исходные ID сохраняются.
+- baseline: Market delta
+  value: 133/133
+  status: 'Frozen decisions: ENHANCE / OPTIONAL / VERTICAL / INTEGRATION / FUTURE / REJECTED.'
+- baseline: Documents
+  value: 1–50
+  status: Полная серия спецификаций.
+- baseline: Work Packages
+  value: '94'
+  status: WP49-001…094; DAG без циклов.
+- baseline: Build waves
+  value: '12'
+  status: W0…W11.
+- baseline: Core authority decisions
+  value: REV47-001…040
+  status: Обязательны до физического обновления старых документов.
+- baseline: RTM coverage
+  value: 0 UNMAPPED
+  status: Buildable requirements имеют owner/module/workflow/API/event/test/WP mapping.
+- baseline: Final environment
+  value: Local Server + async cloud
+  status: Enterprise operations не зависят от WAN.
+releases:
+- id: MVP
+  gate: 'Core chain работает offline/local-first: field -> task -> harvest -> weighing -> warehouse -> production -> finished
+    batch; permissions/audit/1C skeleton/demo/DR PASS.'
+  meaning: Release-blocking.
+- id: V1
+  gate: Planning, remote sensing, fuel, quality, OEE, maintenance, yard/WMS/TMS-lite, supply/sales, economics/workforce/control
+    tower operationally complete.
+  meaning: First full operating platform.
+- id: V1.5
+  gate: Advanced grain, agrochemistry, auto work fact, S&OP, AI gateway, SDKs and more automation accepted.
+  meaning: Advanced automation.
+- id: V2
+  gate: ISOBUS/J1939/RTK, richer retrofit/AI/device SDK/vertical packages after separate acceptance.
+  meaning: Hardware/vertical expansion.
+- id: FUTURE
+  gate: Only frozen hooks/contracts; not blocking release.
+  meaning: No-build unless CR promotes scope.
+release_gates:
+- id: RG-MVP-1
+  condition: Core offline chain E2E PASS
+- id: RG-MVP-2
+  condition: Permissions/audit/idempotency/outbox PASS
+- id: RG-MVP-3
+  condition: 1C skeleton + reconciliation PASS
+- id: RG-MVP-4
+  condition: Backup/restore/DR PASS
+- id: RG-MVP-5
+  condition: Demo/acceptance regression PASS
+- id: RG-V1-1
+  condition: Planning/remote sensing/fuel/quality/OEE/maintenance/logistics/commercial/economics/workforce/control tower PASS
+- id: RG-V1-2
+  condition: Enterprise performance & security thresholds PASS
+- id: RG-V1-3
+  condition: Migration/onboarding baseline PASS
+- id: RG-V1.5-1
+  condition: Advanced grain/agrochem/auto fact/S&OP/AI gateway/SDK acceptance PASS
+- id: RG-V2-1
+  condition: Device protocols/advanced retrofit/vertical packages accepted separately

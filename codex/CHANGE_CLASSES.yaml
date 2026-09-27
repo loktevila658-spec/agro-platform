@@ -1,0 +1,15 @@
+schema_version: '1.0'
+source: DOC50
+classes:
+- id: Scope CR
+  when: Добавление/удаление requirement, status/release change, new observable behavior.
+- id: Architecture Decision
+  when: Canonical owner, SoT, module dependency, write authority, infrastructure pattern.
+- id: Contract Change
+  when: API/event/workflow/permission/schema compatibility change.
+- id: Bugfix
+  when: Не меняет frozen observable contract; фиксируется обычным WP/issue.
+- id: Emergency Fix
+  when: Минимальный production fix + retrospective mapping to requirement/WP/tests.
+- id: Research Candidate
+  when: Не попадает в implementation graph до formal promotion through CR.

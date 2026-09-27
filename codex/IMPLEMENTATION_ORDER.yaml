@@ -1,0 +1,146 @@
+schema_version: '1.0'
+source: DOC49
+waves:
+- id: W0
+  name: Repository & Toolchain
+  scope: Репозиторий, Compose, CI, lint/typecheck, schema tooling, codegen.
+  work_packages:
+  - WP49-001
+  - WP49-002
+  - WP49-003
+  - WP49-004
+  - WP49-005
+  - WP49-006
+  - WP49-007
+  - WP49-008
+  - WP49-009
+  - WP49-010
+- id: W1
+  name: Platform Foundation
+  scope: Identity, org, permissions, audit, files, idempotency, outbox/inbox.
+  work_packages:
+  - WP49-011
+  - WP49-012
+  - WP49-013
+  - WP49-014
+  - WP49-015
+  - WP49-016
+  - WP49-017
+  - WP49-018
+- id: W2
+  name: Offline & Integration Foundation
+  scope: mobile local store, sync queue, conflict UX, connector framework.
+  work_packages:
+  - WP49-019
+  - WP49-020
+  - WP49-021
+  - WP49-022
+  - WP49-023
+  - WP49-024
+- id: W3
+  name: Master Data & GIS Core
+  scope: master data, land/field/season, geometry/versioning, map/offline map.
+  work_packages:
+  - WP49-025
+  - WP49-026
+  - WP49-027
+  - WP49-028
+  - WP49-029
+  - WP49-030
+- id: W4
+  name: Agronomy & Work Execution
+  scope: tasks, tech maps, scouting, agrochemistry, weather/remote sensing.
+  work_packages:
+  - WP49-031
+  - WP49-032
+  - WP49-033
+  - WP49-034
+  - WP49-035
+  - WP49-036
+  - WP49-037
+  - WP49-038
+- id: W5
+  name: Fleet & Harvest
+  scope: machinery, operator mobile, telemetry evidence, fuel, harvest transfer.
+  work_packages:
+  - WP49-039
+  - WP49-040
+  - WP49-041
+  - WP49-042
+  - WP49-043
+  - WP49-044
+  - WP49-045
+  - WP49-046
+  - WP49-047
+- id: W6
+  name: Warehouse/Weighing/Grain
+  scope: inventory, weighing, grain KKU, lab quality, elevator operations.
+  work_packages:
+  - WP49-048
+  - WP49-049
+  - WP49-050
+  - WP49-051
+  - WP49-052
+  - WP49-053
+  - WP49-054
+  - WP49-055
+- id: W7
+  name: Production & Maintenance
+  scope: MES-lite, recipe, downtime/OEE, maintenance, quality holds.
+  work_packages:
+  - WP49-056
+  - WP49-057
+  - WP49-058
+  - WP49-059
+  - WP49-060
+  - WP49-061
+  - WP49-062
+  - WP49-063
+- id: W8
+  name: Logistics & Commercial Ops
+  scope: Yard, WMS-lite, TMS-lite, supply/sales/order fulfillment.
+  work_packages:
+  - WP49-064
+  - WP49-065
+  - WP49-066
+  - WP49-067
+  - WP49-068
+  - WP49-069
+  - WP49-070
+  - WP49-071
+- id: W9
+  name: Economics/Workforce/Analytics
+  scope: costing, S&OP-lite, workforce, Control Tower/reporting.
+  work_packages:
+  - WP49-072
+  - WP49-073
+  - WP49-074
+  - WP49-075
+  - WP49-076
+  - WP49-077
+  - WP49-078
+- id: W10
+  name: AI/Extensions/Verticals
+  scope: AI gateway, plugin SDK, optional vertical packages.
+  work_packages:
+  - WP49-079
+  - WP49-080
+  - WP49-081
+  - WP49-082
+  - WP49-083
+  - WP49-084
+  - WP49-085
+  - WP49-086
+- id: W11
+  name: Hardening & Release
+  scope: performance, security, DR, migration, regression, packaging, release baseline.
+  work_packages:
+  - WP49-087
+  - WP49-088
+  - WP49-089
+  - WP49-090
+  - WP49-091
+  - WP49-092
+  - WP49-093
+  - WP49-094
+rule: Do not unlock a work package until its dependency gates PASS.

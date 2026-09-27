@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agroplatform:change-control:1.0",
+  "title": "AgroPlatform Change Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "changeClass",
+    "title",
+    "reason",
+    "requestedBy",
+    "affectedRequirements",
+    "affectedSpecs",
+    "releaseImpact",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CR-[0-9]{4,}$"
+    },
+    "changeClass": {
+      "type": "string",
+      "enum": [
+        "Scope CR",
+        "Architecture Decision",
+        "Contract Change",
+        "Bugfix",
+        "Emergency Fix",
+        "Research Candidate"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requestedBy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "affectedRequirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "affectedSpecs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "affectedWorkPackages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "releaseImpact": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "MVP",
+        "V1",
+        "V1.5",
+        "V2",
+        "FUTURE",
+        "MULTI"
+      ]
+    },
+    "authorityOrSoTImpact": {
+      "type": "boolean",
+      "default": false
+    },
+    "compatibilityImpact": {
+      "type": "string"
+    },
+    "migrationRequired": {
+      "type": "boolean"
+    },
+    "testsRequired": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision": {
+      "type": "string"
+    },
+    "approvedBy": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "PROPOSED",
+        "APPROVED",
+        "REJECTED",
+        "IMPLEMENTED",
+        "CLOSED"
+      ]
+    }
+  }
+}

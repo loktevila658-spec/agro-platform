@@ -1,0 +1,5048 @@
+schema_version: '1.0'
+source:
+- DOC33
+- DOC48
+- MASTER_FUNCTIONAL.xlsx
+count: 315
+status: FROZEN
+requirements:
+- id: MASTER-001
+  function: Организации и юрлица
+  block: CORE
+  subblock: Организация
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M001 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-002
+  function: Филиалы и подразделения
+  block: CORE
+  subblock: Организация
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M002 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-003
+  function: Производственные площадки
+  block: CORE
+  subblock: Организация
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M003 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-004
+  function: Пользователи
+  block: CORE
+  subblock: Пользователи
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M004 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-005
+  function: Сотрудники
+  block: CORE
+  subblock: Пользователи
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M005 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-006
+  function: Роли
+  block: CORE
+  subblock: Пользователи
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M006 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-007
+  function: Права доступа
+  block: CORE
+  subblock: Пользователи
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M007 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-008
+  function: Аудит действий
+  block: CORE
+  subblock: Пользователи
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M008 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-009
+  function: История входов
+  block: CORE
+  subblock: Пользователи
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M009 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-010
+  function: Справочники
+  block: CORE
+  subblock: Настройки
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M010 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-011
+  function: Шаблоны
+  block: CORE
+  subblock: Настройки
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M011 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-012
+  function: Мультиязычность
+  block: CORE
+  subblock: Настройки
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №1–23, №43, №46
+  owner_module: core
+  entity_family: Organization / User / ReferenceData
+  workflow: Core master-data lifecycle
+  api_event: /api/v1/core/* | core.*
+  offline: 'YES'
+  integration: 1C master-data where configured
+  test_demo_wp_status: AT48-M012 | DEMO27-CORE | WP49-CORE | FROZEN
+- id: MASTER-013
+  function: Реестр полей
+  block: Поля и земельный банк
+  subblock: Поля
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M013 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-014
+  function: Карточка поля
+  block: Поля и земельный банк
+  subblock: Поля
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M014 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-015
+  function: Контур поля
+  block: Поля и земельный банк
+  subblock: Поля
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M015 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-016
+  function: Рисование контура
+  block: Поля и земельный банк
+  subblock: Поля
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M016 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-017
+  function: Импорт контуров
+  block: Поля и земельный банк
+  subblock: Поля
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M017 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-018
+  function: Экспорт контуров
+  block: Поля и земельный банк
+  subblock: Поля
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M018 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-019
+  function: Кадастровый номер
+  block: Поля и земельный банк
+  subblock: Земельный банк
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M019 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-020
+  function: Договоры
+  block: Поля и земельный банк
+  subblock: Земельный банк
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M020 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-021
+  function: Напоминание по договорам
+  block: Поля и земельный банк
+  subblock: Земельный банк
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M021 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-022
+  function: Сравнение границ
+  block: Поля и земельный банк
+  subblock: Земельный банк
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M022 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-023
+  function: Пересечения
+  block: Поля и земельный банк
+  subblock: Земельный банк
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M023 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-024
+  function: Культура сезона
+  block: Поля и земельный банк
+  subblock: Сезоны
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M024 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-025
+  function: История культур
+  block: Поля и земельный банк
+  subblock: Сезоны
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M025 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-026
+  function: История поля
+  block: Поля и земельный банк
+  subblock: Сезоны
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №24, №34
+  owner_module: gis-land
+  entity_family: LandPlot / Field / FieldSeason
+  workflow: Land/field lifecycle
+  api_event: /api/v1/land/* /fields/* | land.* / field.*
+  offline: 'YES'
+  integration: Cadastre/GIS providers
+  test_demo_wp_status: AT48-M026 | DEMO27-GIS | WP49-GIS_LAND | FROZEN
+- id: MASTER-027
+  function: Справочник агроопераций
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M027 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-028
+  function: Создание работы
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M028 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-029
+  function: Ежедневный план
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M029 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-030
+  function: Сменное задание
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M030 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-031
+  function: Групповое назначение
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M031 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-032
+  function: Статусы
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M032 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-033
+  function: Начать работу
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M033 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-034
+  function: Завершить работу
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M034 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-035
+  function: Отмена/перенос
+  block: Агрооперации
+  subblock: Задания
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M035 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-036
+  function: Фактическая выработка
+  block: Агрооперации
+  subblock: Факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M036 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-037
+  function: Фактический расход
+  block: Агрооперации
+  subblock: Факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M037 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-038
+  function: Фактическое время
+  block: Агрооперации
+  subblock: Факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M038 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-039
+  function: План против факта
+  block: Агрооперации
+  subblock: План-факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M039 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-040
+  function: Просрочки
+  block: Агрооперации
+  subblock: План-факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M040 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-041
+  function: Отклонение от нормы
+  block: Агрооперации
+  subblock: План-факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M041 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-042
+  function: Причина отклонения
+  block: Агрооперации
+  subblock: План-факт
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №34
+  owner_module: agronomy
+  entity_family: PlannedOperation / ActualOperation / WorkTask
+  workflow: Plan -> assign -> execute -> confirm
+  api_event: /api/v1/agronomy/* | agronomy.operation.*
+  offline: 'YES'
+  integration: Warehouse/Fleet/1C
+  test_demo_wp_status: AT48-M042 | DEMO27-AGRO | WP49-AGRONOMY | FROZEN
+- id: MASTER-043
+  function: Справочник семян
+  block: Склад и ТМЦ
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M043 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-044
+  function: Справочник удобрений
+  block: Склад и ТМЦ
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M044 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-045
+  function: Справочник СЗР
+  block: Склад и ТМЦ
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M045 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-046
+  function: Упаковочные материалы
+  block: Склад и ТМЦ
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M046 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-047
+  function: Запчасти
+  block: Склад и ТМЦ
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M047 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-048
+  function: Приход
+  block: Склад и ТМЦ
+  subblock: Склад
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M048 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-049
+  function: Расход
+  block: Склад и ТМЦ
+  subblock: Склад
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M049 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-050
+  function: Перемещение
+  block: Склад и ТМЦ
+  subblock: Склад
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M050 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-051
+  function: Возврат
+  block: Склад и ТМЦ
+  subblock: Склад
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M051 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-052
+  function: Остатки
+  block: Склад и ТМЦ
+  subblock: Склад
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M052 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-053
+  function: Минимальный остаток
+  block: Склад и ТМЦ
+  subblock: Склад
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M053 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-054
+  function: Партии материалов
+  block: Склад и ТМЦ
+  subblock: Партии
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M054 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-055
+  function: Прослеживаемость партии
+  block: Склад и ТМЦ
+  subblock: Партии
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M055 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-056
+  function: QR маркировка
+  block: Склад и ТМЦ
+  subblock: QR
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M056 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-057
+  function: Сканирование QR
+  block: Склад и ТМЦ
+  subblock: QR
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M057 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-058
+  function: Передача ТМЦ
+  block: Склад и ТМЦ
+  subblock: QR
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №37
+  owner_module: warehouse
+  entity_family: Material / Lot / StockMovement / InventoryPosition
+  workflow: Receive -> move -> issue -> count
+  api_event: /api/v1/warehouse/* | inventory.*
+  offline: 'YES'
+  integration: 1C / WMS
+  test_demo_wp_status: AT48-M058 | DEMO27-WH | WP49-WAREHOUSE | FROZEN
+- id: MASTER-059
+  function: Технологические карты
+  block: Планирование
+  subblock: Техкарты
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M059 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-060
+  function: Нормы ресурсов
+  block: Планирование
+  subblock: Техкарты
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M060 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-061
+  function: Тарифы
+  block: Планирование
+  subblock: Техкарты
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M061 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-062
+  function: План культур по годам
+  block: Планирование
+  subblock: Севооборот
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M062 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-063
+  function: Проверка севооборота
+  block: Планирование
+  subblock: Севооборот
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M063 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-064
+  function: Агросроки
+  block: Планирование
+  subblock: Календарь
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M064 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-065
+  function: Загрузка техники
+  block: Планирование
+  subblock: Ресурсы
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M065 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-066
+  function: Загрузка персонала
+  block: Планирование
+  subblock: Ресурсы
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M066 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-067
+  function: Конфликты
+  block: Планирование
+  subblock: Ресурсы
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M067 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-068
+  function: Бюджет сезона
+  block: Планирование
+  subblock: Бюджет
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M068 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-069
+  function: Себестоимость
+  block: Планирование
+  subblock: Бюджет
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M069 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-070
+  function: Маржинальность
+  block: Планирование
+  subblock: Бюджет
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M070 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-071
+  function: Сценарии
+  block: Планирование
+  subblock: Бюджет
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M071 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-072
+  function: Прогноз прибыли
+  block: Планирование
+  subblock: Бюджет
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M072 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-073
+  function: План-факт бюджета
+  block: Планирование
+  subblock: План-факт
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M073 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-074
+  function: План-факт урожайности
+  block: Планирование
+  subblock: План-факт
+  priority: Средний
+  original_stage: Этап 3
+  scope_status: COMMITTED
+  release: V1.5
+  owner_docs: №34, №40
+  owner_module: planning-economics
+  entity_family: SeasonPlan / TechMap / ResourceDemand / BudgetPlan
+  workflow: Plan -> approve -> reforecast -> plan/fact
+  api_event: /api/v1/planning/* | planning.*
+  offline: READ+CACHED WRITE where allowed
+  integration: 1C / Economics
+  test_demo_wp_status: AT48-M074 | DEMO27-PLAN | WP49-PLANNING_ECONOMICS | FROZEN
+- id: MASTER-075
+  function: Задание на обследование
+  block: Скаутинг и агроном
+  subblock: Скаутинг
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M075 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-076
+  function: Офлайн-обследование
+  block: Скаутинг и агроном
+  subblock: Скаутинг
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M076 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-077
+  function: GPS-точка
+  block: Скаутинг и агроном
+  subblock: Скаутинг
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M077 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-078
+  function: Фото
+  block: Скаутинг и агроном
+  subblock: Скаутинг
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M078 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-079
+  function: Комментарий
+  block: Скаутинг и агроном
+  subblock: Скаутинг
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M079 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-080
+  function: Голосовая заметка
+  block: Скаутинг и агроном
+  subblock: Скаутинг
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M080 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-081
+  function: Состояние почвы
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M081 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-082
+  function: Всхожесть
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M082 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-083
+  function: Сорняки
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M083 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-084
+  function: Вредители
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M084 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-085
+  function: Болезни
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M085 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-086
+  function: История осмотров
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M086 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-087
+  function: Карта проблем
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M087 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-088
+  function: Создать работу из проблемы
+  block: Скаутинг и агроном
+  subblock: Наблюдения
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M088 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-089
+  function: Расчёт удобрений
+  block: Скаутинг и агроном
+  subblock: Агрономия
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M089 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-090
+  function: Защитные мероприятия
+  block: Скаутинг и агроном
+  subblock: Агрономия
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №34
+  owner_module: scouting
+  entity_family: ScoutingTask / Observation / Anomaly / Recommendation
+  workflow: Detect -> inspect -> decide -> follow-up
+  api_event: /api/v1/scouting/* | scouting.*
+  offline: 'YES'
+  integration: GIS/AI/Remote sensing
+  test_demo_wp_status: AT48-M090 | DEMO27-SCOUT | WP49-SCOUTING | FROZEN
+- id: MASTER-091
+  function: NDVI
+  block: Погода и спутник
+  subblock: Спутник
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M091 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-092
+  function: NDWI
+  block: Погода и спутник
+  subblock: Спутник
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M092 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-093
+  function: История индексов
+  block: Погода и спутник
+  subblock: Спутник
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M093 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-094
+  function: Текущая погода
+  block: Погода и спутник
+  subblock: Погода
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M094 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-095
+  function: Прогноз
+  block: Погода и спутник
+  subblock: Погода
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M095 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-096
+  function: История погоды
+  block: Погода и спутник
+  subblock: Погода
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M096 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-097
+  function: Погодные риски
+  block: Погода и спутник
+  subblock: Погода
+  priority: Средний
+  original_stage: Этап 3/4
+  scope_status: COMMITTED
+  release: V1.5 -> V2
+  owner_docs: №24, №34
+  owner_module: remote-sensing-weather
+  entity_family: WeatherObservation / SatelliteScene / IndexRaster
+  workflow: Ingest -> normalize -> derive -> alert
+  api_event: /api/v1/weather/* /remote-sensing/* | weather.* / remote_sensing.*
+  offline: CACHE
+  integration: Weather/Satellite providers
+  test_demo_wp_status: AT48-M097 | DEMO27-RS | WP49-REMOTE_SENSING_WEATHER | FROZEN
+- id: MASTER-098
+  function: Проект обследования
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M098 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-099
+  function: Сетка отбора
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M099 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-100
+  function: Размер ячейки
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M100 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-101
+  function: GPS-навигация
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M101 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-102
+  function: Точка отбора
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M102 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-103
+  function: Маркировка образца
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M103 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-104
+  function: Фото образца
+  block: Картирование
+  subblock: Агрохимия
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M104 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-105
+  function: Импорт Excel/CSV
+  block: Картирование
+  subblock: Лаборатория
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M105 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-106
+  function: API лаборатории
+  block: Картирование
+  subblock: Лаборатория
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M106 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-107
+  function: pH/N/P/K
+  block: Картирование
+  subblock: Лаборатория
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M107 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-108
+  function: Агрохимические карты
+  block: Картирование
+  subblock: Карты
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M108 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-109
+  function: Сравнение обследований
+  block: Картирование
+  subblock: Карты
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №24, №34
+  owner_module: precision-farming
+  entity_family: SamplingGrid / ManagementZone / PrescriptionMap
+  workflow: Sample -> map -> zone -> prescription
+  api_event: /api/v1/precision/* | precision.*
+  offline: 'YES'
+  integration: UAV/Lab/ISOBUS
+  test_demo_wp_status: AT48-M109 | DEMO27-PREC | WP49-PRECISION_FARMING | FROZEN
+- id: MASTER-110
+  function: Реестр техники
+  block: Техника и телематика
+  subblock: Реестр
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M110 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-111
+  function: Карточка техники
+  block: Техника и телематика
+  subblock: Реестр
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M111 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-112
+  function: Навесное оборудование
+  block: Техника и телематика
+  subblock: Реестр
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M112 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-113
+  function: Местоположение
+  block: Техника и телематика
+  subblock: Телематика
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M113 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-114
+  function: История треков
+  block: Техника и телематика
+  subblock: Телематика
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M114 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-115
+  function: Скорость
+  block: Техника и телематика
+  subblock: Телематика
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M115 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-116
+  function: Геозоны
+  block: Техника и телематика
+  subblock: Телематика
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M116 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-117
+  function: Площадь обработки
+  block: Техника и телематика
+  subblock: Телематика
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M117 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-118
+  function: Моточасы
+  block: Техника и телематика
+  subblock: Эксплуатация
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M118 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-119
+  function: Простои
+  block: Техника и телематика
+  subblock: Эксплуатация
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M119 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-120
+  function: Причины простоев
+  block: Техника и телематика
+  subblock: Эксплуатация
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M120 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-121
+  function: Выработка
+  block: Техника и телематика
+  subblock: Эксплуатация
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M121 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-122
+  function: Отклонение от задания
+  block: Техника и телематика
+  subblock: Контроль
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M122 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-123
+  function: Нарушение геозоны
+  block: Техника и телематика
+  subblock: Контроль
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M123 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-124
+  function: Уведомления
+  block: Техника и телематика
+  subblock: Контроль
+  priority: Высокий
+  original_stage: Этап 2/4
+  scope_status: COMMITTED
+  release: V1 -> V2
+  owner_docs: №35
+  owner_module: fleet
+  entity_family: Equipment / Implement / TelemetryEvidence / WorkFactCandidate
+  workflow: Observe -> derive -> reconcile work fact
+  api_event: /api/v1/fleet/* | fleet.*
+  offline: 'YES'
+  integration: GPS/OEM/CAN/J1939/ISOBUS
+  test_demo_wp_status: AT48-M124 | DEMO27-FLEET | WP49-FLEET | FROZEN
+- id: MASTER-125
+  function: Мои задания
+  block: Мобильный исполнитель
+  subblock: Задания
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M125 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-126
+  function: Карточка задания
+  block: Мобильный исполнитель
+  subblock: Задания
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M126 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-127
+  function: Карта задания
+  block: Мобильный исполнитель
+  subblock: Задания
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M127 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-128
+  function: Принять задание
+  block: Мобильный исполнитель
+  subblock: Задания
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M128 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-129
+  function: Начать/завершить
+  block: Мобильный исполнитель
+  subblock: Задания
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M129 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-130
+  function: Зафиксировать простой
+  block: Мобильный исполнитель
+  subblock: Простои
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M130 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-131
+  function: Сообщить о поломке
+  block: Мобильный исполнитель
+  subblock: Простои
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M131 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-132
+  function: QR получение
+  block: Мобильный исполнитель
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M132 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-133
+  function: QR передача
+  block: Мобильный исполнитель
+  subblock: ТМЦ
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M133 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-134
+  function: Личная выработка
+  block: Мобильный исполнитель
+  subblock: KPI
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M134 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-135
+  function: Время работы
+  block: Мобильный исполнитель
+  subblock: KPI
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M135 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-136
+  function: Простои
+  block: Мобильный исполнитель
+  subblock: KPI
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M136 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-137
+  function: Расчётная оплата
+  block: Мобильный исполнитель
+  subblock: KPI
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M137 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-138
+  function: Фиксация ТО
+  block: Мобильный исполнитель
+  subblock: ТО
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M138 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-139
+  function: Фиксация ремонта
+  block: Мобильный исполнитель
+  subblock: ТО
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M139 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-140
+  function: Полная офлайн-работа
+  block: Мобильный исполнитель
+  subblock: Offline
+  priority: Высокий
+  original_stage: Этап 2
+  scope_status: COMMITTED
+  release: V1
+  owner_docs: №35, №42, №46
+  owner_module: mobile-executor
+  entity_family: Assignment / LaborFact / MobileCommand
+  workflow: Receive -> execute -> evidence -> sync
+  api_event: /api/v1/mobile-work/* | workforce.assignment.*
+  offline: PRIMARY
+  integration: Fleet/Warehouse/Workforce
+  test_demo_wp_status: AT48-M140 | DEMO27-OFF | WP49-MOBILE_EXECUTOR | FROZEN
+- id: MASTER-141
+  function: Справочник топлива
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M141 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-142
+  function: Топливные склады
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M142 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-143
+  function: Приход топлива
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M143 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-144
+  function: Выдача топлива
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M144 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-145
+  function: Остаток
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M145 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-146
+  function: Расход
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M146 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-147
+  function: Сливы
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M147 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-148
+  function: Заправки
+  block: ГСМ и АЗС
+  subblock: ГСМ
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M148 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-149
+  function: Импорт из ПО АЗС
+  block: ГСМ и АЗС
+  subblock: АЗС
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M149 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-150
+  function: Сверка
+  block: ГСМ и АЗС
+  subblock: АЗС
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M150 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-151
+  function: Аномалии
+  block: ГСМ и АЗС
+  subblock: АЗС
+  priority: Средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №35
+  owner_module: fuel
+  entity_family: FuelStorage / FuelIssue / Refuel / FuelReconciliation
+  workflow: Issue -> consume -> reconcile -> investigate
+  api_event: /api/v1/fuel/* | fuel.*
+  offline: 'YES'
+  integration: АЗС / fuel sensors / 1C
+  test_demo_wp_status: AT48-M151 | DEMO27-FUEL | WP49-FUEL | FROZEN
+- id: MASTER-152
+  function: Реестр транспорта
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M152 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-153
+  function: Реестр грузов
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M153 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-154
+  function: Создать взвешивание
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M154 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-155
+  function: Брутто
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M155 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-156
+  function: Тара
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M156 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-157
+  function: Нетто
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M157 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-158
+  function: Поле происхождения
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M158 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-159
+  function: Пункт загрузки
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M159 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-160
+  function: Пункт выгрузки
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M160 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-161
+  function: Партия
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M161 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-162
+  function: Документ
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M162 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-163
+  function: История
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M163 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-164
+  function: Корректировка
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M164 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-165
+  function: Аудит
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M165 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-166
+  function: Фотофиксация
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M166 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-167
+  function: Несанкционированный транспорт
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M167 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-168
+  function: Складской оборот
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M168 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-169
+  function: Экспорт 1С
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M169 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-170
+  function: Работа без интернета
+  block: Весовая
+  subblock: Весовая
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №35, №36, №37
+  owner_module: weighing
+  entity_family: WeighingTransaction / WeightReading / TransportTrip
+  workflow: Identify -> gross/tare -> net -> reconcile
+  api_event: /api/v1/weighing/* | weighing.*
+  offline: 'YES'
+  integration: Weight terminal/Yard/Grain
+  test_demo_wp_status: AT48-M170 | DEMO27-WEIGH | WP49-WEIGHING | FROZEN
+- id: MASTER-171
+  function: Реестр оборудования
+  block: ТОиР
+  subblock: Оборудование
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M171 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-172
+  function: Карточка оборудования
+  block: ТОиР
+  subblock: Оборудование
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M172 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-173
+  function: Регламент ТО
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M173 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-174
+  function: Следующее ТО
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M174 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-175
+  function: Напоминания
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M175 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-176
+  function: Заявка на ремонт
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M176 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-177
+  function: Фото/комментарий
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M177 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-178
+  function: Исполнитель
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M178 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-179
+  function: Начало/окончание ремонта
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M179 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-180
+  function: Запчасти
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M180 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-181
+  function: Стоимость ремонта
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M181 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-182
+  function: История ремонтов
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M182 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-183
+  function: Простой из-за ремонта
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M183 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-184
+  function: Стоимость владения
+  block: ТОиР
+  subblock: ТОиР
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №26, №35
+  owner_module: maintenance
+  entity_family: MaintenanceRequest / WorkOrder / ServiceEvent
+  workflow: Detect -> plan -> execute -> close
+  api_event: /api/v1/maintenance/* | maintenance.*
+  offline: 'YES'
+  integration: Fleet/MES/IoT/1C
+  test_demo_wp_status: AT48-M184 | DEMO27-MAINT | WP49-MAINTENANCE | FROZEN
+- id: MASTER-185
+  function: Реестр заводов/цехов
+  block: Производство (наше расширение)
+  subblock: Структура
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M185 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-186
+  function: Производственные линии
+  block: Производство (наше расширение)
+  subblock: Структура
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M186 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-187
+  function: Оборудование линии
+  block: Производство (наше расширение)
+  subblock: Структура
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M187 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-188
+  function: Производственные смены
+  block: Производство (наше расширение)
+  subblock: Смены
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M188 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-189
+  function: Сменное задание
+  block: Производство (наше расширение)
+  subblock: Смены
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M189 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-190
+  function: План выпуска
+  block: Производство (наше расширение)
+  subblock: Выпуск
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M190 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-191
+  function: Фактический выпуск
+  block: Производство (наше расширение)
+  subblock: Выпуск
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M191 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-192
+  function: Производительность
+  block: Производство (наше расширение)
+  subblock: Выпуск
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M192 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-193
+  function: RUN
+  block: Производство (наше расширение)
+  subblock: Состояние
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M193 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-194
+  function: STOP
+  block: Производство (наше расширение)
+  subblock: Состояние
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M194 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-195
+  function: IDLE
+  block: Производство (наше расширение)
+  subblock: Состояние
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M195 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-196
+  function: Простой
+  block: Производство (наше расширение)
+  subblock: Простои
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M196 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-197
+  function: Причина простоя
+  block: Производство (наше расширение)
+  subblock: Простои
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M197 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-198
+  function: Микропростои
+  block: Производство (наше расширение)
+  subblock: Простои
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M198 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-199
+  function: Брак
+  block: Производство (наше расширение)
+  subblock: Качество
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M199 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-200
+  function: Потери
+  block: Производство (наше расширение)
+  subblock: Качество
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M200 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-201
+  function: Yield
+  block: Производство (наше расширение)
+  subblock: Качество
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M201 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-202
+  function: Availability
+  block: Производство (наше расширение)
+  subblock: OEE
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M202 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-203
+  function: Performance
+  block: Производство (наше расширение)
+  subblock: OEE
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M203 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-204
+  function: Quality
+  block: Производство (наше расширение)
+  subblock: OEE
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M204 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-205
+  function: OEE
+  block: Производство (наше расширение)
+  subblock: OEE
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M205 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-206
+  function: Bottleneck
+  block: Производство (наше расширение)
+  subblock: Аналитика
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M206 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-207
+  function: Сравнение смен
+  block: Производство (наше расширение)
+  subblock: Аналитика
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M207 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-208
+  function: Сравнение линий
+  block: Производство (наше расширение)
+  subblock: Аналитика
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M208 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-209
+  function: Поле происхождения
+  block: Производство (наше расширение)
+  subblock: Traceability
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M209 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-210
+  function: Партия сырья
+  block: Производство (наше расширение)
+  subblock: Traceability
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M210 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-211
+  function: Производственная партия
+  block: Производство (наше расширение)
+  subblock: Traceability
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M211 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-212
+  function: Партия готовой продукции
+  block: Производство (наше расширение)
+  subblock: Traceability
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M212 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-213
+  function: Сквозная прослеживаемость
+  block: Производство (наше расширение)
+  subblock: Traceability
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №26, №39, №40
+  owner_module: production
+  entity_family: ProductionOrder / ProductionRun / Batch / MaterialConsumption
+  workflow: Order -> run -> output -> quality -> close
+  api_event: /api/v1/production/* | production.*
+  offline: 'YES'
+  integration: Warehouse/Quality/1C/IoT
+  test_demo_wp_status: AT48-M213 | DEMO27-MES | WP49-PRODUCTION | FROZEN
+- id: MASTER-214
+  function: Главный экран руководителя
+  block: Аналитика и отчёты
+  subblock: Дашборды
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M214 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-215
+  function: Экран поля
+  block: Аналитика и отчёты
+  subblock: Дашборды
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M215 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-216
+  function: Экран техники
+  block: Аналитика и отчёты
+  subblock: Дашборды
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M216 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-217
+  function: Экран производства
+  block: Аналитика и отчёты
+  subblock: Дашборды
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M217 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-218
+  function: За смену
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M218 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-219
+  function: За день
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M219 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-220
+  function: За неделю
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M220 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-221
+  function: За месяц
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M221 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-222
+  function: За сезон
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M222 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-223
+  function: По полю
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M223 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-224
+  function: По культуре
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M224 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-225
+  function: По сотруднику
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M225 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-226
+  function: По технике
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M226 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-227
+  function: По складу
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M227 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-228
+  function: По весовой
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M228 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-229
+  function: По производству
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M229 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-230
+  function: По ТОиР
+  block: Аналитика и отчёты
+  subblock: Отчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M230 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-231
+  function: Excel
+  block: Аналитика и отчёты
+  subblock: Экспорт
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M231 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-232
+  function: CSV
+  block: Аналитика и отчёты
+  subblock: Экспорт
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M232 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-233
+  function: PDF
+  block: Аналитика и отчёты
+  subblock: Экспорт
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M233 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-234
+  function: Расписание
+  block: Аналитика и отчёты
+  subblock: Автоотчёты
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M234 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-235
+  function: План-факт
+  block: Аналитика и отчёты
+  subblock: Аналитика
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M235 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-236
+  function: Сравнение периодов
+  block: Аналитика и отчёты
+  subblock: Аналитика
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M236 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-237
+  function: Себестоимость
+  block: Аналитика и отчёты
+  subblock: Аналитика
+  priority: Высокий
+  original_stage: MVP/Этап 3
+  scope_status: COMMITTED
+  release: MVP -> V1.5
+  owner_docs: №45
+  owner_module: analytics
+  entity_family: KpiDefinition / Dashboard / Report / SavedView
+  workflow: Calculate -> publish -> drill-down
+  api_event: /api/v1/analytics/* | analytics.*
+  offline: CACHE
+  integration: All canonical modules
+  test_demo_wp_status: AT48-M237 | DEMO27-AN | WP49-ANALYTICS | FROZEN
+- id: MASTER-238
+  function: Просрочено задание
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M238 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-239
+  function: Не начата работа
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M239 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-240
+  function: Простой техники
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M240 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-241
+  function: Поломка
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M241 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-242
+  function: Низкий остаток ТМЦ
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M242 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-243
+  function: Заканчивается договор
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M243 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-244
+  function: Скоро ТО
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M244 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-245
+  function: План выпуска отстаёт
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M245 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-246
+  function: Линия остановлена
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M246 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-247
+  function: Проблема поля
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M247 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-248
+  function: Ошибка синхронизации 1С
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M248 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-249
+  function: Ошибка ФГИС
+  block: Уведомления
+  subblock: События
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M249 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-250
+  function: In-app
+  block: Уведомления
+  subblock: Каналы
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M250 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-251
+  function: Push
+  block: Уведомления
+  subblock: Каналы
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M251 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-252
+  function: E-mail
+  block: Уведомления
+  subblock: Каналы
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M252 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-253
+  function: Telegram/SMS
+  block: Уведомления
+  subblock: Каналы
+  priority: Высокий
+  original_stage: MVP/Этап 2
+  scope_status: COMMITTED
+  release: MVP -> V1
+  owner_docs: №16, №45
+  owner_module: notifications
+  entity_family: NotificationRule / Notification / Escalation
+  workflow: Rule -> evaluate -> deliver -> acknowledge
+  api_event: /api/v1/notifications/* | notification.*
+  offline: QUEUE/CACHE
+  integration: All events / email/SMS optional
+  test_demo_wp_status: AT48-M253 | DEMO27-NOTIF | WP49-NOTIFICATIONS | FROZEN
+- id: MASTER-254
+  function: Организации
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M254 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-255
+  function: Подразделения
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M255 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-256
+  function: Сотрудники
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M256 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-257
+  function: Контрагенты
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M257 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-258
+  function: Номенклатура
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M258 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-259
+  function: Склады
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M259 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-260
+  function: Техника/ОС
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M260 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-261
+  function: Приход/расход
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M261 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-262
+  function: Весовая
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M262 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-263
+  function: Производство
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M263 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-264
+  function: Затраты
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M264 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-265
+  function: Зарплата
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M265 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-266
+  function: Двусторонний sync
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M266 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-267
+  function: Очередь обмена
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M267 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-268
+  function: Журнал ошибок
+  block: Интеграция 1С
+  subblock: 1С
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №40, №41
+  owner_module: integration-1c
+  entity_family: IntegrationEnvelope / Mapping / ReconciliationCase
+  workflow: Export/import -> map -> reconcile
+  api_event: /api/v1/integrations/1c/* | integration.1c.*
+  offline: LOCAL QUEUE
+  integration: 1C
+  test_demo_wp_status: AT48-M268 | DEMO27-INT | WP49-INTEGRATION_1C | FROZEN
+- id: MASTER-269
+  function: Коннектор ФГИС
+  block: ФГИС и внешние интеграции
+  subblock: ФГИС
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M269 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-270
+  function: Валидация
+  block: ФГИС и внешние интеграции
+  subblock: ФГИС
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M270 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-271
+  function: Очередь отправки
+  block: ФГИС и внешние интеграции
+  subblock: ФГИС
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M271 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-272
+  function: Статус документа
+  block: ФГИС и внешние интеграции
+  subblock: ФГИС
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M272 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-273
+  function: Журнал ошибок
+  block: ФГИС и внешние интеграции
+  subblock: ФГИС
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M273 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-274
+  function: REST API
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M274 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-275
+  function: Webhooks
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M275 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-276
+  function: Импорт Excel
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M276 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-277
+  function: Экспорт Excel
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M277 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-278
+  function: Лаборатории
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M278 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-279
+  function: Агродроны
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M279 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-280
+  function: Геосервисы
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M280 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-281
+  function: GPS-провайдеры
+  block: ФГИС и внешние интеграции
+  subblock: Интеграции
+  priority: Высокий
+  original_stage: Этап 2/3
+  scope_status: COMMITTED
+  release: V1 -> V1.5
+  owner_docs: №13, №44
+  owner_module: external-integrations
+  entity_family: ExternalConnector / ExternalStatus / ExchangeEnvelope
+  workflow: Prepare -> exchange -> reconcile
+  api_event: /api/v1/integrations/* | integration.external.*
+  offline: LOCAL QUEUE
+  integration: External systems only
+  test_demo_wp_status: AT48-M281 | DEMO27-INT | WP49-EXTERNAL_INTEGRATIONS | FROZEN
+- id: MASTER-282
+  function: Вопросы обычным языком
+  block: AI-помощник
+  subblock: AI
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №30
+  owner_module: ai
+  entity_family: AiRequest / Recommendation / ModelRun / Citation
+  workflow: Context -> infer -> guard -> human/domain action
+  api_event: /api/v1/ai/* | ai.*
+  offline: OPTIONAL local model/cache
+  integration: Canonical data / model providers
+  test_demo_wp_status: AT48-M282 | DEMO27-AI | WP49-AI | FROZEN
+- id: MASTER-283
+  function: Автопоиск данных
+  block: AI-помощник
+  subblock: AI
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №30
+  owner_module: ai
+  entity_family: AiRequest / Recommendation / ModelRun / Citation
+  workflow: Context -> infer -> guard -> human/domain action
+  api_event: /api/v1/ai/* | ai.*
+  offline: OPTIONAL local model/cache
+  integration: Canonical data / model providers
+  test_demo_wp_status: AT48-M283 | DEMO27-AI | WP49-AI | FROZEN
+- id: MASTER-284
+  function: Контекст диалога
+  block: AI-помощник
+  subblock: AI
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №30
+  owner_module: ai
+  entity_family: AiRequest / Recommendation / ModelRun / Citation
+  workflow: Context -> infer -> guard -> human/domain action
+  api_event: /api/v1/ai/* | ai.*
+  offline: OPTIONAL local model/cache
+  integration: Canonical data / model providers
+  test_demo_wp_status: AT48-M284 | DEMO27-AI | WP49-AI | FROZEN
+- id: MASTER-285
+  function: Ежедневная сводка
+  block: AI-помощник
+  subblock: AI
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №30
+  owner_module: ai
+  entity_family: AiRequest / Recommendation / ModelRun / Citation
+  workflow: Context -> infer -> guard -> human/domain action
+  api_event: /api/v1/ai/* | ai.*
+  offline: OPTIONAL local model/cache
+  integration: Canonical data / model providers
+  test_demo_wp_status: AT48-M285 | DEMO27-AI | WP49-AI | FROZEN
+- id: MASTER-286
+  function: Поиск причин отклонений
+  block: AI-помощник
+  subblock: AI
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №30
+  owner_module: ai
+  entity_family: AiRequest / Recommendation / ModelRun / Citation
+  workflow: Context -> infer -> guard -> human/domain action
+  api_event: /api/v1/ai/* | ai.*
+  offline: OPTIONAL local model/cache
+  integration: Canonical data / model providers
+  test_demo_wp_status: AT48-M286 | DEMO27-AI | WP49-AI | FROZEN
+- id: MASTER-287
+  function: Рекомендации
+  block: AI-помощник
+  subblock: AI
+  priority: Низкий/средний
+  original_stage: Этап 4
+  scope_status: COMMITTED
+  release: V2
+  owner_docs: №30
+  owner_module: ai
+  entity_family: AiRequest / Recommendation / ModelRun / Citation
+  workflow: Context -> infer -> guard -> human/domain action
+  api_event: /api/v1/ai/* | ai.*
+  offline: OPTIONAL local model/cache
+  integration: Canonical data / model providers
+  test_demo_wp_status: AT48-M287 | DEMO27-AI | WP49-AI | FROZEN
+- id: MASTER-288
+  function: Локальный сервер
+  block: Offline / безопасность / DevOps
+  subblock: Offline
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M288 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-289
+  function: Mobile local DB
+  block: Offline / безопасность / DevOps
+  subblock: Offline
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M289 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-290
+  function: Очередь изменений
+  block: Offline / безопасность / DevOps
+  subblock: Offline
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M290 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-291
+  function: Разрешение конфликтов
+  block: Offline / безопасность / DevOps
+  subblock: Offline
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M291 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-292
+  function: Кэш карт
+  block: Offline / безопасность / DevOps
+  subblock: Offline
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M292 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-293
+  function: HTTPS/TLS
+  block: Offline / безопасность / DevOps
+  subblock: Безопасность
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M293 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-294
+  function: JWT/OAuth2
+  block: Offline / безопасность / DevOps
+  subblock: Безопасность
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M294 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-295
+  function: 2FA
+  block: Offline / безопасность / DevOps
+  subblock: Безопасность
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M295 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-296
+  function: Резервные копии
+  block: Offline / безопасность / DevOps
+  subblock: Безопасность
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M296 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-297
+  function: Восстановление
+  block: Offline / безопасность / DevOps
+  subblock: Безопасность
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M297 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-298
+  function: Логи
+  block: Offline / безопасность / DevOps
+  subblock: Система
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M298 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-299
+  function: Мониторинг
+  block: Offline / безопасность / DevOps
+  subblock: Система
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M299 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-300
+  function: Обновления
+  block: Offline / безопасность / DevOps
+  subblock: Система
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M300 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-301
+  function: Мультитенантность
+  block: Offline / безопасность / DevOps
+  subblock: Система
+  priority: Высокий
+  original_stage: MVP
+  scope_status: COMMITTED
+  release: MVP
+  owner_docs: №12, №19, №20, №22, №28
+  owner_module: platform
+  entity_family: SyncEnvelope / AuditRecord / DeploymentState / SecurityPolicy
+  workflow: Offline command -> sync -> conflict/reconcile
+  api_event: /api/v1/platform/* | platform.*
+  offline: FOUNDATIONAL
+  integration: Deployment/Identity/Cloud replica
+  test_demo_wp_status: AT48-M301 | DEMO27-OFF | WP49-PLATFORM | FROZEN
+- id: MASTER-302
+  function: Единый Device API
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M302 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-303
+  function: MQTT ingestion
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M303 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-304
+  function: Device registry
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M304 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-305
+  function: Health/heartbeat
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M305 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-306
+  function: GPS-трекеры
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M306 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-307
+  function: LoRa/LoRaWAN
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M307 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-308
+  function: RetrofitNode
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M308 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-309
+  function: Весовой терминал
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M309 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-310
+  function: RFID
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M310 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-311
+  function: Камеры
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M311 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-312
+  function: Счётчик продукции
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M312 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-313
+  function: Ток/RPM
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M313 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-314
+  function: Уровень/температура
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M314 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN
+- id: MASTER-315
+  function: Почва/погода
+  block: IoT — после приложения
+  subblock: IoT
+  priority: После ПО
+  original_stage: Этап 5
+  scope_status: COMMITTED
+  release: FUTURE / IoT
+  owner_docs: №25, №31, №35, №36
+  owner_module: iot-evidence
+  entity_family: Device / Signal / RawMeasurement / NormalizedEvidence
+  workflow: Acquire -> normalize -> evidence -> domain candidate
+  api_event: /api/v1/iot/* | iot.evidence.*
+  offline: EDGE STORE-AND-FORWARD
+  integration: MQTT/Modbus/OPC UA/LoRaWAN
+  test_demo_wp_status: AT48-M315 | DEMO27-IOT | WP49-IOT_EVIDENCE | FROZEN

@@ -1,0 +1,11 @@
+schema_version: 0.1.0
+status: BOOTSTRAP
+sources:
+- DOC12
+- DOC20
+- DOC50
+authority: LOCAL_PRIMARY
+wan_required_for_critical_local_workflows: false
+last_write_wins_for_authoritative_conflicts: false
+idempotency_required: true
+note: Detailed queue/conflict/retention behavior must be implemented from DOC12 by WP49 sync packages.

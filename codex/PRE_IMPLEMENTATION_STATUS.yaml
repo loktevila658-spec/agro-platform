@@ -1,0 +1,51 @@
+schema_version: '1.0'
+source: DOC50
+items:
+- id: H50-01
+  requirement: №48 frozen scope загружен и checksum/version зафиксирован.
+  status: READY
+  note: Scope artifacts included in pack.
+- id: H50-02
+  requirement: №49 build graph загружен; DAG validation PASS.
+  status: READY
+  note: Build graph included and explicit DAG cycle check PASS.
+- id: H50-03
+  requirement: 94 WP manifests созданы/сверены с каталогом.
+  status: READY
+  note: 94 WP manifests generated from DOC49 catalog.
+- id: H50-04
+  requirement: Repo baseline соответствует DOC28/№50 structure.
+  status: PENDING_WP49_001
+  note: Repository source tree must be created by WP49-001.
+- id: H50-05
+  requirement: OpenAPI/Event/Permission/Workflow catalogs имеют начальные версии.
+  status: READY_BOOTSTRAP
+  note: Initial empty/versioned catalogs are included; domain entries are added by relevant WPs.
+- id: H50-06
+  requirement: Database migration framework и test Compose готовы.
+  status: PENDING_WP49_001_003
+  note: Compose/migration runner belongs to WP49-001/WP49-003.
+- id: H50-07
+  requirement: DEMO27 fixtures доступны через bootstrap/verify команды.
+  status: PENDING_WP49_008
+  note: Executable DEMO27 fixtures belong to WP49-008.
+- id: H50-08
+  requirement: CI quality gates G0-G12 реализованы либо имеют явный staged implementation WP.
+  status: STAGED
+  note: CI/gates are explicitly staged by WP49-005 and later gate-specific WPs.
+- id: H50-09
+  requirement: Secrets/production credentials отсутствуют в pack.
+  status: READY
+  note: Starter pack contains no production credentials/secrets.
+- id: H50-10
+  requirement: MVP release graph можно выполнить без optional AI/IoT/verticals.
+  status: READY
+  note: MVP graph is defined independently of optional AI/IoT/vertical scope.
+- id: H50-11
+  requirement: Completion Report template и evidence storage определены.
+  status: READY
+  note: Completion Report template and evidence path are included.
+- id: H50-12
+  requirement: Change-control owner/process назначен до первой scope-changing задачи.
+  status: USER_ACTION_REQUIRED
+  note: Project owner must appoint the change-control approver/process before scope-changing work.

@@ -1,0 +1,8 @@
+schema_version: 0.1.0
+status: BOOTSTRAP
+sources:
+- DOC03
+- DOC19
+- DOC50
+deny_by_default: true
+permissions: []

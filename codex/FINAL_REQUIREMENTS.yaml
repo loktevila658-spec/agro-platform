@@ -1,0 +1,2167 @@
+schema_version: '1.0'
+count: 430
+sources:
+  DOC48: 150
+  DOC49: 120
+  DOC50: 160
+requirements:
+- source: DOC48
+  ID: RT48-001
+  Area: SCOPE
+  Requirement: Every committed MASTER ID shall exist exactly once in the freeze registry.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-002
+  Area: SCOPE
+  Requirement: A requirement ID shall never be reused for a different semantic meaning.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-003
+  Area: SCOPE
+  Requirement: Every market-delta ID shall retain the decision recorded in №33.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-004
+  Area: SCOPE
+  Requirement: Rejected/future items shall remain visible as explicit no-build scope.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-005
+  Area: SCOPE
+  Requirement: Scope counts shall be reproducible from machine-readable artifacts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-006
+  Area: SCOPE
+  Requirement: Each requirement shall carry a freeze version and source reference.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-007
+  Area: SCOPE
+  Requirement: Release-path semantics shall distinguish baseline from later enhancement.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-008
+  Area: SCOPE
+  Requirement: A deleted/merged requirement shall retain tombstone/supersession history.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-009
+  Area: SCOPE
+  Requirement: Scope queries shall support filtering by module, release and decision.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-010
+  Area: SCOPE
+  Requirement: No code artifact may silently create a new product requirement.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-011
+  Area: AUTH
+  Requirement: Document precedence shall be machine-readable.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-012
+  Area: AUTH
+  Requirement: REV47 decisions shall override conflicting legacy wording.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-013
+  Area: AUTH
+  Requirement: Domain specifications №34–46 shall own detailed domain behavior.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-014
+  Area: AUTH
+  Requirement: Old documents shall remain valid only where not contradicted by higher authority.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-015
+  Area: AUTH
+  Requirement: Every conflict resolution shall point to a canonical decision.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-016
+  Area: AUTH
+  Requirement: Authority changes shall require an ADR/change request.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-017
+  Area: AUTH
+  Requirement: The build graph shall never infer authority from document date alone.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-018
+  Area: AUTH
+  Requirement: Specification links shall use stable document/requirement IDs.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-019
+  Area: AUTH
+  Requirement: Superseded UX/workflow text shall be marked as such in build inputs.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-020
+  Area: AUTH
+  Requirement: Codex prompts shall include the authority rules relevant to the slice.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-021
+  Area: MAP
+  Requirement: Every buildable requirement shall map to an owner module.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-022
+  Area: MAP
+  Requirement: Every MASTER function shall map to at least one entity family.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-023
+  Area: MAP
+  Requirement: Every write-side function shall map to a command/workflow.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-024
+  Area: MAP
+  Requirement: Every observable state change shall map to an event or explicit no-event rationale.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-025
+  Area: MAP
+  Requirement: Every user-visible query shall map to a read model/API contract.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-026
+  Area: MAP
+  Requirement: Every requirement shall map to at least one acceptance target.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-027
+  Area: MAP
+  Requirement: Every requirement shall map to a demo scenario family where demonstrable.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-028
+  Area: MAP
+  Requirement: Cross-domain functions shall identify primary owner and consumers.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-029
+  Area: MAP
+  Requirement: Mapping shall not create duplicate canonical entities.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-030
+  Area: MAP
+  Requirement: UNMAPPED status shall fail the freeze gate.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-031
+  Area: DOMAIN
+  Requirement: One canonical ownerModule shall control authoritative writes per entity family.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-032
+  Area: DOMAIN
+  Requirement: Cross-module direct repository writes shall be prohibited.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-033
+  Area: DOMAIN
+  Requirement: Shared concepts shall use referenced IDs/contracts rather than duplicated tables.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-034
+  Area: DOMAIN
+  Requirement: Lot/Batch, Sample/Lab, Workforce, Shipment and CostObject shall follow REV47 canonical naming.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-035
+  Area: DOMAIN
+  Requirement: Derived/read-model data shall not become SoT.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-036
+  Area: DOMAIN
+  Requirement: AI/IoT evidence shall not bypass domain commands.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-037
+  Area: DOMAIN
+  Requirement: Inventory facts shall remain owned by warehouse/grain contracts as applicable.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-038
+  Area: DOMAIN
+  Requirement: Accounting facts shall remain external/1C where defined.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-039
+  Area: DOMAIN
+  Requirement: Cloud replica shall not become write authority under LOCAL_PRIMARY.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-040
+  Area: DOMAIN
+  Requirement: Vertical extensions shall use extension boundaries rather than core forks.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-041
+  Area: API
+  Requirement: Every command API shall have idempotency semantics where replay is possible.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-042
+  Area: API
+  Requirement: Every public API shall reference a requirement/workflow ID.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-043
+  Area: API
+  Requirement: Domain events shall be versioned and namespaced.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-044
+  Area: API
+  Requirement: Event payloads shall expose provenance identifiers required by consumers.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-045
+  Area: API
+  Requirement: Breaking API/event changes shall trigger traceability impact analysis.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-046
+  Area: API
+  Requirement: Generated clients shall be based on frozen OpenAPI/events contracts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-047
+  Area: API
+  Requirement: Read models may aggregate domains but shall preserve source references.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-048
+  Area: API
+  Requirement: External webhooks/connectors shall not write tables directly.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-049
+  Area: API
+  Requirement: Command/result error codes shall map to business rules.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-050
+  Area: API
+  Requirement: Deprecated contracts shall retain migration/compatibility metadata.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-051
+  Area: 'OFF'
+  Requirement: Every mobile-capable requirement shall declare offline read/write/queue behavior.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-052
+  Area: 'OFF'
+  Requirement: Offline commands shall use stable UUID and idempotency keys.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-053
+  Area: 'OFF'
+  Requirement: Conflict-prone entities shall define merge/reject/manual-resolution behavior.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-054
+  Area: 'OFF'
+  Requirement: Attachments/evidence shall remain linked during delayed sync.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-055
+  Area: 'OFF'
+  Requirement: LOCAL_PRIMARY shall remain final authority for local enterprise facts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-056
+  Area: 'OFF'
+  Requirement: Cloud analytics shall tolerate delayed replication.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-057
+  Area: 'OFF'
+  Requirement: Offline status shall be visible in role workspaces.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-058
+  Area: 'OFF'
+  Requirement: Sync retries shall not create duplicate business facts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-059
+  Area: 'OFF'
+  Requirement: Reference/master snapshots shall be versioned for offline clients.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-060
+  Area: 'OFF'
+  Requirement: No requirement shall assume permanent WAN unless explicitly classified.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-061
+  Area: INT
+  Requirement: Every external integration shall declare provider/consumer/SoT role.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-062
+  Area: INT
+  Requirement: 1C shall retain accounting authority defined in prior specs.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-063
+  Area: INT
+  Requirement: Government systems shall remain external integrations, not platform competitors/SoT by default.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-064
+  Area: INT
+  Requirement: Hardware signals shall enter through evidence adapters.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-065
+  Area: INT
+  Requirement: Connector failures shall not corrupt canonical facts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-066
+  Area: INT
+  Requirement: Reconciliation shall exist where both systems represent the same business object.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-067
+  Area: INT
+  Requirement: External IDs shall be mapped and provenance retained.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-068
+  Area: INT
+  Requirement: Retries and out-of-order messages shall be covered by integration tests.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-069
+  Area: INT
+  Requirement: Integration-only market deltas shall not create duplicate platform modules.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-070
+  Area: INT
+  Requirement: Secrets/configuration shall follow platform configuration and SDK contracts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-071
+  Area: TEST
+  Requirement: Each MASTER ID shall have a stable acceptance-test target.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-072
+  Area: TEST
+  Requirement: Critical invariants shall have negative tests.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-073
+  Area: TEST
+  Requirement: Offline/reconnect paths shall be tested for mobile write flows.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-074
+  Area: TEST
+  Requirement: Permission-denied paths shall be tested for privileged functions.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-075
+  Area: TEST
+  Requirement: Integration retries/duplicates shall be tested.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-076
+  Area: TEST
+  Requirement: Audit/provenance shall be asserted for authoritative changes.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-077
+  Area: TEST
+  Requirement: Demo scenarios shall use deterministic reference data.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-078
+  Area: TEST
+  Requirement: Release gates shall execute the tests relevant to included scope.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-079
+  Area: TEST
+  Requirement: Regression tests shall reference requirement IDs in metadata.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-080
+  Area: TEST
+  Requirement: A requirement cannot be Done if its mapped tests are missing or skipped without waiver.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-081
+  Area: REL
+  Requirement: Every buildable requirement shall have a normalized release target/path.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-082
+  Area: REL
+  Requirement: MVP->later paths shall be split into deliverable slices.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-083
+  Area: REL
+  Requirement: Future items shall not block current release builds.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-084
+  Area: REL
+  Requirement: Optional modules shall not become mandatory dependencies of core.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-085
+  Area: REL
+  Requirement: Vertical extensions shall be independently activatable.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-086
+  Area: REL
+  Requirement: Release movement shall require dependency and migration analysis.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-087
+  Area: REL
+  Requirement: Release dashboards shall count requirements by frozen scope status.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-088
+  Area: REL
+  Requirement: V1/V1.5/V2 additions shall preserve backward compatibility where specified.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-089
+  Area: REL
+  Requirement: Release freeze shall include matching demo/acceptance coverage.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-090
+  Area: REL
+  Requirement: №49 shall order work by dependency, not document number.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-091
+  Area: CHANGE
+  Requirement: Post-freeze scope changes shall use a Change Request.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-092
+  Area: CHANGE
+  Requirement: Change Requests shall identify affected requirements/documents/modules/tests.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-093
+  Area: CHANGE
+  Requirement: Change Requests shall state release and migration impact.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-094
+  Area: CHANGE
+  Requirement: Scope changes shall update machine-readable freeze artifacts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-095
+  Area: CHANGE
+  Requirement: Emergency defects shall not be disguised as scope expansion.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-096
+  Area: CHANGE
+  Requirement: Semantic changes shall create version/history records.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-097
+  Area: CHANGE
+  Requirement: Rejected candidates may only be reactivated by explicit decision.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-098
+  Area: CHANGE
+  Requirement: Owner-module changes require architecture review.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-099
+  Area: CHANGE
+  Requirement: SoT boundary changes require reconciliation/data-migration review.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-100
+  Area: CHANGE
+  Requirement: Every approved change shall propagate to №49 graph before coding.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-101
+  Area: DATA
+  Requirement: Canonical facts shall expose createdAt/updatedAt/version/audit/provenance as applicable.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-102
+  Area: DATA
+  Requirement: Derived metrics shall reference calculation policy/version.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-103
+  Area: DATA
+  Requirement: Traceability links shall survive correction/supersession.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-104
+  Area: DATA
+  Requirement: Data-quality status shall be visible to analytics.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-105
+  Area: DATA
+  Requirement: Geometry/measurement/quality facts shall retain source/version metadata.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-106
+  Area: DATA
+  Requirement: Retention/legal-hold rules shall remain traceable to data classes.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-107
+  Area: DATA
+  Requirement: Master-data merges shall preserve aliases/external IDs.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-108
+  Area: DATA
+  Requirement: Corrections shall supersede rather than silently overwrite immutable evidence.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-109
+  Area: DATA
+  Requirement: Read models shall be rebuildable from canonical sources where designed.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-110
+  Area: DATA
+  Requirement: Migration/import provenance shall remain available after cutover.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-111
+  Area: SEC
+  Requirement: Every write function shall map to permission/action semantics.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-112
+  Area: SEC
+  Requirement: UI visibility shall not substitute server authorization.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-113
+  Area: SEC
+  Requirement: Sensitive exports/reports shall have explicit permissions.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-114
+  Area: SEC
+  Requirement: Admin/config/plugin actions shall be separately privileged.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-115
+  Area: SEC
+  Requirement: Audit log access shall be permission-controlled.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-116
+  Area: SEC
+  Requirement: Service accounts/connectors shall have least-privilege scopes.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-117
+  Area: SEC
+  Requirement: Offline authorization snapshots shall be bounded/versioned.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-118
+  Area: SEC
+  Requirement: Permission changes shall invalidate relevant cached capabilities.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-119
+  Area: SEC
+  Requirement: Security-critical actions shall include actor and correlation IDs.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-120
+  Area: SEC
+  Requirement: Codex slices shall not introduce wildcard permissions without spec approval.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-121
+  Area: BUILD
+  Requirement: Every buildable row shall have a WP49 placeholder/family.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-122
+  Area: BUILD
+  Requirement: №49 shall refine placeholders into dependency-ordered work packages.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-123
+  Area: BUILD
+  Requirement: Each WP shall declare allowed paths and out-of-scope behavior.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-124
+  Area: BUILD
+  Requirement: Each WP shall include DB/API/event/permission/offline/test impacts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-125
+  Area: BUILD
+  Requirement: Shared foundation work shall precede dependent domain slices.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-126
+  Area: BUILD
+  Requirement: No WP shall mix unrelated domains merely to reduce task count.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-127
+  Area: BUILD
+  Requirement: Database migrations shall be forward-safe and traceable to requirements.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-128
+  Area: BUILD
+  Requirement: Generated contracts shall be updated within the same WP.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-129
+  Area: BUILD
+  Requirement: Definition of Done shall include mapped acceptance tests.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-130
+  Area: BUILD
+  Requirement: WP completion shall update traceability status automatically where possible.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-131
+  Area: PUB
+  Requirement: №50 shall publish the frozen scope as machine-readable artifacts.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-132
+  Area: PUB
+  Requirement: №50 shall include document authority and revision map.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-133
+  Area: PUB
+  Requirement: №50 shall include OpenAPI/events/database/workflow/test packages.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-134
+  Area: PUB
+  Requirement: Final publication shall contain no UNMAPPED buildable requirement.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-135
+  Area: PUB
+  Requirement: Final publication shall contain no unresolved authority conflict.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-136
+  Area: PUB
+  Requirement: Release baseline shall include artifact checksums/version.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-137
+  Area: PUB
+  Requirement: Final pack shall identify optional/future/no-build modules clearly.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-138
+  Area: PUB
+  Requirement: The published package shall be usable without reading competitor research.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-139
+  Area: PUB
+  Requirement: The published package shall retain source requirement IDs for audit.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-140
+  Area: PUB
+  Requirement: Any later release shall version the freeze rather than overwrite it.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-141
+  Area: MAP
+  Requirement: The RTM shall support reverse lookup from API/event/test/WP back to requirement.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-142
+  Area: AUTH
+  Requirement: A stale legacy document shall never supersede a frozen REV47 decision by accident.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-143
+  Area: BUILD
+  Requirement: Codex task manifests shall embed requirement IDs and acceptance IDs.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-144
+  Area: REL
+  Requirement: Release reports shall distinguish committed core from optional modules.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-145
+  Area: TEST
+  Requirement: Coverage metrics shall report both requirement count and critical-path scenario coverage.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-146
+  Area: CHANGE
+  Requirement: Freeze checksum/version shall change for every approved scope mutation.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-147
+  Area: DATA
+  Requirement: Cross-domain lineage shall be queryable for traceability-critical chains.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-148
+  Area: SEC
+  Requirement: Traceability exports shall honor row/object scope where configured.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-149
+  Area: 'OFF'
+  Requirement: Offline-first acceptance shall be required for critical mobile roles.
+  Priority: MUST
+  Gate: G48
+- source: DOC48
+  ID: RT48-150
+  Area: INT
+  Requirement: Reconciliation exceptions shall be first-class observable cases.
+  Priority: MUST
+  Gate: G48
+- source: DOC49
+  ID: BGR49-001
+  Requirement: Граф Work Packages должен быть DAG без циклических hard dependencies.
+- source: DOC49
+  ID: BGR49-002
+  Requirement: Каждый WP должен иметь ровно один primary owner module.
+- source: DOC49
+  ID: BGR49-003
+  Requirement: Каждый committed MASTER requirement должен маппиться минимум на один WP.
+- source: DOC49
+  ID: BGR49-004
+  Requirement: Каждый accepted market delta должен маппиться на WP либо FUTURE/extension decision.
+- source: DOC49
+  ID: BGR49-005
+  Requirement: Каждый WP должен иметь хотя бы один acceptance reference.
+- source: DOC49
+  ID: BGR49-006
+  Requirement: Каждый authoritative write WP должен включать audit и idempotency requirements.
+- source: DOC49
+  ID: BGR49-007
+  Requirement: Каждый mobile write WP должен иметь offline/conflict contract.
+- source: DOC49
+  ID: BGR49-008
+  Requirement: Каждый integration WP должен иметь mock/failure fixtures.
+- source: DOC49
+  ID: BGR49-009
+  Requirement: Каждый device WP должен подтверждать evidence-only boundary.
+- source: DOC49
+  ID: BGR49-010
+  Requirement: Каждый AI WP должен подтверждать advisory-only authority.
+- source: DOC49
+  ID: BGR49-011
+  Requirement: Каждый migration WP должен иметь compatibility plan.
+- source: DOC49
+  ID: BGR49-012
+  Requirement: Каждый event producer WP должен иметь contract test для consumers.
+- source: DOC49
+  ID: BGR49-013
+  Requirement: Каждый permission-protected action должен иметь deny test.
+- source: DOC49
+  ID: BGR49-014
+  Requirement: Каждый report/KPI WP должен иметь provenance/freshness semantics.
+- source: DOC49
+  ID: BGR49-015
+  Requirement: Каждый cross-domain workflow должен иметь explicit orchestration owner.
+- source: DOC49
+  ID: BGR49-016
+  Requirement: Каждый performance-critical WP должен иметь NFR budget.
+- source: DOC49
+  ID: BGR49-017
+  Requirement: Каждый package merge должен сохранять deterministic demo seed.
+- source: DOC49
+  ID: BGR49-018
+  Requirement: Каждый schema change должен быть versioned migration.
+- source: DOC49
+  ID: BGR49-019
+  Requirement: Каждый API breaking change до V2 запрещён без approved exception.
+- source: DOC49
+  ID: BGR49-020
+  Requirement: Каждый WP должен сохранять LOCAL_PRIMARY invariants.
+- source: DOC49
+  ID: BGR49-021
+  Requirement: 'Контроль build graph #021: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-022
+  Requirement: 'Контроль build graph #022: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-023
+  Requirement: 'Контроль build graph #023: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-024
+  Requirement: 'Контроль build graph #024: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-025
+  Requirement: 'Контроль build graph #025: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-026
+  Requirement: 'Контроль build graph #026: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-027
+  Requirement: 'Контроль build graph #027: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-028
+  Requirement: 'Контроль build graph #028: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-029
+  Requirement: 'Контроль build graph #029: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-030
+  Requirement: 'Контроль build graph #030: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-031
+  Requirement: 'Контроль build graph #031: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-032
+  Requirement: 'Контроль build graph #032: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-033
+  Requirement: 'Контроль build graph #033: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-034
+  Requirement: 'Контроль build graph #034: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-035
+  Requirement: 'Контроль build graph #035: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-036
+  Requirement: 'Контроль build graph #036: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-037
+  Requirement: 'Контроль build graph #037: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-038
+  Requirement: 'Контроль build graph #038: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-039
+  Requirement: 'Контроль build graph #039: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-040
+  Requirement: 'Контроль build graph #040: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-041
+  Requirement: 'Контроль build graph #041: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-042
+  Requirement: 'Контроль build graph #042: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-043
+  Requirement: 'Контроль build graph #043: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-044
+  Requirement: 'Контроль build graph #044: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-045
+  Requirement: 'Контроль build graph #045: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-046
+  Requirement: 'Контроль build graph #046: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-047
+  Requirement: 'Контроль build graph #047: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-048
+  Requirement: 'Контроль build graph #048: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-049
+  Requirement: 'Контроль build graph #049: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-050
+  Requirement: 'Контроль build graph #050: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-051
+  Requirement: 'Контроль build graph #051: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-052
+  Requirement: 'Контроль build graph #052: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-053
+  Requirement: 'Контроль build graph #053: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-054
+  Requirement: 'Контроль build graph #054: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-055
+  Requirement: 'Контроль build graph #055: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-056
+  Requirement: 'Контроль build graph #056: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-057
+  Requirement: 'Контроль build graph #057: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-058
+  Requirement: 'Контроль build graph #058: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-059
+  Requirement: 'Контроль build graph #059: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-060
+  Requirement: 'Контроль build graph #060: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-061
+  Requirement: 'Контроль build graph #061: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-062
+  Requirement: 'Контроль build graph #062: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-063
+  Requirement: 'Контроль build graph #063: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-064
+  Requirement: 'Контроль build graph #064: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-065
+  Requirement: 'Контроль build graph #065: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-066
+  Requirement: 'Контроль build graph #066: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-067
+  Requirement: 'Контроль build graph #067: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-068
+  Requirement: 'Контроль build graph #068: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-069
+  Requirement: 'Контроль build graph #069: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-070
+  Requirement: 'Контроль build graph #070: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-071
+  Requirement: 'Контроль build graph #071: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-072
+  Requirement: 'Контроль build graph #072: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-073
+  Requirement: 'Контроль build graph #073: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-074
+  Requirement: 'Контроль build graph #074: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-075
+  Requirement: 'Контроль build graph #075: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-076
+  Requirement: 'Контроль build graph #076: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-077
+  Requirement: 'Контроль build graph #077: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-078
+  Requirement: 'Контроль build graph #078: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-079
+  Requirement: 'Контроль build graph #079: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-080
+  Requirement: 'Контроль build graph #080: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-081
+  Requirement: 'Контроль build graph #081: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-082
+  Requirement: 'Контроль build graph #082: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-083
+  Requirement: 'Контроль build graph #083: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-084
+  Requirement: 'Контроль build graph #084: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-085
+  Requirement: 'Контроль build graph #085: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-086
+  Requirement: 'Контроль build graph #086: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-087
+  Requirement: 'Контроль build graph #087: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-088
+  Requirement: 'Контроль build graph #088: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-089
+  Requirement: 'Контроль build graph #089: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-090
+  Requirement: 'Контроль build graph #090: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-091
+  Requirement: 'Контроль build graph #091: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-092
+  Requirement: 'Контроль build graph #092: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-093
+  Requirement: 'Контроль build graph #093: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-094
+  Requirement: 'Контроль build graph #094: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-095
+  Requirement: 'Контроль build graph #095: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-096
+  Requirement: 'Контроль build graph #096: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-097
+  Requirement: 'Контроль build graph #097: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-098
+  Requirement: 'Контроль build graph #098: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-099
+  Requirement: 'Контроль build graph #099: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-100
+  Requirement: 'Контроль build graph #100: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-101
+  Requirement: 'Контроль build graph #101: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-102
+  Requirement: 'Контроль build graph #102: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-103
+  Requirement: 'Контроль build graph #103: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-104
+  Requirement: 'Контроль build graph #104: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-105
+  Requirement: 'Контроль build graph #105: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-106
+  Requirement: 'Контроль build graph #106: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-107
+  Requirement: 'Контроль build graph #107: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-108
+  Requirement: 'Контроль build graph #108: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-109
+  Requirement: 'Контроль build graph #109: permission coverage должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-110
+  Requirement: 'Контроль build graph #110: offline replay должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-111
+  Requirement: 'Контроль build graph #111: audit provenance должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-112
+  Requirement: 'Контроль build graph #112: demo determinism должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-113
+  Requirement: 'Контроль build graph #113: integration retry должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-114
+  Requirement: 'Контроль build graph #114: performance budget должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-115
+  Requirement: 'Контроль build graph #115: security negative path должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-116
+  Requirement: 'Контроль build graph #116: migration safety должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-117
+  Requirement: 'Контроль build graph #117: repository boundary должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-118
+  Requirement: 'Контроль build graph #118: database ownership должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-119
+  Requirement: 'Контроль build graph #119: OpenAPI compatibility должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC49
+  ID: BGR49-120
+  Requirement: 'Контроль build graph #120: event versioning должен быть явно проверяемым gate текущего WP и иметь машинно-читаемое
+    evidence.'
+- source: DOC50
+  ID: TZ50-001
+  Category: Scope/Governance
+  Requirement: Implementation must preserve all 315 MASTER IDs and their frozen release/status mapping.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-002
+  Category: Scope/Governance
+  Requirement: Implementation must preserve all 133 market-delta frozen decisions; no delta becomes core implicitly.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-003
+  Category: Scope/Governance
+  Requirement: Any post-freeze scope change must use an approved Change Request.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-004
+  Category: Scope/Governance
+  Requirement: REV47 conflict decisions must override stale conflicting text until physical spec revision is completed.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-005
+  Category: Scope/Governance
+  Requirement: Every buildable requirement must map to one owner module and at least one WP49 package.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-006
+  Category: Scope/Governance
+  Requirement: No requirement ID may be reused for changed semantics.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-007
+  Category: Scope/Governance
+  Requirement: No feature may be silently omitted; deferred/rejected status must be explicit.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-008
+  Category: Scope/Governance
+  Requirement: Every observable contract change must update traceability.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-009
+  Category: Scope/Governance
+  Requirement: Canonical glossary and entity names must be used consistently across code and contracts.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-010
+  Category: Scope/Governance
+  Requirement: Architecture decisions changing SoT or module ownership require explicit ADR/change approval.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-011
+  Category: Scope/Governance
+  Requirement: Competitor research cannot directly alter runtime scope after freeze.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-012
+  Category: Scope/Governance
+  Requirement: Future hooks must remain no-build until promoted by change control.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-013
+  Category: Scope/Governance
+  Requirement: Release composition must be generated from frozen scope artifacts, not hand-maintained parallel lists.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-014
+  Category: Scope/Governance
+  Requirement: Build graph must remain a DAG after every approved scope change.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-015
+  Category: Scope/Governance
+  Requirement: Final release evidence must identify exact spec/build baseline versions.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-016
+  Category: Architecture
+  Requirement: Local Server must be authoritative for operational business writes.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-017
+  Category: Architecture
+  Requirement: Cloud must not overwrite authoritative Local business facts.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-018
+  Category: Architecture
+  Requirement: PostgreSQL local-cloud multi-master replication is prohibited.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-019
+  Category: Architecture
+  Requirement: Backend must preserve modular bounded-context ownership.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-020
+  Category: Architecture
+  Requirement: Direct cross-module writes to foreign authoritative tables are prohibited.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-021
+  Category: Architecture
+  Requirement: All authoritative writes must pass domain validation/state transitions.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-022
+  Category: Architecture
+  Requirement: All authoritative writes must pass server-side permission checks.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-023
+  Category: Architecture
+  Requirement: All authoritative writes must emit audit/provenance where applicable.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-024
+  Category: Architecture
+  Requirement: Transactional outbox must accompany authoritative events.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-025
+  Category: Architecture
+  Requirement: Redis must not be durable business authority.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-026
+  Category: Architecture
+  Requirement: MinIO/S3 attachments must be referenced by stable metadata/checksum.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-027
+  Category: Architecture
+  Requirement: Hardware absence must not block core manual workflows.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-028
+  Category: Architecture
+  Requirement: AI absence must not block core business workflows.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-029
+  Category: Architecture
+  Requirement: WAN loss must not block critical Local workflows.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-030
+  Category: Architecture
+  Requirement: External system outage must not corrupt or block Local authoritative state.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-031
+  Category: Data/SoT
+  Requirement: Canonical entities must use stable IDs independent of external system IDs.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-032
+  Category: Data/SoT
+  Requirement: External IDs must be stored as mappings with source provenance.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-033
+  Category: Data/SoT
+  Requirement: Attribute-level source-of-truth rules must be enforceable.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-034
+  Category: Data/SoT
+  Requirement: Corrections must preserve original authoritative values and history.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-035
+  Category: Data/SoT
+  Requirement: Immutable specifications/results must use versioning/supersession.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-036
+  Category: Data/SoT
+  Requirement: Duplicate/master merge operations must preserve lineage.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-037
+  Category: Data/SoT
+  Requirement: Business quantities and money must use exact decimal representation.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-038
+  Category: Data/SoT
+  Requirement: Business timestamps must preserve instant and relevant local timezone/business date semantics.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-039
+  Category: Data/SoT
+  Requirement: Spatial data must use explicit CRS/SRID metadata.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-040
+  Category: Data/SoT
+  Requirement: Field, LandPlot and FieldSeason must remain distinct entities.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-041
+  Category: Data/SoT
+  Requirement: Batch/Lot genealogy must be reusable across warehouse, grain and production.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-042
+  Category: Data/SoT
+  Requirement: Quality disposition must not erase physical production/stock facts.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-043
+  Category: Data/SoT
+  Requirement: Operational cost must remain distinguishable from accounting actual.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-044
+  Category: Data/SoT
+  Requirement: AI-derived data must be marked derived/advisory with model provenance.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-045
+  Category: Data/SoT
+  Requirement: IoT-derived state must reference source evidence and resolver version.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-046
+  Category: API/Events
+  Requirement: HTTP contracts must be represented in canonical OpenAPI.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-047
+  Category: API/Events
+  Requirement: Generated clients must be synchronized with OpenAPI changes.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-048
+  Category: API/Events
+  Requirement: API breaking changes require explicit version/compatibility plan.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-049
+  Category: API/Events
+  Requirement: Commands must support idempotency where retries are possible.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-050
+  Category: API/Events
+  Requirement: Event schemas must be versioned and catalogued.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-051
+  Category: API/Events
+  Requirement: Events must include correlation/causation identifiers where applicable.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-052
+  Category: API/Events
+  Requirement: Event producers must be owned by the canonical source module.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-053
+  Category: API/Events
+  Requirement: Consumers must tolerate additive compatible fields.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-054
+  Category: API/Events
+  Requirement: Breaking event changes must use new major schema/version.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-055
+  Category: API/Events
+  Requirement: Inbox consumers must protect against duplicate delivery.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-056
+  Category: API/Events
+  Requirement: External webhooks must be signed/authenticated and idempotent.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-057
+  Category: API/Events
+  Requirement: API error model must distinguish validation, conflict, permission and external dependency failures.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-058
+  Category: Offline/Sync
+  Requirement: Mobile authoritative intent must be captured as ProvisionalCommand offline.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-059
+  Category: Offline/Sync
+  Requirement: Every provisional command must have a stable client command ID.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-060
+  Category: Offline/Sync
+  Requirement: Mobile UI must expose pending/synced/conflict/failed state.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-061
+  Category: Offline/Sync
+  Requirement: Server must revalidate rules and permissions when offline commands sync.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-062
+  Category: Offline/Sync
+  Requirement: Last-write-wins must not resolve authoritative conflicts by default.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-063
+  Category: Offline/Sync
+  Requirement: Attachment upload must have independent resumable queue state.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-064
+  Category: Offline/Sync
+  Requirement: Offline schema migration must preserve unsynced queue.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-065
+  Category: Offline/Sync
+  Requirement: Offline maps/reference data must use explicit snapshots/versioning.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-066
+  Category: Offline/Sync
+  Requirement: Sync retries must be idempotent.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-067
+  Category: Offline/Sync
+  Requirement: Conflict resolution actions must be audited.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-068
+  Category: Offline/Sync
+  Requirement: Long offline operation must respect NFR retention/capacity baseline.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-069
+  Category: Offline/Sync
+  Requirement: Cloud replication must remain separate from mobile sync authority.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-070
+  Category: Security/Audit
+  Requirement: Application permissions must be deny-by-default.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-071
+  Category: Security/Audit
+  Requirement: UI visibility must not replace server authorization.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-072
+  Category: Security/Audit
+  Requirement: Privileged corrections/approvals/config changes must be audited.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-073
+  Category: Security/Audit
+  Requirement: Production secrets must not be stored in repository or demo fixtures.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-074
+  Category: Security/Audit
+  Requirement: Extension capabilities must be least-privilege.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-075
+  Category: Security/Audit
+  Requirement: File upload/download paths must enforce authorization and content controls.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-076
+  Category: Security/Audit
+  Requirement: Identity/session handling must meet security baseline from DOC19.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-077
+  Category: Security/Audit
+  Requirement: Personal data access must be logged where required by policy.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-078
+  Category: Security/Audit
+  Requirement: Release artifacts must support integrity verification.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-079
+  Category: Security/Audit
+  Requirement: SBOM must be generated for production release.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-080
+  Category: Security/Audit
+  Requirement: Security regression must include horizontal/vertical authorization tests.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-081
+  Category: Security/Audit
+  Requirement: No AI/IoT connector may bypass permission/domain command layer.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-082
+  Category: Integration
+  Requirement: 1C integration must respect attribute-level SoT mapping.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-083
+  Category: Integration
+  Requirement: 1C downtime must not block Local operational workflows.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-084
+  Category: Integration
+  Requirement: Inbound external data must pass staging/validation/mapping before canonical write.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-085
+  Category: Integration
+  Requirement: Integration retries must be idempotent.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-086
+  Category: Integration
+  Requirement: Integration must handle duplicate/out-of-order/partial payloads.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-087
+  Category: Integration
+  Requirement: Reconciliation status must be observable to operators.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-088
+  Category: Integration
+  Requirement: External rejection must not silently delete Local fact.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-089
+  Category: Integration
+  Requirement: External status updates must preserve source timestamp/provenance.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-090
+  Category: Integration
+  Requirement: Provider-specific schemas must remain inside adapters/connectors.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-091
+  Category: Integration
+  Requirement: Connector secrets must use secure configuration/secrets storage.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-092
+  Category: Integration
+  Requirement: Government systems must remain integration boundaries, not internal core domains.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-093
+  Category: Integration
+  Requirement: Integration fixtures must include failure injection cases.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-094
+  Category: Domain Traceability
+  Requirement: FieldSeason operations must be traceable to resource/labor/machine facts.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-095
+  Category: Domain Traceability
+  Requirement: HarvestBatch must remain linked to source field/season/task.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-096
+  Category: Domain Traceability
+  Requirement: Combine unload must be distinct from transport delivery and scale measurement.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-097
+  Category: Domain Traceability
+  Requirement: WeighingTransaction must preserve raw weight evidence and corrections.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-098
+  Category: Domain Traceability
+  Requirement: Warehouse/Grain lot split/merge must preserve genealogy.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-099
+  Category: Domain Traceability
+  Requirement: Grain quality/owner/storage transformations must preserve source lot relations.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-100
+  Category: Domain Traceability
+  Requirement: Production consumption/output must preserve batch genealogy.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-101
+  Category: Domain Traceability
+  Requirement: FinishedProductBatch must be traceable to consumed input lots.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-102
+  Category: Domain Traceability
+  Requirement: Shipment/POD must preserve shipped batch/handling unit links.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-103
+  Category: Domain Traceability
+  Requirement: Reverse traceability must follow the same canonical relationships.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-104
+  Category: Domain Traceability
+  Requirement: Quality hold/disposition must be visible in traceability graph.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-105
+  Category: Domain Traceability
+  Requirement: Maintenance/downtime relations must not mutate production facts retroactively.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-106
+  Category: UX/Operations
+  Requirement: Mobile role workspaces must minimize text entry through QR/GPS/photo/voice/NFC/RFID where useful.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-107
+  Category: UX/Operations
+  Requirement: Critical industrial actions must use explicit confirmation and state feedback.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-108
+  Category: UX/Operations
+  Requirement: Offline state must be visible to operators.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-109
+  Category: UX/Operations
+  Requirement: Permission-driven UX must reflect server capabilities.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-110
+  Category: UX/Operations
+  Requirement: Industrial UI must support glove/outdoor/tablet/kiosk contexts defined in DOC46.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-111
+  Category: UX/Operations
+  Requirement: Cross-domain search results must obey permissions.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-112
+  Category: UX/Operations
+  Requirement: Control Tower KPIs must expose freshness/completeness/confidence.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-113
+  Category: UX/Operations
+  Requirement: KPI drilldown must reach underlying canonical facts/evidence.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-114
+  Category: UX/Operations
+  Requirement: Saved views/reports must not create parallel business authority.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-115
+  Category: UX/Operations
+  Requirement: Operator exceptions must route to actionable workflows, not passive dashboards.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-116
+  Category: Testing/Demo
+  Requirement: Every WP must have testable acceptance criteria before implementation starts.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-117
+  Category: Testing/Demo
+  Requirement: Every authoritative state machine must have positive and negative transition tests.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-118
+  Category: Testing/Demo
+  Requirement: Every permission-protected command must have negative permission tests.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-119
+  Category: Testing/Demo
+  Requirement: Every offline command path must test retry/idempotency/conflict where applicable.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-120
+  Category: Testing/Demo
+  Requirement: Every integration must test timeout/error/duplicate/out-of-order cases.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-121
+  Category: Testing/Demo
+  Requirement: Every DB migration must be exercised in CI against representative previous schema.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-122
+  Category: Testing/Demo
+  Requirement: Deterministic DEMO27 scenarios must be usable for E2E verification.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-123
+  Category: Testing/Demo
+  Requirement: Golden KPI/formula values must be versioned and reproducible.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-124
+  Category: Testing/Demo
+  Requirement: Traceability regression must test forward and reverse chain.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-125
+  Category: Testing/Demo
+  Requirement: Critical release tests must run against real infrastructure services in test Compose.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-126
+  Category: Testing/Demo
+  Requirement: Performance tests must use enterprise-scale generators where defined.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-127
+  Category: Testing/Demo
+  Requirement: DR/restore must be periodically tested, not only documented.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-128
+  Category: Testing/Demo
+  Requirement: Release regression must produce machine-readable PASS/FAIL evidence.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-129
+  Category: Deployment/Release
+  Requirement: Local Server deployment must be reproducible from versioned manifests.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-130
+  Category: Deployment/Release
+  Requirement: Production release must pin service/image versions.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-131
+  Category: Deployment/Release
+  Requirement: Release must declare DB/API/event/config compatibility versions.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-132
+  Category: Deployment/Release
+  Requirement: Schema breaking changes must follow expand/compatible/backfill/switch/contract.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-133
+  Category: Deployment/Release
+  Requirement: Mobile upgrade must preserve local data and unsynced commands.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-134
+  Category: Deployment/Release
+  Requirement: Backup must include database/object/config/contracts needed for restore.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-135
+  Category: Deployment/Release
+  Requirement: RPO/RTO must meet NFR profile for targeted deployment.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-136
+  Category: Deployment/Release
+  Requirement: Cloud must remain non-authoritative during degraded replication.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-137
+  Category: Deployment/Release
+  Requirement: Feature flags/module activation must be versioned and auditable.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-138
+  Category: Deployment/Release
+  Requirement: Customer-specific configuration must not require core forks.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-139
+  Category: Deployment/Release
+  Requirement: Rollback/recovery procedure must be explicit in release notes.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-140
+  Category: Deployment/Release
+  Requirement: Production promotion requires release gate evidence.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-141
+  Category: Codex Execution
+  Requirement: Codex must implement exactly one WP manifest at a time.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-142
+  Category: Codex Execution
+  Requirement: Codex must verify dependsOn before editing.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-143
+  Category: Codex Execution
+  Requirement: Codex must edit only allowedPaths.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-144
+  Category: Codex Execution
+  Requirement: Need to modify deniedPaths must trigger explicit issue/CR, not silent change.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-145
+  Category: Codex Execution
+  Requirement: Codex must not invent business rules/entities/releases.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-146
+  Category: Codex Execution
+  Requirement: Codex must update contracts in the same WP as observable behavior.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-147
+  Category: Codex Execution
+  Requirement: Codex must create/adjust tests before or with implementation.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-148
+  Category: Codex Execution
+  Requirement: Codex must run required quality gates before completion.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-149
+  Category: Codex Execution
+  Requirement: Codex must run mapped deterministic demo scenario.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-150
+  Category: Codex Execution
+  Requirement: Codex must produce Completion Report evidence.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-151
+  Category: Codex Execution
+  Requirement: Codex must not declare PASS with required tests skipped.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-152
+  Category: Codex Execution
+  Requirement: Codex must not create a second source of truth for convenience.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-153
+  Category: Codex Execution
+  Requirement: Codex must not bypass application layer with direct foreign DB write.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-154
+  Category: Codex Execution
+  Requirement: Codex must preserve existing stable IDs/event names unless migration/alias plan is approved.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-155
+  Category: Codex Execution
+  Requirement: Codex must create explicit migration for schema changes.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-156
+  Category: Codex Execution
+  Requirement: Codex must update generated clients after API changes.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-157
+  Category: Codex Execution
+  Requirement: Codex must keep event schema/catalog synchronized.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-158
+  Category: Codex Execution
+  Requirement: Codex must keep permission catalog synchronized.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-159
+  Category: Codex Execution
+  Requirement: Codex must record known limitations/deferred items with approved references.
+  Level: MUST
+- source: DOC50
+  ID: TZ50-160
+  Category: Codex Execution
+  Requirement: Codex must stop scope interpretation at №48/№50 boundaries; ambiguity becomes issue/ADR/CR proposal.
+  Level: MUST

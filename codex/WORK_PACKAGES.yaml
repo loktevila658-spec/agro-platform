@@ -1,0 +1,1570 @@
+schema_version: '1.0'
+source: DOC49
+count: 94
+status: FROZEN_BUILD_GRAPH
+work_packages:
+- id: WP49-001
+  title: Monorepo bootstrap
+  wave: W0
+  release: MVP
+  depends_on: []
+  depends_on_symbolic: []
+  depends_on_raw: —
+  allowed_paths_raw: /apps /packages /database /openapi /events /tests
+  exit_criteria: Repo builds; Compose boots; CI smoke passes.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-002
+  title: Shared configuration & environment model
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  depends_on_symbolic: []
+  depends_on_raw: '001'
+  allowed_paths_raw: /packages/config /deployment
+  exit_criteria: Typed config; env validation; no secrets in repo.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-003
+  title: Database baseline & migration runner
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  depends_on_symbolic: []
+  depends_on_raw: '001'
+  allowed_paths_raw: /database /apps/api
+  exit_criteria: PostgreSQL/PostGIS migrations reproducible; schema version exposed.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-004
+  title: Contract codegen pipeline
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  depends_on_symbolic: []
+  depends_on_raw: '001'
+  allowed_paths_raw: /openapi /events /packages/contracts
+  exit_criteria: OpenAPI/event schemas validate; TS/Dart clients generated.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-005
+  title: CI quality gates
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  - WP49-002
+  - WP49-003
+  - WP49-004
+  depends_on_symbolic: []
+  depends_on_raw: 001-004
+  allowed_paths_raw: /.github /tests /scripts
+  exit_criteria: lint/typecheck/unit/contract/migration gates block merge.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-006
+  title: Observability foundation
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  - WP49-002
+  - WP49-003
+  depends_on_symbolic: []
+  depends_on_raw: 001-003
+  allowed_paths_raw: /packages/observability /apps/api
+  exit_criteria: structured logs, correlationId, metrics, health endpoints.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-007
+  title: Dev CLI agroctl foundation
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  - WP49-002
+  - WP49-003
+  - WP49-004
+  - WP49-005
+  depends_on_symbolic: []
+  depends_on_raw: 001-005
+  allowed_paths_raw: /tools/agroctl
+  exit_criteria: bootstrap, migrate, seed, verify commands.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-008
+  title: Demo fixture loader skeleton
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-003
+  - WP49-007
+  depends_on_symbolic: []
+  depends_on_raw: 003,007
+  allowed_paths_raw: /demo /tools/agroctl
+  exit_criteria: MINIMAL seed idempotent and deterministic.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-009
+  title: Security baseline & secret handling
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  - WP49-002
+  - WP49-003
+  - WP49-004
+  - WP49-005
+  - WP49-006
+  depends_on_symbolic: []
+  depends_on_raw: 001-006
+  allowed_paths_raw: /security /packages/config
+  exit_criteria: secret scan, baseline headers, key handling.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-010
+  title: Architecture guard tests
+  wave: W0
+  release: MVP
+  depends_on:
+  - WP49-001
+  - WP49-002
+  - WP49-003
+  - WP49-004
+  - WP49-005
+  depends_on_symbolic: []
+  depends_on_raw: 001-005
+  allowed_paths_raw: /tests/architecture
+  exit_criteria: module dependency rules executable.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-011
+  title: Organization/site hierarchy
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-003
+  - WP49-004
+  depends_on_symbolic: []
+  depends_on_raw: 003,004
+  allowed_paths_raw: /apps/api/modules/org /database
+  exit_criteria: Enterprise/Site hierarchy, API/events/audit.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-012
+  title: Identity/authentication
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-011
+  depends_on_symbolic: []
+  depends_on_raw: '011'
+  allowed_paths_raw: /apps/api/modules/identity /apps/web /apps/mobile
+  exit_criteria: login/token/session/local auth policy.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-013
+  title: RBAC/permissions engine
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-011
+  - WP49-012
+  depends_on_symbolic: []
+  depends_on_raw: 011,012
+  allowed_paths_raw: /apps/api/modules/permissions /permissions
+  exit_criteria: server-side permission checks + tests.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-014
+  title: Audit & correction framework
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-011
+  - WP49-012
+  - WP49-013
+  depends_on_symbolic: []
+  depends_on_raw: 011-013
+  allowed_paths_raw: /apps/api/modules/audit
+  exit_criteria: immutable audit, correction/supersession links.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-015
+  title: Idempotency & command envelope
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-011
+  - WP49-012
+  - WP49-013
+  - WP49-014
+  depends_on_symbolic: []
+  depends_on_raw: 011-014
+  allowed_paths_raw: /apps/api/common
+  exit_criteria: idempotency key, commandId, optimistic version.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-016
+  title: Transactional outbox/inbox
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-003
+  - WP49-015
+  depends_on_symbolic: []
+  depends_on_raw: 003,015
+  allowed_paths_raw: /apps/api/modules/events /events
+  exit_criteria: domain events atomic with writes; replay safe.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-017
+  title: Files/attachments service
+  wave: W1
+  release: MVP
+  depends_on:
+  - WP49-011
+  - WP49-014
+  depends_on_symbolic: []
+  depends_on_raw: 011,014
+  allowed_paths_raw: /apps/api/modules/files /packages/storage
+  exit_criteria: MinIO metadata, hashes, offline upload refs.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-018
+  title: Notification/rules skeleton
+  wave: W1
+  release: V1
+  depends_on:
+  - WP49-016
+  depends_on_symbolic: []
+  depends_on_raw: '016'
+  allowed_paths_raw: /apps/api/modules/notifications
+  exit_criteria: rules consume events; no direct domain mutation.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-019
+  title: Mobile local persistence
+  wave: W2
+  release: MVP
+  depends_on:
+  - WP49-004
+  - WP49-012
+  - WP49-015
+  depends_on_symbolic: []
+  depends_on_raw: 004,012,015
+  allowed_paths_raw: /apps/mobile
+  exit_criteria: local DB adapter, command queue, attachment queue.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-020
+  title: Sync protocol & conflict model
+  wave: W2
+  release: MVP
+  depends_on:
+  - WP49-015
+  - WP49-016
+  - WP49-019
+  depends_on_symbolic: []
+  depends_on_raw: 015,016,019
+  allowed_paths_raw: /apps/api/modules/sync /apps/mobile
+  exit_criteria: push/pull, cursor, conflicts, retries, 14-day offline tests.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-021
+  title: Connector framework core
+  wave: W2
+  release: MVP
+  depends_on:
+  - WP49-016
+  depends_on_symbolic: []
+  depends_on_raw: '016'
+  allowed_paths_raw: /apps/api/modules/integrations /packages/connectors
+  exit_criteria: retries, DLQ, mapping, external IDs.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-022
+  title: 1C connector skeleton
+  wave: W2
+  release: MVP
+  depends_on:
+  - WP49-021
+  depends_on_symbolic: []
+  depends_on_raw: '021'
+  allowed_paths_raw: /apps/api/modules/integrations/1c
+  exit_criteria: mock-backed import/export, reconciliation shell.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-023
+  title: External provider abstraction
+  wave: W2
+  release: V1
+  depends_on:
+  - WP49-021
+  depends_on_symbolic: []
+  depends_on_raw: '021'
+  allowed_paths_raw: /apps/api/modules/providers
+  exit_criteria: weather/satellite/cadastre provider contracts.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-024
+  title: Cloud replication pipeline
+  wave: W2
+  release: V1
+  depends_on:
+  - WP49-016
+  - WP49-020
+  depends_on_symbolic: []
+  depends_on_raw: 016,020
+  allowed_paths_raw: /apps/api/modules/replication
+  exit_criteria: async local->cloud, cloud cannot overwrite local authority.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-025
+  title: Master Data core
+  wave: W3
+  release: MVP
+  depends_on:
+  - WP49-011
+  - WP49-014
+  - WP49-015
+  - WP49-016
+  depends_on_symbolic: []
+  depends_on_raw: 011,014-016
+  allowed_paths_raw: /apps/api/modules/master-data
+  exit_criteria: materials, products, units, external codes, provenance.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-026
+  title: GIS spatial foundation
+  wave: W3
+  release: MVP
+  depends_on:
+  - WP49-003
+  - WP49-011
+  - WP49-017
+  depends_on_symbolic: []
+  depends_on_raw: 003,011,017
+  allowed_paths_raw: /apps/api/modules/gis /apps/web /apps/mobile
+  exit_criteria: PostGIS, geometry versions, MapLibre base, imports.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-027
+  title: LandPlot
+  wave: W3
+  release: MVP
+  depends_on:
+  - WP49-025
+  - WP49-026
+  depends_on_symbolic: []
+  depends_on_raw: 025,026
+  allowed_paths_raw: /apps/api/modules/land
+  exit_criteria: cadastre refs, geometry history, rights metadata.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-028
+  title: Field & FieldSeason
+  wave: W3
+  release: MVP
+  depends_on:
+  - WP49-027
+  depends_on_symbolic: []
+  depends_on_raw: '027'
+  allowed_paths_raw: /apps/api/modules/farm
+  exit_criteria: LandPlot != Field != FieldSeason; split/merge history.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-029
+  title: Offline GIS package
+  wave: W3
+  release: MVP
+  depends_on:
+  - WP49-019
+  - WP49-020
+  - WP49-026
+  - WP49-027
+  - WP49-028
+  depends_on_symbolic: []
+  depends_on_raw: 019,020,026-028
+  allowed_paths_raw: /apps/mobile/features/map
+  exit_criteria: offline fields/maps/tasks with sync.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-030
+  title: QR identity foundation
+  wave: W3
+  release: MVP
+  depends_on:
+  - WP49-017
+  - WP49-025
+  depends_on_symbolic: []
+  depends_on_raw: 017,025
+  allowed_paths_raw: /apps/api/modules/identity-tags /apps/mobile
+  exit_criteria: QR payload/version/resolution for entities.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-031
+  title: Task/work order core
+  wave: W4
+  release: MVP
+  depends_on:
+  - WP49-013
+  - WP49-020
+  - WP49-028
+  depends_on_symbolic: []
+  depends_on_raw: 013,020,028
+  allowed_paths_raw: /apps/api/modules/tasks /apps/mobile
+  exit_criteria: task lifecycle, assignee, offline execution.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-032
+  title: SeasonPlan & TechMap
+  wave: W4
+  release: V1
+  depends_on:
+  - WP49-025
+  - WP49-028
+  - WP49-031
+  depends_on_symbolic: []
+  depends_on_raw: 025,028,031
+  allowed_paths_raw: /apps/api/modules/agronomy
+  exit_criteria: versioned tech map, planned operations/resources.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-033
+  title: Agronomy actual operation fact
+  wave: W4
+  release: MVP
+  depends_on:
+  - WP49-031
+  - WP49-032
+  depends_on_symbolic: []
+  depends_on_raw: 031,032
+  allowed_paths_raw: /apps/api/modules/agronomy
+  exit_criteria: manual/mobile actual fact + material/labor refs.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-034
+  title: Scouting
+  wave: W4
+  release: V1
+  depends_on:
+  - WP49-026
+  - WP49-028
+  - WP49-031
+  depends_on_symbolic: []
+  depends_on_raw: 026,028,031
+  allowed_paths_raw: /apps/api/modules/scouting /apps/mobile
+  exit_criteria: GPS/photo/voice observations, anomaly->task loop.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-035
+  title: Weather/GDD provider
+  wave: W4
+  release: V1
+  depends_on:
+  - WP49-023
+  - WP49-028
+  depends_on_symbolic: []
+  depends_on_raw: 023,028
+  allowed_paths_raw: /apps/api/modules/agronomy/providers
+  exit_criteria: weather snapshots, GDD, provenance/freshness.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-036
+  title: Remote sensing/Sentinel
+  wave: W4
+  release: V1
+  depends_on:
+  - WP49-023
+  - WP49-026
+  - WP49-028
+  depends_on_symbolic: []
+  depends_on_raw: 023,026,028
+  allowed_paths_raw: /apps/api/modules/remote-sensing
+  exit_criteria: scene catalog, cloud mask, indices, anomaly zones.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-037
+  title: Agrochemical sampling & lab handoff
+  wave: W4
+  release: V1.5
+  depends_on:
+  - WP49-026
+  - WP49-028
+  - WP49-031
+  depends_on_symbolic: []
+  depends_on_raw: 026,028,031
+  allowed_paths_raw: /apps/api/modules/agrochemistry
+  exit_criteria: grid/route/sample/chain-of-custody to Quality.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-038
+  title: Prescription maps
+  wave: W4
+  release: V1.5
+  depends_on:
+  - WP49-032
+  - WP49-036
+  - WP49-037
+  depends_on_symbolic: []
+  depends_on_raw: 032,036,037
+  allowed_paths_raw: /apps/api/modules/agronomy /apps/web
+  exit_criteria: management zones and prescription versioning.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-039
+  title: Equipment/Fleet master
+  wave: W5
+  release: MVP
+  depends_on:
+  - WP49-025
+  - WP49-030
+  depends_on_symbolic: []
+  depends_on_raw: 025,030
+  allowed_paths_raw: /apps/api/modules/fleet
+  exit_criteria: machine, implement, composition, QR identity.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-040
+  title: Mechanizer mobile workspace
+  wave: W5
+  release: MVP
+  depends_on:
+  - WP49-019
+  - WP49-031
+  - WP49-039
+  depends_on_symbolic: []
+  depends_on_raw: 019,031,039
+  allowed_paths_raw: /apps/mobile/features/mechanizer
+  exit_criteria: shift tasks, start/stop, material QR, downtime.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-041
+  title: Telemetry evidence adapter
+  wave: W5
+  release: V1
+  depends_on:
+  - WP49-021
+  - WP49-039
+  depends_on_symbolic: []
+  depends_on_raw: 021,039
+  allowed_paths_raw: /apps/api/modules/iot-evidence
+  exit_criteria: GPS/fuel/counter normalized evidence, no business writes.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-042
+  title: Automatic work fact candidate
+  wave: W5
+  release: V1.5
+  depends_on:
+  - WP49-033
+  - WP49-041
+  depends_on_symbolic: []
+  depends_on_raw: 033,041
+  allowed_paths_raw: /apps/api/modules/fleet
+  exit_criteria: rule-derived candidate, operator confirmation workflow.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-043
+  title: Fuel/АЗС operational core
+  wave: W5
+  release: V1.5
+  depends_on:
+  - WP49-025
+  - WP49-039
+  - WP49-041
+  depends_on_symbolic: []
+  depends_on_raw: 025,039,041
+  allowed_paths_raw: /apps/api/modules/fuel
+  exit_criteria: storage/issue/refill/reconciliation/anomaly.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-044
+  title: WorkNorm/LaborFact/PieceworkPreview
+  wave: W5
+  release: V1.5
+  depends_on:
+  - WP49-033
+  - WP49-040
+  depends_on_symbolic: []
+  depends_on_raw: 033,040
+  allowed_paths_raw: /apps/api/modules/workforce
+  exit_criteria: norm, labor fact, preview for 1C; no payroll.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-045
+  title: Harvest transfer & trip
+  wave: W5
+  release: MVP
+  depends_on:
+  - WP49-028
+  - WP49-039
+  - WP49-040
+  depends_on_symbolic: []
+  depends_on_raw: 028,039,040
+  allowed_paths_raw: /apps/api/modules/harvest
+  exit_criteria: combine unload -> truck -> trip -> destination.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-046
+  title: Harvest reconciliation
+  wave: W5
+  release: V1
+  depends_on:
+  - WP49-041
+  - WP49-045
+  depends_on_symbolic: []
+  depends_on_raw: 041,045
+  allowed_paths_raw: /apps/api/modules/harvest
+  exit_criteria: yield/unload/delivery/weighing discrepancy views.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-047
+  title: ISOBUS/J1939/RTK adapters
+  wave: W5
+  release: V2
+  depends_on:
+  - WP49-041
+  depends_on_symbolic: []
+  depends_on_raw: '041'
+  allowed_paths_raw: /services/edge /packages/device-drivers
+  exit_criteria: read-only evidence adapters; optional hardware.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-048
+  title: Warehouse inventory ledger
+  wave: W6
+  release: MVP
+  depends_on:
+  - WP49-025
+  - WP49-030
+  depends_on_symbolic: []
+  depends_on_raw: 025,030
+  allowed_paths_raw: /apps/api/modules/warehouse
+  exit_criteria: locations, lots, movements, reservations, immutable facts.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-049
+  title: Weighing transaction
+  wave: W6
+  release: MVP
+  depends_on:
+  - WP49-021
+  - WP49-045
+  - WP49-048
+  depends_on_symbolic: []
+  depends_on_raw: 021,045,048
+  allowed_paths_raw: /apps/api/modules/weighing
+  exit_criteria: gross/tare/net, manual/device, offline, corrections.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-050
+  title: Batch genealogy core
+  wave: W6
+  release: MVP
+  depends_on:
+  - WP49-033
+  - WP49-045
+  - WP49-048
+  - WP49-049
+  depends_on_symbolic: []
+  depends_on_raw: 033,045,048,049
+  allowed_paths_raw: /apps/api/modules/traceability
+  exit_criteria: split/merge genealogy and reverse trace.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-051
+  title: Quality/LIMS foundation
+  wave: W6
+  release: V1
+  depends_on:
+  - WP49-017
+  - WP49-025
+  - WP49-050
+  depends_on_symbolic: []
+  depends_on_raw: 017,025,050
+  allowed_paths_raw: /apps/api/modules/quality
+  exit_criteria: spec/sample/test/result/disposition/hold.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-052
+  title: Grain lot & quality snapshot
+  wave: W6
+  release: V1
+  depends_on:
+  - WP49-049
+  - WP49-050
+  - WP49-051
+  depends_on_symbolic: []
+  depends_on_raw: 049-051
+  allowed_paths_raw: /apps/api/modules/grain
+  exit_criteria: mass + quality + owner + location identity.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-053
+  title: Elevator storage/silo board
+  wave: W6
+  release: V1.5
+  depends_on:
+  - WP49-048
+  - WP49-052
+  depends_on_symbolic: []
+  depends_on_raw: 048,052
+  allowed_paths_raw: /apps/api/modules/grain
+  exit_criteria: silo/cell placement, compatibility, balances.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-054
+  title: Grain processing operations
+  wave: W6
+  release: V1.5
+  depends_on:
+  - WP49-052
+  - WP49-053
+  depends_on_symbolic: []
+  depends_on_raw: 052,053
+  allowed_paths_raw: /apps/api/modules/grain
+  exit_criteria: drying/cleaning/loss/waste/regrade with mass balance.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-055
+  title: Grain shipping & cleanup
+  wave: W6
+  release: V1.5
+  depends_on:
+  - WP49-052
+  - WP49-053
+  - WP49-054
+  depends_on_symbolic: []
+  depends_on_raw: 052-054
+  allowed_paths_raw: /apps/api/modules/grain
+  exit_criteria: shipment, ownership, cleanup, reconciliation.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-056
+  title: ProductionOrder/Run manual-first
+  wave: W7
+  release: MVP
+  depends_on:
+  - WP49-025
+  - WP49-048
+  - WP49-050
+  depends_on_symbolic: []
+  depends_on_raw: 025,048,050
+  allowed_paths_raw: /apps/api/modules/production
+  exit_criteria: manual MES run lifecycle, inputs/outputs.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-057
+  title: Recipe/versioned specs
+  wave: W7
+  release: V1
+  depends_on:
+  - WP49-051
+  - WP49-056
+  depends_on_symbolic: []
+  depends_on_raw: 051,056
+  allowed_paths_raw: /apps/api/modules/production
+  exit_criteria: RecipeDefinition/Version and parameter specs.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-058
+  title: Downtime/manual reason workflow
+  wave: W7
+  release: MVP
+  depends_on:
+  - WP49-039
+  - WP49-056
+  depends_on_symbolic: []
+  depends_on_raw: 039,056
+  allowed_paths_raw: /apps/api/modules/production
+  exit_criteria: downtime lifecycle, reason catalog, audit.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-059
+  title: Machine state resolver
+  wave: W7
+  release: V1.5
+  depends_on:
+  - WP49-041
+  - WP49-056
+  - WP49-058
+  depends_on_symbolic: []
+  depends_on_raw: 041,056,058
+  allowed_paths_raw: /apps/api/modules/production/state
+  exit_criteria: RUN/IDLE/STOP resolver, hysteresis/stale/conflicts.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-060
+  title: OEE engine
+  wave: W7
+  release: V1
+  depends_on:
+  - WP49-056
+  - WP49-058
+  depends_on_symbolic: []
+  depends_on_raw: 056,058
+  allowed_paths_raw: /apps/api/modules/production/oee
+  exit_criteria: versioned policy, A/P/Q, provisional/final provenance.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-061
+  title: Quality integration in production
+  wave: W7
+  release: V1
+  depends_on:
+  - WP49-051
+  - WP49-056
+  - WP49-057
+  depends_on_symbolic: []
+  depends_on_raw: 051,056,057
+  allowed_paths_raw: /apps/api/modules/production
+  exit_criteria: holds/disposition/late reject and final OEE.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-062
+  title: Maintenance core
+  wave: W7
+  release: V1
+  depends_on:
+  - WP49-039
+  - WP49-058
+  depends_on_symbolic: []
+  depends_on_raw: 039,058
+  allowed_paths_raw: /apps/api/modules/maintenance
+  exit_criteria: requests/workorders/plans/equipment history.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-063
+  title: Retrofit onboarding
+  wave: W7
+  release: V2
+  depends_on:
+  - WP49-041
+  - WP49-059
+  - WP49-062
+  depends_on_symbolic: []
+  depends_on_raw: 041,059,062
+  allowed_paths_raw: /apps/api/modules/iot /services/edge
+  exit_criteria: node/signal/binding/calibration/shadow/active.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-064
+  title: Yard core
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-049
+  depends_on_symbolic: []
+  depends_on_raw: 049
+  allowed_paths_raw: /apps/api/modules/yard
+  exit_criteria: appointment/visit/checkpoint/queue/gate states.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-065
+  title: ALPR/RFID gate adapters
+  wave: W8
+  release: V1.5
+  depends_on:
+  - WP49-021
+  - WP49-064
+  depends_on_symbolic: []
+  depends_on_raw: 021,064
+  allowed_paths_raw: /packages/device-drivers /apps/api/modules/yard
+  exit_criteria: evidence only, manual fallback.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-066
+  title: WMS-lite tasks
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-048
+  - WP49-064
+  depends_on_symbolic: []
+  depends_on_raw: 048,064
+  allowed_paths_raw: /apps/api/modules/warehouse
+  exit_criteria: putaway/pick/replenishment/count/staging.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-067
+  title: Handling Units
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-030
+  - WP49-048
+  - WP49-066
+  depends_on_symbolic: []
+  depends_on_raw: 030,048,066
+  allowed_paths_raw: /apps/api/modules/warehouse
+  exit_criteria: HU/pallet/container QR/RFID.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-068
+  title: TMS-lite transport requests/trips
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-045
+  - WP49-064
+  depends_on_symbolic: []
+  depends_on_raw: 045,064
+  allowed_paths_raw: /apps/api/modules/logistics
+  exit_criteria: request/assign/route/ETA/POD.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-069
+  title: Driver mobile workspace
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-019
+  - WP49-020
+  - WP49-068
+  depends_on_symbolic: []
+  depends_on_raw: 019,020,068
+  allowed_paths_raw: /apps/mobile/features/driver
+  exit_criteria: offline trip execution, checkpoints, POD.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-070
+  title: Supply/procurement operational layer
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-021
+  - WP49-048
+  - WP49-051
+  depends_on_symbolic: []
+  depends_on_raw: 021,048,051
+  allowed_paths_raw: /apps/api/modules/supply
+  exit_criteria: requirements/PR/inbound/receipt/discrepancy.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-071
+  title: Sales/order fulfillment
+  wave: W8
+  release: V1
+  depends_on:
+  - WP49-048
+  - WP49-051
+  - WP49-068
+  depends_on_symbolic: []
+  depends_on_raw: 048,051,068
+  allowed_paths_raw: /apps/api/modules/sales
+  exit_criteria: order ref/allocation/shipment/returns.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-072
+  title: Operational costing foundation
+  wave: W9
+  release: V1
+  depends_on:
+  - WP49-025
+  - WP49-033
+  - WP49-043
+  - WP49-048
+  - WP49-056
+  depends_on_symbolic: []
+  depends_on_raw: 025,033,043,048,056
+  allowed_paths_raw: /apps/api/modules/economics
+  exit_criteria: plan/forecast/operational actual layers.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-073
+  title: Plan/Fact & allocation
+  wave: W9
+  release: V1.5
+  depends_on:
+  - WP49-072
+  depends_on_symbolic: []
+  depends_on_raw: '072'
+  allowed_paths_raw: /apps/api/modules/economics
+  exit_criteria: allocation rules and variance explainability.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-074
+  title: MRP/S&OP-lite
+  wave: W9
+  release: V1.5
+  depends_on:
+  - WP49-032
+  - WP49-070
+  - WP49-071
+  - WP49-072
+  - WP49-073
+  depends_on_symbolic: []
+  depends_on_raw: 032,070-073
+  allowed_paths_raw: /apps/api/modules/economics
+  exit_criteria: demand/capacity/material scenarios.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-075
+  title: Workforce operations core
+  wave: W9
+  release: V1
+  depends_on:
+  - WP49-011
+  - WP49-031
+  - WP49-044
+  depends_on_symbolic: []
+  depends_on_raw: 011,031,044
+  allowed_paths_raw: /apps/api/modules/workforce
+  exit_criteria: crew/shift/qualification/instructions/handover.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-076
+  title: Control Tower read models
+  wave: W9
+  release: V1
+  depends_on:
+  - WP49-016
+  - WP49-028
+  - WP49-039
+  - WP49-048
+  - WP49-056
+  - WP49-064
+  - WP49-072
+  depends_on_symbolic: []
+  depends_on_raw: 016,028,039,048,056,064,072
+  allowed_paths_raw: /apps/api/modules/analytics
+  exit_criteria: cross-domain read models with freshness/provenance.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-077
+  title: Search/Saved Views
+  wave: W9
+  release: V1
+  depends_on:
+  - WP49-076
+  depends_on_symbolic: []
+  depends_on_raw: '076'
+  allowed_paths_raw: /apps/api/modules/search /apps/web
+  exit_criteria: permission-filtered cross-domain search/views.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-078
+  title: Reporting engine
+  wave: W9
+  release: V1
+  depends_on:
+  - WP49-076
+  - WP49-077
+  depends_on_symbolic: []
+  depends_on_raw: 076,077
+  allowed_paths_raw: /apps/api/modules/reporting
+  exit_criteria: XLSX/CSV/PDF, schedules, audit.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-079
+  title: AI Gateway & Model Registry
+  wave: W10
+  release: V1.5
+  depends_on:
+  - WP49-006
+  - WP49-009
+  - WP49-016
+  - WP49-076
+  depends_on_symbolic: []
+  depends_on_raw: 006,009,016,076
+  allowed_paths_raw: /apps/ai /apps/api/modules/ai
+  exit_criteria: advisory layer, model/prompt registry, provenance.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-080
+  title: RAG/knowledge assistant
+  wave: W10
+  release: V1.5
+  depends_on:
+  - WP49-079
+  depends_on_symbolic: []
+  depends_on_raw: 079
+  allowed_paths_raw: /apps/ai
+  exit_criteria: permission-aware retrieval, citations, no direct mutation.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-081
+  title: Agronomy AI use cases
+  wave: W10
+  release: V2
+  depends_on:
+  - WP49-034
+  - WP49-035
+  - WP49-036
+  - WP49-037
+  - WP49-038
+  - WP49-079
+  depends_on_symbolic: []
+  depends_on_raw: 034-038,079
+  allowed_paths_raw: /apps/ai
+  exit_criteria: anomaly explanation/recommendation only.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-082
+  title: Operations AI use cases
+  wave: W10
+  release: V2
+  depends_on:
+  - WP49-060
+  - WP49-062
+  - WP49-076
+  - WP49-079
+  depends_on_symbolic: []
+  depends_on_raw: 060,062,076,079
+  allowed_paths_raw: /apps/ai
+  exit_criteria: OEE/downtime/maintenance advisory.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-083
+  title: Plugin SDK core
+  wave: W10
+  release: V1.5
+  depends_on:
+  - WP49-010
+  - WP49-016
+  - WP49-021
+  depends_on_symbolic: []
+  depends_on_raw: 010,016,021
+  allowed_paths_raw: /packages/sdk /apps/api/modules/extensions
+  exit_criteria: manifest/capabilities/lifecycle/sandbox.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-084
+  title: Integration SDK
+  wave: W10
+  release: V1.5
+  depends_on:
+  - WP49-021
+  - WP49-083
+  depends_on_symbolic: []
+  depends_on_raw: 021,083
+  allowed_paths_raw: /packages/sdk/integration
+  exit_criteria: connector kit + contract tests.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-085
+  title: Device Driver SDK
+  wave: W10
+  release: V2
+  depends_on:
+  - WP49-041
+  - WP49-083
+  depends_on_symbolic: []
+  depends_on_raw: 041,083
+  allowed_paths_raw: /packages/sdk/device /services/edge
+  exit_criteria: driver kit, evidence schema, HIL fixtures.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-086
+  title: Vertical extension framework
+  wave: W10
+  release: V2
+  depends_on:
+  - WP49-083
+  depends_on_symbolic: []
+  depends_on_raw: 083
+  allowed_paths_raw: /packages/sdk/vertical
+  exit_criteria: vertical package boundaries and activation.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-087
+  title: Performance/load suite
+  wave: W11
+  release: MVP
+  depends_on:
+  - WP49-005
+  - WP49-008
+  depends_on_symbolic: []
+  depends_on_raw: 005,008
+  allowed_paths_raw: /tests/performance
+  exit_criteria: enterprise profiles incl. 5M telemetry/day and burst.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-088
+  title: Security hardening suite
+  wave: W11
+  release: MVP
+  depends_on:
+  - WP49-009
+  - WP49-013
+  - WP49-083
+  depends_on_symbolic: []
+  depends_on_raw: 009,013,083
+  allowed_paths_raw: /security /tests/security
+  exit_criteria: SAST/SCA/secret/authz/tenant isolation tests.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-089
+  title: Backup/restore/DR validation
+  wave: W11
+  release: MVP
+  depends_on:
+  - WP49-003
+  - WP49-022
+  - WP49-024
+  depends_on_symbolic: []
+  depends_on_raw: 003,022,024
+  allowed_paths_raw: /deployment /tests/dr
+  exit_criteria: RPO/RTO restore drills, PITR, object restore.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-090
+  title: Migration/onboarding tooling
+  wave: W11
+  release: V1
+  depends_on:
+  - WP49-007
+  - WP49-025
+  - WP49-043
+  depends_on_symbolic: []
+  depends_on_raw: 007,025,043
+  allowed_paths_raw: /apps/api/modules/onboarding /tools
+  exit_criteria: staging/map/reconcile/cutover/rollback.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-091
+  title: Full deterministic demo pack
+  wave: W11
+  release: MVP
+  depends_on: []
+  depends_on_symbolic:
+  - all required MVP
+  depends_on_raw: all required MVP
+  allowed_paths_raw: /demo
+  exit_criteria: DEMO profile and golden end-to-end stories pass.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-092
+  title: Cross-domain regression pack
+  wave: W11
+  release: MVP
+  depends_on: []
+  depends_on_symbolic:
+  - all merged
+  depends_on_raw: all merged
+  allowed_paths_raw: /tests/e2e
+  exit_criteria: scope-freeze RTM scenarios pass; no UNMAPPED.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-093
+  title: Packaging & signed release bundle
+  wave: W11
+  release: MVP
+  depends_on:
+  - WP49-087
+  - WP49-088
+  - WP49-089
+  - WP49-090
+  - WP49-091
+  - WP49-092
+  depends_on_symbolic: []
+  depends_on_raw: 087-092
+  allowed_paths_raw: /deployment /release
+  exit_criteria: Local Server bundle, migrations, manifests, SBOM.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED
+- id: WP49-094
+  title: Production readiness gate
+  wave: W11
+  release: MVP
+  depends_on:
+  - WP49-087
+  - WP49-088
+  - WP49-089
+  - WP49-090
+  - WP49-091
+  - WP49-092
+  - WP49-093
+  depends_on_symbolic: []
+  depends_on_raw: 087-093
+  allowed_paths_raw: /release
+  exit_criteria: Go-live checklist, rollback, support runbook, final evidence.
+  spec_refs:
+  - DOC49
+  - DOC50
+  execution_contract: Use DOC50 task preamble and G0-G12 gates.
+  status: NOT_STARTED

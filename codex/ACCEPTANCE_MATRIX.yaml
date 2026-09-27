@@ -1,0 +1,1597 @@
+schema_version: '1.0'
+count: 300
+sources:
+  DOC48: 120
+  DOC49: 80
+  DOC50: 100
+tests:
+- source: DOC48
+  ID: AT48-001
+  Area: Scope
+  Scenario: Load machine-readable master scope
+  Expected: 315 unique MASTER IDs; no duplicates; all COMMITTED.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-002
+  Area: Delta
+  Scenario: Load market delta registry
+  Expected: 133 unique MD IDs; every row has frozen decision.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-003
+  Area: Mapping
+  Scenario: Reverse lookup MASTER-152
+  Expected: Returns docs/module/entity/API/event/offline/integration/test/demo/WP.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-004
+  Area: Authority
+  Scenario: Legacy text conflicts with REV47
+  Expected: REV47/№48 authority wins; conflict is surfaced.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-005
+  Area: Release
+  Scenario: MVP -> V1.5 function
+  Expected: Build graph splits baseline vs later enhancements.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-006
+  Area: Offline
+  Scenario: Mobile write requirement
+  Expected: Offline classification and sync test are present.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-007
+  Area: Integration
+  Scenario: 1C owned accounting attribute
+  Expected: Platform does not become accounting SoT.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-008
+  Area: IoT
+  Scenario: Sensor-derived candidate
+  Expected: Evidence cannot mutate canonical fact directly.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-009
+  Area: AI
+  Scenario: AI recommendation
+  Expected: No authoritative mutation without domain command/human policy.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-010
+  Area: Security
+  Scenario: UI hidden but API called
+  Expected: Server permission denies unauthorized action.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-011
+  Area: Change
+  Scenario: Modify frozen release without CR
+  Expected: Validation rejects change.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-012
+  Area: Build
+  Scenario: WP without acceptance link
+  Expected: №49 validation fails WP.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-013
+  Area: Document
+  Scenario: Old doc pending revision
+  Expected: Precedence resolves behavior without ambiguity.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-014
+  Area: Rejected
+  Scenario: MD decision REJECTED
+  Expected: No build WP generated.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-015
+  Area: Future
+  Scenario: MD decision FUTURE
+  Expected: Hook may exist; current release dependency absent.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-016
+  Area: Optional
+  Scenario: OPTIONAL_MODULE disabled
+  Expected: Core workflows remain operational.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-017
+  Area: Vertical
+  Scenario: Vertical extension disabled
+  Expected: Shared core remains valid.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-018
+  Area: Demo
+  Scenario: Requirement demo link
+  Expected: Referenced DEMO27 family resolves.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-019
+  Area: Provenance
+  Scenario: Derived KPI drill-down
+  Expected: Resolves calculation version and canonical facts.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-020
+  Area: Export
+  Scenario: Traceability export
+  Expected: Contains stable IDs and freeze version.
+  Mode: UNIT/SCHEMA
+- source: DOC48
+  ID: AT48-021
+  Area: Scope
+  Scenario: Load machine-readable master scope
+  Expected: 315 unique MASTER IDs; no duplicates; all COMMITTED.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-022
+  Area: Delta
+  Scenario: Load market delta registry
+  Expected: 133 unique MD IDs; every row has frozen decision.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-023
+  Area: Mapping
+  Scenario: Reverse lookup MASTER-152
+  Expected: Returns docs/module/entity/API/event/offline/integration/test/demo/WP.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-024
+  Area: Authority
+  Scenario: Legacy text conflicts with REV47
+  Expected: REV47/№48 authority wins; conflict is surfaced.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-025
+  Area: Release
+  Scenario: MVP -> V1.5 function
+  Expected: Build graph splits baseline vs later enhancements.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-026
+  Area: Offline
+  Scenario: Mobile write requirement
+  Expected: Offline classification and sync test are present.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-027
+  Area: Integration
+  Scenario: 1C owned accounting attribute
+  Expected: Platform does not become accounting SoT.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-028
+  Area: IoT
+  Scenario: Sensor-derived candidate
+  Expected: Evidence cannot mutate canonical fact directly.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-029
+  Area: AI
+  Scenario: AI recommendation
+  Expected: No authoritative mutation without domain command/human policy.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-030
+  Area: Security
+  Scenario: UI hidden but API called
+  Expected: Server permission denies unauthorized action.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-031
+  Area: Change
+  Scenario: Modify frozen release without CR
+  Expected: Validation rejects change.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-032
+  Area: Build
+  Scenario: WP without acceptance link
+  Expected: №49 validation fails WP.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-033
+  Area: Document
+  Scenario: Old doc pending revision
+  Expected: Precedence resolves behavior without ambiguity.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-034
+  Area: Rejected
+  Scenario: MD decision REJECTED
+  Expected: No build WP generated.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-035
+  Area: Future
+  Scenario: MD decision FUTURE
+  Expected: Hook may exist; current release dependency absent.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-036
+  Area: Optional
+  Scenario: OPTIONAL_MODULE disabled
+  Expected: Core workflows remain operational.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-037
+  Area: Vertical
+  Scenario: Vertical extension disabled
+  Expected: Shared core remains valid.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-038
+  Area: Demo
+  Scenario: Requirement demo link
+  Expected: Referenced DEMO27 family resolves.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-039
+  Area: Provenance
+  Scenario: Derived KPI drill-down
+  Expected: Resolves calculation version and canonical facts.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-040
+  Area: Export
+  Scenario: Traceability export
+  Expected: Contains stable IDs and freeze version.
+  Mode: INTEGRATION
+- source: DOC48
+  ID: AT48-041
+  Area: Scope
+  Scenario: Load machine-readable master scope
+  Expected: 315 unique MASTER IDs; no duplicates; all COMMITTED.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-042
+  Area: Delta
+  Scenario: Load market delta registry
+  Expected: 133 unique MD IDs; every row has frozen decision.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-043
+  Area: Mapping
+  Scenario: Reverse lookup MASTER-152
+  Expected: Returns docs/module/entity/API/event/offline/integration/test/demo/WP.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-044
+  Area: Authority
+  Scenario: Legacy text conflicts with REV47
+  Expected: REV47/№48 authority wins; conflict is surfaced.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-045
+  Area: Release
+  Scenario: MVP -> V1.5 function
+  Expected: Build graph splits baseline vs later enhancements.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-046
+  Area: Offline
+  Scenario: Mobile write requirement
+  Expected: Offline classification and sync test are present.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-047
+  Area: Integration
+  Scenario: 1C owned accounting attribute
+  Expected: Platform does not become accounting SoT.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-048
+  Area: IoT
+  Scenario: Sensor-derived candidate
+  Expected: Evidence cannot mutate canonical fact directly.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-049
+  Area: AI
+  Scenario: AI recommendation
+  Expected: No authoritative mutation without domain command/human policy.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-050
+  Area: Security
+  Scenario: UI hidden but API called
+  Expected: Server permission denies unauthorized action.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-051
+  Area: Change
+  Scenario: Modify frozen release without CR
+  Expected: Validation rejects change.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-052
+  Area: Build
+  Scenario: WP without acceptance link
+  Expected: №49 validation fails WP.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-053
+  Area: Document
+  Scenario: Old doc pending revision
+  Expected: Precedence resolves behavior without ambiguity.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-054
+  Area: Rejected
+  Scenario: MD decision REJECTED
+  Expected: No build WP generated.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-055
+  Area: Future
+  Scenario: MD decision FUTURE
+  Expected: Hook may exist; current release dependency absent.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-056
+  Area: Optional
+  Scenario: OPTIONAL_MODULE disabled
+  Expected: Core workflows remain operational.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-057
+  Area: Vertical
+  Scenario: Vertical extension disabled
+  Expected: Shared core remains valid.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-058
+  Area: Demo
+  Scenario: Requirement demo link
+  Expected: Referenced DEMO27 family resolves.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-059
+  Area: Provenance
+  Scenario: Derived KPI drill-down
+  Expected: Resolves calculation version and canonical facts.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-060
+  Area: Export
+  Scenario: Traceability export
+  Expected: Contains stable IDs and freeze version.
+  Mode: E2E
+- source: DOC48
+  ID: AT48-061
+  Area: Scope
+  Scenario: Load machine-readable master scope
+  Expected: 315 unique MASTER IDs; no duplicates; all COMMITTED.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-062
+  Area: Delta
+  Scenario: Load market delta registry
+  Expected: 133 unique MD IDs; every row has frozen decision.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-063
+  Area: Mapping
+  Scenario: Reverse lookup MASTER-152
+  Expected: Returns docs/module/entity/API/event/offline/integration/test/demo/WP.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-064
+  Area: Authority
+  Scenario: Legacy text conflicts with REV47
+  Expected: REV47/№48 authority wins; conflict is surfaced.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-065
+  Area: Release
+  Scenario: MVP -> V1.5 function
+  Expected: Build graph splits baseline vs later enhancements.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-066
+  Area: Offline
+  Scenario: Mobile write requirement
+  Expected: Offline classification and sync test are present.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-067
+  Area: Integration
+  Scenario: 1C owned accounting attribute
+  Expected: Platform does not become accounting SoT.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-068
+  Area: IoT
+  Scenario: Sensor-derived candidate
+  Expected: Evidence cannot mutate canonical fact directly.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-069
+  Area: AI
+  Scenario: AI recommendation
+  Expected: No authoritative mutation without domain command/human policy.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-070
+  Area: Security
+  Scenario: UI hidden but API called
+  Expected: Server permission denies unauthorized action.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-071
+  Area: Change
+  Scenario: Modify frozen release without CR
+  Expected: Validation rejects change.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-072
+  Area: Build
+  Scenario: WP without acceptance link
+  Expected: №49 validation fails WP.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-073
+  Area: Document
+  Scenario: Old doc pending revision
+  Expected: Precedence resolves behavior without ambiguity.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-074
+  Area: Rejected
+  Scenario: MD decision REJECTED
+  Expected: No build WP generated.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-075
+  Area: Future
+  Scenario: MD decision FUTURE
+  Expected: Hook may exist; current release dependency absent.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-076
+  Area: Optional
+  Scenario: OPTIONAL_MODULE disabled
+  Expected: Core workflows remain operational.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-077
+  Area: Vertical
+  Scenario: Vertical extension disabled
+  Expected: Shared core remains valid.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-078
+  Area: Demo
+  Scenario: Requirement demo link
+  Expected: Referenced DEMO27 family resolves.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-079
+  Area: Provenance
+  Scenario: Derived KPI drill-down
+  Expected: Resolves calculation version and canonical facts.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-080
+  Area: Export
+  Scenario: Traceability export
+  Expected: Contains stable IDs and freeze version.
+  Mode: NEGATIVE
+- source: DOC48
+  ID: AT48-081
+  Area: Scope
+  Scenario: Load machine-readable master scope
+  Expected: 315 unique MASTER IDs; no duplicates; all COMMITTED.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-082
+  Area: Delta
+  Scenario: Load market delta registry
+  Expected: 133 unique MD IDs; every row has frozen decision.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-083
+  Area: Mapping
+  Scenario: Reverse lookup MASTER-152
+  Expected: Returns docs/module/entity/API/event/offline/integration/test/demo/WP.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-084
+  Area: Authority
+  Scenario: Legacy text conflicts with REV47
+  Expected: REV47/№48 authority wins; conflict is surfaced.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-085
+  Area: Release
+  Scenario: MVP -> V1.5 function
+  Expected: Build graph splits baseline vs later enhancements.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-086
+  Area: Offline
+  Scenario: Mobile write requirement
+  Expected: Offline classification and sync test are present.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-087
+  Area: Integration
+  Scenario: 1C owned accounting attribute
+  Expected: Platform does not become accounting SoT.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-088
+  Area: IoT
+  Scenario: Sensor-derived candidate
+  Expected: Evidence cannot mutate canonical fact directly.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-089
+  Area: AI
+  Scenario: AI recommendation
+  Expected: No authoritative mutation without domain command/human policy.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-090
+  Area: Security
+  Scenario: UI hidden but API called
+  Expected: Server permission denies unauthorized action.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-091
+  Area: Change
+  Scenario: Modify frozen release without CR
+  Expected: Validation rejects change.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-092
+  Area: Build
+  Scenario: WP without acceptance link
+  Expected: №49 validation fails WP.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-093
+  Area: Document
+  Scenario: Old doc pending revision
+  Expected: Precedence resolves behavior without ambiguity.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-094
+  Area: Rejected
+  Scenario: MD decision REJECTED
+  Expected: No build WP generated.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-095
+  Area: Future
+  Scenario: MD decision FUTURE
+  Expected: Hook may exist; current release dependency absent.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-096
+  Area: Optional
+  Scenario: OPTIONAL_MODULE disabled
+  Expected: Core workflows remain operational.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-097
+  Area: Vertical
+  Scenario: Vertical extension disabled
+  Expected: Shared core remains valid.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-098
+  Area: Demo
+  Scenario: Requirement demo link
+  Expected: Referenced DEMO27 family resolves.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-099
+  Area: Provenance
+  Scenario: Derived KPI drill-down
+  Expected: Resolves calculation version and canonical facts.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-100
+  Area: Export
+  Scenario: Traceability export
+  Expected: Contains stable IDs and freeze version.
+  Mode: GOVERNANCE
+- source: DOC48
+  ID: AT48-101
+  Area: Duplicate
+  Scenario: Duplicate MASTER ID injected
+  Expected: Freeze validator fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-102
+  Area: Missing
+  Scenario: Remove owner module
+  Expected: Freeze validator fails UNMAPPED.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-103
+  Area: API
+  Scenario: Remove API/event rationale
+  Expected: Buildable write requirement fails validation.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-104
+  Area: Offline
+  Scenario: Remove offline classification
+  Expected: Mobile-capable requirement fails validation.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-105
+  Area: Conflict
+  Scenario: Two owner modules claim same write
+  Expected: Authority validation fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-106
+  Area: SoT
+  Scenario: Cloud writes LOCAL_PRIMARY fact
+  Expected: Rejected.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-107
+  Area: 1C
+  Scenario: Platform posts accounting without contract
+  Expected: Rejected.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-108
+  Area: Event
+  Scenario: Breaking event version without migration
+  Expected: Compatibility gate fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-109
+  Area: Migration
+  Scenario: Change entity owner without migration plan
+  Expected: Change request rejected.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-110
+  Area: Test
+  Scenario: All tests mapped but one critical skipped
+  Expected: Release gate fails unless explicit waiver.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-111
+  Area: Permission
+  Scenario: Wildcard permission added by slice
+  Expected: Security gate fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-112
+  Area: Demo
+  Scenario: Non-deterministic demo seed
+  Expected: Demo gate fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-113
+  Area: Future
+  Scenario: Future module added as MVP dependency
+  Expected: Dependency validator fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-114
+  Area: Optional
+  Scenario: Core import references optional module implementation
+  Expected: Boundary test fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-115
+  Area: Vertical
+  Scenario: Vertical writes core tables directly
+  Expected: Boundary test fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-116
+  Area: Trace
+  Scenario: Test links to nonexistent requirement
+  Expected: Schema validation fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-117
+  Area: Trace
+  Scenario: Requirement links to nonexistent WP
+  Expected: №49 import fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-118
+  Area: Trace
+  Scenario: Document authority points to missing doc
+  Expected: Publication gate fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-119
+  Area: Change
+  Scenario: Approved CR updates scope but not tests
+  Expected: Consistency gate fails.
+  Mode: NEGATIVE/GOV
+- source: DOC48
+  ID: AT48-120
+  Area: Publish
+  Scenario: Freeze artifacts and DOCX counts disagree
+  Expected: №50 packaging gate fails.
+  Mode: NEGATIVE/GOV
+- source: DOC49
+  ID: AT49-001
+  Проверка: Все 94 WP образуют DAG; cycle detector возвращает PASS.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-002
+  Проверка: 315/315 MASTER refs имеют WP mapping.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-003
+  Проверка: 133/133 market delta имеют WP либо frozen non-build status.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-004
+  Проверка: WP manifest без specRefs отклоняется валидатором.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-005
+  Проверка: WP manifest с denied path change отклоняется.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-006
+  Проверка: WP с DB change без migration отклоняется.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-007
+  Проверка: WP с endpoint без OpenAPI diff отклоняется.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-008
+  Проверка: WP с event без schema/producer metadata отклоняется.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-009
+  Проверка: WP с protected action без permission tests отклоняется.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-010
+  Проверка: Mobile write без offline/idempotency tests отклоняется.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-011
+  Проверка: IoT package, пытающийся писать business fact напрямую, отклоняется architecture test.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-012
+  Проверка: AI package, пытающийся mutate canonical fact, отклоняется architecture test.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-013
+  Проверка: Cloud replica не может overwrite LOCAL_PRIMARY fact.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-014
+  Проверка: Cross-module repository write ловится architecture test.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-015
+  Проверка: Generated clients воспроизводимо строятся из contracts.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-016
+  Проверка: MINIMAL demo seed повторяем и idempotent.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-017
+  Проверка: MVP path может быть собран без V2 hardware/AI packages.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-018
+  Проверка: Manual-only production workflow проходит без PLC/IoT.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-019
+  Проверка: Weighing работает при недоступном внешнем терминале в manual fallback.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-020
+  Проверка: Full genealogy demo проходит field->finished batch->shipment.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-021
+  Проверка: 1C unavailable не блокирует local operations.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-022
+  Проверка: 14-day offline queue синхронизируется без duplicate facts.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-023
+  Проверка: Permission deny path проверен для каждого command family.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-024
+  Проверка: Migration compatibility check обнаруживает breaking rename/drop.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-025
+  Проверка: Event consumer contract сохраняется при additive producer field.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-026
+  Проверка: Performance suite использует profile №20.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-027
+  Проверка: DR package подтверждает RPO/RTO restore drill.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-028
+  Проверка: Completion Report содержит изменённые files/contracts/tests/evidence.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-029
+  Проверка: WP нельзя пометить Done при FAIL любого mandatory gate.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-030
+  Проверка: Final production readiness gate зависит от 087–093.
+  Expected: PASS
+- source: DOC49
+  ID: AT49-031
+  Проверка: 'Регрессионная проверка build graph #031: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-032
+  Проверка: 'Регрессионная проверка build graph #032: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-033
+  Проверка: 'Регрессионная проверка build graph #033: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-034
+  Проверка: 'Регрессионная проверка build graph #034: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-035
+  Проверка: 'Регрессионная проверка build graph #035: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-036
+  Проверка: 'Регрессионная проверка build graph #036: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-037
+  Проверка: 'Регрессионная проверка build graph #037: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-038
+  Проверка: 'Регрессионная проверка build graph #038: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-039
+  Проверка: 'Регрессионная проверка build graph #039: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-040
+  Проверка: 'Регрессионная проверка build graph #040: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-041
+  Проверка: 'Регрессионная проверка build graph #041: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-042
+  Проверка: 'Регрессионная проверка build graph #042: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-043
+  Проверка: 'Регрессионная проверка build graph #043: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-044
+  Проверка: 'Регрессионная проверка build graph #044: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-045
+  Проверка: 'Регрессионная проверка build graph #045: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-046
+  Проверка: 'Регрессионная проверка build graph #046: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-047
+  Проверка: 'Регрессионная проверка build graph #047: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-048
+  Проверка: 'Регрессионная проверка build graph #048: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-049
+  Проверка: 'Регрессионная проверка build graph #049: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-050
+  Проверка: 'Регрессионная проверка build graph #050: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-051
+  Проверка: 'Регрессионная проверка build graph #051: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-052
+  Проверка: 'Регрессионная проверка build graph #052: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-053
+  Проверка: 'Регрессионная проверка build graph #053: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-054
+  Проверка: 'Регрессионная проверка build graph #054: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-055
+  Проверка: 'Регрессионная проверка build graph #055: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-056
+  Проверка: 'Регрессионная проверка build graph #056: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-057
+  Проверка: 'Регрессионная проверка build graph #057: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-058
+  Проверка: 'Регрессионная проверка build graph #058: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-059
+  Проверка: 'Регрессионная проверка build graph #059: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-060
+  Проверка: 'Регрессионная проверка build graph #060: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-061
+  Проверка: 'Регрессионная проверка build graph #061: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-062
+  Проверка: 'Регрессионная проверка build graph #062: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-063
+  Проверка: 'Регрессионная проверка build graph #063: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-064
+  Проверка: 'Регрессионная проверка build graph #064: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-065
+  Проверка: 'Регрессионная проверка build graph #065: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-066
+  Проверка: 'Регрессионная проверка build graph #066: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-067
+  Проверка: 'Регрессионная проверка build graph #067: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-068
+  Проверка: 'Регрессионная проверка build graph #068: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-069
+  Проверка: 'Регрессионная проверка build graph #069: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-070
+  Проверка: 'Регрессионная проверка build graph #070: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-071
+  Проверка: 'Регрессионная проверка build graph #071: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-072
+  Проверка: 'Регрессионная проверка build graph #072: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-073
+  Проверка: 'Регрессионная проверка build graph #073: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-074
+  Проверка: 'Регрессионная проверка build graph #074: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-075
+  Проверка: 'Регрессионная проверка build graph #075: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-076
+  Проверка: 'Регрессионная проверка build graph #076: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-077
+  Проверка: 'Регрессионная проверка build graph #077: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-078
+  Проверка: 'Регрессионная проверка build graph #078: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-079
+  Проверка: 'Регрессионная проверка build graph #079: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC49
+  ID: AT49-080
+  Проверка: 'Регрессионная проверка build graph #080: package validator, dependency resolver и merge gate сохраняют deterministic
+    результат при повторном запуске.'
+  Expected: PASS
+- source: DOC50
+  ID: AT50-001
+  Category: Scope/Governance
+  Проверка: 315 MASTER IDs present in machine-readable scope and mapped to frozen release/status.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-002
+  Category: Scope/Governance
+  Проверка: 133 market-delta rows present with frozen decision and no missing IDs.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-003
+  Category: Scope/Governance
+  Проверка: No buildable requirement is UNMAPPED in RTM.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-004
+  Category: Scope/Governance
+  Проверка: All 94 WP49 manifests exist and reference valid requirements/specs.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-005
+  Category: Scope/Governance
+  Проверка: Build graph cycle detector returns no cycles.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-006
+  Category: Scope/Governance
+  Проверка: Every WP has ownerModule, release, wave, dependsOn, allowedPaths and acceptance.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-007
+  Category: Scope/Governance
+  Проверка: No FUTURE/REJECTED item appears in build graph as implementation without approved CR.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-008
+  Category: Scope/Governance
+  Проверка: REV47 conflicts referenced by affected requirements are resolvable without ambiguity.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-009
+  Category: Scope/Governance
+  Проверка: Release baseline generated from scope matches documented MVP/V1/V1.5/V2 composition.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-010
+  Category: Scope/Governance
+  Проверка: Change request validation rejects reuse of an existing requirement ID for new semantics.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-011
+  Category: Architecture
+  Проверка: Attempted cloud overwrite of Local authoritative fact is rejected.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-012
+  Category: Architecture
+  Проверка: Architecture test detects direct cross-module write into foreign authoritative table.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-013
+  Category: Architecture
+  Проверка: Authoritative command without permission is rejected and audited.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-014
+  Category: Architecture
+  Проверка: Authoritative transaction publishes event through outbox atomically.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-015
+  Category: Architecture
+  Проверка: Redis loss does not erase authoritative business facts.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-016
+  Category: Architecture
+  Проверка: External system outage leaves Local command path operational.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-017
+  Category: Architecture
+  Проверка: Manual-only workflow completes without IoT hardware.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-018
+  Category: Architecture
+  Проверка: Core workflow completes with AI service unavailable.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-019
+  Category: Architecture
+  Проверка: Sensor evidence cannot directly close/alter business fact outside domain command.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-020
+  Category: Architecture
+  Проверка: Safety/PLC write operation is unavailable in V1 baseline.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-021
+  Category: Data/API
+  Проверка: External ID collision does not replace canonical internal identity.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-022
+  Category: Data/API
+  Проверка: Correction creates audit/supersession history rather than destructive overwrite.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-023
+  Category: Data/API
+  Проверка: Decimal quantity roundtrip through API/DB preserves exact expected value.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-024
+  Category: Data/API
+  Проверка: Business timezone boundary produces correct local business date.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-025
+  Category: Data/API
+  Проверка: OpenAPI diff is generated for API change and generated client compiles.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-026
+  Category: Data/API
+  Проверка: Duplicate idempotent command returns same logical result without double fact.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-027
+  Category: Data/API
+  Проверка: Duplicate event delivery does not duplicate consumer state.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-028
+  Category: Data/API
+  Проверка: Breaking event schema without new major version is rejected by contract test.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-029
+  Category: Data/API
+  Проверка: Attachment checksum mismatch is detected.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-030
+  Category: Data/API
+  Проверка: Spatial geometry with wrong/unknown CRS follows validation/error policy.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-031
+  Category: Offline/Sync
+  Проверка: Critical mobile command saves locally with WAN disabled.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-032
+  Category: Offline/Sync
+  Проверка: Queued command survives app restart and syncs after reconnect.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-033
+  Category: Offline/Sync
+  Проверка: Duplicate resend does not create duplicate business fact.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-034
+  Category: Offline/Sync
+  Проверка: Permission revoked while offline causes server rejection on sync with visible status.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-035
+  Category: Offline/Sync
+  Проверка: Concurrent conflicting authoritative changes produce explicit conflict, not LWW.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-036
+  Category: Offline/Sync
+  Проверка: Attachment upload resumes after interrupted connection.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-037
+  Category: Offline/Sync
+  Проверка: Mobile schema upgrade preserves unsynced queue.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-038
+  Category: Offline/Sync
+  Проверка: 14-day offline fixture remains usable within configured storage profile.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-039
+  Category: Offline/Sync
+  Проверка: Conflict resolution creates audit record.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-040
+  Category: Offline/Sync
+  Проверка: Cloud replication delay does not alter mobile sync authority.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-041
+  Category: Security/Integration
+  Проверка: Horizontal authorization test cannot access another scoped object.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-042
+  Category: Security/Integration
+  Проверка: Vertical authorization test cannot invoke privileged correction.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-043
+  Category: Security/Integration
+  Проверка: Repository secret scan finds no production credentials.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-044
+  Category: Security/Integration
+  Проверка: Extension without required capability cannot call protected platform action.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-045
+  Category: Security/Integration
+  Проверка: Inbound malformed external payload cannot write canonical tables.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-046
+  Category: Security/Integration
+  Проверка: Integration duplicate/out-of-order fixtures reconcile deterministically.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-047
+  Category: Security/Integration
+  Проверка: 1C unavailability queues/retries without blocking local execution.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-048
+  Category: Security/Integration
+  Проверка: External rejection is stored as reconciliation status without deleting local fact.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-049
+  Category: Security/Integration
+  Проверка: Connector retry is idempotent under repeated timeout.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-050
+  Category: Security/Integration
+  Проверка: Release SBOM and integrity metadata are produced.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-051
+  Category: Traceability
+  Проверка: Forward trace FieldSeason -> finished batch returns complete canonical chain.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-052
+  Category: Traceability
+  Проверка: Reverse trace finished batch -> field/season returns source lots and operations.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-053
+  Category: Traceability
+  Проверка: CombineUnload amount may differ from WeighingTransaction without being overwritten.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-054
+  Category: Traceability
+  Проверка: Lot split creates child genealogy and preserves parent provenance.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-055
+  Category: Traceability
+  Проверка: Lot merge records all parents and does not lose quality/owner references.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-056
+  Category: Traceability
+  Проверка: Quality Hold blocks configured shipment/consumption action but does not erase stock.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-057
+  Category: Traceability
+  Проверка: Production consumption/output preserves exact batch genealogy.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-058
+  Category: Traceability
+  Проверка: Shipment/POD remains linked to shipped batch/handling units.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-059
+  Category: Traceability
+  Проверка: Late quality correction updates disposition workflow without rewriting original lab result.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-060
+  Category: Traceability
+  Проверка: Cloud/read-model trace result matches Local canonical graph after replication catches up.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-061
+  Category: UX/Analytics
+  Проверка: Offline indicator and pending counter are visible during disconnected mobile workflow.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-062
+  Category: UX/Analytics
+  Проверка: Hidden UI action still fails server authorization when called directly.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-063
+  Category: UX/Analytics
+  Проверка: QR scan resolves correct entity or shows explicit ambiguity/error.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-064
+  Category: UX/Analytics
+  Проверка: Control Tower KPI displays freshness/completeness metadata.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-065
+  Category: UX/Analytics
+  Проверка: KPI drilldown reaches underlying canonical fact IDs.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-066
+  Category: UX/Analytics
+  Проверка: Global search filters results by permissions.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-067
+  Category: UX/Analytics
+  Проверка: Saved view cannot bypass later permission changes.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-068
+  Category: UX/Analytics
+  Проверка: Exception center opens actionable domain workflow for supported exception.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-069
+  Category: UX/Analytics
+  Проверка: Industrial confirmation prevents accidental single-tap irreversible action.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-070
+  Category: UX/Analytics
+  Проверка: Report regeneration from same frozen inputs/version reproduces expected KPI values.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-071
+  Category: Testing/Deployment
+  Проверка: All mapped unit/integration/contract tests for a WP pass before merge.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-072
+  Category: Testing/Deployment
+  Проверка: DEMO27 mapped scenario passes with fixed seed/reference clock.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-073
+  Category: Testing/Deployment
+  Проверка: Migration from representative prior schema completes and application boots.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-074
+  Category: Testing/Deployment
+  Проверка: Backup restore reconstructs database and object references within target RTO.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-075
+  Category: Testing/Deployment
+  Проверка: Restore meets configured RPO for enterprise profile.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-076
+  Category: Testing/Deployment
+  Проверка: Mobile update preserves offline queue in upgrade fixture.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-077
+  Category: Testing/Deployment
+  Проверка: Local Server remains functional during simulated WAN outage.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-078
+  Category: Testing/Deployment
+  Проверка: Cloud replica resumes after outage without overwriting local facts.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-079
+  Category: Testing/Deployment
+  Проверка: Performance suite meets NFR threshold for selected deployment profile.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-080
+  Category: Testing/Deployment
+  Проверка: Release manifest pins all required versions and compatibility metadata.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-081
+  Category: Codex Execution
+  Проверка: Codex runner refuses WP when a hard dependency is not merged.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-082
+  Category: Codex Execution
+  Проверка: Codex diff check fails when modified file is outside allowedPaths.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-083
+  Category: Codex Execution
+  Проверка: Codex completion fails when deniedPaths were touched without approved CR.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-084
+  Category: Codex Execution
+  Проверка: Codex completion fails when required migration is missing.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-085
+  Category: Codex Execution
+  Проверка: Codex completion fails when OpenAPI changed but generated client was not updated.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-086
+  Category: Codex Execution
+  Проверка: Codex completion fails when event producer changed without catalog update.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-087
+  Category: Codex Execution
+  Проверка: Codex completion fails when permission key changed without catalog/tests.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-088
+  Category: Codex Execution
+  Проверка: Codex completion fails when required offline behavior has no test.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-089
+  Category: Codex Execution
+  Проверка: Codex completion fails when mapped demo scenario is skipped.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-090
+  Category: Codex Execution
+  Проверка: Codex completion report lists exact changed files and commit.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-091
+  Category: Codex Execution
+  Проверка: Codex completion report lists DB/API/event/permission/workflow diffs.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-092
+  Category: Codex Execution
+  Проверка: Codex completion report records known limitations and approved deferred refs.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-093
+  Category: Codex Execution
+  Проверка: Codex does not add a new entity outside frozen scope without CR/ADR proposal.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-094
+  Category: Codex Execution
+  Проверка: Codex cannot mark PASS when any mandatory G0-G12 gate is FAIL.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-095
+  Category: Codex Execution
+  Проверка: Parallel WP scheduler rejects packages with conflicting authoritative write/migration scope.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-096
+  Category: Codex Execution
+  Проверка: Architecture linter rejects a new cyclic module dependency.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-097
+  Category: Codex Execution
+  Проверка: Contract test rejects silent rename of stable event/permission ID.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-098
+  Category: Codex Execution
+  Проверка: Final regression confirms no new UNMAPPED requirement after merge.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-099
+  Category: Codex Execution
+  Проверка: Production release gate rejects build missing SBOM/backup/DR evidence.
+  Expected: PASS
+- source: DOC50
+  ID: AT50-100
+  Category: Codex Execution
+  Проверка: End-to-end execution from WP manifest to Completion Report is reproducible on clean environment.
+  Expected: PASS

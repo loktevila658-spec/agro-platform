@@ -1,0 +1,7 @@
+schema_version: 0.1.0
+status: BOOTSTRAP
+sources:
+- DOC11
+- DOC47
+- DOC50
+rules: []

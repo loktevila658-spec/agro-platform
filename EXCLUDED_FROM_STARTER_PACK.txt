@@ -1,0 +1,9 @@
+Intentionally excluded from the clean Codex starter pack:
+- QA page renders and contact sheets
+- intermediate PDFs and PNGs created during document QA
+- nested duplicate ZIP archives
+- macOS metadata (.DS_Store, __MACOSX, ._*)
+- old competitor/reference architecture PNG/DRAWIO assets and functional audit workbook
+
+Reason: these are useful for archive/history but are not canonical implementation inputs after DOC47–DOC50 freeze.
+The original uploaded archive remains the source-of-record for these excluded materials.

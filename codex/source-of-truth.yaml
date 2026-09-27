@@ -1,0 +1,39 @@
+schema_version: '1.0'
+source: DOC50
+records:
+- data_family: Operational execution facts
+  authority: Platform Local Server
+  rule: Tasks, weighing, inventory operational facts, runs, quality disposition, trips, labor.
+- data_family: Accounting/Tax/GL
+  authority: 1C
+  rule: Проводки, НДС, бухгалтерская/налоговая себестоимость, регламентированный учет.
+- data_family: Operational costing
+  authority: Platform
+  rule: Near-real-time operational view; must reconcile to 1C accounting actual.
+- data_family: GIS canonical geometry
+  authority: Platform
+  rule: Versioned Field/LandPlot/FieldSeason geometry; external cadastre is referenced evidence/status.
+- data_family: External legal/status data
+  authority: External authority/provider
+  rule: Platform caches/maps status; does not invent external authority.
+- data_family: IoT/PLC raw readings
+  authority: IoT evidence store
+  rule: Never direct business write.
+- data_family: AI output
+  authority: AI advisory store
+  rule: Recommendation/proposal; not business fact.
+- data_family: Cloud analytics
+  authority: Cloud derived/read model
+  rule: May compute derived views; cannot override Local primary facts.
+- data_family: Identity & permissions
+  authority: Platform
+  rule: Authentication mapping + application permissions; external IdP may authenticate.
+- data_family: Documents/attachments
+  authority: Platform object store + metadata
+  rule: Immutable references/checksums/versioning.
+- data_family: Quality specifications/results
+  authority: Platform Quality/LIMS
+  rule: Versioned specifications/results; external lab imported with provenance.
+- data_family: Vertical extension facts
+  authority: Extension-owned module
+  rule: Must use shared core identities/contracts; no hidden duplicate core SoT.

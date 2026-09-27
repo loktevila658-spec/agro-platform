@@ -1,0 +1,49 @@
+schema_version: '1.0'
+id: WP49-086
+title: Vertical extension framework
+wave: W10
+release: V2
+depends_on:
+- WP49-083
+depends_on_symbolic: []
+depends_on_raw: 083
+allowed_paths_raw: /packages/sdk/vertical
+exit_criteria: vertical package boundaries and activation.
+spec_refs:
+- DOC49
+- DOC50
+execution_contract: Use DOC50 task preamble and G0-G12 gates.
+status: NOT_STARTED
+authority:
+  release: DOC50
+  scope: DOC48
+  reconciliation: DOC47
+  execution: DOC49
+mandatory_invariants:
+- INV-01
+- INV-02
+- INV-03
+- INV-04
+- INV-05
+- INV-06
+- INV-07
+- INV-08
+- INV-09
+- INV-10
+- INV-11
+- INV-12
+quality_gates:
+- G0
+- G1
+- G2
+- G3
+- G4
+- G5
+- G6
+- G7
+- G8
+- G9
+- G10
+- G11
+- G12
+completion_report: ../prompts/WP_COMPLETION_REPORT.md

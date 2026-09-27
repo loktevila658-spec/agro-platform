@@ -1,0 +1,148 @@
+schema_version: '1.0'
+source: DOC47
+count: 40
+decisions:
+- ID: REV47-001
+  Тема: Lot/Batch identity
+  Canonical решение: Canonical identity партии едина. GrainLot, WarehouseLot, HarvestBatch, FinishedProductBatch являются
+    domain views/types/roles над общей traceability identity, а не несвязанными параллельными партиями.
+- ID: REV47-002
+  Тема: Inventory authority
+  Canonical решение: Остаток меняет только Inventory Ledger/warehouse domain. YardEvent, WmsTask, TmsTrip, IoT evidence и
+    UI action не могут сами менять stock.
+- ID: REV47-003
+  Тема: Grain KKU
+  Canonical решение: Масса, качество, владелец и storage location зерна являются независимыми измерениями. Обычный quantity-on-hand
+    не заменяет ККУ.
+- ID: REV47-004
+  Тема: Quality/LIMS owner
+  Canonical решение: Sample, LabOrder, TestMethod, LabResult, Specification, QualityHold, NCR и COA canonical принадлежат
+    №39; №26/34/36/38 используют их через ссылки/contexts.
+- ID: REV47-005
+  Тема: Labor owner
+  Canonical решение: EmployeeRef приходит из HR/1С; Assignment, Crew, Shift, Qualification, LaborFact и WorkInstruction canonical
+    принадлежат №42.
+- ID: REV47-006
+  Тема: Fleet facts
+  Canonical решение: Machine telemetry является evidence. WorkFact, FuelIssue, HarvestTransfer и downtime создаются только
+    domain workflow №35.
+- ID: REV47-007
+  Тема: Production facts
+  Canonical решение: PLC/IoT не пишет ProductionRun, output, scrap, consumption и OEE напрямую; сохраняется модель №26.
+- ID: REV47-008
+  Тема: Operational economics
+  Canonical решение: STANDARD/PLAN/FORECAST/OPERATIONAL_ACTUAL принадлежат №40; ACCOUNTING_ACTUAL и проводки принадлежат 1С.
+- ID: REV47-009
+  Тема: Supply/Sales boundary
+  Canonical решение: Платформа владеет physical execution. Счет, НДС, дебиторка/кредиторка и регламентированный документ остаются
+    в 1С.
+- ID: REV47-010
+  Тема: Yard/WMS/TMS split
+  Canonical решение: Yard = движение по территории; WMS-lite = складские задачи; TMS-lite = перевозка; Inventory Ledger =
+    остаток.
+- ID: REV47-011
+  Тема: Control Tower
+  Canonical решение: Dashboard/read model никогда не становится SoT; каждый KPI обязан иметь provenance до canonical facts.
+- ID: REV47-012
+  Тема: Configuration boundary
+  Canonical решение: Конфигурация может выбирать разрешенные варианты, но не отменять hard business invariants/security/SoT.
+- ID: REV47-013
+  Тема: Extension boundary
+  Canonical решение: Plugin/connector/driver не получает direct DB write в core tables и не обходит commands, permissions,
+    audit, outbox.
+- ID: REV47-014
+  Тема: Vertical extensions
+  Canonical решение: Livestock/greenhouse/perennial verticals расширяют core через package boundary; не создают копии Organization/User/File/Audit/Inventory/Quality.
+- ID: REV47-015
+  Тема: Offline authority
+  Canonical решение: Offline client создает provisional command/state; окончательная business authority остается LOCAL_PRIMARY.
+- ID: REV47-016
+  Тема: Integration idempotency
+  Canonical решение: Все внешние inbound/outbound операции имеют external ID mapping, idempotency key, inbox/outbox и reconciliation
+    state.
+- ID: REV47-017
+  Тема: Event ownership
+  Canonical решение: Event публикуется модулем-владельцем canonical fact, а не read model или интеграционным адаптером.
+- ID: REV47-018
+  Тема: Correction model
+  Canonical решение: Подтвержденные факты исправляются correction/supersession/amendment, а не silent UPDATE.
+- ID: REV47-019
+  Тема: Source-time quality
+  Canonical решение: Device timestamp хранится вместе с receivedAt/clockQuality; бизнес-решения не должны безусловно доверять
+    device clock.
+- ID: REV47-020
+  Тема: Search/report security
+  Canonical решение: Global search, export и scheduled reports обязаны применять те же row/domain permissions, что и source
+    UI/API.
+- ID: REV47-021
+  Тема: AI authority
+  Canonical решение: AI производит recommendation/proposal/derived insight; canonical fact создается только domain command/human-approved
+    workflow.
+- ID: REV47-022
+  Тема: Hardware optionality
+  Canonical решение: Отсутствие PLC/CAN/ISOBUS/RFID/ALPR/IoT не блокирует manual/mobile workflow, если функция не помечена
+    hardware-required.
+- ID: REV47-023
+  Тема: 1C mapping
+  Canonical решение: 'SoT определяется на уровне атрибута: operational fact может принадлежать платформе, accountingCode/accounting
+    posting - 1С.'
+- ID: REV47-024
+  Тема: API first
+  Canonical решение: Web/mobile/integration используют application/API contracts; прямой доступ клиентов к PostgreSQL запрещен.
+- ID: REV47-025
+  Тема: Schema evolution
+  Canonical решение: Миграции forward-only; expand/migrate/contract; совместимость local/cloud/clients контролируется release
+    manifest.
+- ID: REV47-026
+  Тема: Master IDs
+  Canonical решение: MASTER-001…315 не переиспользуются и не перенумеровываются; новые accepted deltas получают стабильные
+    CAND/REQ aliases.
+- ID: REV47-027
+  Тема: Document authority tags
+  Canonical решение: Каждый canonical entity/rule/API/event в №48 должен иметь ownerDocument и ownerModule.
+- ID: REV47-028
+  Тема: No duplicate permissions
+  Canonical решение: Permission key определяется один раз в permissions registry; документы доменов только ссылаются/предлагают
+    additions.
+- ID: REV47-029
+  Тема: No duplicate KPI formulas
+  Canonical решение: Формула KPI canonical в Registry №17/обновленной версии; Control Tower хранит ссылку на formulaVersion.
+- ID: REV47-030
+  Тема: No duplicate status names
+  Canonical решение: Одинаковые слова DRAFT/ACTIVE/CLOSED допустимы только внутри явно названного aggregate/state machine.
+- ID: REV47-031
+  Тема: File/attachment ownership
+  Canonical решение: Фото, документы, voice и COA хранятся через общий File/Object contract; домены держат typed references.
+- ID: REV47-032
+  Тема: Audit ownership
+  Canonical решение: Каждая command-side mutation порождает audit record на local authority; cloud analytics audit не заменяет
+    local audit.
+- ID: REV47-033
+  Тема: Data quality
+  Canonical решение: DQ flag не переписывает business fact; хранится отдельно и влияет на confidence/read models.
+- ID: REV47-034
+  Тема: Retention/Legal Hold
+  Canonical решение: Retention policy не может физически удалить данные под active Legal Hold независимо от домена.
+- ID: REV47-035
+  Тема: External state
+  Canonical решение: External status (1С/FGIS/carrier/lab) хранится отдельно от internal domain state, если системы не разделяют
+    один state machine.
+- ID: REV47-036
+  Тема: Geospatial owner
+  Canonical решение: Geometry/version/history принадлежат GIS contract №24/34; остальные домены ссылаются на geometryVersionId.
+- ID: REV47-037
+  Тема: ReferenceClock
+  Canonical решение: Demo/golden tests используют фиксируемый clock; production использует trusted server time + source time
+    metadata.
+- ID: REV47-038
+  Тема: Derived read models
+  Canonical решение: Redis/search indexes/materialized views восстанавливаемы из canonical DB/events и не являются единственным
+    хранилищем фактов.
+- ID: REV47-039
+  Тема: Release scope
+  Canonical решение: MVP/V1/V1.5/V2 определяется №33 и уточняется №48; отдельный доменный документ не может самостоятельно
+    повысить FUTURE до MVP.
+- ID: REV47-040
+  Тема: Codex work rule
+  Canonical решение: Codex реализует только work package с явными specRefs, allowed paths, tests и DoD; широкие автономные
+    рефакторинги запрещены.

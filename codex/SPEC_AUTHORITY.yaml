@@ -1,0 +1,29 @@
+schema_version: '1.0'
+source: DOC50
+rule: Conflicts are resolved by authority chain + canonical owner + REV47 decisions; last-document-wins is forbidden.
+precedence:
+- priority: 1
+  source: №50 Final TZ / Release Baseline
+  rule: Финальная operational/execution рамка; не меняет frozen scope №48.
+- priority: 2
+  source: №48 Scope Freeze / RTM
+  rule: Что строим, release/status и traceability. Любое изменение — formal CR.
+- priority: 3
+  source: №47 REV47 / conflict register
+  rule: Закрытые противоречия, canonical ownership и precedence старых документов.
+- priority: 4
+  source: №49 Build Graph
+  rule: 'Как строим: WP, DAG, gates, allowed paths, exit evidence.'
+- priority: 5
+  source: №33 + MASTER-001…315
+  rule: Product scope baseline и frozen market-delta decisions.
+- priority: 6
+  source: Доменные №34–46
+  rule: Детальные domain contracts в своей области.
+- priority: 7
+  source: Базовые №1–32
+  rule: Исторический baseline; действует в части, не переопределённой №47–50.
+rev47_decision_count: 40
+conflict_resolution_count: 30
+rev47_file: REV47_DECISIONS.yaml
+conflict_file: CONFLICT_REGISTER.yaml

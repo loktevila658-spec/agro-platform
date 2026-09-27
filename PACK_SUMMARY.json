@@ -1,0 +1,16 @@
+{
+  "pack_version": "1.0",
+  "prepared_from": "Документы на разработку .zip",
+  "canonical_documents": 50,
+  "master_requirements": 315,
+  "market_delta_items": 133,
+  "work_packages": 94,
+  "waves": 12,
+  "rev47_decisions": 40,
+  "conflicts": 30,
+  "final_requirements": 430,
+  "acceptance_tests": 300,
+  "explicit_wp_cycle_check": "PASS",
+  "files_before_manifest": 179,
+  "created_files_total": 181
+}

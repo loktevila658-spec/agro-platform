@@ -1,0 +1,40 @@
+schema_version: '1.0'
+source: DOC50
+count: 12
+invariants:
+- id: INV-01
+  name: LOCAL_PRIMARY
+  rule: Local Server предприятия является единственным authoritative write-node для operational business facts.
+- id: INV-02
+  name: No PostgreSQL multi-master
+  rule: Local↔cloud PostgreSQL multi-master запрещён; cloud — async replica/analytics.
+- id: INV-03
+  name: Offline-first
+  rule: Критические mobile workflows должны продолжаться без WAN; sync — отдельный stateful contract.
+- id: INV-04
+  name: Single-entry
+  rule: Данные вводятся один раз и переиспользуются; QR/GPS/photo/voice/NFC/RFID минимизируют ручной ввод.
+- id: INV-05
+  name: Evidence-first
+  rule: IoT/GPS/PLC/AI/vision дают evidence; они не пишут business facts напрямую.
+- id: INV-06
+  name: Domain commands
+  rule: Любое authoritative изменение проходит command validation, permissions, state machine, audit и outbox.
+- id: INV-07
+  name: 1C boundary
+  rule: Платформа не превращается во вторую бухгалтерию/payroll/treasury.
+- id: INV-08
+  name: AI advisory
+  rule: AI не имеет неконтролируемого write-access к business facts; proposal -> guardrails -> human/domain command.
+- id: INV-09
+  name: Module ownership
+  rule: Нет прямых cross-module writes в чужие таблицы; интеграция через contracts/events/application services.
+- id: INV-10
+  name: Immutable provenance
+  rule: Исторические facts/specifications/results исправляются correction/supersession/amendment, а не silent overwrite.
+- id: INV-11
+  name: Hardware optional
+  rule: Приложение обязано работать manual-only; retrofit повышает автоматизацию, но не является prerequisite.
+- id: INV-12
+  name: Safety boundary
+  rule: PLC/E-stop/interlocks/safety logic не заменяются платформой; V1 OT read-only.

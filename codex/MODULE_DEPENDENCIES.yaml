@@ -1,0 +1,91 @@
+schema_version: '1.0'
+sources:
+- DOC28
+- DOC49
+- DOC50
+status: BOOTSTRAP_CANONICAL_POLICY
+modules:
+- id: platform-core
+  responsibility: Identity, Organization, permissions, audit, idempotency, files, outbox/inbox
+- id: master-data
+  responsibility: Canonical dictionaries, units, materials, products, external IDs, golden record
+- id: gis
+  responsibility: LandPlot, Field, FieldSeason geometry, cadastral/spatial/remote sensing foundation
+- id: agronomy
+  responsibility: SeasonPlan, TechMap, operations, scouting, agrochemistry, weather, prescriptions
+- id: fleet
+  responsibility: Equipment, implement, mechanizer assignments, telemetry-derived operational context
+- id: fuel
+  responsibility: Fuel storage/issue/reconciliation and station integration
+- id: harvest
+  responsibility: HarvestBatch, CombineUnload, HarvestTransfer, HarvestTrip, reconciliation
+- id: weighing
+  responsibility: WeighingTransaction, scales, gross/tare/net, evidence/reconciliation
+- id: warehouse
+  responsibility: Inventory ledger, lots, locations, movements, QR/handling units
+- id: grain
+  responsibility: GrainLot, quality/owner/storage, drying/cleaning, silo board, QQA
+- id: quality
+  responsibility: Specifications, sampling, LIMS, results, holds, NCR/CAPA-lite, COA
+- id: production
+  responsibility: ProductionOrder/Run, recipe, consumption/output, downtime, OEE
+- id: maintenance
+  responsibility: Assets, plans, requests/work orders, MTBF/MTTR links
+- id: logistics
+  responsibility: Yard, WMS-lite tasks, TMS-lite trips, POD
+- id: commercial-ops
+  responsibility: Procurement/supply/sales/contracts refs/order fulfillment
+- id: workforce
+  responsibility: Shift, crew, qualification, work instructions, labor facts
+- id: economics
+  responsibility: Norms, operational costing, budgets, plan/fact, S&OP-lite
+- id: analytics
+  responsibility: Control Tower, KPI provenance, global search, reports, exceptions
+- id: notifications
+  responsibility: Rules engine, channels, escalation, notification center
+- id: integration
+  responsibility: 1C and external system connectors, reconciliation
+- id: sync
+  responsibility: Mobile offline queue, conflict model, snapshots, idempotency
+- id: iot-evidence
+  responsibility: Raw/normalized evidence, device bindings, state resolver
+- id: ai
+  responsibility: AI Gateway, RAG/ML/CV advisory, model/prompt registry
+- id: extensions
+  responsibility: Plugin SDK, Integration SDK, Device Driver SDK
+- id: verticals
+  responsibility: Optional Cattle/Pig/Poultry/Greenhouse/Perennial packages
+dependency_policy:
+- id: BG-001
+  rule: Codex меняет только allowedPaths текущего WP.
+- id: BG-002
+  rule: Любая необходимость изменить deniedPaths останавливает WP и создаёт change request.
+- id: BG-003
+  rule: Cross-module read разрешён только через public application/query contract или read model.
+- id: BG-004
+  rule: Cross-module write возможен только через command/API/event contract владельца домена.
+- id: BG-005
+  rule: Прямой UPDATE чужой таблицы запрещён даже внутри одной PostgreSQL БД.
+- id: BG-006
+  rule: Новый event требует schema, version, producer, consumers и contract tests.
+- id: BG-007
+  rule: Новый endpoint требует OpenAPI и permission mapping.
+- id: BG-008
+  rule: Новая authoritative сущность требует SoT/provenance/retention/audit решения.
+- id: BG-009
+  rule: Новый offline write требует ProvisionalCommand/idempotency/conflict policy.
+- id: BG-010
+  rule: Новый device signal сначала становится evidence; бизнес-факт создаётся domain workflow.
+- id: BG-011
+  rule: Новый AI output — recommendation/proposal; authoritative mutation только доменной командой.
+- id: BG-012
+  rule: Схема БД не меняется ORM auto-sync; только versioned migrations.
+- id: BG-013
+  rule: Каждый breaking change проходит expand/migrate/contract или совместимый эквивалент.
+- id: BG-014
+  rule: Generated clients обновляются из канонических contracts, а не вручную.
+- id: BG-015
+  rule: Нельзя ослаблять acceptance test ради прохождения реализации без отдельного approved change.
+execution_dependency_source: build-graph.yaml / WP49 manifests
+note: No speculative module-to-module edges are added here; concrete implementation dependencies must be justified by frozen
+  WP/spec contracts.

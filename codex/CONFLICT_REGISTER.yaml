@@ -1,0 +1,125 @@
+schema_version: '1.0'
+source: DOC47
+count: 30
+conflicts:
+- ID: CR47-001
+  Риск/противоречие: Quality entities duplicated in MES/Grain/Agronomy
+  Статус: Resolve
+  Решение: №39 canonical; replace local duplicates with context references.
+- ID: CR47-002
+  Риск/противоречие: Labor facts in Fleet vs Workforce
+  Статус: Resolve
+  Решение: Fleet creates machine/work evidence; №42 owns LaborFact and PieceworkPreview.
+- ID: CR47-003
+  Риск/противоречие: Warehouse task can appear to change stock
+  Статус: Resolve
+  Решение: WMS task completion triggers inventory command; task itself no stock mutation.
+- ID: CR47-004
+  Риск/противоречие: GrainLot vs WarehouseLot
+  Статус: Resolve
+  Решение: Common BatchIdentity; grain-specific quantity/quality projection + inventory placement.
+- ID: CR47-005
+  Риск/противоречие: Operational cost vs accounting cost
+  Статус: Resolve
+  Решение: Separate layers and labels in UI/API; no implicit equality.
+- ID: CR47-006
+  Риск/противоречие: Customer/Supplier master overlap with 1C
+  Статус: Resolve
+  Решение: Attribute-level SoT and cached projection; mapping required.
+- ID: CR47-007
+  Риск/противоречие: Shift definitions in MES and Workforce
+  Статус: Resolve
+  Решение: ShiftTemplate/ShiftInstance shared; MES adds ProductionRun assignment.
+- ID: CR47-008
+  Риск/противоречие: Equipment identity across fleet/production/lab
+  Статус: Resolve
+  Решение: Common Equipment/Asset identity where physical asset same; typed capabilities.
+- ID: CR47-009
+  Риск/противоречие: Task abstraction too broad
+  Статус: Resolve
+  Решение: No universal state machine; global task feed is read-model over typed tasks.
+- ID: CR47-010
+  Риск/противоречие: Status CLOSED reused
+  Статус: Resolve
+  Решение: Namespace by aggregate; APIs never return bare status without resource type.
+- ID: CR47-011
+  Риск/противоречие: Cloud analytics appears writable
+  Статус: Resolve
+  Решение: Cloud derived/read only for LOCAL_PRIMARY facts; commands route to local authority.
+- ID: CR47-012
+  Риск/противоречие: Config may redefine workflow arbitrarily
+  Статус: Resolve
+  Решение: Only approved configuration points; hard invariants compile/runtime protected.
+- ID: CR47-013
+  Риск/противоречие: Plugin wants DB schema access
+  Статус: Resolve
+  Решение: Own namespace/storage only; core via SDK/API/events.
+- ID: CR47-014
+  Риск/противоречие: AI proposed command ambiguity
+  Статус: Resolve
+  Решение: AIProposal distinct object; execution requires domain permission and policy/human gate.
+- ID: CR47-015
+  Риск/противоречие: QualityHold vs Inventory quarantine
+  Статус: Resolve
+  Решение: QualityHold drives eligibility; inventory state/location reflects hold via domain command, not duplicated independent
+    truth.
+- ID: CR47-016
+  Риск/противоречие: Yard gate event vs transport state
+  Статус: Resolve
+  Решение: Yard events update YardVisit; TMS state changes only mapped workflow transition.
+- ID: CR47-017
+  Риск/противоречие: Weighing reading vs transaction
+  Статус: Resolve
+  Решение: Raw WeightReading evidence -> WeighingTransaction canonical -> downstream grain/harvest facts.
+- ID: CR47-018
+  Риск/противоречие: Telemetry fuel vs stock fuel
+  Статус: Resolve
+  Решение: Sensor level/consumption evidence does not create FuelIssue/stock movement.
+- ID: CR47-019
+  Риск/противоречие: Report exported value after correction
+  Статус: Resolve
+  Решение: Report stores generatedAt + source versions; regeneration required for corrected facts.
+- ID: CR47-020
+  Риск/противоречие: Search index stale
+  Статус: Resolve
+  Решение: Show freshness/index timestamp; source screen/API remains authoritative.
+- ID: CR47-021
+  Риск/противоречие: External lab corrected result
+  Статус: Resolve
+  Решение: New result version supersedes prior; old result retained and dependent disposition recalculated by workflow.
+- ID: CR47-022
+  Риск/противоречие: 1C unavailable during operation
+  Статус: Resolve
+  Решение: Operational workflow continues locally; outbound accounting handoff queued/reconciled.
+- ID: CR47-023
+  Риск/противоречие: RFID/ALPR confidence low
+  Статус: Resolve
+  Решение: Evidence confidence recorded; configurable human confirmation before critical identity action.
+- ID: CR47-024
+  Риск/противоречие: Device time differs from server
+  Статус: Resolve
+  Решение: Store source timestamp + receivedAt + clockQuality; policy chooses trusted timeline.
+- ID: CR47-025
+  Риск/противоречие: Migration imports invalid master data
+  Статус: Resolve
+  Решение: Staging validation/quarantine; no direct production-table import before cutover gate.
+- ID: CR47-026
+  Риск/противоречие: Extension package incompatible with core
+  Статус: Resolve
+  Решение: Compatibility manifest blocks activation; rollback preserves prior compatible package.
+- ID: CR47-027
+  Риск/противоречие: Vertical package duplicates core inventory
+  Статус: Resolve
+  Решение: Vertical consumes Inventory API and typed stock dimensions; no separate stock engine.
+- ID: CR47-028
+  Риск/противоречие: KPI formula changes history silently
+  Статус: Resolve
+  Решение: Formula/version pinned per calculation; optional explicit recalculation status.
+- ID: CR47-029
+  Риск/противоречие: Permission renamed in one module
+  Статус: Resolve
+  Решение: Alias/migration in central registry; no local one-off permission keys.
+- ID: CR47-030
+  Риск/противоречие: MASTER function mapped to multiple implementations
+  Статус: Resolve
+  Решение: №48 designates one primary Codex slice and explicit dependent slices.

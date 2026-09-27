@@ -1,0 +1,1470 @@
+schema_version: '1.0'
+source:
+- DOC33
+- DOC48
+count: 133
+status: FROZEN
+items:
+- id: MD-001
+  domain: Agronomy
+  capability: SeasonPlan как отдельный versioned объект сезона
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 59-74
+  integrations: 1С/ERP, weather
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-002
+  domain: Agronomy
+  capability: Шаблоны TechMap + версии + наследование
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 59-60
+  integrations: 1С/ERP
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-003
+  domain: Agronomy
+  capability: ResourceDemand по материалам, технике, людям
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 60,65,66
+  integrations: Warehouse, Fleet, Workforce, 1С
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-004
+  domain: Agronomy
+  capability: Лист потребностей и procurement handoff
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34/№41
+  master_link: 60,68
+  integrations: 1С, Procurement
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-005
+  domain: Agronomy
+  capability: Нормы оплаты и WorkNorm на агрооперацию
+  decision: ENHANCE
+  release: V1
+  spec_doc: №35/№42
+  master_link: 61,137
+  integrations: 1С зарплата
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-006
+  domain: Agronomy
+  capability: Рекомендации по севообороту по предшественнику
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34
+  master_link: 62-63
+  integrations: Knowledge base
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-007
+  domain: Agronomy
+  capability: Проверка конфликтов ресурсов по календарю
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 65-67
+  integrations: Fleet, Workforce
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-008
+  domain: Agronomy
+  capability: Годовое/сезонное/оперативное планирование в одной модели
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34/№40
+  master_link: 59-74
+  integrations: Analytics, 1С
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-009
+  domain: Agronomy
+  capability: KPI сезона по культурам
+  decision: ENHANCE
+  release: V1
+  spec_doc: №40/№45
+  master_link: 70-74
+  integrations: Analytics
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-010
+  domain: Agronomy
+  capability: Бизнес-план по культуре/полю
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №40
+  master_link: 68-74
+  integrations: 1С finance
+  hardware: Нет
+  wp49_disposition: WP49-AGRONOMY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-011
+  domain: Scouting
+  capability: Справочник болезней, вредителей, сорняков и мер борьбы
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 83-85,90
+  integrations: AI/RAG optional
+  hardware: Нет
+  wp49_disposition: WP49-SCOUTING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-012
+  domain: Scouting
+  capability: Биометрические показатели осмотра
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 75-90
+  integrations: Mobile offline
+  hardware: Нет
+  wp49_disposition: WP49-SCOUTING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-013
+  domain: Scouting
+  capability: Автомаршрут по anomaly/productivity zones
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34
+  master_link: 75-88
+  integrations: GIS, Satellite
+  hardware: Нет
+  wp49_disposition: WP49-SCOUTING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-014
+  domain: Weather
+  capability: GDD / сумма активных температур / накопленные осадки
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 94-97
+  integrations: Weather API, meteo station
+  hardware: Опционально метеостанция
+  wp49_disposition: WP49-WEATHER
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-015
+  domain: Weather
+  capability: Phenology forecast
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34/№30
+  master_link: 24,91-97
+  integrations: Weather, Satellite, AI optional
+  hardware: Нет
+  wp49_disposition: WP49-WEATHER
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-016
+  domain: Remote sensing
+  capability: TrueColor + расширенный индексный каталог
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 91-93
+  integrations: Copernicus/UAV
+  hardware: Нет
+  wp49_disposition: WP49-REMOTE_SENSING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-017
+  domain: Remote sensing
+  capability: Stable productivity zones across years
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34
+  master_link: 91-93,109
+  integrations: PostGIS, raster storage
+  hardware: Нет
+  wp49_disposition: WP49-REMOTE_SENSING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-018
+  domain: Remote sensing
+  capability: UAV orthomosaic/GeoTIFF ingestion
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34
+  master_link: '279'
+  integrations: GeoTIFF/COG, UAV providers
+  hardware: БПЛА опционально
+  wp49_disposition: WP49-REMOTE_SENSING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-019
+  domain: Agrochemistry
+  capability: SamplingGrid presets and variable step
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 98-103
+  integrations: PostGIS
+  hardware: Нет
+  wp49_disposition: WP49-AGROCHEMISTRY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-020
+  domain: Agrochemistry
+  capability: SamplingRoute optimisation
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34
+  master_link: 98-103
+  integrations: MapLibre/GPS
+  hardware: Нет
+  wp49_disposition: WP49-AGROCHEMISTRY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-021
+  domain: Agrochemistry
+  capability: Chain of custody образца
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34/№39
+  master_link: 103-107
+  integrations: Lab API
+  hardware: QR printer/scanner optional
+  wp49_disposition: WP49-AGROCHEMISTRY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-022
+  domain: Agrochemistry
+  capability: Расширяемые лабораторные показатели
+  decision: ENHANCE
+  release: V1
+  spec_doc: №34/№39
+  master_link: 106-109
+  integrations: LIMS/API/CSV
+  hardware: Нет
+  wp49_disposition: WP49-AGROCHEMISTRY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-023
+  domain: Precision farming
+  capability: PrescriptionMap как canonical artifact
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34
+  master_link: 108-109
+  integrations: ISOBUS/OEM formats
+  hardware: Нет
+  wp49_disposition: WP49-PRECISION_FARMING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-024
+  domain: Precision farming
+  capability: Variable-rate export profiles by machine vendor
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №34/№44
+  master_link: 279-281
+  integrations: ISOBUS/OEM
+  hardware: Нет
+  wp49_disposition: WP49-PRECISION_FARMING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-025
+  domain: Precision farming
+  capability: Terrain/relief model
+  decision: ENHANCE
+  release: V2
+  spec_doc: №34
+  master_link: 98-109
+  integrations: DEM providers/UAV
+  hardware: Нет
+  wp49_disposition: WP49-PRECISION_FARMING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-026
+  domain: Fleet
+  capability: Machine + Implement composition
+  decision: ENHANCE
+  release: V1
+  spec_doc: №35
+  master_link: 110-124
+  integrations: ISOBUS/OEM
+  hardware: Optional identification tag
+  wp49_disposition: WP49-FLEET
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-027
+  domain: Fleet
+  capability: OEM telemetry connector abstraction
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №35/№44
+  master_link: 110-124,281
+  integrations: OEM API
+  hardware: Терминал/OEM modem
+  wp49_disposition: WP49-FLEET
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-028
+  domain: Fleet
+  capability: CAN / J1939 read-only evidence
+  decision: FUTURE
+  release: V2
+  spec_doc: №35/№31
+  master_link: 302-315
+  integrations: CAN/J1939
+  hardware: Gateway required
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_FUTURE
+- id: MD-029
+  domain: Fleet
+  capability: ISOBUS task/implement context
+  decision: FUTURE
+  release: V2
+  spec_doc: №35
+  master_link: 112,117,279-281
+  integrations: ISO 11783/ISOBUS
+  hardware: ISOBUS terminal
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_FUTURE
+- id: MD-030
+  domain: Fleet
+  capability: RTK correction source registry
+  decision: FUTURE
+  release: V2
+  spec_doc: №35
+  master_link: 113-117
+  integrations: NTRIP/RTCM
+  hardware: GNSS RTK required
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_FUTURE
+- id: MD-031
+  domain: Fleet
+  capability: Automatic work fact inference
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №35
+  master_link: 36-38,117-121
+  integrations: GPS/OEM
+  hardware: GPS/telemetry optional
+  wp49_disposition: WP49-FLEET
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-032
+  domain: Fleet
+  capability: Yield-map import
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №35/№34
+  master_link: 279-281
+  integrations: OEM/ISOXML/files
+  hardware: Yield monitor optional
+  wp49_disposition: WP49-FLEET
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-033
+  domain: Fleet
+  capability: Machine process parameters and alarms
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №35
+  master_link: 110-124,302-315
+  integrations: OEM/CAN
+  hardware: OEM/CAN optional
+  wp49_disposition: WP49-FLEET
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-034
+  domain: Fuel
+  capability: Fuel storage reconciliation by tank
+  decision: ENHANCE
+  release: V1
+  spec_doc: №35
+  master_link: 141-151
+  integrations: АЗС controller/ДУТ
+  hardware: Level sensor optional
+  wp49_disposition: WP49-FUEL
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-035
+  domain: Fuel
+  capability: 'Fuel issue identity: vehicle + employee + task'
+  decision: ENHANCE
+  release: V1
+  spec_doc: №35
+  master_link: 141-151
+  integrations: АЗС/1С
+  hardware: RFID/QR optional
+  wp49_disposition: WP49-FUEL
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-036
+  domain: Fuel
+  capability: Telemetry-vs-issued fuel reconciliation
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №35
+  master_link: 146-151
+  integrations: Telemetry, 1С
+  hardware: ДУТ/CAN optional
+  wp49_disposition: WP49-FUEL
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-037
+  domain: Harvest
+  capability: CombineUnload business evidence
+  decision: ENHANCE
+  release: V1
+  spec_doc: №35
+  master_link: 36,121,152-170
+  integrations: GPS/OEM
+  hardware: Telemetry optional
+  wp49_disposition: WP49-HARVEST
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-038
+  domain: Harvest
+  capability: HarvestTransfer combine -> truck
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №35
+  master_link: 152-170
+  integrations: Fleet/Weighing
+  hardware: Telemetry optional
+  wp49_disposition: WP49-HARVEST
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-039
+  domain: Harvest
+  capability: HarvestTrip field -> receiver
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №35/№37
+  master_link: 152-170
+  integrations: Fleet/Yard/Weighing
+  hardware: GPS optional
+  wp49_disposition: WP49-HARVEST
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-040
+  domain: Harvest
+  capability: Anti-loss harvest reconciliation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №35/№36
+  master_link: 152-170
+  integrations: Fleet/Weighing/Grain
+  hardware: Telemetry optional
+  wp49_disposition: WP49-HARVEST
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-041
+  domain: Labor
+  capability: Piecework calculation preview
+  decision: ENHANCE
+  release: V1
+  spec_doc: №35/№42
+  master_link: 61,134-137,265
+  integrations: 1С payroll
+  hardware: Нет
+  wp49_disposition: WP49-LABOR
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-042
+  domain: Weighing
+  capability: Auto and rail weighbridge profiles
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: 152-170
+  integrations: Serial/TCP/vendor protocol
+  hardware: Weight terminal required for automation
+  wp49_disposition: WP49-WEIGHING
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-043
+  domain: Weighing
+  capability: Unregistered weighing journal
+  decision: ENHANCE
+  release: V1
+  spec_doc: №36
+  master_link: 163-167
+  integrations: Weighbridge
+  hardware: Weight terminal
+  wp49_disposition: WP49-WEIGHING
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-044
+  domain: Weighing
+  capability: ALPR vehicle identification evidence
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 167,311
+  integrations: ONVIF/vendor ALPR
+  hardware: Camera required
+  wp49_disposition: WP49-WEIGHING
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-045
+  domain: Yard
+  capability: YardVisit lifecycle
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 152-170
+  integrations: WMS/TMS/Weighing
+  hardware: Нет
+  wp49_disposition: WP49-YARD
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-046
+  domain: Yard
+  capability: Appointment / time slot
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: '-'
+  integrations: TMS/ERP
+  hardware: Нет
+  wp49_disposition: WP49-YARD
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-047
+  domain: Yard
+  capability: Electronic queue
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: '-'
+  integrations: SMS/Push
+  hardware: Display/kiosk optional
+  wp49_disposition: WP49-YARD
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-048
+  domain: Yard
+  capability: Driver self check-in
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №37
+  master_link: '-'
+  integrations: YMS/TMS
+  hardware: Kiosk optional
+  wp49_disposition: WP49-YARD
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-049
+  domain: Yard
+  capability: Gate / barrier / traffic-light integration
+  decision: FUTURE
+  release: V2
+  spec_doc: №37/№31
+  master_link: 309-311
+  integrations: I/O/Modbus/vendor
+  hardware: Required for automation
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_FUTURE
+- id: MD-050
+  domain: Yard
+  capability: Checkpoint timeline and dwell KPI
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37/№45
+  master_link: 218-236
+  integrations: YMS/Analytics
+  hardware: Нет
+  wp49_disposition: WP49-YARD
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-051
+  domain: Grain
+  capability: GrainLot specialised profile over canonical Batch
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №36
+  master_link: 54-55,161,210-213
+  integrations: Weighing/Lab/MES
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-052
+  domain: Grain
+  capability: Quantitative-quality accounting (ККУ)
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: '-'
+  integrations: 1С/Weighing/Lab
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-053
+  domain: Grain
+  capability: Configurable grain quality indicators
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №36/№39
+  master_link: '-'
+  integrations: LIMS/API
+  hardware: Lab devices optional
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-054
+  domain: Grain
+  capability: Conditioned/credited weight calculation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: 155-157
+  integrations: Formula Registry
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-055
+  domain: Grain
+  capability: Owner / client account for grain
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: '-'
+  integrations: 1С contracts
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-056
+  domain: Grain
+  capability: Tolling/raw-material owner model
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: '-'
+  integrations: 1С/MES
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-057
+  domain: Grain
+  capability: Silo/StorageCell model
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №36
+  master_link: 52-55
+  integrations: IoT optional
+  hardware: Level sensor optional
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-058
+  domain: Grain
+  capability: Silo board visualisation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36/№45
+  master_link: 214-237
+  integrations: Analytics/IoT
+  hardware: Optional sensors
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-059
+  domain: Grain
+  capability: Drying operation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: 185-213
+  integrations: MES/IoT
+  hardware: Dryer telemetry optional
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-060
+  domain: Grain
+  capability: Cleaning operation and grain waste
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36
+  master_link: 199-201
+  integrations: MES/IoT
+  hardware: Equipment telemetry optional
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-061
+  domain: Grain
+  capability: Shrinkage / aspiration loss
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36/№17
+  master_link: 200-201
+  integrations: Formula Registry
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-062
+  domain: Grain
+  capability: Bunker scale evidence
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №36/№25
+  master_link: '309'
+  integrations: Weight terminal
+  hardware: Bunker scale required
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-063
+  domain: Grain
+  capability: Average weighted quality after merge
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36/№39
+  master_link: 54-55
+  integrations: Quality/LIMS
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-064
+  domain: Grain
+  capability: Storage cleanup/closure (зачистка)
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №36
+  master_link: '-'
+  integrations: Inventory/1С
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-065
+  domain: Grain
+  capability: Milling/feed production bridge
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №36/№26
+  master_link: 185-213
+  integrations: MES-lite
+  hardware: Нет
+  wp49_disposition: WP49-GRAIN
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-066
+  domain: WMS-lite
+  capability: 'Warehouse topology: zones/locations/bins'
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №37
+  master_link: 43-58
+  integrations: ERP
+  hardware: Нет
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-067
+  domain: WMS-lite
+  capability: Directed putaway
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 43-58
+  integrations: Mobile/TSД
+  hardware: ТСД optional
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-068
+  domain: WMS-lite
+  capability: Picking tasks
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 49-50,57
+  integrations: Mobile/TSД
+  hardware: ТСД optional
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-069
+  domain: WMS-lite
+  capability: Replenishment of picking zones
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №37
+  master_link: '53'
+  integrations: Inventory
+  hardware: Нет
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-070
+  domain: WMS-lite
+  capability: Cycle count without full shutdown
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: '52'
+  integrations: Inventory/1С
+  hardware: ТСД optional
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-071
+  domain: WMS-lite
+  capability: HandlingUnit / pallet / container
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 54-57
+  integrations: TSД/RFID
+  hardware: QR/RFID optional
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-072
+  domain: WMS-lite
+  capability: FEFO/FIFO allocation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 54-55
+  integrations: Quality/Inventory
+  hardware: Нет
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-073
+  domain: WMS-lite
+  capability: Staging/loading zone
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: '-'
+  integrations: TMS/Yard
+  hardware: ТСД optional
+  wp49_disposition: WP49-WMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-074
+  domain: WMS-lite
+  capability: Voice/pick-by-light adapter points
+  decision: FUTURE
+  release: V2
+  spec_doc: №44/№37
+  master_link: '-'
+  integrations: Plugin SDK
+  hardware: Optional hardware
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_FUTURE
+- id: MD-075
+  domain: TMS-lite
+  capability: TransportRequest / ShipmentExecution
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: '-'
+  integrations: ERP/WMS/Yard
+  hardware: Нет
+  wp49_disposition: WP49-TMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-076
+  domain: TMS-lite
+  capability: Carrier / own fleet assignment
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 110-124
+  integrations: 1С/Contracts
+  hardware: Нет
+  wp49_disposition: WP49-TMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-077
+  domain: TMS-lite
+  capability: ETA and trip exception monitoring
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №37
+  master_link: 113-124
+  integrations: Maps/Fleet
+  hardware: GPS optional
+  wp49_disposition: WP49-TMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-078
+  domain: TMS-lite
+  capability: Proof of delivery / unloading evidence
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №37
+  master_link: '-'
+  integrations: Mobile API
+  hardware: Mobile
+  wp49_disposition: WP49-TMS_LITE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-079
+  domain: Logistics
+  capability: Full network optimisation / multimodal TMS
+  decision: INTEGRATION_ONLY
+  release: FUTURE
+  spec_doc: №37/№44
+  master_link: '-'
+  integrations: External TMS
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-080
+  domain: Quality
+  capability: ProductSpecification / MaterialSpecification
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №39
+  master_link: '-'
+  integrations: MES/Warehouse
+  hardware: Нет
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-081
+  domain: Quality
+  capability: SamplingPlan
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №39
+  master_link: '-'
+  integrations: LIMS/MES/Grain
+  hardware: Нет
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-082
+  domain: Quality
+  capability: LabOrder + TestMethod + Result
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №39
+  master_link: 106-109
+  integrations: Lab API/files
+  hardware: Lab devices optional
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-083
+  domain: Quality
+  capability: COA / quality certificate generation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №39
+  master_link: '-'
+  integrations: Documents/ERP
+  hardware: Нет
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-084
+  domain: Quality
+  capability: Nonconformance + disposition
+  decision: ENHANCE
+  release: V1
+  spec_doc: №39
+  master_link: 199-213
+  integrations: MES/WMS
+  hardware: Нет
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-085
+  domain: Quality
+  capability: CAPA-lite
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №39
+  master_link: '-'
+  integrations: Tasks/Notifications
+  hardware: Нет
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-086
+  domain: Quality
+  capability: Calibration registry for measurement equipment
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №39
+  master_link: 171-184
+  integrations: ТОиР/Devices
+  hardware: Нет
+  wp49_disposition: WP49-QUALITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-087
+  domain: Food safety
+  capability: HACCP/CCP configurable checks
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №39
+  master_link: '-'
+  integrations: MES/Quality
+  hardware: Sensors optional
+  wp49_disposition: WP49-FOOD_SAFETY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-088
+  domain: Economics
+  capability: Standard operational cost model
+  decision: ENHANCE
+  release: V1
+  spec_doc: №40
+  master_link: 68-74,237
+  integrations: 1С
+  hardware: Нет
+  wp49_disposition: WP49-ECONOMICS
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-089
+  domain: Economics
+  capability: Actual operational cost allocation
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №40
+  master_link: 37-38,181,237,264
+  integrations: 1С cost data
+  hardware: Нет
+  wp49_disposition: WP49-ECONOMICS
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-090
+  domain: Economics
+  capability: What-if scenario planning
+  decision: ENHANCE
+  release: V1.5
+  spec_doc: №40
+  master_link: 71-72
+  integrations: Analytics
+  hardware: Нет
+  wp49_disposition: WP49-ECONOMICS
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-091
+  domain: Economics
+  capability: S&OP-lite capacity/material balance
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №40
+  master_link: '-'
+  integrations: ERP/MES/Warehouse
+  hardware: Нет
+  wp49_disposition: WP49-ECONOMICS
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-092
+  domain: Supply
+  capability: PurchaseRequest from operational demand
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №41
+  master_link: '-'
+  integrations: 1С
+  hardware: Нет
+  wp49_disposition: WP49-SUPPLY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-093
+  domain: Supply
+  capability: ExpectedDelivery / inbound appointment
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №41/№37
+  master_link: '-'
+  integrations: 1С/Yard
+  hardware: Нет
+  wp49_disposition: WP49-SUPPLY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-094
+  domain: Sales
+  capability: ShipmentOrder operational reference
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №41
+  master_link: '-'
+  integrations: 1С/TMS
+  hardware: Нет
+  wp49_disposition: WP49-SALES
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-095
+  domain: Contracts
+  capability: ContractRef + validity for operational rules
+  decision: ENHANCE
+  release: V1
+  spec_doc: №41
+  master_link: 20-21
+  integrations: 1С/EDO
+  hardware: Нет
+  wp49_disposition: WP49-CONTRACTS
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-096
+  domain: Workforce
+  capability: Crew and shift assignment cross-domain
+  decision: ENHANCE
+  release: V1
+  spec_doc: №42
+  master_link: 5,66,125-140,188
+  integrations: 1С HR
+  hardware: Нет
+  wp49_disposition: WP49-WORKFORCE
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-097
+  domain: Workforce
+  capability: Qualification / equipment authorisation
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №42
+  master_link: 6-7
+  integrations: HR external
+  hardware: Нет
+  wp49_disposition: WP49-WORKFORCE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-098
+  domain: Workforce
+  capability: Digital work instructions + checklist
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №42
+  master_link: 11,125-140
+  integrations: Documents
+  hardware: Mobile
+  wp49_disposition: WP49-WORKFORCE
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-099
+  domain: Workforce
+  capability: Operational attendance/time fact
+  decision: ENHANCE
+  release: V1
+  spec_doc: №42
+  master_link: 135,265
+  integrations: 1С HR/payroll
+  hardware: Нет
+  wp49_disposition: WP49-WORKFORCE
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-100
+  domain: Platform
+  capability: Customer onboarding wizard
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №43
+  master_link: 1-12
+  integrations: Import/connectors
+  hardware: Нет
+  wp49_disposition: WP49-PLATFORM
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-101
+  domain: Platform
+  capability: Feature flags and module enablement
+  decision: ENHANCE
+  release: V1
+  spec_doc: №43
+  master_link: '301'
+  integrations: License/config service
+  hardware: Нет
+  wp49_disposition: WP49-PLATFORM
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-102
+  domain: Platform
+  capability: Configurable reason catalogs/forms/checklists
+  decision: ENHANCE
+  release: V1
+  spec_doc: №43
+  master_link: 10-11
+  integrations: Plugin/config
+  hardware: Нет
+  wp49_disposition: WP49-PLATFORM
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-103
+  domain: Platform
+  capability: Migration mapping/reconciliation workbench
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №43
+  master_link: 276-277
+  integrations: Excel/CSV/API/1С
+  hardware: Нет
+  wp49_disposition: WP49-PLATFORM
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-104
+  domain: Extensibility
+  capability: Integration Connector SDK
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №44
+  master_link: 274-281
+  integrations: REST/Webhooks/queues
+  hardware: Нет
+  wp49_disposition: WP49-EXTENSIBILITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-105
+  domain: Extensibility
+  capability: Device/Protocol Adapter SDK
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №44/№31
+  master_link: 302-315
+  integrations: IoT protocols
+  hardware: Hardware depends
+  wp49_disposition: WP49-EXTENSIBILITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-106
+  domain: Extensibility
+  capability: Business Plugin SDK
+  decision: OPTIONAL_MODULE
+  release: V2
+  spec_doc: №44
+  master_link: '-'
+  integrations: API/events
+  hardware: Нет
+  wp49_disposition: WP49-EXTENSIBILITY
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-107
+  domain: Analytics
+  capability: Cross-domain Control Tower
+  decision: ENHANCE
+  release: V1
+  spec_doc: №45
+  master_link: 214-237
+  integrations: Read models
+  hardware: Нет
+  wp49_disposition: WP49-ANALYTICS
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-108
+  domain: Analytics
+  capability: Evidence/data-quality indicator near KPI
+  decision: ENHANCE
+  release: V1
+  spec_doc: №45
+  master_link: 214-237
+  integrations: Governance/IoT
+  hardware: Нет
+  wp49_disposition: WP49-ANALYTICS
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-109
+  domain: Analytics
+  capability: Global search across entities/IDs/QR
+  decision: OPTIONAL_MODULE
+  release: V1
+  spec_doc: №45
+  master_link: '-'
+  integrations: Postgres/search index optional
+  hardware: Нет
+  wp49_disposition: WP49-ANALYTICS
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-110
+  domain: UX
+  capability: Role workspaces
+  decision: ENHANCE
+  release: V1
+  spec_doc: №46
+  master_link: 125-140,214-230
+  integrations: Push/QR/NFC
+  hardware: Mobile
+  wp49_disposition: WP49-UX
+  freeze_status: FROZEN_ACCEPTED
+- id: MD-111
+  domain: UX
+  capability: Industrial large-button/glove mode
+  decision: OPTIONAL_MODULE
+  release: V1.5
+  spec_doc: №46
+  master_link: 125-140
+  integrations: Mobile
+  hardware: Rugged device optional
+  wp49_disposition: WP49-UX
+  freeze_status: FROZEN_OPTIONAL
+- id: MD-112
+  domain: 'Vertical: Livestock'
+  capability: Animal master / digital herd twin
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Milking/RFID/ERP
+  hardware: RFID optional
+  wp49_disposition: WP49-VERTICAL_LIVESTOCK
+  freeze_status: FROZEN_EXTENSION
+- id: MD-113
+  domain: 'Vertical: Livestock'
+  capability: Reproduction workflow
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Vertical integrations
+  hardware: Optional sensors
+  wp49_disposition: WP49-VERTICAL_LIVESTOCK
+  freeze_status: FROZEN_EXTENSION
+- id: MD-114
+  domain: 'Vertical: Livestock'
+  capability: Veterinary + medicine inventory
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Vet systems
+  hardware: RFID optional
+  wp49_disposition: WP49-VERTICAL_LIVESTOCK
+  freeze_status: FROZEN_EXTENSION
+- id: MD-115
+  domain: 'Vertical: Livestock'
+  capability: Feeding/ration optimisation
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Feed equipment
+  hardware: Scale/mixer optional
+  wp49_disposition: WP49-VERTICAL_LIVESTOCK
+  freeze_status: FROZEN_EXTENSION
+- id: MD-116
+  domain: 'Vertical: Livestock'
+  capability: Milking and individual yield
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Milking systems
+  hardware: Milking equipment required for automation
+  wp49_disposition: WP49-VERTICAL_LIVESTOCK
+  freeze_status: FROZEN_EXTENSION
+- id: MD-117
+  domain: 'Vertical: Livestock'
+  capability: Computer vision health/lameness/BCS/feed-table
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38/№30
+  master_link: '-'
+  integrations: AI/CV
+  hardware: Cameras required
+  wp49_disposition: WP49-VERTICAL_LIVESTOCK
+  freeze_status: FROZEN_EXTENSION
+- id: MD-118
+  domain: 'Vertical: Greenhouse'
+  capability: Crop cycle + greenhouse zones
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Weather/IoT optional
+  hardware: Нет
+  wp49_disposition: WP49-VERTICAL_GREENHOUSE
+  freeze_status: FROZEN_EXTENSION
+- id: MD-119
+  domain: 'Vertical: Greenhouse'
+  capability: Climate and irrigation target plan
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Local automation
+  hardware: Sensors optional
+  wp49_disposition: WP49-VERTICAL_GREENHOUSE
+  freeze_status: FROZEN_EXTENSION
+- id: MD-120
+  domain: 'Vertical: Greenhouse'
+  capability: Local autonomous execution fallback
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38/№31
+  master_link: '-'
+  integrations: RS485/LoRaWAN/PLC
+  hardware: Controller required for control
+  wp49_disposition: WP49-VERTICAL_GREENHOUSE
+  freeze_status: FROZEN_EXTENSION
+- id: MD-121
+  domain: 'Vertical: Orchard'
+  capability: Row/block model for orchards/vineyards
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: GIS
+  hardware: Нет
+  wp49_disposition: WP49-VERTICAL_ORCHARD
+  freeze_status: FROZEN_EXTENSION
+- id: MD-122
+  domain: 'Vertical: Horticulture'
+  capability: Harvest by worker/container/weight
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Mobile/1С
+  hardware: Scale optional
+  wp49_disposition: WP49-VERTICAL_HORTICULTURE
+  freeze_status: FROZEN_EXTENSION
+- id: MD-123
+  domain: 'Vertical: Poultry/Small farm'
+  capability: Flock/incubation cycles
+  decision: VERTICAL_EXTENSION
+  release: FUTURE
+  spec_doc: №38
+  master_link: '-'
+  integrations: Vertical IoT
+  hardware: Optional sensors
+  wp49_disposition: WP49-VERTICAL_POULTRY_SMALL_F
+  freeze_status: FROZEN_EXTENSION
+- id: MD-124
+  domain: Boundary
+  capability: Financial accounting / GL / tax
+  decision: INTEGRATION_ONLY
+  release: ALL
+  spec_doc: №13/№40
+  master_link: 254-268
+  integrations: 1С
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-125
+  domain: Boundary
+  capability: Payroll calculation
+  decision: INTEGRATION_ONLY
+  release: ALL
+  spec_doc: №42
+  master_link: '265'
+  integrations: 1С
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-126
+  domain: Boundary
+  capability: Full enterprise procurement/sales accounting
+  decision: INTEGRATION_ONLY
+  release: ALL
+  spec_doc: №41
+  master_link: 257-264
+  integrations: 1С
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-127
+  domain: Boundary
+  capability: Full enterprise WMS automation/robot orchestration
+  decision: INTEGRATION_ONLY
+  release: ALL
+  spec_doc: №37/№44
+  master_link: '-'
+  integrations: External WMS
+  hardware: Hardware often required
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-128
+  domain: Boundary
+  capability: Full network TMS/SCAP optimiser
+  decision: INTEGRATION_ONLY
+  release: ALL
+  spec_doc: №37
+  master_link: '-'
+  integrations: External TMS
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-129
+  domain: Boundary
+  capability: Marketplace/e-commerce ecosystem
+  decision: REJECTED
+  release: '-'
+  spec_doc: №33
+  master_link: '-'
+  integrations: External marketplace
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_REJECTED
+- id: MD-130
+  domain: Boundary
+  capability: Media/social agronomic community
+  decision: INTEGRATION_ONLY
+  release: FUTURE
+  spec_doc: №30/№34
+  master_link: '-'
+  integrations: RAG/source links
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY
+- id: MD-131
+  domain: Boundary
+  capability: Safety PLC / E-stop / safety interlocks
+  decision: REJECTED
+  release: ALL
+  spec_doc: №25/№31
+  master_link: '-'
+  integrations: PLC safety
+  hardware: Required local safety
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_REJECTED
+- id: MD-132
+  domain: Boundary
+  capability: Unsupervised AI mutation of canonical facts
+  decision: REJECTED
+  release: ALL
+  spec_doc: №30
+  master_link: 282-287
+  integrations: AI Gateway
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_REJECTED
+- id: MD-133
+  domain: Boundary
+  capability: Government system clone
+  decision: INTEGRATION_ONLY
+  release: ALL
+  spec_doc: №13
+  master_link: 269-273
+  integrations: External APIs/files
+  hardware: Нет
+  wp49_disposition: NO_BUILD
+  freeze_status: FROZEN_BOUNDARY

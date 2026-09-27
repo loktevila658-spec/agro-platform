@@ -1,0 +1,42 @@
+schema_version: '1.0'
+source: DOC50
+gates:
+- id: G0
+  name: Prerequisites
+  pass_condition: dependsOn merged; contracts/schema compatible.
+- id: G1
+  name: Static
+  pass_condition: format/lint/typecheck/architecture rules PASS.
+- id: G2
+  name: Migration
+  pass_condition: migration valid; compatibility strategy documented.
+- id: G3
+  name: Unit
+  pass_condition: domain rules/value objects PASS.
+- id: G4
+  name: Integration
+  pass_condition: real Postgres/PostGIS/Redis/MinIO/BullMQ tests PASS.
+- id: G5
+  name: API Contract
+  pass_condition: OpenAPI/codegen/backward compatibility PASS.
+- id: G6
+  name: Event Contract
+  pass_condition: event schemas/outbox/inbox/idempotency PASS.
+- id: G7
+  name: Permissions
+  pass_condition: deny-by-default + negative tests PASS.
+- id: G8
+  name: Offline
+  pass_condition: offline save/sync/retry/conflict paths PASS where applicable.
+- id: G9
+  name: Audit/Provenance
+  pass_condition: authoritative changes and corrections traceable.
+- id: G10
+  name: Demo/E2E
+  pass_condition: deterministic scenario PASS.
+- id: G11
+  name: NFR/Security
+  pass_condition: relevant performance/security/chaos gates PASS.
+- id: G12
+  name: Evidence/Merge
+  pass_condition: Completion Report complete; no unmapped scope; merge approved.
