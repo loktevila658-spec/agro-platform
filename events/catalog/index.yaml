@@ -1,7 +1,7 @@
 schema_version: 0.1.0
 status: BOOTSTRAP
-sources:
-- DOC15
-- DOC50
 events: []
-rule: Events are added only by a WP that updates schema, producer/consumer ownership and contract tests.
+sources:
+  - DOC28
+  - DOC49
+  - DOC50
