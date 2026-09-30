@@ -8,6 +8,7 @@ RUN cd apps && pnpm install --no-frozen-lockfile
 RUN cd apps && pnpm --filter @agroplatform/api build
 
 FROM node:22-alpine
+RUN apk add --no-cache postgresql-client
 WORKDIR /workspace/apps/api
 COPY --from=build /workspace/apps/node_modules ../node_modules
 COPY --from=build /workspace/apps/api/node_modules ./node_modules
