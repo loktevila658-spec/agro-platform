@@ -1,4 +1,10 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+import { SchemaVersionController } from './schema-version.controller';
+import { SchemaVersionService } from './schema-version.service';
+
+@Module({
+  controllers: [SchemaVersionController],
+  providers: [SchemaVersionService],
+})
 export class AppModule {}
