@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agroplatform.local/schemas/event-catalog.schema.json",
+  "title": "AgroPlatform event catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "catalogVersion", "events"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "catalogVersion": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version", "producer", "consumers", "schema"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$"},
+          "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+          "producer": {"type": "string", "minLength": 1},
+          "consumers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "schema": {"type": "object"}
+        }
+      }
+    }
+  }
+}
