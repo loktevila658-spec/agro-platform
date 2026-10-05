@@ -4,10 +4,12 @@
   "title": "AgroPlatform event catalog",
   "type": "object",
   "additionalProperties": false,
-  "required": ["$schema", "catalogVersion", "events"],
+  "required": ["$schema", "catalogVersion", "schema_version", "status", "events", "sources"],
   "properties": {
-    "$schema": {"type": "string"},
+    "$schema": {"type": "string", "pattern": "^\\.\\./schemas/event-catalog\\.schema\\.json$"},
     "catalogVersion": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "status": {"type": "string", "pattern": "^BOOTSTRAP$"},
     "events": {
       "type": "array",
       "items": {
@@ -19,9 +21,20 @@
           "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
           "producer": {"type": "string", "minLength": 1},
           "consumers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-          "schema": {"type": "object"}
+          "schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "additionalProperties"],
+            "properties": {
+              "type": {"type": "string", "pattern": "^object$"},
+              "additionalProperties": {"type": "boolean"},
+              "properties": {"type": "object"},
+              "required": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+            }
+          }
         }
       }
-    }
+    },
+    "sources": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
   }
 }
