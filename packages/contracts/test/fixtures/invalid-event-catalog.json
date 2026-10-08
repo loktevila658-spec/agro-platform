@@ -1,0 +1,16 @@
+{
+  "$schema": "../schemas/event-catalog.schema.json",
+  "catalogVersion": "not-a-version",
+  "schema_version": "0.1.0",
+  "status": "BOOTSTRAP",
+  "events": [
+    {
+      "name": "invalid event name",
+      "version": "latest",
+      "producer": "",
+      "consumers": ["duplicate", "duplicate"],
+      "schema": {"type": "string", "additionalProperties": false}
+    }
+  ],
+  "sources": ["DOC50"]
+}

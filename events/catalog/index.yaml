@@ -1,3 +1,5 @@
+$schema: ../schemas/event-catalog.schema.json
+catalogVersion: 1.0.0
 schema_version: 0.1.0
 status: BOOTSTRAP
 events: []

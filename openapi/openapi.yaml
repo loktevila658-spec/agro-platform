@@ -5,9 +5,61 @@ info:
 servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
-paths: {}
+paths:
+  /system/schema-version:
+    get:
+      operationId: getSchemaVersion
+      summary: Read the applied database schema version
+      responses:
+        '200':
+          description: Current database and PostGIS schema-version state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaVersionResponse'
+        '503':
+          description: Database schema version is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaVersionUnavailableResponse'
 components:
-  schemas: {}
+  schemas:
+    SchemaVersionResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - expectedSchemaVersion
+        - postgisVersion
+        - status
+      properties:
+        schemaVersion:
+          type: integer
+        expectedSchemaVersion:
+          type: integer
+        postgisVersion:
+          type: string
+        status:
+          type: string
+          enum:
+            - current
+            - behind
+            - ahead
+    SchemaVersionUnavailableResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - statusCode
+        - error
+        - message
+      properties:
+        statusCode:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
 x-status: BOOTSTRAP
 x-sources:
   - DOC28
