@@ -15,17 +15,35 @@ async function waitForHttp(url, attempts = 30) {
 
 function start(command, args, env = {}) {
   return spawn(command, args, {
+    detached: process.platform !== 'win32',
     env: { ...process.env, ...env },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+}
+
+function stop(processHandle) {
+  if (processHandle.exitCode !== null) return;
+
+  if (process.platform === 'win32') {
+    processHandle.kill('SIGTERM');
+  } else {
+    try {
+      process.kill(-processHandle.pid, 'SIGTERM');
+    } catch (error) {
+      if (error.code !== 'ESRCH') throw error;
+    }
+  }
+
+  processHandle.stdout.destroy();
+  processHandle.stderr.destroy();
 }
 
 test('built API and web shells start locally', async (context) => {
   const api = start('node', ['apps/api/dist/main.js'], { PORT: '3100' });
   const web = start('pnpm', ['--dir', 'apps/web', 'start'], { PORT: '3101' });
   context.after(() => {
-    api.kill('SIGTERM');
-    web.kill('SIGTERM');
+    stop(api);
+    stop(web);
   });
 
   const [apiResponse, webResponse] = await Promise.all([
