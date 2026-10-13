@@ -10,21 +10,162 @@ paths:
     get:
       operationId: getSchemaVersion
       summary: Read the applied database schema version
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: Current database and PostGIS schema-version state
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SchemaVersionResponse'
         '503':
           description: Database schema version is unavailable
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SchemaVersionUnavailableResponse'
+  /health/live:
+    get:
+      operationId: getLiveness
+      summary: Check API process liveness
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: API process is alive
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LivenessResponse'
+  /health/ready:
+    get:
+      operationId: getReadiness
+      summary: Check API and required database readiness
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: API and database are ready
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessResponse'
+        '503':
+          description: API database dependency is not ready
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessResponse'
+  /metrics:
+    get:
+      operationId: getMetrics
+      summary: Read current API process and HTTP measurements
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Current API process and HTTP measurements
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
 components:
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        pattern: '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$'
+      description: Optional bounded request correlation identifier; invalid values are replaced.
+  headers:
+    CorrelationId:
+      description: Correlation identifier assigned to this request.
+      schema:
+        type: string
   schemas:
+    LivenessResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+    ReadinessResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - databaseStatus
+      properties:
+        status:
+          type: string
+          enum:
+            - ready
+            - not_ready
+        databaseStatus:
+          type: string
+          enum:
+            - current
+            - unavailable
+            - behind
+            - ahead
+    MetricsResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - processUptimeSeconds
+        - processHeapUsedBytes
+        - processResidentSetBytes
+        - httpRequestCount
+        - httpRequestDurationMsTotal
+        - httpStatus2xxCount
+        - httpStatus3xxCount
+        - httpStatus4xxCount
+        - httpStatus5xxCount
+      properties:
+        processUptimeSeconds:
+          type: number
+        processHeapUsedBytes:
+          type: integer
+        processResidentSetBytes:
+          type: integer
+        httpRequestCount:
+          type: integer
+        httpRequestDurationMsTotal:
+          type: number
+        httpStatus2xxCount:
+          type: integer
+        httpStatus3xxCount:
+          type: integer
+        httpStatus4xxCount:
+          type: integer
+        httpStatus5xxCount:
+          type: integer
     SchemaVersionResponse:
       type: object
       additionalProperties: false
