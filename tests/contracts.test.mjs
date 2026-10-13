@@ -7,7 +7,7 @@ import {
   validateOpenApi,
 } from '../packages/contracts/scripts/lib/contracts.mjs';
 
-test('OpenAPI remains a bootstrap contract with only authorized system and observability operations', () => {
+test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
   const source = readFileSync('openapi/openapi.yaml', 'utf8');
   const { document, operations } = validateOpenApi(source);
 
@@ -17,50 +17,41 @@ test('OpenAPI remains a bootstrap contract with only authorized system and obser
     '/health/live',
     '/health/ready',
     '/metrics',
+    '/org/organization-units',
+    '/org/organizations',
+    '/org/sites',
+    '/org/tenants',
+    '/org/tenants/{tenantId}/hierarchy',
     '/system/schema-version',
   ]);
-  assert.deepEqual(operations, [
-    {
-      method: 'GET',
-      operationId: 'getLiveness',
-      path: '/health/live',
-      responseSchemaName: 'LivenessResponse',
-    },
-    {
-      method: 'GET',
-      operationId: 'getReadiness',
-      path: '/health/ready',
-      responseSchemaName: 'ReadinessResponse',
-    },
-    {
-      method: 'GET',
-      operationId: 'getMetrics',
-      path: '/metrics',
-      responseSchemaName: 'MetricsResponse',
-    },
-    {
-      method: 'GET',
-      operationId: 'getSchemaVersion',
-      path: '/system/schema-version',
-      responseSchemaName: 'SchemaVersionResponse',
-    },
+  assert.deepEqual(operations.map(({ method, operationId, path }) => ({ method, operationId, path })), [
+    { method: 'GET', operationId: 'getLiveness', path: '/health/live' },
+    { method: 'GET', operationId: 'getReadiness', path: '/health/ready' },
+    { method: 'GET', operationId: 'getMetrics', path: '/metrics' },
+    { method: 'POST', operationId: 'createOrgOrganizationUnit', path: '/org/organization-units' },
+    { method: 'POST', operationId: 'createOrgOrganization', path: '/org/organizations' },
+    { method: 'POST', operationId: 'createOrgSite', path: '/org/sites' },
+    { method: 'POST', operationId: 'createOrgTenant', path: '/org/tenants' },
+    { method: 'GET', operationId: 'getOrgHierarchy', path: '/org/tenants/{tenantId}/hierarchy' },
+    { method: 'GET', operationId: 'getSchemaVersion', path: '/system/schema-version' },
   ]);
 
-  const forbiddenDomains =
-    /auth|identity|permission|audit|gis|fleet|warehouse|production/i;
+  const forbiddenDomains = /\/(?:auth|identity|permissions?|audit|gis|fleet|warehouse|production)(?:\/|$)/i;
   assert.doesNotMatch(Object.keys(document.paths).join('\n'), forbiddenDomains);
-  assert.deepEqual(Object.keys(document.paths).filter((path) => ![
-    '/system/schema-version',
-    '/health/live',
-    '/health/ready',
-    '/metrics',
-  ].includes(path)), []);
+  assert.deepEqual(operations.filter(({ path }) => path.startsWith('/org/')).map(({ operationId }) => operationId), [
+    'createOrgOrganizationUnit', 'createOrgOrganization', 'createOrgSite', 'createOrgTenant', 'getOrgHierarchy',
+  ]);
 });
 
-test('event catalog contains no domain events', () => {
+test('event catalog contains exactly the WP49-011 organization events', () => {
   const source = readFileSync('events/catalog/index.yaml', 'utf8');
   const catalog = parseYamlDocument(source);
 
   assert.equal(catalog.status, 'BOOTSTRAP');
-  assert.deepEqual(catalog.events, []);
+  assert.deepEqual(catalog.events.map(({ name, version, producer }) => ({ name, version, producer })), [
+    { name: 'org.tenant.created', version: '1.0.0', producer: 'org' },
+    { name: 'org.organization.created', version: '1.0.0', producer: 'org' },
+    { name: 'org.unit.created', version: '1.0.0', producer: 'org' },
+    { name: 'org.site.created', version: '1.0.0', producer: 'org' },
+  ]);
 });

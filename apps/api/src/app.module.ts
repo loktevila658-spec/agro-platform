@@ -4,8 +4,10 @@ import { ObservabilityMetrics, StructuredLogger } from '../../../packages/observ
 import { ObservabilityController } from './observability.controller';
 import { SchemaVersionController } from './schema-version.controller';
 import { SchemaVersionService } from './schema-version.service';
+import { OrgModule } from './modules/org/org.module';
 
 @Module({
+  imports: [OrgModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

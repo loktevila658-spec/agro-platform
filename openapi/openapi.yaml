@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AgroPlatform API
-  version: 0.0.0-bootstrap
+  version: 0.1.0
 servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
@@ -11,7 +11,6 @@ paths:
       operationId: getSchemaVersion
       summary: Read the applied database schema version
       parameters:
-        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: Current database and PostGIS schema-version state
@@ -36,7 +35,6 @@ paths:
       operationId: getLiveness
       summary: Check API process liveness
       parameters:
-        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: API process is alive
@@ -52,7 +50,6 @@ paths:
       operationId: getReadiness
       summary: Check API and required database readiness
       parameters:
-        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: API and database are ready
@@ -77,7 +74,6 @@ paths:
       operationId: getMetrics
       summary: Read current API process and HTTP measurements
       parameters:
-        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: Current API process and HTTP measurements
@@ -88,8 +84,174 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MetricsResponse'
+  /org/tenants:
+    post:
+      operationId: createOrgTenant
+      summary: Create a tenant in the local organization hierarchy
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/CausationId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTenantRequest'
+      responses:
+        '201':
+          description: Tenant created or returned from an idempotent retry
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantResponse'
+        '400':
+          description: Invalid request
+        '401':
+          description: Missing or invalid server-issued bootstrap credential
+        '403':
+          description: Actor lacks org.tenant.create
+        '409':
+          description: Duplicate code or incompatible idempotency-key reuse
+        '503':
+          description: PostgreSQL unavailable
+  /org/organizations:
+    post:
+      operationId: createOrgOrganization
+      summary: Create an organization within a tenant
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/CausationId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganizationRequest'
+      responses:
+        '201':
+          description: Organization created or returned from an idempotent retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationResponse'
+        '400':
+          description: Invalid request
+        '401':
+          description: Missing or invalid server-issued bootstrap credential
+        '403':
+          description: Actor lacks org.organization.create
+        '409':
+          description: Invalid tenant, duplicate code or incompatible idempotency-key reuse
+        '503':
+          description: PostgreSQL unavailable
+  /org/organization-units:
+    post:
+      operationId: createOrgOrganizationUnit
+      summary: Create an organization unit under an organization or parent unit
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/CausationId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganizationUnitRequest'
+      responses:
+        '201':
+          description: Organization unit created or returned from an idempotent retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUnitResponse'
+        '400':
+          description: Invalid request
+        '401':
+          description: Missing or invalid server-issued bootstrap credential
+        '403':
+          description: Actor lacks org.organization_unit.create
+        '409':
+          description: Invalid parent, cross-organization reference, duplicate code or incompatible idempotency-key reuse
+        '503':
+          description: PostgreSQL unavailable
+  /org/sites:
+    post:
+      operationId: createOrgSite
+      summary: Create a physical site belonging to one organization
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/CausationId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSiteRequest'
+      responses:
+        '201':
+          description: Site created or returned from an idempotent retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteResponse'
+        '400':
+          description: Invalid request
+        '401':
+          description: Missing or invalid server-issued bootstrap credential
+        '403':
+          description: Actor lacks org.site.create
+        '409':
+          description: Invalid organization/unit, duplicate code or incompatible idempotency-key reuse
+        '503':
+          description: PostgreSQL unavailable
+  /org/tenants/{tenantId}/hierarchy:
+    get:
+      operationId: getOrgHierarchy
+      summary: Read a tenant and all organization units and sites in its hierarchy
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Tenant hierarchy snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HierarchyResponse'
+        '401':
+          description: Missing or invalid server-issued bootstrap credential
+        '403':
+          description: Actor lacks org.hierarchy.read
+        '404':
+          description: Tenant not found
+        '503':
+          description: PostgreSQL unavailable
 components:
   parameters:
+    Authorization:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Server-issued Bearer bootstrap credential.
     CorrelationId:
       name: X-Correlation-Id
       in: header
@@ -99,6 +261,22 @@ components:
         minLength: 1
         pattern: '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$'
       description: Optional bounded request correlation identifier; invalid values are replaced.
+    CausationId:
+      name: X-Causation-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        pattern: '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$'
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 200
   headers:
     CorrelationId:
       description: Correlation identifier assigned to this request.
@@ -201,6 +379,241 @@ components:
           type: string
         message:
           type: string
+    CreateTenantRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - name
+        - timezone
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        timezone:
+          type: string
+    TenantResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - code
+        - name
+        - timezone
+        - createdAt
+        - correlationId
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        timezone:
+          type: string
+        createdAt:
+          type: string
+        correlationId:
+          type: string
+    CreateOrganizationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenantId
+        - code
+        - name
+        - organizationType
+      properties:
+        tenantId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        organizationType:
+          type: string
+          enum:
+            - LEGAL_ENTITY
+            - SOLE_PROPRIETOR
+            - FARM
+            - OPERATING_UNIT
+    OrganizationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - tenantId
+        - code
+        - name
+        - organizationType
+        - createdAt
+        - correlationId
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        organizationType:
+          type: string
+        createdAt:
+          type: string
+        correlationId:
+          type: string
+    CreateOrganizationUnitRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenantId
+        - organizationId
+        - code
+        - name
+        - unitType
+      properties:
+        tenantId:
+          type: string
+        organizationId:
+          type: string
+        parentId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        unitType:
+          type: string
+    OrganizationUnitResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - tenantId
+        - organizationId
+        - code
+        - name
+        - unitType
+        - createdAt
+        - correlationId
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        organizationId:
+          type: string
+        parentId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        unitType:
+          type: string
+        createdAt:
+          type: string
+        correlationId:
+          type: string
+    CreateSiteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenantId
+        - organizationId
+        - code
+        - name
+        - siteType
+        - timezone
+      properties:
+        tenantId:
+          type: string
+        organizationId:
+          type: string
+        organizationUnitId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        siteType:
+          type: string
+          enum:
+            - BASE
+            - FARM
+            - WAREHOUSE_SITE
+            - WEIGH_SITE
+            - PRODUCTION_SITE
+            - REPAIR_BASE
+            - FUEL_SITE
+        address:
+          type: string
+        timezone:
+          type: string
+    SiteResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - tenantId
+        - organizationId
+        - code
+        - name
+        - siteType
+        - timezone
+        - createdAt
+        - correlationId
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        organizationId:
+          type: string
+        organizationUnitId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        siteType:
+          type: string
+        address:
+          type: string
+        timezone:
+          type: string
+        createdAt:
+          type: string
+        correlationId:
+          type: string
+    HierarchyResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - tenantId
+        - tenantCode
+        - tenantName
+        - organizationsJson
+        - organizationUnitsJson
+        - sitesJson
+      properties:
+        tenantId:
+          type: string
+        tenantCode:
+          type: string
+        tenantName:
+          type: string
+        organizationsJson:
+          type: string
+          description: JSON-encoded array of organizations.
+        organizationUnitsJson:
+          type: string
+          description: JSON-encoded array of organizational units.
+        sitesJson:
+          type: string
+          description: JSON-encoded array of sites.
 x-status: BOOTSTRAP
 x-sources:
   - DOC28

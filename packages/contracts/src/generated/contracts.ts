@@ -4,8 +4,50 @@
  */
 
 export const OPENAPI_VERSION = '3.1.0' as const;
-export const API_CONTRACT_VERSION = '0.0.0-bootstrap' as const;
+export const API_CONTRACT_VERSION = '0.1.0' as const;
 export const EVENT_CATALOG_VERSION = '1.0.0' as const;
+
+export interface CreateOrganizationRequest {
+  readonly code: string;
+  readonly name: string;
+  readonly organizationType: 'LEGAL_ENTITY' | 'SOLE_PROPRIETOR' | 'FARM' | 'OPERATING_UNIT';
+  readonly tenantId: string;
+}
+
+export interface CreateOrganizationUnitRequest {
+  readonly code: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly parentId?: string;
+  readonly tenantId: string;
+  readonly unitType: string;
+}
+
+export interface CreateSiteRequest {
+  readonly address?: string;
+  readonly code: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly organizationUnitId?: string;
+  readonly siteType: 'BASE' | 'FARM' | 'WAREHOUSE_SITE' | 'WEIGH_SITE' | 'PRODUCTION_SITE' | 'REPAIR_BASE' | 'FUEL_SITE';
+  readonly tenantId: string;
+  readonly timezone: string;
+}
+
+export interface CreateTenantRequest {
+  readonly code: string;
+  readonly name: string;
+  readonly timezone: string;
+}
+
+export interface HierarchyResponse {
+  readonly organizationsJson: string;
+  readonly organizationUnitsJson: string;
+  readonly sitesJson: string;
+  readonly tenantCode: string;
+  readonly tenantId: string;
+  readonly tenantName: string;
+}
 
 export interface LivenessResponse {
   readonly status: 'ok';
@@ -21,6 +63,28 @@ export interface MetricsResponse {
   readonly processHeapUsedBytes: number;
   readonly processResidentSetBytes: number;
   readonly processUptimeSeconds: number;
+}
+
+export interface OrganizationResponse {
+  readonly code: string;
+  readonly correlationId: string;
+  readonly createdAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly organizationType: string;
+  readonly tenantId: string;
+}
+
+export interface OrganizationUnitResponse {
+  readonly code: string;
+  readonly correlationId: string;
+  readonly createdAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly parentId?: string;
+  readonly tenantId: string;
+  readonly unitType: string;
 }
 
 export interface ReadinessResponse {
@@ -41,6 +105,29 @@ export interface SchemaVersionUnavailableResponse {
   readonly statusCode: number;
 }
 
+export interface SiteResponse {
+  readonly address?: string;
+  readonly code: string;
+  readonly correlationId: string;
+  readonly createdAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly organizationUnitId?: string;
+  readonly siteType: string;
+  readonly tenantId: string;
+  readonly timezone: string;
+}
+
+export interface TenantResponse {
+  readonly code: string;
+  readonly correlationId: string;
+  readonly createdAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly timezone: string;
+}
+
 export interface EventDefinition {
   readonly name: string;
   readonly version: string;
@@ -49,7 +136,192 @@ export interface EventDefinition {
   readonly schema: Readonly<Record<string, unknown>>;
 }
 
-export const EVENT_DEFINITIONS: readonly EventDefinition[] = [];
+export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
+  {
+    "name": "org.tenant.created",
+    "version": "1.0.0",
+    "producer": "org",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "org.organization.created",
+    "version": "1.0.0",
+    "producer": "org",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "org.unit.created",
+    "version": "1.0.0",
+    "producer": "org",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "org.site.created",
+    "version": "1.0.0",
+    "producer": "org",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  }
+];
 
 export interface ApiTransportResponse {
   readonly ok: boolean;
@@ -57,7 +329,7 @@ export interface ApiTransportResponse {
   json(): Promise<unknown>;
 }
 
-export type ApiTransport = (url: string, init: { readonly method: string }) => Promise<ApiTransportResponse>;
+export type ApiTransport = (url: string, init: { readonly method: string; readonly headers?: Readonly<Record<string, string>>; readonly body?: string }) => Promise<ApiTransportResponse>;
 
 export interface ApiClientOptions {
   readonly baseUrl: string;
@@ -76,25 +348,99 @@ export class AgroPlatformApiClient {
   }
 
   async getLiveness(): Promise<LivenessResponse> {
-    const response = await this.transport(`${this.baseUrl}/health/live`, { method: 'GET' });
+    const url = new URL(`${this.baseUrl}/health/live`);
+    const headers: Record<string, string> = {};
+    const response = await this.transport(url.toString(), { method: 'GET' });
     if (!response.ok) throw new Error(`getLiveness failed with HTTP ${response.status}`);
     return await response.json() as LivenessResponse;
   }
 
   async getReadiness(): Promise<ReadinessResponse> {
-    const response = await this.transport(`${this.baseUrl}/health/ready`, { method: 'GET' });
+    const url = new URL(`${this.baseUrl}/health/ready`);
+    const headers: Record<string, string> = {};
+    const response = await this.transport(url.toString(), { method: 'GET' });
     if (!response.ok) throw new Error(`getReadiness failed with HTTP ${response.status}`);
     return await response.json() as ReadinessResponse;
   }
 
   async getMetrics(): Promise<MetricsResponse> {
-    const response = await this.transport(`${this.baseUrl}/metrics`, { method: 'GET' });
+    const url = new URL(`${this.baseUrl}/metrics`);
+    const headers: Record<string, string> = {};
+    const response = await this.transport(url.toString(), { method: 'GET' });
     if (!response.ok) throw new Error(`getMetrics failed with HTTP ${response.status}`);
     return await response.json() as MetricsResponse;
   }
 
+  async createOrgOrganizationUnit(authorization: string, idempotencyKey: string, body: CreateOrganizationUnitRequest, xCausationId?: string, xCorrelationId?: string): Promise<OrganizationUnitResponse> {
+    const url = new URL(`${this.baseUrl}/org/organization-units`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    if (xCausationId !== undefined) headers["X-Causation-Id"] = String(xCausationId);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`createOrgOrganizationUnit failed with HTTP ${response.status}`);
+    return await response.json() as OrganizationUnitResponse;
+  }
+
+  async createOrgOrganization(authorization: string, idempotencyKey: string, body: CreateOrganizationRequest, xCausationId?: string, xCorrelationId?: string): Promise<OrganizationResponse> {
+    const url = new URL(`${this.baseUrl}/org/organizations`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    if (xCausationId !== undefined) headers["X-Causation-Id"] = String(xCausationId);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`createOrgOrganization failed with HTTP ${response.status}`);
+    return await response.json() as OrganizationResponse;
+  }
+
+  async createOrgSite(authorization: string, idempotencyKey: string, body: CreateSiteRequest, xCausationId?: string, xCorrelationId?: string): Promise<SiteResponse> {
+    const url = new URL(`${this.baseUrl}/org/sites`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    if (xCausationId !== undefined) headers["X-Causation-Id"] = String(xCausationId);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`createOrgSite failed with HTTP ${response.status}`);
+    return await response.json() as SiteResponse;
+  }
+
+  async createOrgTenant(authorization: string, idempotencyKey: string, body: CreateTenantRequest, xCausationId?: string, xCorrelationId?: string): Promise<TenantResponse> {
+    const url = new URL(`${this.baseUrl}/org/tenants`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    if (xCausationId !== undefined) headers["X-Causation-Id"] = String(xCausationId);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`createOrgTenant failed with HTTP ${response.status}`);
+    return await response.json() as TenantResponse;
+  }
+
+  async getOrgHierarchy(tenantId: string, authorization: string, xCorrelationId?: string): Promise<HierarchyResponse> {
+    const url = new URL(`${this.baseUrl}/org/tenants/${encodeURIComponent(String(tenantId))}/hierarchy`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`getOrgHierarchy failed with HTTP ${response.status}`);
+    return await response.json() as HierarchyResponse;
+  }
+
   async getSchemaVersion(): Promise<SchemaVersionResponse> {
-    const response = await this.transport(`${this.baseUrl}/system/schema-version`, { method: 'GET' });
+    const url = new URL(`${this.baseUrl}/system/schema-version`);
+    const headers: Record<string, string> = {};
+    const response = await this.transport(url.toString(), { method: 'GET' });
     if (!response.ok) throw new Error(`getSchemaVersion failed with HTTP ${response.status}`);
     return await response.json() as SchemaVersionResponse;
   }

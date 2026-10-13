@@ -71,17 +71,21 @@ test('migration program is deterministic and guards applied state', async () => 
   assert.match(first, /schema_migrations/);
 });
 
-test('baseline migration enables PostGIS without business tables', async () => {
+test('baseline and organization migrations are ordered and declare the WP49-011 hierarchy', async () => {
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.equal(migrations.length, 1);
-  assert.equal(migrations[0].version, 1);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
     /CREATE\s+TABLE\s+(?!IF\s+NOT\s+EXISTS\s+platform_meta\.schema_migrations)/i,
   );
+  for (const table of ['tenant', 'organization', 'organization_unit', 'site', 'command_idempotency', 'audit_entry', 'outbox_event']) {
+    assert.match(migrations[1].sql, new RegExp(`CREATE TABLE org\\.${table}\\b`, 'i'));
+  }
+  assert.match(migrations[1].sql, /CREATE TRIGGER/i);
+  assert.match(migrations[1].sql, /WITH RECURSIVE/i);
 });
 
 test('database credentials are not exposed in psql process arguments', async () => {
