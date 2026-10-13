@@ -20,14 +20,34 @@ const syntheticEvent = {
   schema: { type: 'object', additionalProperties: false, properties: {}, required: [] },
 };
 
-test('canonical OpenAPI validates and declares schema-version operation', async () => {
+test('canonical OpenAPI validates and declares only authorized bootstrap operations', async () => {
   const { openapi } = await loadAndValidateContracts();
-  assert.deepEqual(openapi.operations, [{
-    method: 'GET',
-    operationId: 'getSchemaVersion',
-    path: '/system/schema-version',
-    responseSchemaName: 'SchemaVersionResponse',
-  }]);
+  assert.deepEqual(openapi.operations, [
+    {
+      method: 'GET',
+      operationId: 'getLiveness',
+      path: '/health/live',
+      responseSchemaName: 'LivenessResponse',
+    },
+    {
+      method: 'GET',
+      operationId: 'getReadiness',
+      path: '/health/ready',
+      responseSchemaName: 'ReadinessResponse',
+    },
+    {
+      method: 'GET',
+      operationId: 'getMetrics',
+      path: '/metrics',
+      responseSchemaName: 'MetricsResponse',
+    },
+    {
+      method: 'GET',
+      operationId: 'getSchemaVersion',
+      path: '/system/schema-version',
+      responseSchemaName: 'SchemaVersionResponse',
+    },
+  ]);
 });
 
 test('malformed OpenAPI syntax fails deterministically', async () => {

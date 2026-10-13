@@ -7,6 +7,27 @@ export const OPENAPI_VERSION = '3.1.0' as const;
 export const API_CONTRACT_VERSION = '0.0.0-bootstrap' as const;
 export const EVENT_CATALOG_VERSION = '1.0.0' as const;
 
+export interface LivenessResponse {
+  readonly status: 'ok';
+}
+
+export interface MetricsResponse {
+  readonly httpRequestCount: number;
+  readonly httpRequestDurationMsTotal: number;
+  readonly httpStatus2xxCount: number;
+  readonly httpStatus3xxCount: number;
+  readonly httpStatus4xxCount: number;
+  readonly httpStatus5xxCount: number;
+  readonly processHeapUsedBytes: number;
+  readonly processResidentSetBytes: number;
+  readonly processUptimeSeconds: number;
+}
+
+export interface ReadinessResponse {
+  readonly databaseStatus: 'current' | 'unavailable' | 'behind' | 'ahead';
+  readonly status: 'ready' | 'not_ready';
+}
+
 export interface SchemaVersionResponse {
   readonly expectedSchemaVersion: number;
   readonly postgisVersion: string;
@@ -52,6 +73,24 @@ export class AgroPlatformApiClient {
   constructor(options: ApiClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, '');
     this.transport = options.transport ?? defaultTransport;
+  }
+
+  async getLiveness(): Promise<LivenessResponse> {
+    const response = await this.transport(`${this.baseUrl}/health/live`, { method: 'GET' });
+    if (!response.ok) throw new Error(`getLiveness failed with HTTP ${response.status}`);
+    return await response.json() as LivenessResponse;
+  }
+
+  async getReadiness(): Promise<ReadinessResponse> {
+    const response = await this.transport(`${this.baseUrl}/health/ready`, { method: 'GET' });
+    if (!response.ok) throw new Error(`getReadiness failed with HTTP ${response.status}`);
+    return await response.json() as ReadinessResponse;
+  }
+
+  async getMetrics(): Promise<MetricsResponse> {
+    const response = await this.transport(`${this.baseUrl}/metrics`, { method: 'GET' });
+    if (!response.ok) throw new Error(`getMetrics failed with HTTP ${response.status}`);
+    return await response.json() as MetricsResponse;
   }
 
   async getSchemaVersion(): Promise<SchemaVersionResponse> {

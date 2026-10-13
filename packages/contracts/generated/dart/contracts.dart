@@ -5,6 +5,69 @@ const openApiVersion = '3.1.0';
 const apiContractVersion = '0.0.0-bootstrap';
 const eventCatalogVersion = '1.0.0';
 
+class LivenessResponse {
+  const LivenessResponse({
+    required this.status,
+  });
+
+  factory LivenessResponse.fromJson(Map<String, Object?> json) => LivenessResponse(
+        status: json['status'] as String,
+      );
+
+  final String status;
+}
+
+class MetricsResponse {
+  const MetricsResponse({
+    required this.httpRequestCount,
+    required this.httpRequestDurationMsTotal,
+    required this.httpStatus2xxCount,
+    required this.httpStatus3xxCount,
+    required this.httpStatus4xxCount,
+    required this.httpStatus5xxCount,
+    required this.processHeapUsedBytes,
+    required this.processResidentSetBytes,
+    required this.processUptimeSeconds,
+  });
+
+  factory MetricsResponse.fromJson(Map<String, Object?> json) => MetricsResponse(
+        httpRequestCount: (json['httpRequestCount'] as num).toInt(),
+        httpRequestDurationMsTotal: json['httpRequestDurationMsTotal'] as num,
+        httpStatus2xxCount: (json['httpStatus2xxCount'] as num).toInt(),
+        httpStatus3xxCount: (json['httpStatus3xxCount'] as num).toInt(),
+        httpStatus4xxCount: (json['httpStatus4xxCount'] as num).toInt(),
+        httpStatus5xxCount: (json['httpStatus5xxCount'] as num).toInt(),
+        processHeapUsedBytes: (json['processHeapUsedBytes'] as num).toInt(),
+        processResidentSetBytes: (json['processResidentSetBytes'] as num).toInt(),
+        processUptimeSeconds: json['processUptimeSeconds'] as num,
+      );
+
+  final int httpRequestCount;
+  final num httpRequestDurationMsTotal;
+  final int httpStatus2xxCount;
+  final int httpStatus3xxCount;
+  final int httpStatus4xxCount;
+  final int httpStatus5xxCount;
+  final int processHeapUsedBytes;
+  final int processResidentSetBytes;
+  final num processUptimeSeconds;
+}
+
+class ReadinessResponse {
+  const ReadinessResponse({
+    required this.databaseStatus,
+    required this.status,
+  });
+
+  factory ReadinessResponse.fromJson(Map<String, Object?> json) => ReadinessResponse(
+        databaseStatus: json['databaseStatus'] as String,
+        status: json['status'] as String,
+      );
+
+  final String databaseStatus;
+  final String status;
+}
+
 class SchemaVersionResponse {
   const SchemaVersionResponse({
     required this.expectedSchemaVersion,
@@ -71,6 +134,21 @@ class AgroPlatformApiClient {
 
   final Uri baseUri;
   final ApiTransport transport;
+
+  Future<LivenessResponse> getLiveness() async {
+    final json = await transport(baseUri.resolve('/health/live'), 'GET');
+    return LivenessResponse.fromJson(json);
+  }
+
+  Future<ReadinessResponse> getReadiness() async {
+    final json = await transport(baseUri.resolve('/health/ready'), 'GET');
+    return ReadinessResponse.fromJson(json);
+  }
+
+  Future<MetricsResponse> getMetrics() async {
+    final json = await transport(baseUri.resolve('/metrics'), 'GET');
+    return MetricsResponse.fromJson(json);
+  }
 
   Future<SchemaVersionResponse> getSchemaVersion() async {
     final json = await transport(baseUri.resolve('/system/schema-version'), 'GET');
