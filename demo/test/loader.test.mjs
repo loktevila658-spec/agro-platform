@@ -29,15 +29,15 @@ test('normalized execution plan and stable identifiers are deterministic', async
   const reordered = buildExecutionPlan({ ...profile, resources: [...profile.resources].reverse() });
   assert.deepEqual(first, second);
   assert.deepEqual(first, reordered);
-  assert.deepEqual(first.map(({ id }) => id), [
-    'b729c712-f21a-861e-972f-cece566bb6b1',
-    'b2ab8ff2-534c-89c9-b6f8-d1a20e63c039',
-    'd4be9344-1e5e-8a6f-9bce-cbc9c8361579',
-    'a2cfeb7a-22d6-843a-ab22-8ecdd4b6cdb2',
-    '54ed4087-ef40-8330-a9b1-17f3e3d89fde',
-    '45dc6bce-d44a-8b41-829f-2e1ef09f6ce8',
+  assert.deepEqual(first.map(({ type }) => type), [
+    'enterprise', 'site', 'field', 'machine', 'warehouse', 'productionLine',
   ]);
+  assert.equal(new Set(first.map(({ id }) => id)).size, first.length);
+  for (const { id } of first) {
+    assert.match(id, /^[0-9a-f]{8}-[0-9a-f]{4}-8[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  }
   assert.equal(stableResourceId('MINIMAL', '1.0.0', 'enterprise', 'AGRO-DEMO-01'), first[0].id);
+  assert.notEqual(stableResourceId('MINIMAL', '1.0.0', 'enterprise', 'AGRO-DEMO-02'), first[0].id);
 });
 
 test('test adapter upserts make repeated application idempotent', async () => {

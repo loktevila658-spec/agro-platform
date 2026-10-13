@@ -8,8 +8,8 @@ profiles remain separate future work.
 `profiles/minimal.json` is the data definition; `src/loader.mjs` validates it
 and builds a deterministic ordered upsert plan. Stable IDs are SHA-256-derived
 from the profile name, dataset version, resource type, and canonical key, then
-formatted as stable UUIDv8 identifiers. The loader has no clock, random-number, network, or secret
-dependency.
+formatted as stable UUIDv8 identifiers. The loader has no clock, random-number,
+network, or secret dependency.
 
 The current database baseline contains no business-domain tables and there is
 no approved persistence adapter in this work package. Consequently, the CLI
