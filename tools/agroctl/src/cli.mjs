@@ -157,8 +157,8 @@ function processOutcome(result, command, environment) {
     return {
       code: signalExitCode(result.signal),
       message: `terminated by signal ${result.signal}`,
-      stdout: result.stdout,
-      stderr: result.stderr,
+      stdout: sanitizeOutput(result.stdout, environment),
+      stderr: sanitizeOutput(result.stderr, environment),
     };
   }
 

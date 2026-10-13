@@ -174,12 +174,21 @@ test('repository root resolution is independent of an unrelated current director
   assert.equal(resolveRepositoryRoot(import.meta.url, outsideDirectory), repositoryRoot);
 });
 
-test('child signal and spawn errors produce deterministic exit codes and safe messages', () => {
+test('child signal output is redacted and signal/spawn errors use deterministic exit codes', () => {
+  const databaseUrl = 'postgresql://operator:signal-secret@localhost/agro';
   const signaled = makeCli({
-    runProcess: () => ({ status: null, signal: 'SIGTERM', stdout: '', stderr: '' }),
+    env: { DATABASE_URL: databaseUrl },
+    runProcess: () => ({
+      status: null,
+      signal: 'SIGTERM',
+      stdout: `subprocess received ${databaseUrl}\n`,
+      stderr: 'PGPASSWORD=signal-secret\n',
+    }),
   });
   assert.equal(signaled.cli(['migrate']), 143);
   assert.match(signaled.stderr(), /terminated by signal SIGTERM/);
+  assert.doesNotMatch(signaled.stdout() + signaled.stderr(), /operator|signal-secret|postgresql:\/\//);
+  assert.match(signaled.stdout() + signaled.stderr(), /\[REDACTED\]/);
 
   const missing = makeCli({
     runProcess: () => ({ status: null, error: { code: 'ENOENT', message: 'spawn failed' } }),
