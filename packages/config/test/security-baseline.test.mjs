@@ -14,7 +14,6 @@ import { formatFinding, scanRepository, scanText } from '../../../security/secre
 
 const require = createRequire(import.meta.url);
 const {
-  SecurityHeaderConfigError,
   createBaselineSecurityHeaders,
 } = require('../../../security/headers.cjs');
 
@@ -96,6 +95,10 @@ test('secret references are typed, immutable, and contain no secret material', (
   });
   assert.equal(Object.isFrozen(reference), true);
   assert.equal(JSON.stringify(reference).includes('PRIVATE KEY'), false);
+  const opaqueLocator = '4f9a2c7e1b6d8a3f5c0e9b2d7a4f1c6e8b3d0a5f2c9e7b1d6a4f8c3e0b5d2a9';
+  assert.equal(parseRequiredSecretReference({
+    SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: opaqueLocator, purpose: 'event-signing' }),
+  }, 'SIGNING_KEY_REF').locator, opaqueLocator);
 });
 
 test('missing, malformed, and raw key material fail without echoing the value', () => {
@@ -109,6 +112,9 @@ test('missing, malformed, and raw key material fail without echoing the value', 
     { SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: '', purpose: 'y' }) },
     { SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: 'x', purpose: 'y', material: rawValue }) },
     { SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: privateKeyMarker, purpose: 'y' }) },
+    { SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: 'ghp_' + 'A'.repeat(36), purpose: 'y' }) },
+    { SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: 'safe-locator', purpose: 'signing', version: `password=${rawValue}` }) },
+    { SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: 'safe-locator', purpose: 'signing', version: `postgres://user:${rawValue}@db.internal/app` }) },
   ]) {
     assert.throws(() => parseRequiredSecretReference(source, 'SIGNING_KEY_REF'), (error) => {
       assert.ok(error instanceof ConfigValidationError);
@@ -117,6 +123,25 @@ test('missing, malformed, and raw key material fail without echoing the value', 
       return true;
     });
   }
+  for (const field of ['locator', 'purpose', 'version']) {
+    const secret = 'xoxb-' + 'AbCdEf1234567890GhIjKlMn';
+    assert.throws(() => parseRequiredSecretReference({
+      SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: 'opaque-r4nd0m-ref-98Qx', purpose: 'signing', version: 'v4', [field]: secret }),
+    }, 'SIGNING_KEY_REF'), (error) => {
+      assert.ok(error instanceof ConfigValidationError);
+      assert.match(error.message, /SIGNING_KEY_REF/);
+      assert.equal(error.message.includes(secret), false);
+      return true;
+    });
+  }
+  const privateKeyValue = ['-----BEGIN', 'RSA PRIVATE KEY-----'].join(' ');
+  assert.throws(() => parseRequiredSecretReference({
+    SIGNING_KEY_REF: JSON.stringify({ provider: 'VAULT', locator: 'opaque-r4nd0m-ref-98Qx', purpose: privateKeyValue, version: 'v4' }),
+  }, 'SIGNING_KEY_REF'), (error) => {
+    assert.ok(error instanceof ConfigValidationError);
+    assert.equal(error.message.includes(privateKeyValue), false);
+    return true;
+  });
 });
 
 test('repository scan is included in the package test and reports zero committed findings', async () => {
@@ -126,7 +151,7 @@ test('repository scan is included in the package test and reports zero committed
   assert.match(readme, /no path-based or broad test-directory exclusions/);
 });
 
-test('baseline security header policy is restrictive and enables HSTS only after HTTPS readiness', () => {
+test('baseline security header policy enables HSTS only for production', () => {
   const development = createBaselineSecurityHeaders({ AGRO_ENV: 'development' });
   assert.deepEqual(development, {
     'Content-Security-Policy': "default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; frame-ancestors 'none'",
@@ -137,15 +162,8 @@ test('baseline security header policy is restrictive and enables HSTS only after
   assert.equal(Object.values(development).some((value) => value.includes('*')), false);
   assert.equal('Strict-Transport-Security' in development, false);
   assert.equal(
-    createBaselineSecurityHeaders({ AGRO_ENV: 'production', AGRO_HTTPS_READY: 'true' })['Strict-Transport-Security'],
+    createBaselineSecurityHeaders({ AGRO_ENV: 'production' })['Strict-Transport-Security'],
     'max-age=31536000',
   );
-  assert.throws(
-    () => createBaselineSecurityHeaders({ AGRO_ENV: 'test', AGRO_HTTPS_READY: 'true' }),
-    SecurityHeaderConfigError,
-  );
-  assert.throws(
-    () => createBaselineSecurityHeaders({ AGRO_ENV: 'production', AGRO_HTTPS_READY: 'yes' }),
-    /AGRO_HTTPS_READY/,
-  );
+  assert.equal('Strict-Transport-Security' in createBaselineSecurityHeaders({ AGRO_ENV: 'test' }), false);
 });

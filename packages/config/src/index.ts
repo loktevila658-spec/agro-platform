@@ -43,6 +43,20 @@ export interface SecretReference {
   readonly version?: string;
 }
 
+const privateKeyMaterialPattern = /-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----|-----END (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/i;
+const providerCredentialPattern = /\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{20,}|sk_live_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35}|AKIA[0-9A-Z]{16})\b/;
+const embeddedCredentialPattern = /\b(?:password|passwd|token|secret|api[_-]?key|access[_-]?key|private[_-]?key)\s*[:=]\s*[^\s,;]+/i;
+const credentialUrlPattern = /\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[^\s:@/]+:[^\s@/]+@/i;
+const bearerCredentialPattern = /\bBearer\s+[A-Za-z0-9._~+/-]{16,}/i;
+
+function containsRecognizedSecretMaterial(value: string): boolean {
+  return privateKeyMaterialPattern.test(value)
+    || providerCredentialPattern.test(value)
+    || embeddedCredentialPattern.test(value)
+    || credentialUrlPattern.test(value)
+    || bearerCredentialPattern.test(value);
+}
+
 export interface ConfigValidationIssue {
   readonly variable: string;
   readonly message: string;
@@ -92,10 +106,13 @@ export function parseRequiredSecretReference(
     || candidate.purpose.trim() === ''
     || (candidate.version !== undefined
       && (typeof candidate.version !== 'string' || candidate.version.trim() === ''))
-    || /-----BEGIN .*PRIVATE KEY-----/.test(raw)
   ) {
     throw invalid();
   }
+
+  const referenceFields = [candidate.provider, candidate.locator, candidate.purpose, candidate.version]
+    .filter((value): value is string => typeof value === 'string');
+  if (referenceFields.some(containsRecognizedSecretMaterial)) throw invalid();
 
   return Object.freeze({
     provider: candidate.provider as SecretReferenceProvider,

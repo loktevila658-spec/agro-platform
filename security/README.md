@@ -25,6 +25,9 @@ test, which is part of the recursive CI unit gate.
 DOC19 providers. It accepts a provider, locator, purpose, and optional version;
 it accepts no secret value or private-key material. Missing or malformed
 references fail with the configuration field name and a value-free message.
+Recognized private-key markers, provider tokens, credential assignments,
+credential-bearing database URLs, and bearer-token values are rejected in all
+reference fields. Opaque random-looking locators remain valid.
 Retrieval, storage, key generation, signing, and rotation remain with external
 providers and later authorized work.
 
@@ -34,6 +37,8 @@ The API installs the baseline middleware in its Nest bootstrap. API responses
 always receive a restrictive CSP, `X-Frame-Options: DENY`,
 `X-Content-Type-Options: nosniff`, and
 `Referrer-Policy: strict-origin-when-cross-origin`. HSTS is added only when
-`AGRO_ENV=production` and `AGRO_HTTPS_READY=true`; readiness must be explicitly
-configured and HSTS is not sent for local HTTP development. The CSP denies all
-resource loading, inline execution, and framing; it uses no wildcard sources.
+`AGRO_ENV=production`; it is not sent in development or test. DOC19 requires
+HSTS after production HTTPS readiness. The deployment must use production mode
+only after HTTPS is ready; this baseline adds no separate readiness setting.
+The CSP denies all resource loading, inline execution, and framing; it uses no
+wildcard sources.
