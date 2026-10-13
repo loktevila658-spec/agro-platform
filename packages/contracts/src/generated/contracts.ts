@@ -351,7 +351,7 @@ export class AgroPlatformApiClient {
     const url = new URL(`${this.baseUrl}/health/live`);
     const headers: Record<string, string> = {};
     if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
-    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getLiveness failed with HTTP ${response.status}`);
     return await response.json() as LivenessResponse;
   }
@@ -360,7 +360,7 @@ export class AgroPlatformApiClient {
     const url = new URL(`${this.baseUrl}/health/ready`);
     const headers: Record<string, string> = {};
     if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
-    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getReadiness failed with HTTP ${response.status}`);
     return await response.json() as ReadinessResponse;
   }
@@ -369,7 +369,7 @@ export class AgroPlatformApiClient {
     const url = new URL(`${this.baseUrl}/metrics`);
     const headers: Record<string, string> = {};
     if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
-    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getMetrics failed with HTTP ${response.status}`);
     return await response.json() as MetricsResponse;
   }
@@ -444,7 +444,7 @@ export class AgroPlatformApiClient {
     const url = new URL(`${this.baseUrl}/system/schema-version`);
     const headers: Record<string, string> = {};
     if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
-    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getSchemaVersion failed with HTTP ${response.status}`);
     return await response.json() as SchemaVersionResponse;
   }

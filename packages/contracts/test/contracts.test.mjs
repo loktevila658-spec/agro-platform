@@ -137,6 +137,17 @@ test('schema-version operation is generated in TypeScript and Dart', async () =>
   assert.match(artifacts.get('generated/dart/contracts.dart'), /jsonEncode\(body\.toJson\(\)\)/);
   assert.match(artifacts.get('generated/dart/contracts.dart'), /'Idempotency-Key': idempotencyKey/);
   assert.match(artifacts.get('generated/dart/contracts.dart'), /if \(parentId != null\) 'parentId': parentId/);
+
+  const dart = artifacts.get('generated/dart/contracts.dart');
+  for (const operationId of ['getSchemaVersion', 'getLiveness', 'getReadiness', 'getMetrics']) {
+    const start = dart.indexOf(` ${operationId}({String? xCorrelationId}) async {`);
+    assert.notEqual(start, -1, `${operationId} keeps an optional correlation argument`);
+    const end = dart.indexOf('\n  Future<', start + 1);
+    const method = dart.slice(start, end === -1 ? undefined : end);
+    assert.match(method, /if \(headers\.isEmpty\) \{\s+json = await transport\(/, `${operationId} falls back to legacy transport`);
+    assert.match(method, /else \{\s+final send = requestTransport;/, `${operationId} uses requestTransport for supplied headers`);
+    assert.match(method, /headers: headers, body: null/, `${operationId} sends the optional header in the enriched request`);
+  }
 });
 
 test('generated TypeScript client serializes body, path, query, and header inputs at runtime', async () => {
@@ -183,6 +194,9 @@ test('generated TypeScript client serializes body, path, query, and header input
   await client.getOrgHierarchy('tenant / A', 'Bearer test-token');
   await client.searchHierarchy('tenant / A', 'trace-1', 25);
   await client.getSchemaVersion();
+  await client.getLiveness();
+  await client.getReadiness();
+  await client.getMetrics();
   await client.getSchemaVersion('compat-correlation');
 
   assert.equal(calls[0].url, 'https://example.test/api/org/tenants');
@@ -193,8 +207,10 @@ test('generated TypeScript client serializes body, path, query, and header input
   assert.equal(calls[1].url, 'https://example.test/api/org/tenants/tenant%20%2F%20A/hierarchy');
   assert.equal(calls[2].url, 'https://example.test/api/org/tenants/tenant%20%2F%20A/search?page+size=25');
   assert.equal(calls[2].init.headers['X-Trace-Id'], 'trace-1');
-  assert.deepEqual(calls[3], { url: 'https://example.test/api/system/schema-version', init: { method: 'GET', headers: {} } });
-  assert.deepEqual(calls[4], {
+  assert.deepEqual(calls.slice(3, 7).map(({ init }) => init), [
+    { method: 'GET' }, { method: 'GET' }, { method: 'GET' }, { method: 'GET' },
+  ]);
+  assert.deepEqual(calls[7], {
     url: 'https://example.test/api/system/schema-version',
     init: { method: 'GET', headers: { 'X-Correlation-Id': 'compat-correlation' } },
   });

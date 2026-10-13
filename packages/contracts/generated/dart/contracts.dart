@@ -456,23 +456,44 @@ class AgroPlatformApiClient {
   final ApiRequestTransport? requestTransport;
 
   Future<LivenessResponse> getLiveness({String? xCorrelationId}) async {
-    final send = requestTransport;
-    if (send == null) throw StateError('requestTransport is required for getLiveness');
-    final json = await send(baseUri.resolve('/health/live'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    final headers = <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!};
+    final url = baseUri.resolve('/health/live');
+    final Map<String, Object?> json;
+    if (headers.isEmpty) {
+      json = await transport(url, 'GET');
+    } else {
+      final send = requestTransport;
+      if (send == null) throw StateError('requestTransport is required for getLiveness when optional headers are supplied');
+      json = await send(url, 'GET', headers: headers, body: null);
+    }
     return LivenessResponse.fromJson(json);
   }
 
   Future<ReadinessResponse> getReadiness({String? xCorrelationId}) async {
-    final send = requestTransport;
-    if (send == null) throw StateError('requestTransport is required for getReadiness');
-    final json = await send(baseUri.resolve('/health/ready'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    final headers = <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!};
+    final url = baseUri.resolve('/health/ready');
+    final Map<String, Object?> json;
+    if (headers.isEmpty) {
+      json = await transport(url, 'GET');
+    } else {
+      final send = requestTransport;
+      if (send == null) throw StateError('requestTransport is required for getReadiness when optional headers are supplied');
+      json = await send(url, 'GET', headers: headers, body: null);
+    }
     return ReadinessResponse.fromJson(json);
   }
 
   Future<MetricsResponse> getMetrics({String? xCorrelationId}) async {
-    final send = requestTransport;
-    if (send == null) throw StateError('requestTransport is required for getMetrics');
-    final json = await send(baseUri.resolve('/metrics'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    final headers = <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!};
+    final url = baseUri.resolve('/metrics');
+    final Map<String, Object?> json;
+    if (headers.isEmpty) {
+      json = await transport(url, 'GET');
+    } else {
+      final send = requestTransport;
+      if (send == null) throw StateError('requestTransport is required for getMetrics when optional headers are supplied');
+      json = await send(url, 'GET', headers: headers, body: null);
+    }
     return MetricsResponse.fromJson(json);
   }
 
@@ -512,9 +533,16 @@ class AgroPlatformApiClient {
   }
 
   Future<SchemaVersionResponse> getSchemaVersion({String? xCorrelationId}) async {
-    final send = requestTransport;
-    if (send == null) throw StateError('requestTransport is required for getSchemaVersion');
-    final json = await send(baseUri.resolve('/system/schema-version'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    final headers = <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!};
+    final url = baseUri.resolve('/system/schema-version');
+    final Map<String, Object?> json;
+    if (headers.isEmpty) {
+      json = await transport(url, 'GET');
+    } else {
+      final send = requestTransport;
+      if (send == null) throw StateError('requestTransport is required for getSchemaVersion when optional headers are supplied');
+      json = await send(url, 'GET', headers: headers, body: null);
+    }
     return SchemaVersionResponse.fromJson(json);
   }
 }

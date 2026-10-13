@@ -7,7 +7,7 @@
     "events/schemas/event-catalog.schema.json": "72062ae02323bdedd6ffc23b47562c07174af763bfdd7f8ef1c9a0826826f488"
   },
   "outputs": {
-    "generated/dart/contracts.dart": "db8829bc4572a891cc4e817a1f091f3372194854bb14c97dc062796b3ddc20a8",
-    "src/generated/contracts.ts": "e890a5f8f9c558c555ee5ad33fafad875682acc15f49bae339bafebf60dd0487"
+    "generated/dart/contracts.dart": "bef0914ec309382bbe25a8a6e0027a8ae6480f5f6bb8b9247e50b3f0e5b110fd",
+    "src/generated/contracts.ts": "e07b87cae22ec09b8a32c005c757b662ca23a19825407c1b11d8d0bbb486182d"
   }
 }
