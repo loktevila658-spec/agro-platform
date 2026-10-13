@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const skippedDirectories = new Set(['.git', 'node_modules', '.pnpm-store']);
+const providerTokenPattern = /\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{20,}|sk_live_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35})\b/;
 const tokenPatterns = Object.freeze([
   Object.freeze({
     rule: 'private-key-pem',
@@ -11,11 +12,11 @@ const tokenPatterns = Object.freeze([
   }),
   Object.freeze({
     rule: 'provider-token',
-    pattern: /\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{20,}|sk_live_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35})\b/,
+    pattern: providerTokenPattern,
   }),
 ]);
-const credentialAssignment = /\b[A-Z][A-Z0-9_]*(?:PASSWORD|PASSWD|TOKEN|SECRET|API_KEY|ACCESS_KEY|PRIVATE_KEY)\b\s*[:=]\s*["']?([A-Za-z0-9_+/=-]{24,})/i;
-const credentialUrl = /\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[^\s:@/]+:([A-Za-z0-9_+/=%-]{20,})@/i;
+const credentialAssignments = /\b[A-Z][A-Z0-9_]*(?:PASSWORD|PASSWD|TOKEN|SECRET|API_KEY|ACCESS_KEY|PRIVATE_KEY)\b\s*[:=]\s*["']?([A-Za-z0-9_+/=-]{24,})/gi;
+const credentialUrls = /\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[^\s:@/]+:([A-Za-z0-9_+/=%-]{20,})@/gi;
 
 function hasHighEntropy(value) {
   if (value.length < 24 || new Set(value).size < 12) return false;
@@ -33,19 +34,19 @@ export function scanText(contents) {
   const findings = [];
   const lines = String(contents).split(/\r?\n/);
   for (const [index, line] of lines.entries()) {
-    let highConfidenceMatch = false;
     for (const { rule, pattern } of tokenPatterns) {
       if (pattern.test(line)) {
         findings.push({ line: index + 1, rule });
-        highConfidenceMatch = true;
       }
     }
-    if (!highConfidenceMatch && (credentialAssignment.test(line) || credentialUrl.test(line))) {
-      const value = (credentialAssignment.exec(line) ?? credentialUrl.exec(line))?.[1];
-      if (value && hasHighEntropy(value)) {
-        findings.push({ line: index + 1, rule: 'high-entropy-credential' });
-      }
+    let hasHighEntropyCredential = false;
+    for (const [, value] of line.matchAll(credentialAssignments)) {
+      if (hasHighEntropy(value) && !providerTokenPattern.test(value)) hasHighEntropyCredential = true;
     }
+    for (const [, value] of line.matchAll(credentialUrls)) {
+      if (hasHighEntropy(value) && !providerTokenPattern.test(value)) hasHighEntropyCredential = true;
+    }
+    if (hasHighEntropyCredential) findings.push({ line: index + 1, rule: 'high-entropy-credential' });
   }
   return findings.sort((a, b) => a.line - b.line || (a.rule < b.rule ? -1 : a.rule > b.rule ? 1 : 0));
 }

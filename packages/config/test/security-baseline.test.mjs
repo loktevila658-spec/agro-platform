@@ -42,6 +42,44 @@ test('scanner permits reviewable low-entropy synthetic examples without path exc
   assert.deepEqual(scanText('API_TOKEN=test-only-placeholder\nPASSWORD=not-a-secret'), []);
 });
 
+test('scanner checks all same-line assignments and URLs without disclosing values', async () => {
+  const benignAssignment = 'x'.repeat(32);
+  const assignmentSecret = ['A7cD9fG2hJ5kL8mN', '1pQ4rT6vX3zB0eY'].join('');
+  const urlSecret = ['R3tY5uI7oP9aS2dF', '4gH6jK8lZ1xC0vB'].join('');
+  const contents = [
+    `TOKEN=${benignAssignment} DATABASE_PASSWORD=${assignmentSecret}`,
+    `API_TOKEN=${benignAssignment} postgres://farm:${urlSecret}@db.internal/agro`,
+  ].join('\n');
+  const expected = [
+    { line: 1, rule: 'high-entropy-credential' },
+    { line: 2, rule: 'high-entropy-credential' },
+  ];
+  const findings = scanText(contents);
+  assert.deepEqual(findings, expected);
+  assert.deepEqual(scanText(contents), findings);
+  const formatted = findings.map(formatFinding).join('\n');
+  assert.equal(formatted.includes(assignmentSecret), false);
+  assert.equal(formatted.includes(urlSecret), false);
+
+  const root = await mkdtemp(join(tmpdir(), 'agro-secret-scan-mixed-'));
+  try {
+    await writeFile(join(root, 'mixed.env'), contents);
+    const args = [scannerPath.pathname, root];
+    const first = spawnSync(process.execPath, args, { encoding: 'utf8' });
+    const second = spawnSync(process.execPath, args, { encoding: 'utf8' });
+    assert.equal(first.status, 1);
+    assert.deepEqual(
+      { status: second.status, stdout: second.stdout, stderr: second.stderr },
+      { status: first.status, stdout: first.stdout, stderr: first.stderr },
+    );
+    const output = `${first.stdout}${first.stderr}`;
+    assert.equal(output.includes(assignmentSecret), false);
+    assert.equal(output.includes(urlSecret), false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('scanner findings and repository traversal are stable across repeated scans', async () => {
   const first = await scanRepository();
   const second = await scanRepository();
