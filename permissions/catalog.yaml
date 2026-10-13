@@ -5,4 +5,24 @@ sources:
 - DOC19
 - DOC50
 deny_by_default: true
-permissions: []
+permissions:
+  - action: org.hierarchy.read
+    description: Read a tenant organization, unit and site hierarchy.
+    effect: allow
+    scope: tenant
+  - action: org.tenant.create
+    description: Create an isolated platform tenant.
+    effect: allow
+    scope: global
+  - action: org.organization.create
+    description: Create an organization within a tenant.
+    effect: allow
+    scope: tenant
+  - action: org.organization_unit.create
+    description: Create an organizational unit within an organization.
+    effect: allow
+    scope: tenant
+  - action: org.site.create
+    description: Create a physical site belonging to an organization.
+    effect: allow
+    scope: tenant

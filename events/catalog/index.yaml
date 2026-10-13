@@ -2,8 +2,141 @@ $schema: ../schemas/event-catalog.schema.json
 catalogVersion: 1.0.0
 schema_version: 0.1.0
 status: BOOTSTRAP
-events: []
+events:
+  - name: org.tenant.created
+    version: 1.0.0
+    producer: org
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - tenantId
+        - actorId
+        - correlationId
+        - causationId
+        - occurredAt
+  - name: org.organization.created
+    version: 1.0.0
+    producer: org
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - tenantId
+        - actorId
+        - correlationId
+        - causationId
+        - occurredAt
+  - name: org.unit.created
+    version: 1.0.0
+    producer: org
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - tenantId
+        - actorId
+        - correlationId
+        - causationId
+        - occurredAt
+  - name: org.site.created
+    version: 1.0.0
+    producer: org
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - tenantId
+        - actorId
+        - correlationId
+        - causationId
+        - occurredAt
 sources:
-  - DOC28
+  - DOC02
+  - DOC10
   - DOC49
   - DOC50
