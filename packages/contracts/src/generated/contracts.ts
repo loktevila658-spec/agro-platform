@@ -347,26 +347,29 @@ export class AgroPlatformApiClient {
     this.transport = options.transport ?? defaultTransport;
   }
 
-  async getLiveness(): Promise<LivenessResponse> {
+  async getLiveness(xCorrelationId?: string): Promise<LivenessResponse> {
     const url = new URL(`${this.baseUrl}/health/live`);
     const headers: Record<string, string> = {};
-    const response = await this.transport(url.toString(), { method: 'GET' });
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
     if (!response.ok) throw new Error(`getLiveness failed with HTTP ${response.status}`);
     return await response.json() as LivenessResponse;
   }
 
-  async getReadiness(): Promise<ReadinessResponse> {
+  async getReadiness(xCorrelationId?: string): Promise<ReadinessResponse> {
     const url = new URL(`${this.baseUrl}/health/ready`);
     const headers: Record<string, string> = {};
-    const response = await this.transport(url.toString(), { method: 'GET' });
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
     if (!response.ok) throw new Error(`getReadiness failed with HTTP ${response.status}`);
     return await response.json() as ReadinessResponse;
   }
 
-  async getMetrics(): Promise<MetricsResponse> {
+  async getMetrics(xCorrelationId?: string): Promise<MetricsResponse> {
     const url = new URL(`${this.baseUrl}/metrics`);
     const headers: Record<string, string> = {};
-    const response = await this.transport(url.toString(), { method: 'GET' });
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
     if (!response.ok) throw new Error(`getMetrics failed with HTTP ${response.status}`);
     return await response.json() as MetricsResponse;
   }
@@ -437,10 +440,11 @@ export class AgroPlatformApiClient {
     return await response.json() as HierarchyResponse;
   }
 
-  async getSchemaVersion(): Promise<SchemaVersionResponse> {
+  async getSchemaVersion(xCorrelationId?: string): Promise<SchemaVersionResponse> {
     const url = new URL(`${this.baseUrl}/system/schema-version`);
     const headers: Record<string, string> = {};
-    const response = await this.transport(url.toString(), { method: 'GET' });
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
     if (!response.ok) throw new Error(`getSchemaVersion failed with HTTP ${response.status}`);
     return await response.json() as SchemaVersionResponse;
   }

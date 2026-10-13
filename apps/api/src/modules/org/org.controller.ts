@@ -5,6 +5,7 @@ import {
   Headers,
   Param,
   Post,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -16,6 +17,10 @@ import {
   SiteCommand,
   TenantCommand,
 } from './org.service';
+
+interface CorrelatedRequest {
+  readonly correlationId: string;
+}
 
 function context(authorization?: string, idempotencyKey?: string, correlationId?: string, causationId?: string): OrgRequestContext {
   const token = authorization?.startsWith('Bearer ') ? authorization.slice(7) : undefined;
@@ -30,45 +35,45 @@ export class OrgController {
   @Post('tenants')
   createTenant(
     @Body() body: TenantCommand,
+    @Req() request: CorrelatedRequest,
     @Headers('authorization') authorization?: string,
     @Headers('idempotency-key') idempotencyKey?: string,
-    @Headers('x-correlation-id') correlationId?: string,
     @Headers('x-causation-id') causationId?: string,
   ) {
-    return this.org.createTenant(body, context(authorization, idempotencyKey, correlationId, causationId));
+    return this.org.createTenant(body, context(authorization, idempotencyKey, request.correlationId, causationId));
   }
 
   @Post('organizations')
   createOrganization(
     @Body() body: OrganizationCommand,
+    @Req() request: CorrelatedRequest,
     @Headers('authorization') authorization?: string,
     @Headers('idempotency-key') idempotencyKey?: string,
-    @Headers('x-correlation-id') correlationId?: string,
     @Headers('x-causation-id') causationId?: string,
   ) {
-    return this.org.createOrganization(body, context(authorization, idempotencyKey, correlationId, causationId));
+    return this.org.createOrganization(body, context(authorization, idempotencyKey, request.correlationId, causationId));
   }
 
   @Post('organization-units')
   createOrganizationUnit(
     @Body() body: OrganizationUnitCommand,
+    @Req() request: CorrelatedRequest,
     @Headers('authorization') authorization?: string,
     @Headers('idempotency-key') idempotencyKey?: string,
-    @Headers('x-correlation-id') correlationId?: string,
     @Headers('x-causation-id') causationId?: string,
   ) {
-    return this.org.createOrganizationUnit(body, context(authorization, idempotencyKey, correlationId, causationId));
+    return this.org.createOrganizationUnit(body, context(authorization, idempotencyKey, request.correlationId, causationId));
   }
 
   @Post('sites')
   createSite(
     @Body() body: SiteCommand,
+    @Req() request: CorrelatedRequest,
     @Headers('authorization') authorization?: string,
     @Headers('idempotency-key') idempotencyKey?: string,
-    @Headers('x-correlation-id') correlationId?: string,
     @Headers('x-causation-id') causationId?: string,
   ) {
-    return this.org.createSite(body, context(authorization, idempotencyKey, correlationId, causationId));
+    return this.org.createSite(body, context(authorization, idempotencyKey, request.correlationId, causationId));
   }
 
   @Get('tenants/:tenantId/hierarchy')

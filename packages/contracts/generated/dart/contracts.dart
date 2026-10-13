@@ -455,18 +455,24 @@ class AgroPlatformApiClient {
   final ApiTransport transport;
   final ApiRequestTransport? requestTransport;
 
-  Future<LivenessResponse> getLiveness() async {
-    final json = await transport(baseUri.resolve('/health/live'), 'GET');
+  Future<LivenessResponse> getLiveness({String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for getLiveness');
+    final json = await send(baseUri.resolve('/health/live'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
     return LivenessResponse.fromJson(json);
   }
 
-  Future<ReadinessResponse> getReadiness() async {
-    final json = await transport(baseUri.resolve('/health/ready'), 'GET');
+  Future<ReadinessResponse> getReadiness({String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for getReadiness');
+    final json = await send(baseUri.resolve('/health/ready'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
     return ReadinessResponse.fromJson(json);
   }
 
-  Future<MetricsResponse> getMetrics() async {
-    final json = await transport(baseUri.resolve('/metrics'), 'GET');
+  Future<MetricsResponse> getMetrics({String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for getMetrics');
+    final json = await send(baseUri.resolve('/metrics'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
     return MetricsResponse.fromJson(json);
   }
 
@@ -505,8 +511,10 @@ class AgroPlatformApiClient {
     return HierarchyResponse.fromJson(json);
   }
 
-  Future<SchemaVersionResponse> getSchemaVersion() async {
-    final json = await transport(baseUri.resolve('/system/schema-version'), 'GET');
+  Future<SchemaVersionResponse> getSchemaVersion({String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for getSchemaVersion');
+    final json = await send(baseUri.resolve('/system/schema-version'), 'GET', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
     return SchemaVersionResponse.fromJson(json);
   }
 }

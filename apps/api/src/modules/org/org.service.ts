@@ -95,6 +95,7 @@ export class OrgService implements OnModuleDestroy {
   async readHierarchy(tenantIdInput: string, context: OrgRequestContext): Promise<Record<string, unknown>> {
     this.authorize(context, 'org.hierarchy.read', tenantIdInput);
     const tenantId = requireUuid(tenantIdInput, 'tenantId');
+    if (!process.env.DATABASE_URL) throw new ServiceUnavailableException('PostgreSQL is not configured');
     try {
       const tenant = await this.pool.query('SELECT id, code, name, timezone, created_at AS "createdAt" FROM org.tenant WHERE id = $1', [tenantId]);
       if (!tenant.rowCount) throw new NotFoundException('Tenant not found');

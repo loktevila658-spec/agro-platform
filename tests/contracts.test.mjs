@@ -36,6 +36,20 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     { method: 'GET', operationId: 'getSchemaVersion', path: '/system/schema-version' },
   ]);
 
+  const compatibilityOperations = [
+    ['GET', '/system/schema-version', 'getSchemaVersion'],
+    ['GET', '/health/live', 'getLiveness'],
+    ['GET', '/health/ready', 'getReadiness'],
+    ['GET', '/metrics', 'getMetrics'],
+  ];
+  for (const [method, path, operationId] of compatibilityOperations) {
+    const operation = document.paths[path][method.toLowerCase()];
+    assert.deepEqual(operation.parameters, [{ $ref: '#/components/parameters/CorrelationId' }]);
+    assert.deepEqual(operations.find((item) => item.operationId === operationId).inputs.header, [
+      { name: 'X-Correlation-Id', required: false, type: 'string' },
+    ]);
+  }
+
   const forbiddenDomains = /\/(?:auth|identity|permissions?|audit|gis|fleet|warehouse|production)(?:\/|$)/i;
   assert.doesNotMatch(Object.keys(document.paths).join('\n'), forbiddenDomains);
   assert.deepEqual(operations.filter(({ path }) => path.startsWith('/org/')).map(({ operationId }) => operationId), [

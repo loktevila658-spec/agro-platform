@@ -88,14 +88,15 @@ async function stopApi(api) {
   clearTimeout(timer);
 }
 
-function post(url, path, body, key, bearer = token) {
+function post(url, path, body, key, bearer = token, correlationId = `wp011-${key ?? 'missing'}`, causationId) {
   return fetch(`${url}${path}`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
       ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
       ...(key ? { 'idempotency-key': key } : {}),
-      'x-correlation-id': `wp011-${key ?? 'missing'}`,
+      ...(correlationId === null ? {} : { 'x-correlation-id': correlationId }),
+      ...(causationId ? { 'x-causation-id': causationId } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -173,9 +174,16 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     let baseUrl = full.url;
 
     const tenantCommand = { code: `TEN-${process.pid}`, name: 'Integration Tenant', timezone: 'Europe/Moscow' };
-    const tenantFirst = await post(baseUrl, '/org/tenants', tenantCommand, 'tenant-create');
+    const tenantFirst = await post(baseUrl, '/org/tenants', tenantCommand, 'tenant-create', token, null);
     assert.equal(tenantFirst.status, 201);
+    const generatedCorrelation = tenantFirst.headers.get('x-correlation-id');
+    assert.ok(generatedCorrelation);
     const tenant = await json(tenantFirst);
+    assert.equal(tenant.correlationId, generatedCorrelation);
+    const tenantAudit = (await testPool.query('SELECT correlation_id, causation_id FROM org.audit_entry WHERE entity_id = $1', [tenant.id])).rows[0];
+    const tenantOutbox = (await testPool.query('SELECT correlation_id, causation_id FROM org.outbox_event WHERE entity_id = $1', [tenant.id])).rows[0];
+    assert.deepEqual(tenantAudit, { correlation_id: generatedCorrelation, causation_id: generatedCorrelation });
+    assert.deepEqual(tenantOutbox, { correlation_id: generatedCorrelation, causation_id: generatedCorrelation });
     const tenantRetry = await post(baseUrl, '/org/tenants', tenantCommand, 'tenant-create');
     assert.equal(tenantRetry.status, 201);
     assert.deepEqual(await json(tenantRetry), tenant);
@@ -189,18 +197,35 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     baseUrl = tenantScoped.url;
 
     const organizationCommand = { tenantId: tenant.id, code: 'ORG-01', name: 'Integration Farm', organizationType: 'FARM' };
-    const organizationResponse = await post(baseUrl, '/org/organizations', organizationCommand, 'organization-create');
+    const providedCorrelation = 'provided-org-correlation-01';
+    const explicitCausation = 'cause-org-command-01';
+    const organizationResponse = await post(baseUrl, '/org/organizations', organizationCommand, 'organization-create', token, providedCorrelation, explicitCausation);
     assert.equal(organizationResponse.status, 201);
+    assert.equal(organizationResponse.headers.get('x-correlation-id'), providedCorrelation);
     const organization = await json(organizationResponse);
+    assert.equal(organization.correlationId, providedCorrelation);
+    const organizationAudit = (await testPool.query('SELECT correlation_id, causation_id FROM org.audit_entry WHERE entity_id = $1', [organization.id])).rows[0];
+    const organizationOutbox = (await testPool.query('SELECT correlation_id, causation_id FROM org.outbox_event WHERE entity_id = $1', [organization.id])).rows[0];
+    assert.deepEqual(organizationAudit, { correlation_id: providedCorrelation, causation_id: explicitCausation });
+    assert.deepEqual(organizationOutbox, { correlation_id: providedCorrelation, causation_id: explicitCausation });
     const incompatibleReuse = await post(baseUrl, '/org/organizations', { ...organizationCommand, name: 'Changed payload' }, 'organization-create');
     assert.equal(incompatibleReuse.status, 409);
     assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.organization WHERE tenant_id = $1', [tenant.id])).rows[0].n, 1);
 
+    const invalidIncomingCorrelation = 'not valid correlation';
     const unitResponse = await post(baseUrl, '/org/organization-units', {
       tenantId: tenant.id, organizationId: organization.id, code: 'UNIT-A', name: 'Division A', unitType: 'DIVISION',
-    }, 'unit-root');
+    }, 'unit-root', token, invalidIncomingCorrelation);
     assert.equal(unitResponse.status, 201);
+    const replacementCorrelation = unitResponse.headers.get('x-correlation-id');
+    assert.ok(replacementCorrelation);
+    assert.notEqual(replacementCorrelation, invalidIncomingCorrelation);
     const unit = await json(unitResponse);
+    assert.equal(unit.correlationId, replacementCorrelation);
+    const unitAudit = (await testPool.query('SELECT correlation_id, causation_id FROM org.audit_entry WHERE entity_id = $1', [unit.id])).rows[0];
+    const unitOutbox = (await testPool.query('SELECT correlation_id, causation_id FROM org.outbox_event WHERE entity_id = $1', [unit.id])).rows[0];
+    assert.deepEqual(unitAudit, { correlation_id: replacementCorrelation, causation_id: replacementCorrelation });
+    assert.deepEqual(unitOutbox, { correlation_id: replacementCorrelation, causation_id: replacementCorrelation });
     const childResponse = await post(baseUrl, '/org/organization-units', {
       tenantId: tenant.id, organizationId: organization.id, parentId: unit.id, code: 'UNIT-B', name: 'Team B', unitType: 'TEAM',
     }, 'unit-child');

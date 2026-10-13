@@ -86,6 +86,19 @@ test('rejects a tenant-scoped command outside the configured tenant scope', asyn
   assert.equal(connects, 0);
 });
 
+test('hierarchy read fails closed without DATABASE_URL before querying the pool', async (t) => {
+  const original = process.env.DATABASE_URL;
+  t.after(() => { process.env.DATABASE_URL = original; });
+  delete process.env.DATABASE_URL;
+
+  const { service, calls } = serviceWithPool();
+  await assert.rejects(
+    service.readHierarchy(tenantId, context()),
+    (error) => error.getStatus() === 503,
+  );
+  assert.equal(calls.length, 0);
+});
+
 test('permission mapping denies missing and unknown actions by default', async (t) => {
   const original = process.env.ORG_BOOTSTRAP_PERMISSIONS;
   t.after(() => { process.env.ORG_BOOTSTRAP_PERMISSIONS = original; });

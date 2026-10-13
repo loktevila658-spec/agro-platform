@@ -49,6 +49,11 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
   assert.deepEqual(openapi.operations.find(({ operationId }) => operationId === 'getOrgHierarchy').inputs.path, [
     { name: 'tenantId', required: true, type: 'string' },
   ]);
+  for (const operationId of ['getSchemaVersion', 'getLiveness', 'getReadiness', 'getMetrics']) {
+    assert.deepEqual(openapi.operations.find((operation) => operation.operationId === operationId).inputs.header, [
+      { name: 'X-Correlation-Id', required: false, type: 'string' },
+    ]);
+  }
 
 });
 
@@ -120,12 +125,14 @@ test('malformed event catalog fails declared schema validation', async () => {
 
 test('schema-version operation is generated in TypeScript and Dart', async () => {
   const artifacts = renderGeneratedArtifacts(await loadAndValidateContracts());
-  assert.match(artifacts.get('src/generated/contracts.ts'), /async getSchemaVersion\(\): Promise<SchemaVersionResponse>/);
+  assert.match(artifacts.get('src/generated/contracts.ts'), /async getSchemaVersion\(xCorrelationId\?: string\): Promise<SchemaVersionResponse>/);
+  assert.match(artifacts.get('src/generated/contracts.ts'), /headers\["X-Correlation-Id"\] = String\(xCorrelationId\)/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /async createOrgTenant\(authorization: string, idempotencyKey: string, body: CreateTenantRequest/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /encodeURIComponent\(String\(tenantId\)\)/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /JSON\.stringify\(body\)/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /headers\["Idempotency-Key"\]/);
-  assert.match(artifacts.get('generated/dart/contracts.dart'), /Future<SchemaVersionResponse> getSchemaVersion\(\) async/);
+  assert.match(artifacts.get('generated/dart/contracts.dart'), /Future<SchemaVersionResponse> getSchemaVersion\(\{String\? xCorrelationId\}\) async/);
+  assert.match(artifacts.get('generated/dart/contracts.dart'), /if \(xCorrelationId != null\) 'X-Correlation-Id': xCorrelationId!/);
   assert.match(artifacts.get('generated/dart/contracts.dart'), /Uri\.encodeComponent\(tenantId\)/);
   assert.match(artifacts.get('generated/dart/contracts.dart'), /jsonEncode\(body\.toJson\(\)\)/);
   assert.match(artifacts.get('generated/dart/contracts.dart'), /'Idempotency-Key': idempotencyKey/);
@@ -176,6 +183,7 @@ test('generated TypeScript client serializes body, path, query, and header input
   await client.getOrgHierarchy('tenant / A', 'Bearer test-token');
   await client.searchHierarchy('tenant / A', 'trace-1', 25);
   await client.getSchemaVersion();
+  await client.getSchemaVersion('compat-correlation');
 
   assert.equal(calls[0].url, 'https://example.test/api/org/tenants');
   assert.equal(calls[0].init.method, 'POST');
@@ -185,7 +193,11 @@ test('generated TypeScript client serializes body, path, query, and header input
   assert.equal(calls[1].url, 'https://example.test/api/org/tenants/tenant%20%2F%20A/hierarchy');
   assert.equal(calls[2].url, 'https://example.test/api/org/tenants/tenant%20%2F%20A/search?page+size=25');
   assert.equal(calls[2].init.headers['X-Trace-Id'], 'trace-1');
-  assert.deepEqual(calls[3], { url: 'https://example.test/api/system/schema-version', init: { method: 'GET' } });
+  assert.deepEqual(calls[3], { url: 'https://example.test/api/system/schema-version', init: { method: 'GET', headers: {} } });
+  assert.deepEqual(calls[4], {
+    url: 'https://example.test/api/system/schema-version',
+    init: { method: 'GET', headers: { 'X-Correlation-Id': 'compat-correlation' } },
+  });
 });
 
 test('synthetic event is generated deterministically in TypeScript and Dart', async () => {

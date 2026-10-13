@@ -11,6 +11,7 @@ paths:
       operationId: getSchemaVersion
       summary: Read the applied database schema version
       parameters:
+        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: Current database and PostGIS schema-version state
@@ -35,6 +36,7 @@ paths:
       operationId: getLiveness
       summary: Check API process liveness
       parameters:
+        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: API process is alive
@@ -50,6 +52,7 @@ paths:
       operationId: getReadiness
       summary: Check API and required database readiness
       parameters:
+        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: API and database are ready
@@ -74,6 +77,7 @@ paths:
       operationId: getMetrics
       summary: Read current API process and HTTP measurements
       parameters:
+        - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
           description: Current API process and HTTP measurements
