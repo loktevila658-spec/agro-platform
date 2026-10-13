@@ -35,13 +35,43 @@ function query(container, databaseUrl, sql) {
   return result.stdout.trim();
 }
 
-async function waitForPostgres(container) {
+async function waitForPostgres(container, databaseUrl) {
+  let stablePostmasterStartTime;
   for (let attempt = 0; attempt < 120; attempt += 1) {
-    const result = docker(['exec', container, 'pg_isready', '-U', 'postgres']);
-    if (result.status === 0) return;
+    const result = docker([
+      'exec',
+      container,
+      'psql',
+      '--dbname',
+      databaseUrl,
+      '--no-psqlrc',
+      '--tuples-only',
+      '--no-align',
+      '--field-separator',
+      '|',
+      '--command',
+      "SELECT current_database(), current_setting('listen_addresses'), pg_postmaster_start_time()::text, pg_is_in_recovery();",
+    ]);
+    const fields = result.status === 0 ? result.stdout.trim().split('|') : [];
+    const [database, listenAddresses, postmasterStartTime, inRecovery] = fields;
+
+    // The Docker entrypoint's temporary initialization server disables network listeners.
+    // Require the final server configuration and the same postmaster across two SQL probes.
+    if (
+      database === 'agro_test'
+      && listenAddresses?.length > 0
+      && postmasterStartTime
+      && inRecovery === 'f'
+    ) {
+      if (postmasterStartTime === stablePostmasterStartTime) return;
+      stablePostmasterStartTime = postmasterStartTime;
+    } else {
+      stablePostmasterStartTime = undefined;
+    }
+
     await new Promise((resolveWait) => setTimeout(resolveWait, 250));
   }
-  throw new Error('PostgreSQL/PostGIS test container did not become ready');
+  throw new Error('PostgreSQL/PostGIS target database did not reach stable post-initialization readiness');
 }
 
 async function waitForHttp(url, processHandle) {
@@ -102,7 +132,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
   assert.equal(started.status, 0, started.stderr);
 
   try {
-    await waitForPostgres(container);
+    await waitForPostgres(container, databaseUrl);
     const migrationEnvironment = {
       ...process.env,
       DATABASE_URL: databaseUrl,
