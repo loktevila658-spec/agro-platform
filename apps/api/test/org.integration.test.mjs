@@ -43,6 +43,45 @@ async function availablePort() {
   return port;
 }
 
+async function waitForPostgres(container, databaseUrl) {
+  let stablePostmasterStartTime;
+  let lastProbe;
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    const probe = docker([
+      'exec',
+      container,
+      'psql',
+      '--dbname',
+      databaseUrl,
+      '--no-psqlrc',
+      '--tuples-only',
+      '--no-align',
+      '--field-separator',
+      '|',
+      '--command',
+      "SELECT current_database(), current_setting('listen_addresses'), pg_postmaster_start_time()::text, pg_is_in_recovery();",
+    ]);
+    lastProbe = probe;
+    const fields = probe.status === 0 ? probe.stdout.trim().split('|') : [];
+    const [database, listenAddresses, postmasterStartTime, inRecovery] = fields;
+
+    if (
+      database === 'agro_test'
+      && listenAddresses?.length > 0
+      && postmasterStartTime
+      && inRecovery === 'f'
+    ) {
+      if (postmasterStartTime === stablePostmasterStartTime) return postmasterStartTime;
+      stablePostmasterStartTime = postmasterStartTime;
+    } else {
+      stablePostmasterStartTime = undefined;
+    }
+
+    await new Promise((resolveWait) => setTimeout(resolveWait, 250));
+  }
+  throw new Error(`PostgreSQL target database did not reach stable final-postmaster readiness\n${processFailure('Last PostgreSQL readiness probe', lastProbe ?? {})}`);
+}
+
 async function startApi(databaseUrl, permissions, tenantIds = '') {
   const port = await availablePort();
   const api = spawn(process.execPath, ['apps/api/dist/main.js'], {
@@ -137,16 +176,8 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     const port = portResult.stdout.trim();
     const databaseUrl = `postgresql://postgres:${password}@127.0.0.1:${port}/agro_test`;
     const socketDatabaseUrl = 'postgresql:///agro_test?host=%2Fvar%2Frun%2Fpostgresql&user=postgres';
-    let ready = false;
-    let lastProbe;
-    for (let attempt = 0; attempt < 100; attempt += 1) {
-      const probe = docker(['exec', container, 'pg_isready', '--username=postgres', '--dbname=agro_test']);
-      lastProbe = probe;
-      if (probe.status === 0) { ready = true; break; }
-      await new Promise((resolveWait) => setTimeout(resolveWait, 250));
-    }
-    assert.equal(ready, true, processFailure('PostgreSQL readiness probe', lastProbe ?? {}));
-    t.diagnostic('org integration: PostgreSQL ready');
+    const postmasterStartTime = await waitForPostgres(container, socketDatabaseUrl);
+    t.diagnostic(`org integration: final PostgreSQL postmaster stable since ${postmasterStartTime}`);
 
     await writeFile(psqlWrapper, `#!/bin/sh\nexec docker exec -i ${container} psql "$@"\n`, 'utf8');
     await chmod(psqlWrapper, 0o700);
