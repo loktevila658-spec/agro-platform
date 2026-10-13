@@ -23,6 +23,11 @@ export const gateDefinitions = Object.freeze({
         command: pnpm,
         args: ['--dir', 'apps', 'typecheck'],
       },
+      {
+        label: 'architecture dependency guard',
+        command: process.execPath,
+        args: ['--test', 'tests/architecture/module-dependencies.test.mjs'],
+      },
     ],
   },
   unit: {
