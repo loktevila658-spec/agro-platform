@@ -26,6 +26,37 @@ export interface RuntimeConfig {
 
 export type EnvironmentSource = Readonly<Record<string, string | undefined>>;
 
+export const secretReferenceProviders = [
+  'LOCAL_SECRETSTORE',
+  'VAULT',
+  'HSM',
+  'OS_KEYSTORE',
+  'EXTERNAL_CSP',
+] as const;
+
+export type SecretReferenceProvider = (typeof secretReferenceProviders)[number];
+
+export interface SecretReference {
+  readonly provider: SecretReferenceProvider;
+  readonly locator: string;
+  readonly purpose: string;
+  readonly version?: string;
+}
+
+const privateKeyMaterialPattern = /-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----|-----END (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/i;
+const providerCredentialPattern = /\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{20,}|sk_live_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35}|AKIA[0-9A-Z]{16})\b/;
+const embeddedCredentialPattern = /\b(?:password|passwd|token|secret|api[_-]?key|access[_-]?key|private[_-]?key)\s*[:=]\s*[^\s,;]+/i;
+const credentialUrlPattern = /\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[^\s:@/]+:[^\s@/]+@/i;
+const bearerCredentialPattern = /\bBearer\s+[A-Za-z0-9._~+/-]{16,}/i;
+
+function containsRecognizedSecretMaterial(value: string): boolean {
+  return privateKeyMaterialPattern.test(value)
+    || providerCredentialPattern.test(value)
+    || embeddedCredentialPattern.test(value)
+    || credentialUrlPattern.test(value)
+    || bearerCredentialPattern.test(value);
+}
+
 export interface ConfigValidationIssue {
   readonly variable: string;
   readonly message: string;
@@ -43,6 +74,52 @@ export class ConfigValidationError extends Error {
     this.name = 'ConfigValidationError';
     this.issues = Object.freeze([...issues]);
   }
+}
+
+/** Parse a JSON-encoded reference to externally held secret material. */
+export function parseRequiredSecretReference(
+  source: EnvironmentSource,
+  variable: string,
+): SecretReference {
+  const raw = source[variable];
+  const invalid = () => new ConfigValidationError([
+    { variable, message: 'must be a valid external secret reference' },
+  ]);
+  if (raw === undefined || raw.trim() === '') throw invalid();
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw invalid();
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw invalid();
+  const candidate = parsed as Record<string, unknown>;
+  const allowedKeys = new Set(['provider', 'locator', 'purpose', 'version']);
+  if (Object.keys(candidate).some((key) => !allowedKeys.has(key))) throw invalid();
+  if (
+    typeof candidate.provider !== 'string'
+    || !(secretReferenceProviders as readonly string[]).includes(candidate.provider)
+    || typeof candidate.locator !== 'string'
+    || candidate.locator.trim() === ''
+    || typeof candidate.purpose !== 'string'
+    || candidate.purpose.trim() === ''
+    || (candidate.version !== undefined
+      && (typeof candidate.version !== 'string' || candidate.version.trim() === ''))
+  ) {
+    throw invalid();
+  }
+
+  const referenceFields = [candidate.provider, candidate.locator, candidate.purpose, candidate.version]
+    .filter((value): value is string => typeof value === 'string');
+  if (referenceFields.some(containsRecognizedSecretMaterial)) throw invalid();
+
+  return Object.freeze({
+    provider: candidate.provider as SecretReferenceProvider,
+    locator: candidate.locator.trim(),
+    purpose: candidate.purpose.trim(),
+    ...(candidate.version === undefined ? {} : { version: (candidate.version as string).trim() }),
+  });
 }
 
 const requiredVariables = [

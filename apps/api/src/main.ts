@@ -11,8 +11,16 @@ import {
 import { AppModule } from './app.module';
 import { ObservabilityExceptionFilter } from './observability-exception.filter';
 
+const { installBaselineSecurityHeaders } = require('../../../security/headers.cjs') as {
+  installBaselineSecurityHeaders: (
+    application: unknown,
+    environment?: NodeJS.ProcessEnv,
+  ) => void;
+};
+
 export async function createApp(module: Type<unknown> = AppModule): Promise<INestApplication> {
   const app = await NestFactory.create(module, { logger: false });
+  installBaselineSecurityHeaders(app.getHttpAdapter().getInstance(), process.env);
   app.use(
     createRequestObservabilityMiddleware(
       app.get(StructuredLogger),
