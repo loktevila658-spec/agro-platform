@@ -26,6 +26,23 @@ export interface RuntimeConfig {
 
 export type EnvironmentSource = Readonly<Record<string, string | undefined>>;
 
+export const secretReferenceProviders = [
+  'LOCAL_SECRETSTORE',
+  'VAULT',
+  'HSM',
+  'OS_KEYSTORE',
+  'EXTERNAL_CSP',
+] as const;
+
+export type SecretReferenceProvider = (typeof secretReferenceProviders)[number];
+
+export interface SecretReference {
+  readonly provider: SecretReferenceProvider;
+  readonly locator: string;
+  readonly purpose: string;
+  readonly version?: string;
+}
+
 export interface ConfigValidationIssue {
   readonly variable: string;
   readonly message: string;
@@ -43,6 +60,49 @@ export class ConfigValidationError extends Error {
     this.name = 'ConfigValidationError';
     this.issues = Object.freeze([...issues]);
   }
+}
+
+/** Parse a JSON-encoded reference to externally held secret material. */
+export function parseRequiredSecretReference(
+  source: EnvironmentSource,
+  variable: string,
+): SecretReference {
+  const raw = source[variable];
+  const invalid = () => new ConfigValidationError([
+    { variable, message: 'must be a valid external secret reference' },
+  ]);
+  if (raw === undefined || raw.trim() === '') throw invalid();
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw invalid();
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw invalid();
+  const candidate = parsed as Record<string, unknown>;
+  const allowedKeys = new Set(['provider', 'locator', 'purpose', 'version']);
+  if (Object.keys(candidate).some((key) => !allowedKeys.has(key))) throw invalid();
+  if (
+    typeof candidate.provider !== 'string'
+    || !(secretReferenceProviders as readonly string[]).includes(candidate.provider)
+    || typeof candidate.locator !== 'string'
+    || candidate.locator.trim() === ''
+    || typeof candidate.purpose !== 'string'
+    || candidate.purpose.trim() === ''
+    || (candidate.version !== undefined
+      && (typeof candidate.version !== 'string' || candidate.version.trim() === ''))
+    || /-----BEGIN .*PRIVATE KEY-----/.test(raw)
+  ) {
+    throw invalid();
+  }
+
+  return Object.freeze({
+    provider: candidate.provider as SecretReferenceProvider,
+    locator: candidate.locator.trim(),
+    purpose: candidate.purpose.trim(),
+    ...(candidate.version === undefined ? {} : { version: (candidate.version as string).trim() }),
+  });
 }
 
 const requiredVariables = [
