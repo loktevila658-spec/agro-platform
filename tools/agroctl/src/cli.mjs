@@ -28,8 +28,8 @@ const COMMANDS = Object.freeze({
     help: 'Delegate to database/migrate.mjs using DATABASE_URL and PSQL_BIN.',
   },
   seed: {
-    usage: 'agroctl seed',
-    help: 'Seed provider foundation; no fixture provider is configured yet.',
+    usage: 'agroctl seed [--profile MINIMAL]',
+    help: 'Delegate to the deterministic demo fixture loader (MINIMAL profile by default).',
   },
   verify: {
     usage: 'agroctl verify',
@@ -96,7 +96,10 @@ function helpText() {
 
 function commandHelp(name) {
   const command = COMMANDS[name];
-  return `${command.usage}\n\n${command.help}\n`;
+  const seedDetails = name === 'seed'
+    ? '\n\nOptions:\n  --profile NAME  Fixture profile to load (supported: MINIMAL).\n'
+    : '';
+  return `${command.usage}\n\n${command.help}${seedDetails}\n`;
 }
 
 function sanitizeOutput(value, environment) {
@@ -235,11 +238,15 @@ export function createCli({
     return reportOutcome('migrate', process.execPath, args, run(process.execPath, args));
   }
 
-  function seed() {
-    stderr.write(
-      'agroctl: no seed provider is configured; WP49-008 owns the deterministic MINIMAL fixture loader. No data was seeded.\n',
-    );
-    return EXIT_CODES.notConfigured;
+  function seed(args = []) {
+    const profileIndex = args.indexOf('--profile');
+    if (profileIndex !== -1 && (!args[profileIndex + 1] || args.indexOf('--profile', profileIndex + 1) !== -1)) {
+      stderr.write('agroctl: usage: agroctl seed [--profile MINIMAL] [--help]\n');
+      return EXIT_CODES.usage;
+    }
+    const profile = profileIndex === -1 ? 'MINIMAL' : args[profileIndex + 1];
+    const loaderArgs = [join(repoRoot, 'demo', 'src', 'loader.mjs'), '--profile', profile];
+    return reportOutcome('seed', process.execPath, loaderArgs, run(process.execPath, loaderArgs));
   }
 
   function verify() {
@@ -279,14 +286,21 @@ export function createCli({
       stdout.write(commandHelp(name));
       return EXIT_CODES.success;
     }
-    if (commandArgs.length > 0) {
+    if (name === 'seed') {
+      const validSeedArgs = commandArgs.length === 0
+        || (commandArgs.length === 2 && commandArgs[0] === '--profile');
+      if (!validSeedArgs) {
+        stderr.write('agroctl: usage: agroctl seed [--profile MINIMAL] [--help]\n');
+        return EXIT_CODES.usage;
+      }
+    } else if (commandArgs.length > 0) {
       stderr.write(`agroctl: usage: ${COMMANDS[name].usage} [--help]\n`);
       return EXIT_CODES.usage;
     }
 
     if (name === 'bootstrap') return bootstrap();
     if (name === 'migrate') return migrate();
-    if (name === 'seed') return seed();
+    if (name === 'seed') return seed(commandArgs);
     return verify();
   };
 }

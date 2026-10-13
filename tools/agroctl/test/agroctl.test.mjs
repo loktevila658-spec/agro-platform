@@ -41,6 +41,8 @@ test('global and command help are deterministic and dispatch without spawning', 
   assert.match(stdout(), /agroctl <bootstrap\|migrate\|seed\|verify>/);
   assert.equal(cli(['migrate', '--help']), 0);
   assert.match(stdout(), /Delegate to database\/migrate\.mjs/);
+  assert.equal(cli(['seed', '--help']), 0);
+  assert.match(stdout(), /--profile NAME/);
   assert.equal(called, false);
 });
 
@@ -127,16 +129,55 @@ test('migrate redacts credentials in subprocess output and propagates failure st
   assert.match(stderr(), /\[REDACTED\]/);
 });
 
-test('seed reports an explicit not-configured foundation and never claims data was seeded', () => {
-  let spawned = false;
-  const { cli, stderr } = makeCli({
-    runProcess: () => { spawned = true; return { status: 0 }; },
+test('seed delegates MINIMAL to the demo loader and preserves safe subprocess options', () => {
+  let call;
+  const { cli, stdout, stderr } = makeCli({
+    runProcess: (command, args, options) => {
+      call = { command, args, options };
+      return { status: 0, stdout: 'plan output\n', stderr: '' };
+    },
   });
 
-  assert.equal(cli(['seed']), 3);
-  assert.match(stderr(), /no seed provider is configured/i);
-  assert.match(stderr(), /WP49-008/);
-  assert.equal(spawned, false);
+  assert.equal(cli(['seed']), 0);
+  assert.equal(call.command, process.execPath);
+  assert.deepEqual(call.args, [join(repositoryRoot, 'demo/src/loader.mjs'), '--profile', 'MINIMAL']);
+  assert.equal(call.options.cwd, repositoryRoot);
+  assert.ok(call.options.env && typeof call.options.env === 'object');
+  assert.match(stdout(), /plan output/);
+  assert.equal(stderr(), '');
+});
+
+test('seed forwards explicit profiles and preserves loader validation failures', () => {
+  let call;
+  const { cli, stderr } = makeCli({
+    runProcess: (_command, args) => {
+      call = args;
+      return { status: 1, stdout: '', stderr: 'agro-demo: unknown profile: UNKNOWN\n' };
+    },
+  });
+
+  assert.equal(cli(['seed', '--profile', 'UNKNOWN']), 1);
+  assert.deepEqual(call, [join(repositoryRoot, 'demo/src/loader.mjs'), '--profile', 'UNKNOWN']);
+  assert.equal(cli(['seed', '--profile']), 2);
+  assert.match(stderr(), /unknown profile: UNKNOWN/);
+  assert.match(stderr(), /usage: agroctl seed/);
+});
+
+test('seed propagates loader failures and redacts secrets in loader output', () => {
+  const databaseUrl = 'postgresql://operator:fixture-secret@localhost/agro';
+  const { cli, stdout, stderr } = makeCli({
+    env: { DATABASE_URL: databaseUrl, API_TOKEN: 'fixture-secret' },
+    runProcess: () => ({
+      status: 23,
+      stdout: `failed ${databaseUrl}\n`,
+      stderr: 'API_TOKEN=fixture-secret\n',
+    }),
+  });
+
+  assert.equal(cli(['seed']), 23);
+  assert.doesNotMatch(stdout() + stderr(), /operator|fixture-secret|postgresql:\/\//);
+  assert.match(stderr(), /\[REDACTED\]/);
+  assert.match(stderr(), /exit code 23/);
 });
 
 test('verify runs every read-only check and aggregates failures by check name', () => {

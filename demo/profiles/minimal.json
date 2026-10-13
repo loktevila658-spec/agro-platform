@@ -1,0 +1,13 @@
+{
+  "profile": "MINIMAL",
+  "version": 1,
+  "datasetVersion": "1.0.0",
+  "resources": [
+    { "type": "enterprise", "key": "AGRO-DEMO-01" },
+    { "type": "site", "key": "SITE-NORTH-01" },
+    { "type": "field", "key": "FIELD-001" },
+    { "type": "machine", "key": "TRACTOR-001" },
+    { "type": "warehouse", "key": "WAREHOUSE-01" },
+    { "type": "productionLine", "key": "LINE-MIX-01" }
+  ]
+}
