@@ -52,6 +52,64 @@ function importSpecifiers(source, sourcePath) {
   return [...new Set(specifiers)].sort(compare);
 }
 
+function pathIsWithin(parent, candidate) {
+  const pathFromParent = relative(parent, candidate);
+  return pathFromParent === '' || (!pathFromParent.startsWith(`..${process.platform === 'win32' ? '\\' : '/'}`) && pathFromParent !== '..');
+}
+
+function nearestPackageRoot(root, sourcePath) {
+  let directory = dirname(sourcePath);
+  while (pathIsWithin(root, directory)) {
+    try {
+      if (statSync(join(directory, 'package.json')).isFile()) return directory;
+    } catch {
+      // Continue to the parent; a package manifest defines the ownership root.
+    }
+    const parent = dirname(directory);
+    if (parent === directory) break;
+    directory = parent;
+  }
+  return null;
+}
+
+function resolveCompiledSource(root, sourcePath, outputPath) {
+  const packageRoot = nearestPackageRoot(root, sourcePath);
+  if (!packageRoot) return null;
+
+  const configPath = join(packageRoot, 'tsconfig.json');
+  let config;
+  try {
+    config = JSON.parse(readFileSync(configPath, 'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw new Error(`${relative(root, configPath)}: cannot read TypeScript output mapping (${error.message})`);
+  }
+
+  const { outDir, rootDir } = config.compilerOptions ?? {};
+  if (typeof outDir !== 'string' || typeof rootDir !== 'string') return null;
+  const outputRoot = resolve(packageRoot, outDir);
+  const sourceRoot = resolve(packageRoot, rootDir);
+  if (!pathIsWithin(packageRoot, outputRoot) || !pathIsWithin(packageRoot, sourceRoot)) return null;
+  if (!pathIsWithin(outputRoot, outputPath) || extname(outputPath) !== '.js') return null;
+
+  const sourceRelative = relative(outputRoot, outputPath);
+  const sourceBase = resolve(sourceRoot, sourceRelative.slice(0, -3));
+  if (!pathIsWithin(sourceRoot, sourceBase)) return null;
+
+  for (const extension of ['.ts', '.tsx', '.js', '.jsx']) {
+    const candidate = `${sourceBase}${extension}`;
+    try {
+      if (statSync(candidate).isFile()) return candidate;
+    } catch {
+      // Try the next source extension supported by this JavaScript build.
+    }
+  }
+
+  throw new Error(
+    `${relative(root, sourcePath)}: compiled output '${relative(packageRoot, outputPath)}' has no matching source under '${rootDir}'`,
+  );
+}
+
 function resolveLocalImport(root, sourcePath, specifier) {
   if (!specifier.startsWith('.')) {
     if (specifier.startsWith('apps.') || specifier.startsWith('packages.')) {
@@ -112,6 +170,8 @@ function resolveLocalImport(root, sourcePath, specifier) {
     throw new Error(`unresolved workspace import '${specifier}'`);
   }
   const base = resolve(dirname(sourcePath), specifier);
+  const compiledSource = resolveCompiledSource(root, sourcePath, base);
+  if (compiledSource) return compiledSource;
   const candidates = [base];
   if (!sourceExtensions.has(extname(base))) {
     for (const extension of sourceExtensions) candidates.push(`${base}${extension}`);

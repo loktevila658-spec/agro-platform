@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -23,6 +23,14 @@ function source(root, path, contents) {
   mkdirSync(join(absolute, '..'), { recursive: true });
   writeFileSync(absolute, contents);
   return absolute;
+}
+
+function typescriptPackage(root, packageRoot, imports = '') {
+  source(root, `${packageRoot}/package.json`, '{"name":"fixture-package"}\n');
+  source(root, `${packageRoot}/tsconfig.json`, JSON.stringify({
+    compilerOptions: { outDir: 'dist', rootDir: 'src' },
+  }));
+  source(root, `${packageRoot}/test/imports.mjs`, imports);
 }
 
 test('allowed application-to-shared-package dependency passes', (t) => {
@@ -109,4 +117,72 @@ test('unresolved local import fails closed with source and specifier', (t) => {
   assert.match(result.errors[0], /apps\/api\/src\/controller\.ts/);
   assert.match(result.errors[0], /unresolved local import '\.\/missing\.js'/);
   assert.equal(evidenceFor(result).result, 'FAIL');
+});
+
+test('API test imports resolve dist outputs to src TypeScript without dist artifacts', (t) => {
+  const root = fixtureRoot(t);
+  typescriptPackage(root, 'apps/api', "import '../dist/main.js';\nimport '../dist/schema-version.service.js';\n");
+  source(root, 'apps/api/src/main.ts', 'export {};\n');
+  source(root, 'apps/api/src/schema-version.service.ts', 'export {};\n');
+
+  assert.equal(existsSync(join(root, 'apps/api/dist')), false);
+  const result = scanSourceFiles(root, [join(root, 'apps/api/test/imports.mjs')]);
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(result.violations, []);
+  assert.deepEqual(result.dependencies.map(({ target }) => target), [
+    'apps/api/src/main.ts',
+    'apps/api/src/schema-version.service.ts',
+  ]);
+});
+
+test('package test import resolves dist/index.js to src/index.ts without dist artifacts', (t) => {
+  const root = fixtureRoot(t);
+  typescriptPackage(root, 'packages/config', "import '../dist/index.js';\n");
+  source(root, 'packages/config/src/index.ts', 'export {};\n');
+
+  assert.equal(existsSync(join(root, 'packages/config/dist')), false);
+  const result = scanSourceFiles(root, [join(root, 'packages/config/test/imports.mjs')]);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.dependencies[0].target, 'packages/config/src/index.ts');
+});
+
+test('compiled output with no corresponding source still fails closed', (t) => {
+  const root = fixtureRoot(t);
+  typescriptPackage(root, 'apps/api', "import '../dist/missing.js';\n");
+
+  assert.equal(existsSync(join(root, 'apps/api/dist')), false);
+  const result = scanSourceFiles(root, [join(root, 'apps/api/test/imports.mjs')]);
+  assert.equal(result.errors.length, 1);
+  assert.match(result.errors[0], /compiled output 'dist\/missing\.js' has no matching source under 'src'/);
+});
+
+test('fake output mapping cannot escape the importing application package', (t) => {
+  const root = fixtureRoot(t);
+  typescriptPackage(root, 'apps/api', "import '../../web/dist/index.js';\n");
+  typescriptPackage(root, 'apps/web');
+  source(root, 'apps/web/src/index.ts', 'export {};\n');
+
+  const importer = join(root, 'apps/api/test/imports.mjs');
+  const result = scanSourceFiles(root, [importer]);
+  assert.deepEqual(result.violations, []);
+  assert.equal(result.errors.length, 1);
+  assert.match(result.errors[0], /unresolved local import '\.\.\/\.\.\/web\/dist\/index\.js'/);
+});
+
+test('pristine repository fixture scan is deterministic with no dist directories', (t) => {
+  const root = fixtureRoot(t);
+  typescriptPackage(root, 'apps/api', "import '../dist/main.js';\n");
+  source(root, 'apps/api/src/main.ts', 'export {};\n');
+  mkdirSync(join(root, 'packages'), { recursive: true });
+  typescriptPackage(root, 'packages/config', "import '../dist/index.js';\n");
+  source(root, 'packages/config/src/index.ts', 'export {};\n');
+
+  assert.equal(existsSync(join(root, 'apps/api/dist')), false);
+  assert.equal(existsSync(join(root, 'packages/config/dist')), false);
+  const first = scanRepository(root);
+  const second = scanRepository(root);
+  assert.deepEqual(first, second);
+  assert.deepEqual(first.errors, []);
+  assert.deepEqual(first.violations, []);
+  assert.equal(first.dependencies.length, 2);
 });
