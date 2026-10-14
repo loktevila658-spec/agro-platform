@@ -5,9 +5,10 @@ import { ObservabilityController } from './observability.controller';
 import { SchemaVersionController } from './schema-version.controller';
 import { SchemaVersionService } from './schema-version.service';
 import { OrgModule } from './modules/org/org.module';
+import { IdentityModule } from './modules/identity/identity.module';
 
 @Module({
-  imports: [OrgModule],
+  imports: [OrgModule, IdentityModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

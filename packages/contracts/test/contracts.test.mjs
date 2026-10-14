@@ -25,6 +25,18 @@ const syntheticEvent = {
 
 test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exact request inputs', async () => {
   const { openapi } = await loadAndValidateContracts();
+  const parameter = (path, method) => openapi.document.paths[path][method].parameters;
+  for (const path of ['/org/tenants', '/org/organizations', '/org/organization-units', '/org/sites', '/org/tenants/{tenantId}/hierarchy']) {
+    assert.ok(parameter(path, path.includes('{tenantId}') ? 'get' : 'post').some(({ $ref }) => $ref === '#/components/parameters/BootstrapAuthorization'), path);
+    assert.ok(!parameter(path, path.includes('{tenantId}') ? 'get' : 'post').some(({ $ref }) => $ref === '#/components/parameters/IdentityAuthorization'), path);
+  }
+  for (const [path, method] of [['/v1/auth/logout', 'post'], ['/v1/me/sessions', 'get'], ['/v1/me/sessions/{id}/commands/revoke', 'post']]) {
+    assert.ok(parameter(path, method).some(({ $ref }) => $ref === '#/components/parameters/IdentityAuthorization'), path);
+    assert.ok(!parameter(path, method).some(({ $ref }) => $ref === '#/components/parameters/BootstrapAuthorization'), path);
+  }
+  assert.equal(openapi.document.components.parameters.BootstrapAuthorization.name, 'Authorization');
+  assert.equal(openapi.document.components.parameters.IdentityAuthorization.name, 'Authorization');
+  assert.match(openapi.document.components.parameters.IdentityAuthorization.description, /Bearer access JWT issued by the local identity module/);
   assert.deepEqual(openapi.operations.map(({ method, operationId, path, responseSchemaName }) => ({ method, operationId, path, responseSchemaName })), [
     { method: 'GET', operationId: 'getLiveness', path: '/health/live', responseSchemaName: 'LivenessResponse' },
     { method: 'GET', operationId: 'getReadiness', path: '/health/ready', responseSchemaName: 'ReadinessResponse' },
@@ -35,6 +47,12 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     { method: 'POST', operationId: 'createOrgTenant', path: '/org/tenants', responseSchemaName: 'TenantResponse' },
     { method: 'GET', operationId: 'getOrgHierarchy', path: '/org/tenants/{tenantId}/hierarchy', responseSchemaName: 'HierarchyResponse' },
     { method: 'GET', operationId: 'getSchemaVersion', path: '/system/schema-version', responseSchemaName: 'SchemaVersionResponse' },
+    { method: 'POST', operationId: 'login', path: '/v1/auth/login', responseSchemaName: 'LoginResponse' },
+    { method: 'POST', operationId: 'logout', path: '/v1/auth/logout', responseSchemaName: 'RevocationResponse' },
+    { method: 'POST', operationId: 'verifyMfa', path: '/v1/auth/mfa/verify', responseSchemaName: 'TokenResponse' },
+    { method: 'POST', operationId: 'refreshSession', path: '/v1/auth/refresh', responseSchemaName: 'TokenResponse' },
+    { method: 'GET', operationId: 'listMySessions', path: '/v1/me/sessions', responseSchemaName: 'SessionListResponse' },
+    { method: 'POST', operationId: 'revokeMySession', path: '/v1/me/sessions/{id}/commands/revoke', responseSchemaName: 'RevocationResponse' },
   ]);
   const tenant = openapi.operations.find(({ operationId }) => operationId === 'createOrgTenant');
   assert.deepEqual(tenant.inputs, {
@@ -46,6 +64,9 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     ],
     body: { schemaName: 'CreateTenantRequest', required: true },
   });
+  for (const operationId of ['logout', 'listMySessions', 'revokeMySession']) {
+    assert.deepEqual(openapi.operations.find((operation) => operation.operationId === operationId).inputs.header.find(({ name }) => name === 'Authorization'), { name: 'Authorization', required: true, type: 'string' });
+  }
   assert.deepEqual(openapi.operations.find(({ operationId }) => operationId === 'getOrgHierarchy').inputs.path, [
     { name: 'tenantId', required: true, type: 'string' },
   ]);
@@ -75,6 +96,9 @@ test('canonical event schema and single YAML catalog validate', async () => {
     { name: 'org.organization.created', version: '1.0.0', producer: 'org' },
     { name: 'org.unit.created', version: '1.0.0', producer: 'org' },
     { name: 'org.site.created', version: '1.0.0', producer: 'org' },
+    { name: 'security.session_created', version: '1.0.0', producer: 'identity' },
+    { name: 'security.session_revoked', version: '1.0.0', producer: 'identity' },
+    { name: 'security.mfa_changed', version: '1.0.0', producer: 'identity' },
   ]);
   assert.deepEqual(Object.keys(contracts.sources).sort(), [
     'events/catalog/index.yaml',
@@ -102,6 +126,20 @@ test('event schema enforces patterns', async () => {
   assert.throws(() => validateEventCatalog(invalid, eventSchema), /name does not match pattern/);
 });
 
+test('event names preserve org names and accept required lowercase snake_case segments', async () => {
+  const { events, eventSchema } = await loadAndValidateContracts();
+  for (const name of ['org.tenant.created', 'org.organization.created', 'org.unit.created', 'org.site.created', 'security.session_created', 'security.session_revoked', 'security.mfa_changed']) {
+    assert.doesNotThrow(() => validateEventCatalog({ ...events, events: [{ ...syntheticEvent, name }] }, eventSchema), name);
+  }
+});
+
+test('event names reject malformed separators and uppercase segments', async () => {
+  const { events, eventSchema } = await loadAndValidateContracts();
+  for (const name of ['security._session.created', 'security.session_.created', 'security.session__created', 'security..session', '.security.session', 'security.session.', 'security.Session_created', 'security.SESSION_created']) {
+    assert.throws(() => validateEventCatalog({ ...events, events: [{ ...syntheticEvent, name }] }, eventSchema), /name does not match pattern/, name);
+  }
+});
+
 test('event schema enforces unique array entries', async () => {
   const { events, eventSchema } = await loadAndValidateContracts();
   const invalid = { ...events, events: [{ ...syntheticEvent, consumers: ['same', 'same'] }] };
@@ -127,6 +165,9 @@ test('schema-version operation is generated in TypeScript and Dart', async () =>
   const artifacts = renderGeneratedArtifacts(await loadAndValidateContracts());
   assert.match(artifacts.get('src/generated/contracts.ts'), /async getSchemaVersion\(xCorrelationId\?: string\): Promise<SchemaVersionResponse>/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /headers\["X-Correlation-Id"\] = String\(xCorrelationId\)/);
+  assert.match(artifacts.get('src/generated/contracts.ts'), /readonly sessions: readonly SessionSummary\[\];/);
+  assert.match(artifacts.get('generated/dart/contracts.dart'), /final List<SessionSummary> sessions;/);
+  assert.match(artifacts.get('generated/dart/contracts.dart'), /SessionSummary\.fromJson\(Map<String, Object\?>\.from\(item as Map\)\)/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /async createOrgTenant\(authorization: string, idempotencyKey: string, body: CreateTenantRequest/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /encodeURIComponent\(String\(tenantId\)\)/);
   assert.match(artifacts.get('src/generated/contracts.ts'), /JSON\.stringify\(body\)/);
@@ -248,7 +289,7 @@ test('generated-output drift is detected without rewriting files', async () => {
 test('canonical generated clients remain free of unauthorized domains', async () => {
   const artifacts = renderGeneratedArtifacts(await loadAndValidateContracts());
   for (const generated of artifacts.values()) {
-    assert.doesNotMatch(generated, /\/(?:auth|identity|permissions?|audit|gis|fleet|warehouse|production)(?:\/|['`])/i);
+    assert.doesNotMatch(generated, /\/(?:identity|permissions?|audit|gis|fleet|warehouse|production)(?:\/|['`])/i);
     assert.doesNotMatch(generated, /(?:auth|identity|permissions?|audit|gis|fleet|warehouse)\.(?:created|updated|deleted)/i);
   }
 });

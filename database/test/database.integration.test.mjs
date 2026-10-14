@@ -153,6 +153,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(first.status, 0, processFailure('First migration run', first));
     assert.match(first.stdout, /migration 1 applied/);
     assert.match(first.stdout, /migration 2 applied/);
+    assert.match(first.stdout, /migration 3 applied/);
 
     const second = spawnSync(process.execPath, ['database/migrate.mjs'], {
       cwd: repositoryRoot,
@@ -162,6 +163,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(second.status, 0, processFailure('Repeated migration run', second));
     assert.match(second.stdout, /migration 1 already applied/);
     assert.match(second.stdout, /migration 2 already applied/);
+    assert.match(second.stdout, /migration 3 already applied/);
 
     assert.equal(
       query(
@@ -169,7 +171,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT current_version FROM platform_meta.schema_version;',
       ),
-      '2',
+      '3',
     );
     assert.match(
       query(
@@ -185,7 +187,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT COUNT(*) FROM platform_meta.schema_migrations;',
       ),
-      '2',
+      '3',
     );
 
     api = spawn(process.execPath, ['apps/api/dist/main.js'], {
@@ -207,8 +209,8 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body, {
-      schemaVersion: 2,
-      expectedSchemaVersion: 2,
+      schemaVersion: 3,
+      expectedSchemaVersion: 3,
       postgisVersion: body.postgisVersion,
       status: 'current',
     });

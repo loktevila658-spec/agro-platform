@@ -157,6 +157,58 @@ class LivenessResponse {
   final String status;
 }
 
+class LoginRequest {
+  const LoginRequest({
+    required this.deviceId,
+    required this.login,
+    required this.password,
+  });
+
+  factory LoginRequest.fromJson(Map<String, Object?> json) => LoginRequest(
+        deviceId: json['deviceId'] as String,
+        login: json['login'] as String,
+        password: json['password'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'deviceId': deviceId, 'login': login, 'password': password};
+
+  final String deviceId;
+  final String login;
+  final String password;
+}
+
+class LoginResponse {
+  const LoginResponse({
+    this.accessToken,
+    this.challengeToken,
+    this.expiresIn,
+    required this.mfaRequired,
+    this.refreshExpiresAt,
+    this.refreshToken,
+    this.tokenType,
+  });
+
+  factory LoginResponse.fromJson(Map<String, Object?> json) => LoginResponse(
+        accessToken: json['accessToken'] == null ? null : json['accessToken'] as String,
+        challengeToken: json['challengeToken'] == null ? null : json['challengeToken'] as String,
+        expiresIn: json['expiresIn'] == null ? null : (json['expiresIn'] as num).toInt(),
+        mfaRequired: json['mfaRequired'] as bool,
+        refreshExpiresAt: json['refreshExpiresAt'] == null ? null : json['refreshExpiresAt'] as String,
+        refreshToken: json['refreshToken'] == null ? null : json['refreshToken'] as String,
+        tokenType: json['tokenType'] == null ? null : json['tokenType'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (accessToken != null) 'accessToken': accessToken, if (challengeToken != null) 'challengeToken': challengeToken, if (expiresIn != null) 'expiresIn': expiresIn, 'mfaRequired': mfaRequired, if (refreshExpiresAt != null) 'refreshExpiresAt': refreshExpiresAt, if (refreshToken != null) 'refreshToken': refreshToken, if (tokenType != null) 'tokenType': tokenType};
+
+  final String? accessToken;
+  final String? challengeToken;
+  final int? expiresIn;
+  final bool mfaRequired;
+  final String? refreshExpiresAt;
+  final String? refreshToken;
+  final String? tokenType;
+}
+
 class MetricsResponse {
   const MetricsResponse({
     required this.httpRequestCount,
@@ -193,6 +245,23 @@ class MetricsResponse {
   final int processHeapUsedBytes;
   final int processResidentSetBytes;
   final num processUptimeSeconds;
+}
+
+class MfaVerifyRequest {
+  const MfaVerifyRequest({
+    required this.challengeToken,
+    required this.code,
+  });
+
+  factory MfaVerifyRequest.fromJson(Map<String, Object?> json) => MfaVerifyRequest(
+        challengeToken: json['challengeToken'] as String,
+        code: json['code'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'challengeToken': challengeToken, 'code': code};
+
+  final String challengeToken;
+  final String code;
 }
 
 class OrganizationResponse {
@@ -282,6 +351,34 @@ class ReadinessResponse {
   final String status;
 }
 
+class RefreshRequest {
+  const RefreshRequest({
+    required this.refreshToken,
+  });
+
+  factory RefreshRequest.fromJson(Map<String, Object?> json) => RefreshRequest(
+        refreshToken: json['refreshToken'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'refreshToken': refreshToken};
+
+  final String refreshToken;
+}
+
+class RevocationResponse {
+  const RevocationResponse({
+    required this.revoked,
+  });
+
+  factory RevocationResponse.fromJson(Map<String, Object?> json) => RevocationResponse(
+        revoked: json['revoked'] as bool,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'revoked': revoked};
+
+  final bool revoked;
+}
+
 class SchemaVersionResponse {
   const SchemaVersionResponse({
     required this.expectedSchemaVersion,
@@ -323,6 +420,58 @@ class SchemaVersionUnavailableResponse {
   final String error;
   final String message;
   final int statusCode;
+}
+
+class SessionListResponse {
+  const SessionListResponse({
+    required this.sessions,
+  });
+
+  factory SessionListResponse.fromJson(Map<String, Object?> json) => SessionListResponse(
+        sessions: (json['sessions'] as List<Object?>).map((item) => SessionSummary.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'sessions': sessions};
+
+  final List<SessionSummary> sessions;
+}
+
+class SessionSummary {
+  const SessionSummary({
+    required this.authStrength,
+    required this.createdAt,
+    required this.current,
+    required this.deviceId,
+    required this.deviceLabel,
+    required this.expiresAt,
+    required this.lastSeenAt,
+    required this.revoked,
+    required this.sessionId,
+  });
+
+  factory SessionSummary.fromJson(Map<String, Object?> json) => SessionSummary(
+        authStrength: json['authStrength'] as String,
+        createdAt: json['createdAt'] as String,
+        current: json['current'] as bool,
+        deviceId: json['deviceId'] as String,
+        deviceLabel: json['deviceLabel'] as String,
+        expiresAt: json['expiresAt'] as String,
+        lastSeenAt: json['lastSeenAt'] as String,
+        revoked: json['revoked'] as bool,
+        sessionId: json['sessionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'authStrength': authStrength, 'createdAt': createdAt, 'current': current, 'deviceId': deviceId, 'deviceLabel': deviceLabel, 'expiresAt': expiresAt, 'lastSeenAt': lastSeenAt, 'revoked': revoked, 'sessionId': sessionId};
+
+  final String authStrength;
+  final String createdAt;
+  final bool current;
+  final String deviceId;
+  final String deviceLabel;
+  final String expiresAt;
+  final String lastSeenAt;
+  final bool revoked;
+  final String sessionId;
 }
 
 class SiteResponse {
@@ -398,6 +547,32 @@ class TenantResponse {
   final String timezone;
 }
 
+class TokenResponse {
+  const TokenResponse({
+    required this.accessToken,
+    required this.expiresIn,
+    required this.refreshExpiresAt,
+    required this.refreshToken,
+    required this.tokenType,
+  });
+
+  factory TokenResponse.fromJson(Map<String, Object?> json) => TokenResponse(
+        accessToken: json['accessToken'] as String,
+        expiresIn: (json['expiresIn'] as num).toInt(),
+        refreshExpiresAt: json['refreshExpiresAt'] as String,
+        refreshToken: json['refreshToken'] as String,
+        tokenType: json['tokenType'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'accessToken': accessToken, 'expiresIn': expiresIn, 'refreshExpiresAt': refreshExpiresAt, 'refreshToken': refreshToken, 'tokenType': tokenType};
+
+  final String accessToken;
+  final int expiresIn;
+  final String refreshExpiresAt;
+  final String refreshToken;
+  final String tokenType;
+}
+
 class EventDefinition {
   const EventDefinition({
     required this.name,
@@ -442,6 +617,27 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     producer: 'org',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'security.session_created',
+    version: '1.0.0',
+    producer: 'identity',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'sessionId': <String, Object?>{'type': 'string'}, 'userId': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'deviceId': <String, Object?>{'type': 'string'}, 'authStrength': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'sessionId', 'userId', 'tenantId', 'actorId', 'deviceId', 'authStrength', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'security.session_revoked',
+    version: '1.0.0',
+    producer: 'identity',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'sessionId': <String, Object?>{'type': 'string'}, 'userId': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'deviceId': <String, Object?>{'type': 'string'}, 'reason': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'sessionId', 'userId', 'tenantId', 'actorId', 'deviceId', 'reason', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'security.mfa_changed',
+    version: '1.0.0',
+    producer: 'identity',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'userId': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'enabled': <String, Object?>{'type': 'boolean'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'userId', 'tenantId', 'actorId', 'enabled', 'correlationId', 'causationId', 'occurredAt']},
   )
 ];
 
@@ -544,5 +740,47 @@ class AgroPlatformApiClient {
       json = await send(url, 'GET', headers: headers, body: null);
     }
     return SchemaVersionResponse.fromJson(json);
+  }
+
+  Future<LoginResponse> login({String? xCorrelationId, required LoginRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for login');
+    final json = await send(baseUri.resolve('/v1/auth/login'), 'POST', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return LoginResponse.fromJson(json);
+  }
+
+  Future<RevocationResponse> logout({required String authorization, String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for logout');
+    final json = await send(baseUri.resolve('/v1/auth/logout'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    return RevocationResponse.fromJson(json);
+  }
+
+  Future<TokenResponse> verifyMfa({String? xCorrelationId, required MfaVerifyRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for verifyMfa');
+    final json = await send(baseUri.resolve('/v1/auth/mfa/verify'), 'POST', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return TokenResponse.fromJson(json);
+  }
+
+  Future<TokenResponse> refreshSession({String? xCorrelationId, required RefreshRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for refreshSession');
+    final json = await send(baseUri.resolve('/v1/auth/refresh'), 'POST', headers: <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return TokenResponse.fromJson(json);
+  }
+
+  Future<SessionListResponse> listMySessions({required String authorization, String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for listMySessions');
+    final json = await send(baseUri.resolve('/v1/me/sessions'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    return SessionListResponse.fromJson(json);
+  }
+
+  Future<RevocationResponse> revokeMySession({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for revokeMySession');
+    final json = await send(baseUri.resolve('/v1/me/sessions/' + Uri.encodeComponent(id) + '/commands/revoke'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return RevocationResponse.fromJson(json);
   }
 }
