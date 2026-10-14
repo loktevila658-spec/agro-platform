@@ -267,6 +267,7 @@ class MfaVerifyRequest {
 class OrganizationResponse {
   const OrganizationResponse({
     required this.code,
+    this.commandId,
     required this.correlationId,
     required this.createdAt,
     required this.id,
@@ -277,6 +278,7 @@ class OrganizationResponse {
 
   factory OrganizationResponse.fromJson(Map<String, Object?> json) => OrganizationResponse(
         code: json['code'] as String,
+        commandId: json['commandId'] == null ? null : json['commandId'] as String,
         correlationId: json['correlationId'] as String,
         createdAt: json['createdAt'] as String,
         id: json['id'] as String,
@@ -285,9 +287,10 @@ class OrganizationResponse {
         tenantId: json['tenantId'] as String,
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'code': code, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'organizationType': organizationType, 'tenantId': tenantId};
+  Map<String, Object?> toJson() => <String, Object?>{'code': code, if (commandId != null) 'commandId': commandId, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'organizationType': organizationType, 'tenantId': tenantId};
 
   final String code;
+  final String? commandId;
   final String correlationId;
   final String createdAt;
   final String id;
@@ -299,6 +302,7 @@ class OrganizationResponse {
 class OrganizationUnitResponse {
   const OrganizationUnitResponse({
     required this.code,
+    this.commandId,
     required this.correlationId,
     required this.createdAt,
     required this.id,
@@ -311,6 +315,7 @@ class OrganizationUnitResponse {
 
   factory OrganizationUnitResponse.fromJson(Map<String, Object?> json) => OrganizationUnitResponse(
         code: json['code'] as String,
+        commandId: json['commandId'] == null ? null : json['commandId'] as String,
         correlationId: json['correlationId'] as String,
         createdAt: json['createdAt'] as String,
         id: json['id'] as String,
@@ -321,9 +326,10 @@ class OrganizationUnitResponse {
         unitType: json['unitType'] as String,
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'code': code, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'organizationId': organizationId, if (parentId != null) 'parentId': parentId, 'tenantId': tenantId, 'unitType': unitType};
+  Map<String, Object?> toJson() => <String, Object?>{'code': code, if (commandId != null) 'commandId': commandId, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'organizationId': organizationId, if (parentId != null) 'parentId': parentId, 'tenantId': tenantId, 'unitType': unitType};
 
   final String code;
+  final String? commandId;
   final String correlationId;
   final String createdAt;
   final String id;
@@ -478,6 +484,7 @@ class SiteResponse {
   const SiteResponse({
     this.address,
     required this.code,
+    this.commandId,
     required this.correlationId,
     required this.createdAt,
     required this.id,
@@ -492,6 +499,7 @@ class SiteResponse {
   factory SiteResponse.fromJson(Map<String, Object?> json) => SiteResponse(
         address: json['address'] == null ? null : json['address'] as String,
         code: json['code'] as String,
+        commandId: json['commandId'] == null ? null : json['commandId'] as String,
         correlationId: json['correlationId'] as String,
         createdAt: json['createdAt'] as String,
         id: json['id'] as String,
@@ -503,10 +511,11 @@ class SiteResponse {
         timezone: json['timezone'] as String,
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{if (address != null) 'address': address, 'code': code, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'organizationId': organizationId, if (organizationUnitId != null) 'organizationUnitId': organizationUnitId, 'siteType': siteType, 'tenantId': tenantId, 'timezone': timezone};
+  Map<String, Object?> toJson() => <String, Object?>{if (address != null) 'address': address, 'code': code, if (commandId != null) 'commandId': commandId, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'organizationId': organizationId, if (organizationUnitId != null) 'organizationUnitId': organizationUnitId, 'siteType': siteType, 'tenantId': tenantId, 'timezone': timezone};
 
   final String? address;
   final String code;
+  final String? commandId;
   final String correlationId;
   final String createdAt;
   final String id;
@@ -521,6 +530,7 @@ class SiteResponse {
 class TenantResponse {
   const TenantResponse({
     required this.code,
+    this.commandId,
     required this.correlationId,
     required this.createdAt,
     required this.id,
@@ -530,6 +540,7 @@ class TenantResponse {
 
   factory TenantResponse.fromJson(Map<String, Object?> json) => TenantResponse(
         code: json['code'] as String,
+        commandId: json['commandId'] == null ? null : json['commandId'] as String,
         correlationId: json['correlationId'] as String,
         createdAt: json['createdAt'] as String,
         id: json['id'] as String,
@@ -537,9 +548,10 @@ class TenantResponse {
         timezone: json['timezone'] as String,
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'code': code, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'timezone': timezone};
+  Map<String, Object?> toJson() => <String, Object?>{'code': code, if (commandId != null) 'commandId': commandId, 'correlationId': correlationId, 'createdAt': createdAt, 'id': id, 'name': name, 'timezone': timezone};
 
   final String code;
+  final String? commandId;
   final String correlationId;
   final String createdAt;
   final String id;

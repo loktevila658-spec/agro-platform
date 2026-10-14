@@ -88,6 +88,7 @@ export interface MfaVerifyRequest {
 
 export interface OrganizationResponse {
   readonly code: string;
+  readonly commandId?: string;
   readonly correlationId: string;
   readonly createdAt: string;
   readonly id: string;
@@ -98,6 +99,7 @@ export interface OrganizationResponse {
 
 export interface OrganizationUnitResponse {
   readonly code: string;
+  readonly commandId?: string;
   readonly correlationId: string;
   readonly createdAt: string;
   readonly id: string;
@@ -153,6 +155,7 @@ export interface SessionSummary {
 export interface SiteResponse {
   readonly address?: string;
   readonly code: string;
+  readonly commandId?: string;
   readonly correlationId: string;
   readonly createdAt: string;
   readonly id: string;
@@ -166,6 +169,7 @@ export interface SiteResponse {
 
 export interface TenantResponse {
   readonly code: string;
+  readonly commandId?: string;
   readonly correlationId: string;
   readonly createdAt: string;
   readonly id: string;

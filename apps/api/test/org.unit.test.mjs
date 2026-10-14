@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import test, { after, before } from 'node:test';
 
+import { executeCommandEffect } from '../dist/common/command-boundary.js';
 import { OrgService } from '../dist/modules/org/org.service.js';
 
 const actorId = '7b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7';
@@ -138,7 +139,7 @@ test('rejects organization and parent-unit relationships before persistence', as
   assert.equal(calls.filter((call) => call.kind === 'client').length, 0);
 });
 
-function tenantClient({ reservationCount = 1, priorHash } = {}) {
+function tenantClient({ reservationCount = 1, priorHash, priorResponse = { id: 'prior' } } = {}) {
   const hashes = [];
   const queries = [];
   return {
@@ -151,7 +152,7 @@ function tenantClient({ reservationCount = 1, priorHash } = {}) {
         return { rows: reservationCount ? [{ idempotency_key: params[1] }] : [], rowCount: reservationCount };
       }
       if (sql.startsWith('SELECT command_name, payload_sha256')) {
-        return { rows: [{ command_name: 'org.tenant.create', payload_sha256: priorHash, response: { id: 'prior' } }], rowCount: 1 };
+        return { rows: [{ command_name: 'org.tenant.create', payload_sha256: priorHash, response: priorResponse }], rowCount: 1 };
       }
       if (sql.startsWith('INSERT INTO org.tenant')) {
         return { rows: [{ id: tenantId, code: params[0], name: params[1], timezone: params[2] }], rowCount: 1 };
@@ -183,4 +184,65 @@ test('rejects reuse of an idempotency key with an incompatible payload', async (
   );
   assert.equal(client.queries.includes('ROLLBACK'), true);
   assert.equal(client.queries.includes('COMMIT'), false);
+});
+
+test('replays historical idempotency response without inventing a commandId', async () => {
+  const command = { code: 'farm', name: 'Farm', timezone: 'UTC' };
+  const payloadHash = createHash('sha256').update('{"code":"farm","name":"Farm","timezone":"UTC"}').digest('hex');
+  const priorResponse = { id: tenantId, code: command.code, name: command.name, timezone: command.timezone };
+  const client = tenantClient({ reservationCount: 0, priorHash: payloadHash, priorResponse });
+  const { service } = serviceWithPool({ clientQuery: client.query.bind(client) });
+  const result = await service.createTenant(command, context('legacy-key'));
+
+  assert.deepEqual(result, priorResponse);
+  assert.equal(Object.hasOwn(result, 'commandId'), false);
+  assert.equal(client.queries.some((sql) => sql.startsWith('UPDATE org.command_idempotency')), false);
+});
+
+test('optimistic version guard rejects stale commands before the authoritative effect', async () => {
+  let effects = 0;
+  await assert.rejects(
+    executeCommandEffect({
+      transaction: {},
+      expectedVersion: 'v4',
+      assertVersion: async (_transaction, expected) => expected === 'v5',
+      effect: async () => { effects += 1; },
+    }),
+    (error) => error.getStatus() === 409 && /Optimistic version conflict/.test(error.message),
+  );
+  assert.equal(effects, 0);
+});
+
+test('optimistic version guard permits only one concurrent effect for the same expected version', async () => {
+  let version = 'v4';
+  let effects = 0;
+  let transactionTail = Promise.resolve();
+  const transact = async (work) => {
+    const previous = transactionTail;
+    let release;
+    transactionTail = new Promise((resolve) => { release = resolve; });
+    await previous;
+    try {
+      return await work({ get version() { return version; } });
+    } finally {
+      release();
+    }
+  };
+  const command = () => transact((transaction) => executeCommandEffect({
+    transaction,
+    expectedVersion: 'v4',
+    assertVersion: async (tx, expected) => tx.version === expected,
+    effect: async () => {
+      effects += 1;
+      version = 'v5';
+      return 'applied';
+    },
+  }));
+
+  const results = await Promise.allSettled([command(), command()]);
+  assert.deepEqual(results.map(({ status }) => status).sort(), ['fulfilled', 'rejected']);
+  assert.equal(results.find(({ status }) => status === 'fulfilled').value, 'applied');
+  assert.equal(results.find(({ status }) => status === 'rejected').reason.getStatus(), 409);
+  assert.equal(version, 'v5');
+  assert.equal(effects, 1);
 });
