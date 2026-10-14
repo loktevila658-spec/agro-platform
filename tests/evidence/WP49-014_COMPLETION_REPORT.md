@@ -2,13 +2,15 @@
 
 - WP ID: WP49-014
 - Title: Audit & correction framework
-- Branch / implementation commit: `codex/wp49-014` / `58b9677dcdd9c4728abb103699f02cbcce55dae9`.
+- Branch: `codex/wp49-014`.
+- Initial implementation commit (historical): [`58b9677dcdd9c4728abb103699f02cbcce55dae9`](https://github.com/loktevila658-spec/agro-platform/commit/58b9677dcdd9c4728abb103699f02cbcce55dae9).
+- G0 `TRUNCATE` protection correction commit: [`1e69c7e52c8e56a645cab5156ddaf10345bb2fe4`](https://github.com/loktevila658-spec/agro-platform/commit/1e69c7e52c8e56a645cab5156ddaf10345bb2fe4).
 - Date: 2026-10-14
-- Process status: [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27) is OPEN for review; **not DONE**. CR #25 and scope addendum #26 remain open. The prior G0 review found that migration 0004 did not block `TRUNCATE`; this correction adds statement-level guards and PostgreSQL integration assertions. New-head CI is pending at this report update; no post-merge CI exists.
+- Process status: [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27) is OPEN for review; **not DONE**. CR #25 and scope addendum #26 remain open. The prior G0 review found that migration 0004 did not block `TRUNCATE`; the correction commit above adds statement-level guards and PostgreSQL integration assertions. CI run `38630316221` passed on the correction commit. This report-only update is a subsequent commit and does not claim that run as evidence for its own resulting head. No merge or post-merge CI exists.
 
 ## 1. Prerequisites verified
 
-- `origin/main`: `715ecb50cbb465a7088be2a4ef1eb8947a0ffdce`; live remote, local remote-tracking ref, and worktree HEAD matched at final review.
+- `origin/main`: `715ecb50cbb465a7088be2a4ef1eb8947a0ffdce`; the live remote and local `origin/main` matched, and PR #27 base pointed to this SHA. At the corrected-code CI review, PR branch `codex/wp49-014` and its remote branch were at `1e69c7e52c8e56a645cab5156ddaf10345bb2fe4` (not at `origin/main`).
 - CR #25: APPROVED and OPEN. Its original body and approval decision were preserved.
 - CR #26: APPROVED and OPEN. The project owner approval «одоряю» (obvious typo for «одобряю») was recorded in its body. It authorizes exactly the identity integration test expectation update and this report path.
 - Frozen WP49-014 manifest was not edited:
@@ -67,8 +69,8 @@ Every path is authorized by CR #25 or CR #26:
 - Typecheck gate: **PASS** — workspace typecheck and architecture dependency guard (11/11).
 - Contract gate: **PASS** — canonical contracts validate and generated clients have no drift.
 - Migration gate: **PASS** — PostgreSQL/PostGIS integration applies and repeats migrations, validates schema version 4 and API response, and verifies required stores/tables.
-- Runtime Compose smoke: **BLOCKED / NOT RUN**. Config validation passed, but the prescribed smoke cleanup runs `docker compose down --volumes --remove-orphans`, which can delete volumes in the shared Compose environment. No unsafe cleanup was performed. The prior incomplete local runtime attempt is not counted as PASS.
-- Prior-head PR CI run [`38627127402`](https://github.com/loktevila658-spec/agro-platform/actions/runs/38627127402): **PASS** on head `2588c19136ef60138451713d6ca72e94321c0e97`; it predates this `TRUNCATE` correction and is not evidence for the corrected head. New-head pre-merge CI: **PENDING** at report update; the PR workflow runs required gates on its isolated runner.
+- Local Compose runtime smoke: **BLOCKED / NOT RUN**. The prescribed smoke cleanup runs `docker compose down --volumes --remove-orphans`, which can delete volumes in the shared Compose environment. No unsafe cleanup was performed. This local status is separate from the successful isolated GitHub Runtime quality gate.
+- Corrected-code PR CI run [`38630316221`](https://github.com/loktevila658-spec/agro-platform/actions/runs/38630316221): **PASS** on exact commit `1e69c7e52c8e56a645cab5156ddaf10345bb2fe4` (PR head before this report-only update). Successful jobs: Lint capability gate, Unit quality gate, Typecheck quality gate, Runtime quality gate, Contract quality gate, Migration quality gate, and aggregate `CI quality gates`. This run is not evidence for the subsequent report-only commit.
 - Post-merge CI: **NOT RUN** — PR #27 has not been merged.
 
 - G0: PASS — dependencies and schema compatibility verified.
@@ -83,7 +85,7 @@ Every path is authorized by CR #25 or CR #26:
 - G9: PASS — evidence/provenance and correction links are persisted and tested.
 - G10: PASS — deterministic framework-level PostgreSQL scenario passes; it is not a product workflow.
 - G11: PASS for applicable security checks — fail-closed authorization, existing identity security-audit assertions, and architecture checks pass. No separate performance/chaos gate was assigned or run.
-- G12: BLOCKED — report is prepared and PR #27 is open, but pre-merge CI, review/merge approval, post-merge CI, and remaining governance steps are outstanding.
+- G12: BLOCKED — report is prepared and corrected-code CI passed, but owner review/merge decision, merge, post-merge CI, and remaining governance steps are outstanding.
 
 ## 6. Deterministic demo / evidence
 
@@ -94,12 +96,12 @@ Every path is authorized by CR #25 or CR #26:
 
 ## 7. Limitations / follow-ups
 
-- Local Compose runtime smoke remains BLOCKED/NOT RUN because the prescribed cleanup deletes volumes in the shared environment. Do not report it as passing. A safe isolated CI/runtime execution is still required.
-- Implementation commit `58b9677dcdd9c4728abb103699f02cbcce55dae9` and PR #27 exist; pre-merge CI is pending, and post-merge CI and merge do not exist.
+- Local Compose runtime smoke remains BLOCKED/NOT RUN because the prescribed cleanup deletes volumes in the shared environment. Do not report local smoke as passing. The isolated GitHub Runtime quality gate passed in run `38630316221`.
+- Historical implementation commit `58b9677dcdd9c4728abb103699f02cbcce55dae9`, correction commit `1e69c7e52c8e56a645cab5156ddaf10345bb2fe4`, and PR #27 exist. Run `38630316221` passed on the correction commit; any CI for a subsequent report-only head is a separate result. Post-merge CI and merge do not exist.
 - CR #25 and CR #26 remain OPEN; neither has been closed.
 - WP49-014 is not marked DONE. Do not start WP49-015.
 
 ## 8. Unlock decision
 
-- **FAIL / NOT DONE** — corrected-head CI, review/merge approval, post-merge CI, and remaining governance evidence are outstanding. Local Compose runtime smoke remains BLOCKED / NOT RUN for the documented destructive cleanup reason.
+- **NOT DONE** — corrected-code CI passed, but owner review/merge decision, merge, post-merge CI, and remaining governance evidence are outstanding. Local Compose runtime smoke remains BLOCKED / NOT RUN for the documented destructive cleanup reason.
 - Newly unlockable WP: none.
