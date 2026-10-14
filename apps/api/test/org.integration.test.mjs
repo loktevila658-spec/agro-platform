@@ -15,6 +15,7 @@ const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../.
 const image = process.env.POSTGIS_TEST_IMAGE ?? 'agroplatform/wp49-003-postgis:test';
 const actorId = '7b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7';
 const token = 'wp49-011-integration-bootstrap-secret';
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const actions = [
   'org.hierarchy.read',
   'org.tenant.create',
@@ -229,6 +230,7 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     const generatedCorrelation = tenantFirst.headers.get('x-correlation-id');
     assert.ok(generatedCorrelation);
     const tenant = await json(tenantFirst);
+    assert.match(tenant.commandId, uuidPattern);
     assert.equal(tenant.correlationId, generatedCorrelation);
     const tenantAudit = (await testPool.query('SELECT correlation_id, causation_id FROM org.audit_entry WHERE entity_id = $1', [tenant.id])).rows[0];
     const tenantOutbox = (await testPool.query('SELECT correlation_id, causation_id FROM org.outbox_event WHERE entity_id = $1', [tenant.id])).rows[0];
@@ -237,9 +239,25 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     const tenantRetry = await post(baseUrl, '/org/tenants', tenantCommand, 'tenant-create');
     assert.equal(tenantRetry.status, 201);
     assert.deepEqual(await json(tenantRetry), tenant);
+    const tenantCommandRecord = (await testPool.query('SELECT response FROM org.command_idempotency WHERE scope_id = $1 AND idempotency_key = $2', [actorId, 'tenant-create'])).rows[0];
+    assert.deepEqual(tenantCommandRecord.response, tenant);
     assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.tenant WHERE code = $1', [tenantCommand.code])).rows[0].n, 1);
     assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.audit_entry WHERE entity_id = $1', [tenant.id])).rows[0].n, 1);
     assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.outbox_event WHERE entity_id = $1', [tenant.id])).rows[0].n, 1);
+
+    const concurrentTenantCommand = { code: `RACE-${process.pid}`, name: 'Concurrent tenant', timezone: 'Europe/Moscow' };
+    const [concurrentTenantA, concurrentTenantB] = await Promise.all([
+      post(baseUrl, '/org/tenants', concurrentTenantCommand, 'tenant-concurrent-create'),
+      post(baseUrl, '/org/tenants', concurrentTenantCommand, 'tenant-concurrent-create'),
+    ]);
+    assert.equal(concurrentTenantA.status, 201);
+    assert.equal(concurrentTenantB.status, 201);
+    const [concurrentTenantResultA, concurrentTenantResultB] = await Promise.all([json(concurrentTenantA), json(concurrentTenantB)]);
+    assert.deepEqual(concurrentTenantResultA, concurrentTenantResultB);
+    assert.match(concurrentTenantResultA.commandId, uuidPattern);
+    assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.tenant WHERE code = $1', [concurrentTenantCommand.code])).rows[0].n, 1);
+    assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.audit_entry WHERE entity_id = $1', [concurrentTenantResultA.id])).rows[0].n, 1);
+    assert.equal((await testPool.query('SELECT count(*)::int AS n FROM org.outbox_event WHERE entity_id = $1', [concurrentTenantResultA.id])).rows[0].n, 1);
 
     await stopApi(api);
     const tenantScoped = await startApi(databaseUrl, actions, tenant.id);
@@ -253,6 +271,7 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     assert.equal(organizationResponse.status, 201);
     assert.equal(organizationResponse.headers.get('x-correlation-id'), providedCorrelation);
     const organization = await json(organizationResponse);
+    assert.match(organization.commandId, uuidPattern);
     assert.equal(organization.correlationId, providedCorrelation);
     const organizationAudit = (await testPool.query('SELECT correlation_id, causation_id FROM org.audit_entry WHERE entity_id = $1', [organization.id])).rows[0];
     const organizationOutbox = (await testPool.query('SELECT correlation_id, causation_id FROM org.outbox_event WHERE entity_id = $1', [organization.id])).rows[0];
@@ -271,6 +290,7 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     assert.ok(replacementCorrelation);
     assert.notEqual(replacementCorrelation, invalidIncomingCorrelation);
     const unit = await json(unitResponse);
+    assert.match(unit.commandId, uuidPattern);
     assert.equal(unit.correlationId, replacementCorrelation);
     const unitAudit = (await testPool.query('SELECT correlation_id, causation_id FROM org.audit_entry WHERE entity_id = $1', [unit.id])).rows[0];
     const unitOutbox = (await testPool.query('SELECT correlation_id, causation_id FROM org.outbox_event WHERE entity_id = $1', [unit.id])).rows[0];
@@ -281,6 +301,7 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     }, 'unit-child');
     assert.equal(childResponse.status, 201);
     const child = await json(childResponse);
+    assert.match(child.commandId, uuidPattern);
     const invalidParent = await post(baseUrl, '/org/organization-units', {
       tenantId: tenant.id, organizationId: organization.id, parentId: '40000000-0000-4000-8000-000000000000', code: 'UNIT-X', name: 'Invalid parent', unitType: 'TEAM',
     }, 'unit-invalid-parent');
@@ -294,6 +315,7 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     const otherTenantResponse = await post(baseUrl, '/org/tenants', { code: `OTHER-${process.pid}`, name: 'Other Tenant', timezone: 'Europe/Moscow' }, 'other-tenant');
     assert.equal(otherTenantResponse.status, 201);
     const otherTenant = await json(otherTenantResponse);
+    assert.match(otherTenant.commandId, uuidPattern);
     const crossTenantSite = await post(baseUrl, '/org/sites', {
       tenantId: otherTenant.id, organizationId: organization.id, code: 'CROSS', name: 'Cross tenant', siteType: 'FARM', timezone: 'Europe/Moscow',
     }, 'cross-tenant-site');
@@ -318,6 +340,7 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     const siteResponse = await post(baseUrl, '/org/sites', siteCommand, 'site-create');
     assert.equal(siteResponse.status, 201);
     const site = await json(siteResponse);
+    assert.match(site.commandId, uuidPattern);
     const hierarchyResponse = await fetch(`${baseUrl}/org/tenants/${tenant.id}/hierarchy`, { headers: { authorization: `Bearer ${token}` } });
     assert.equal(hierarchyResponse.status, 200);
     const hierarchy = await json(hierarchyResponse);

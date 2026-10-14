@@ -191,6 +191,22 @@ test('schema-version operation is generated in TypeScript and Dart', async () =>
   }
 });
 
+test('organization create responses expose commandId while retaining legacy replay compatibility', async () => {
+  const contracts = await loadAndValidateContracts();
+  const artifacts = renderGeneratedArtifacts(contracts);
+  for (const schemaName of ['TenantResponse', 'OrganizationResponse', 'OrganizationUnitResponse', 'SiteResponse']) {
+    const schema = contracts.openapi.document.components.schemas[schemaName];
+    assert.ok(!schema.required.includes('commandId'), `${schemaName} keeps historical replay responses compatible`);
+    assert.deepEqual(schema.properties.commandId, {
+      type: 'string',
+      format: 'uuid',
+      description: 'Stable server command ID for commands accepted after the command-envelope release; historical idempotency responses may predate this field.',
+    });
+    assert.match(artifacts.get('src/generated/contracts.ts'), new RegExp(`interface ${schemaName} \\{[\\s\\S]*?readonly commandId\\?: string;`));
+    assert.match(artifacts.get('generated/dart/contracts.dart'), new RegExp(`class ${schemaName} \\{[\\s\\S]*?final String\\? commandId;`));
+  }
+});
+
 test('generated TypeScript client serializes body, path, query, and header inputs at runtime', async () => {
   const contracts = await loadAndValidateContracts();
   const withQueryOperation = {

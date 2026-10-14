@@ -91,6 +91,17 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
   }
 });
 
+test('organization create response schemas expose commandId as a UUID', () => {
+  const source = readFileSync('openapi/openapi.yaml', 'utf8');
+  const { document } = validateOpenApi(source);
+  for (const schemaName of ['TenantResponse', 'OrganizationResponse', 'OrganizationUnitResponse', 'SiteResponse']) {
+    const schema = document.components.schemas[schemaName];
+    assert.ok(!schema.required.includes('commandId'), `${schemaName} keeps historical replay responses compatible`);
+    assert.equal(schema.properties.commandId.type, 'string');
+    assert.equal(schema.properties.commandId.format, 'uuid');
+  }
+});
+
 test('event catalog preserves WP49-011 organization events and appends the DOC19 identity events', () => {
   const source = readFileSync('events/catalog/index.yaml', 'utf8');
   const catalog = parseYamlDocument(source);

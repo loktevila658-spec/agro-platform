@@ -13,6 +13,7 @@ import { createHash, timingSafeEqual, randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { Pool, PoolClient } from 'pg';
 
+import { AtomicVersionGuard, executeCommandEffect } from '../../common/command-boundary';
 import { PermissionEngine, PermissionScope } from '../permissions/permission-engine';
 import { ORG_POOL } from './org.tokens';
 
@@ -228,7 +229,9 @@ export class OrgService implements OnModuleDestroy {
 
   private async execute(input: {
     action: string; entityType: string; actorId: string; context: OrgRequestContext; command: Record<string, unknown>;
-    scope: string; tenantId?: string; eventName: string; validateHierarchy?: () => Promise<void>; insert: (client: PoolClient) => Promise<Record<string, unknown>>;
+    scope: string; tenantId?: string; eventName: string; validateHierarchy?: () => Promise<void>;
+    expectedVersion?: unknown; assertVersion?: AtomicVersionGuard;
+    insert: (client: PoolClient) => Promise<Record<string, unknown>>;
   }): Promise<Record<string, unknown>> {
     const ids = validateContext(input.context);
     if (!process.env.DATABASE_URL) throw new ServiceUnavailableException('PostgreSQL is not configured');
@@ -248,10 +251,17 @@ export class OrgService implements OnModuleDestroy {
       if (!reservation.rowCount) {
         const previous = await client.query('SELECT command_name, payload_sha256, response FROM org.command_idempotency WHERE scope_id = $1 AND idempotency_key = $2 FOR UPDATE', [input.scope, ids.idempotencyKey]);
         if (previous.rows[0]?.command_name !== input.action || previous.rows[0]?.payload_sha256 !== payloadHash) throw new ConflictException('Idempotency key was already used for a different command payload');
+        const response = previous.rows[0].response as Record<string, unknown>;
         await client.query('COMMIT');
-        return previous.rows[0].response as Record<string, unknown>;
+        return response;
       }
-      const row = await input.insert(client);
+      const commandId = randomUUID();
+      const row = await executeCommandEffect({
+        transaction: client,
+        expectedVersion: input.expectedVersion,
+        assertVersion: input.assertVersion,
+        effect: () => input.insert(client),
+      });
       const entityId = String(row.id);
       const occurredAt = new Date().toISOString();
       const tenantId = input.tenantId ?? entityId;
@@ -260,7 +270,7 @@ export class OrgService implements OnModuleDestroy {
         eventId, entityId, entityType: input.entityType, tenantId, actorId: input.actorId,
         correlationId: ids.correlationId, causationId: ids.causationId, occurredAt,
       };
-      const response = { ...row, correlationId: ids.correlationId };
+      const response = { ...row, commandId, correlationId: ids.correlationId };
       await client.query(
         'INSERT INTO org.audit_entry(tenant_id, actor_id, action, entity_type, entity_id, correlation_id, causation_id, occurred_at, change) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
         [tenantId, input.actorId, input.action, input.entityType, entityId, ids.correlationId, ids.causationId, occurredAt, JSON.stringify({ after: row })],
