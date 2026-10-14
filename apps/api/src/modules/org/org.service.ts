@@ -13,6 +13,7 @@ import { createHash, timingSafeEqual, randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { Pool, PoolClient } from 'pg';
 
+import { PermissionEngine, PermissionScope } from '../permissions/permission-engine';
 import { ORG_POOL } from './org.tokens';
 
 const ACTIONS = new Set([
@@ -68,14 +69,17 @@ function validateContext(context: OrgRequestContext): { correlationId: string; c
 
 @Injectable()
 export class OrgService implements OnModuleDestroy {
-  constructor(@Inject(ORG_POOL) private readonly pool: Pool) {}
+  constructor(
+    @Inject(ORG_POOL) private readonly pool: Pool,
+    private readonly permissionEngine: PermissionEngine = new PermissionEngine(),
+  ) {}
 
   async onModuleDestroy(): Promise<void> {
     await this.pool.end();
   }
 
   // Bootstrap identity is server-configured: bearer credential, actor UUID, permissions and tenant scopes never come from client claims.
-  private authorize(context: OrgRequestContext, action: string, tenantScope?: unknown): string {
+  private authorize(context: OrgRequestContext, action: string, scope: PermissionScope): string {
     const expectedToken = process.env.ORG_BOOTSTRAP_TOKEN;
     const actorId = process.env.ORG_BOOTSTRAP_ACTOR_ID;
     const permissions = (process.env.ORG_BOOTSTRAP_PERMISSIONS ?? '').split(',').map((item) => item.trim()).filter(Boolean);
@@ -84,16 +88,24 @@ export class OrgService implements OnModuleDestroy {
     const expected = Buffer.from(expectedToken);
     if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) throw new UnauthorizedException('Organization actor is not authenticated');
     if (!permissions.every((permission) => ACTIONS.has(permission)) || !permissions.includes(action)) throw new ForbiddenException('Permission denied');
-    if (tenantScope !== undefined) {
-      const tenantId = typeof tenantScope === 'string' ? tenantScope : '';
-      const tenantScopes = (process.env.ORG_BOOTSTRAP_TENANT_IDS ?? '').split(',').map((item) => item.trim()).filter(Boolean);
-      if (!UUID.test(tenantId) || !tenantScopes.includes(tenantId)) throw new ForbiddenException('Permission denied for tenant scope');
+    let configuredTenantScopes: string[] = [];
+    if (scope.kind === 'tenant') {
+      const tenantId = typeof scope.tenantId === 'string' ? scope.tenantId : '';
+      configuredTenantScopes = (process.env.ORG_BOOTSTRAP_TENANT_IDS ?? '').split(',').map((item) => item.trim()).filter(Boolean);
+      if (!UUID.test(tenantId) || !configuredTenantScopes.includes(tenantId)) throw new ForbiddenException('Permission denied for tenant scope');
     }
+    if (!this.permissionEngine.isAllowed({
+      action,
+      registeredActions: ACTIONS,
+      configuredActions: permissions,
+      scope,
+      configuredTenantScopes,
+    })) throw new ForbiddenException('Permission denied');
     return actorId;
   }
 
   async readHierarchy(tenantIdInput: string, context: OrgRequestContext): Promise<Record<string, unknown>> {
-    this.authorize(context, 'org.hierarchy.read', tenantIdInput);
+    this.authorize(context, 'org.hierarchy.read', { kind: 'tenant', tenantId: tenantIdInput });
     const tenantId = requireUuid(tenantIdInput, 'tenantId');
     if (!process.env.DATABASE_URL) throw new ServiceUnavailableException('PostgreSQL is not configured');
     try {
@@ -118,7 +130,7 @@ export class OrgService implements OnModuleDestroy {
   }
 
   async createTenant(commandInput: TenantCommand, context: OrgRequestContext): Promise<Record<string, unknown>> {
-    const actorId = this.authorize(context, 'org.tenant.create');
+    const actorId = this.authorize(context, 'org.tenant.create', { kind: 'global' });
     const command = {
       code: requireText(commandInput?.code, 'code', 64),
       name: requireText(commandInput?.name, 'name'),
@@ -136,7 +148,7 @@ export class OrgService implements OnModuleDestroy {
   }
 
   async createOrganization(commandInput: OrganizationCommand, context: OrgRequestContext): Promise<Record<string, unknown>> {
-    const actorId = this.authorize(context, 'org.organization.create', commandInput?.tenantId);
+    const actorId = this.authorize(context, 'org.organization.create', { kind: 'tenant', tenantId: commandInput?.tenantId });
     const command = {
       tenantId: requireUuid(commandInput?.tenantId, 'tenantId'),
       code: requireText(commandInput?.code, 'code', 64),
@@ -160,7 +172,7 @@ export class OrgService implements OnModuleDestroy {
   }
 
   async createOrganizationUnit(commandInput: OrganizationUnitCommand, context: OrgRequestContext): Promise<Record<string, unknown>> {
-    const actorId = this.authorize(context, 'org.organization_unit.create', commandInput?.tenantId);
+    const actorId = this.authorize(context, 'org.organization_unit.create', { kind: 'tenant', tenantId: commandInput?.tenantId });
     const command = {
       tenantId: requireUuid(commandInput?.tenantId, 'tenantId'), organizationId: requireUuid(commandInput?.organizationId, 'organizationId'),
       parentId: commandInput?.parentId === undefined ? null : requireUuid(commandInput.parentId, 'parentId'),
@@ -186,7 +198,7 @@ export class OrgService implements OnModuleDestroy {
   }
 
   async createSite(commandInput: SiteCommand, context: OrgRequestContext): Promise<Record<string, unknown>> {
-    const actorId = this.authorize(context, 'org.site.create', commandInput?.tenantId);
+    const actorId = this.authorize(context, 'org.site.create', { kind: 'tenant', tenantId: commandInput?.tenantId });
     const command = {
       tenantId: requireUuid(commandInput?.tenantId, 'tenantId'), organizationId: requireUuid(commandInput?.organizationId, 'organizationId'),
       organizationUnitId: commandInput?.organizationUnitId === undefined ? null : requireUuid(commandInput.organizationUnitId, 'organizationUnitId'),
