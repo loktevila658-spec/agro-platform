@@ -80,6 +80,7 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
   const psqlWrapper = join(temp, 'psql');
   const port = 34000 + process.pid % 1000;
   let api;
+  let pool;
   let started = false;
   const createdUsers = [];
 
@@ -98,8 +99,7 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     assert.match(migration.stdout, /migration 3 applied/);
 
     const pg = require('pg');
-    const pool = new pg.Pool({ connectionString: databaseUrl });
-    t.after(() => pool.end());
+    pool = new pg.Pool({ connectionString: databaseUrl });
     const tenantId = randomUUID();
     await pool.query('INSERT INTO org.tenant(id,code,name,timezone,created_by) VALUES ($1,$2,$3,$4,$5)', [tenantId, `ID-${process.pid}`, 'Identity test', 'UTC', randomUUID()]);
     const accounts = {};
@@ -264,6 +264,7 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     assert.equal(Number(psql(container, 'SELECT current_version FROM platform_meta.schema_version;')), 3);
   } finally {
     await stopApi(api);
+    if (pool) await pool.end();
     if (started) docker(['rm', '--force', container]);
   }
 });
