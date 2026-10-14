@@ -80,7 +80,7 @@ paths:
       operationId: logout
       summary: Revoke the current authenticated session
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/IdentityAuthorization'
         - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
@@ -91,12 +91,14 @@ paths:
                 $ref: '#/components/schemas/RevocationResponse'
         '401':
           description: Authentication required
+        '503':
+          description: Authentication service unavailable
   /v1/me/sessions:
     get:
       operationId: listMySessions
       summary: List sessions owned by the authenticated user
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/IdentityAuthorization'
         - $ref: '#/components/parameters/CorrelationId'
       responses:
         '200':
@@ -107,12 +109,14 @@ paths:
                 $ref: '#/components/schemas/SessionListResponse'
         '401':
           description: Authentication required
+        '503':
+          description: Authentication service unavailable
   /v1/me/sessions/{id}/commands/revoke:
     post:
       operationId: revokeMySession
       summary: Revoke a selected session owned by the authenticated user
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/IdentityAuthorization'
         - name: id
           in: path
           required: true
@@ -129,6 +133,8 @@ paths:
           description: Authentication required
         '404':
           description: Session not found for authenticated user
+        '503':
+          description: Authentication service unavailable
   /system/schema-version:
     get:
       operationId: getSchemaVersion
@@ -216,7 +222,7 @@ paths:
       operationId: createOrgTenant
       summary: Create a tenant in the local organization hierarchy
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/BootstrapAuthorization'
         - $ref: '#/components/parameters/CorrelationId'
         - $ref: '#/components/parameters/CausationId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -251,7 +257,7 @@ paths:
       operationId: createOrgOrganization
       summary: Create an organization within a tenant
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/BootstrapAuthorization'
         - $ref: '#/components/parameters/CorrelationId'
         - $ref: '#/components/parameters/CausationId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -283,7 +289,7 @@ paths:
       operationId: createOrgOrganizationUnit
       summary: Create an organization unit under an organization or parent unit
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/BootstrapAuthorization'
         - $ref: '#/components/parameters/CorrelationId'
         - $ref: '#/components/parameters/CausationId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -315,7 +321,7 @@ paths:
       operationId: createOrgSite
       summary: Create a physical site belonging to one organization
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/BootstrapAuthorization'
         - $ref: '#/components/parameters/CorrelationId'
         - $ref: '#/components/parameters/CausationId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -347,7 +353,7 @@ paths:
       operationId: getOrgHierarchy
       summary: Read a tenant and all organization units and sites in its hierarchy
       parameters:
-        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/BootstrapAuthorization'
         - name: tenantId
           in: path
           required: true
@@ -372,13 +378,20 @@ paths:
           description: PostgreSQL unavailable
 components:
   parameters:
-    Authorization:
+    BootstrapAuthorization:
       name: Authorization
       in: header
       required: true
       schema:
         type: string
       description: Server-issued Bearer bootstrap credential.
+    IdentityAuthorization:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Bearer access JWT issued by the local identity module.
     CorrelationId:
       name: X-Correlation-Id
       in: header
@@ -867,5 +880,6 @@ components:
 x-status: BOOTSTRAP
 x-sources:
   - DOC28
+  - DOC19
   - DOC49
   - DOC50

@@ -1,6 +1,6 @@
 # WP49-012 local identity profile
 
-This module implements local password authentication, TOTP challenge verification, and self-service session lifecycle. It does not provision accounts; provisioning remains an operational/database responsibility. `mfa_required` is only an authentication-strength policy.
+This module implements local password authentication, TOTP challenge verification, and self-service session lifecycle. Production account provisioning is outside WP49-012, and this work package defines no public or administrator provisioning API. Direct PostgreSQL account insertion is permitted only in isolated WP49-012 tests and fixtures. Future production provisioning must use its authorized canonical application/domain path. `mfa_required` is only an authentication-strength policy.
 
 ## Runtime configuration
 

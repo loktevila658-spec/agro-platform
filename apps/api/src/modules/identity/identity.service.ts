@@ -176,7 +176,11 @@ export class IdentityService implements OnModuleDestroy {
     let claims: any;
     try { ({ payload: claims } = await jwtVerify(authorization.slice(7), key, { algorithms: ['HS256'] })); } catch { throw new UnauthorizedException('Authentication required'); }
     if (typeof claims.sub !== 'string' || typeof claims.tid !== 'string' || typeof claims.did !== 'string' || typeof claims.sid !== 'string' || !['password', 'password+mfa'].includes(claims.ast)) throw new UnauthorizedException('Authentication required');
-    const result = await this.pool.query(`SELECT id,user_id,tenant_id,device_id,auth_strength FROM identity.auth_session WHERE id=$1 AND user_id=$2 AND tenant_id=$3 AND device_id=$4 AND auth_strength=$5 AND revoked_at IS NULL AND expires_at>clock_timestamp()`, [claims.sid, claims.sub, claims.tid, claims.did, claims.ast]);
+    if (!process.env.DATABASE_URL) throw new ServiceUnavailableException('Authentication service is unavailable');
+    let result: { rowCount: number | null };
+    try {
+      result = await this.pool.query(`SELECT id,user_id,tenant_id,device_id,auth_strength FROM identity.auth_session WHERE id=$1 AND user_id=$2 AND tenant_id=$3 AND device_id=$4 AND auth_strength=$5 AND revoked_at IS NULL AND expires_at>clock_timestamp()`, [claims.sid, claims.sub, claims.tid, claims.did, claims.ast]);
+    } catch { throw new ServiceUnavailableException('Authentication service is unavailable'); }
     if (!result.rowCount) throw new UnauthorizedException('Authentication required');
     return { userId: claims.sub, tenantId: claims.tid, deviceId: claims.did, sessionId: claims.sid, authStrength: claims.ast };
   }
@@ -199,7 +203,12 @@ export class IdentityService implements OnModuleDestroy {
         await client.query('COMMIT');
         throw new UnauthorizedException(GENERIC_AUTH);
       }
-      if (row.revoked_at || new Date(row.expires_at).getTime() <= Date.now() || new Date(row.session_expires).getTime() <= Date.now()) { await client.query('COMMIT'); throw new UnauthorizedException(GENERIC_AUTH); }
+      if (row.revoked_at || new Date(row.expires_at).getTime() <= Date.now() || new Date(row.session_expires).getTime() <= Date.now()) {
+        const reasonCode = row.revoked_at ? 'session_revoked' : 'credential_expired';
+        await this.audit(client, { tenantId: row.tenant_id, actorId: row.user_id, action: 'auth.refresh', resourceType: 'session', resourceId: row.session_id, outcome: 'failure', reasonCode, correlationId });
+        await client.query('COMMIT');
+        throw new UnauthorizedException(GENERIC_AUTH);
+      }
       await client.query('UPDATE identity.refresh_token SET consumed_at=clock_timestamp() WHERE id=$1', [row.id]);
       const refresh = opaque();
       await client.query('INSERT INTO identity.refresh_token(session_id,token_sha256,expires_at) VALUES ($1,$2,$3)', [row.session_id, sha256(refresh), row.session_expires]);

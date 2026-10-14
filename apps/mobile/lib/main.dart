@@ -19,7 +19,7 @@ Future<Map<String, Object?>> apiRequest(String path, {String method = 'GET', Map
   final client = HttpClient();
   try {
     final request = await client.openUrl(method, Uri.parse('$apiBase$path'));
-    request.headers.contentType = ContentType.json;
+    if (body != null) request.headers.contentType = ContentType.json;
     if (accessToken != null) request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $accessToken');
     if (body != null) request.write(jsonEncode(body));
     final response = await request.close();
@@ -94,14 +94,14 @@ class _AgroPlatformShellState extends State<AgroPlatformShell> {
     final token = accessToken;
     if (token == null) return;
     try {
-      await apiRequest('/v1/me/sessions/$sessionId/commands/revoke', method: 'POST', body: {}, accessToken: token);
+      await apiRequest('/v1/me/sessions/$sessionId/commands/revoke', method: 'POST', accessToken: token);
       await loadSessions();
     } catch (_) { setState(() => error = 'Could not revoke session'); }
   }
 
   Future<void> logout() async {
     final token = accessToken;
-    if (token != null) { try { await apiRequest('/v1/auth/logout', method: 'POST', body: {}, accessToken: token); } catch (_) {} }
+    if (token != null) { try { await apiRequest('/v1/auth/logout', method: 'POST', accessToken: token); } catch (_) {} }
     setState(() { accessToken = null; refreshToken = null; challenge = null; sessions = []; code.clear(); password.clear(); error = null; });
   }
 

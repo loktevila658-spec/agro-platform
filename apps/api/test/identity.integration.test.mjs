@@ -68,8 +68,8 @@ async function stopApi(api) {
   const timer = setTimeout(() => api.kill('SIGKILL'), 5000);
   await closed; clearTimeout(timer);
 }
-async function post(base, route, body, token) {
-  const response = await fetch(`${base}${route}`, { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
+async function post(base, route, body, token, correlationId) {
+  const response = await fetch(`${base}${route}`, { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}), ...(correlationId ? { 'x-correlation-id': correlationId } : {}) }, body: JSON.stringify(body) });
   return { response, body: await response.json() };
 }
 
@@ -139,9 +139,17 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     assert.ok(delays[0] > 0 && delays[1] > delays[0] && delays[2] > delays[1]);
 
     const aliceDevice = randomUUID();
-    const loginA = await post(base, '/v1/auth/login', { login: accounts.alice.login, password: accounts.alice.password, deviceId: aliceDevice });
+    const validCorrelationId = `wp012-valid-${process.pid}`;
+    const loginA = await post(base, '/v1/auth/login', { login: accounts.alice.login, password: accounts.alice.password, deviceId: aliceDevice }, undefined, validCorrelationId);
     assert.equal(loginA.response.status, 200); assert.equal(loginA.body.mfaRequired, false);
+    assert.equal(loginA.response.headers.get('x-correlation-id'), validCorrelationId);
     const aliceToken = loginA.body.accessToken; const aliceRefresh = loginA.body.refreshToken;
+    const aliceSessionForCorrelation = (await pool.query('SELECT id FROM identity.auth_session WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1', [accounts.alice.id])).rows[0].id;
+    const aliceCorrelationAudit = await pool.query("SELECT correlation_id FROM identity.security_audit WHERE action='auth.login' AND resource_id=$1 AND outcome='success' ORDER BY sequence_no DESC LIMIT 1", [accounts.alice.id]);
+    const aliceCorrelationEvent = (await pool.query("SELECT correlation_id,payload FROM identity.outbox_event WHERE event_name='security.session_created' AND entity_id=$1", [aliceSessionForCorrelation])).rows[0];
+    assert.equal(aliceCorrelationAudit.rows[0].correlation_id, validCorrelationId);
+    assert.equal(aliceCorrelationEvent.correlation_id, validCorrelationId);
+    assert.equal(aliceCorrelationEvent.payload.correlationId, validCorrelationId);
     const storedHash = (await pool.query('SELECT password_hash FROM identity.user_account WHERE id=$1', [accounts.alice.id])).rows[0].password_hash;
     assert.match(storedHash, /^\$argon2id\$v=19\$m=19456,t=2,p=1\$/); assert.notEqual(storedHash, accounts.alice.password); assert.notEqual(storedHash, accounts.alice.originalHash);
 
@@ -180,11 +188,19 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
 
     const aliceSecond = await post(base, '/v1/auth/login', { login: accounts.alice.login, password: accounts.alice.password, deviceId: randomUUID() });
     const aliceSecondSessionId = (await pool.query('SELECT id FROM identity.auth_session WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1', [accounts.alice.id])).rows[0].id;
-    const bobLogin = await post(base, '/v1/auth/login', { login: accounts.bob.login, password: accounts.bob.password, deviceId: randomUUID() });
+    const bobLogin = await post(base, '/v1/auth/login', { login: accounts.bob.login, password: accounts.bob.password, deviceId: randomUUID() }, undefined, 'invalid correlation id');
+    const replacedCorrelationId = bobLogin.response.headers.get('x-correlation-id');
+    assert.ok(replacedCorrelationId && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(replacedCorrelationId));
+    assert.notEqual(replacedCorrelationId, 'invalid correlation id');
     const bobSession = (await pool.query('SELECT id FROM identity.auth_session WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1', [accounts.bob.id])).rows[0].id;
-    const crossUser = await post(base, `/v1/me/sessions/${bobSession}/commands/revoke`, {}, aliceToken);
+    const bobCorrelationAudit = await pool.query("SELECT correlation_id FROM identity.security_audit WHERE action='auth.login' AND resource_id=$1 AND outcome='success' ORDER BY sequence_no DESC LIMIT 1", [accounts.bob.id]);
+    const bobCorrelationEvent = (await pool.query("SELECT correlation_id,payload FROM identity.outbox_event WHERE event_name='security.session_created' AND entity_id=$1", [bobSession])).rows[0];
+    assert.equal(bobCorrelationAudit.rows[0].correlation_id, replacedCorrelationId);
+    assert.equal(bobCorrelationEvent.correlation_id, replacedCorrelationId);
+    assert.equal(bobCorrelationEvent.payload.correlationId, replacedCorrelationId);
+    const crossUser = await post(base, `/v1/me/sessions/${bobSession}/commands/revoke`, undefined, aliceToken);
     assert.equal(crossUser.response.status, 404);
-    const selfRevoke = await post(base, `/v1/me/sessions/${aliceSecondSessionId}/commands/revoke`, {}, aliceToken);
+    const selfRevoke = await post(base, `/v1/me/sessions/${aliceSecondSessionId}/commands/revoke`, undefined, aliceToken);
     assert.equal(selfRevoke.response.status, 200);
     assert.equal((await pool.query('SELECT revoked_at IS NOT NULL AS revoked FROM identity.auth_session WHERE id=$1', [aliceSecondSessionId])).rows[0].revoked, true);
 
@@ -194,8 +210,16 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     assert.equal(replayRefresh.response.status, 401);
     const revokedRefresh = await post(base, '/v1/auth/refresh', { refreshToken: rotated.body.refreshToken });
     assert.equal(revokedRefresh.response.status, 401);
+    const revokedRefreshAudit = (await pool.query("SELECT reason_code FROM identity.security_audit WHERE action='auth.refresh' AND outcome='failure' AND resource_id=$1 ORDER BY sequence_no DESC LIMIT 1", [aliceSessionForCorrelation])).rows[0];
+    assert.equal(revokedRefreshAudit.reason_code, 'session_revoked');
 
-    const logout = await post(base, '/v1/auth/logout', {}, bobLogin.body.accessToken);
+    await pool.query('UPDATE identity.refresh_token SET expires_at=clock_timestamp()-interval \'1 second\' WHERE token_sha256=$1', [createHash('sha256').update(bobLogin.body.refreshToken).digest('hex')]);
+    const expiredRefresh = await post(base, '/v1/auth/refresh', { refreshToken: bobLogin.body.refreshToken });
+    assert.equal(expiredRefresh.response.status, 401);
+    const expiredRefreshAudit = (await pool.query("SELECT reason_code FROM identity.security_audit WHERE action='auth.refresh' AND outcome='failure' AND resource_id=$1 ORDER BY sequence_no DESC LIMIT 1", [bobSession])).rows[0];
+    assert.equal(expiredRefreshAudit.reason_code, 'credential_expired');
+
+    const logout = await post(base, '/v1/auth/logout', undefined, bobLogin.body.accessToken);
     assert.equal(logout.response.status, 200);
     const afterLogout = await fetch(`${base}/v1/me/sessions`, { headers: { authorization: `Bearer ${bobLogin.body.accessToken}` } });
     assert.equal(afterLogout.status, 401);

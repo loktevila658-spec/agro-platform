@@ -6,9 +6,9 @@ type Tokens = { accessToken: string; refreshToken: string };
 type Session = { sessionId: string; deviceLabel: string; authStrength: string; createdAt: string; current: boolean; revoked: boolean };
 const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
-async function request<T>(path: string, body?: unknown, accessToken?: string): Promise<T> {
+async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown, accessToken?: string): Promise<T> {
   const response = await fetch(`${API}${path}`, {
-    method: body === undefined ? 'GET' : 'POST',
+    method,
     headers: { ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}) },
     body: body === undefined ? undefined : JSON.stringify(body),
     cache: 'no-store',
@@ -31,7 +31,7 @@ export default function BootstrapPage() {
   async function onLogin(event: FormEvent) {
     event.preventDefault(); setError('');
     try {
-      const result = await request<{ mfaRequired: boolean; challengeToken?: string; accessToken?: string; refreshToken?: string }>('/v1/auth/login', { login, password, deviceId });
+      const result = await request<{ mfaRequired: boolean; challengeToken?: string; accessToken?: string; refreshToken?: string }>('POST', '/v1/auth/login', { login, password, deviceId });
       setPassword('');
       if (result.mfaRequired) setChallenge(result.challengeToken ?? '');
       else if (result.accessToken && result.refreshToken) setTokens({ accessToken: result.accessToken, refreshToken: result.refreshToken });
@@ -40,23 +40,23 @@ export default function BootstrapPage() {
   async function onMfa(event: FormEvent) {
     event.preventDefault(); setError('');
     try {
-      const result = await request<Tokens>('/v1/auth/mfa/verify', { challengeToken: challenge, code });
+      const result = await request<Tokens>('POST', '/v1/auth/mfa/verify', { challengeToken: challenge, code });
       setTokens(result); setChallenge(''); setCode('');
     } catch { setError('Authentication failed'); setCode(''); }
   }
   async function loadSessions(access: string) {
-    try { const result = await request<{ sessions: Session[] }>('/v1/me/sessions', undefined, access); setSessions(result.sessions); }
+    try { const result = await request<{ sessions: Session[] }>('GET', '/v1/me/sessions', undefined, access); setSessions(result.sessions); }
     catch { setError('Could not load sessions'); }
   }
   useEffect(() => { if (tokens) void loadSessions(tokens.accessToken); }, [tokens]);
   async function logout() {
     if (!tokens) return;
-    try { await request('/v1/auth/logout', {}, tokens.accessToken); }
+    try { await request('POST', '/v1/auth/logout', undefined, tokens.accessToken); }
     finally { setTokens(null); setSessions([]); setChallenge(''); setCode(''); setPassword(''); }
   }
   async function revokeSession(sessionId: string) {
     if (!tokens) return;
-    try { await request(`/v1/me/sessions/${encodeURIComponent(sessionId)}/commands/revoke`, {}, tokens.accessToken); await loadSessions(tokens.accessToken); }
+    try { await request('POST', `/v1/me/sessions/${encodeURIComponent(sessionId)}/commands/revoke`, undefined, tokens.accessToken); await loadSessions(tokens.accessToken); }
     catch { setError('Could not revoke session'); }
   }
 

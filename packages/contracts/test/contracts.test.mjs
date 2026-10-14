@@ -25,6 +25,18 @@ const syntheticEvent = {
 
 test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exact request inputs', async () => {
   const { openapi } = await loadAndValidateContracts();
+  const parameter = (path, method) => openapi.document.paths[path][method].parameters;
+  for (const path of ['/org/tenants', '/org/organizations', '/org/organization-units', '/org/sites', '/org/tenants/{tenantId}/hierarchy']) {
+    assert.ok(parameter(path, path.includes('{tenantId}') ? 'get' : 'post').some(({ $ref }) => $ref === '#/components/parameters/BootstrapAuthorization'), path);
+    assert.ok(!parameter(path, path.includes('{tenantId}') ? 'get' : 'post').some(({ $ref }) => $ref === '#/components/parameters/IdentityAuthorization'), path);
+  }
+  for (const [path, method] of [['/v1/auth/logout', 'post'], ['/v1/me/sessions', 'get'], ['/v1/me/sessions/{id}/commands/revoke', 'post']]) {
+    assert.ok(parameter(path, method).some(({ $ref }) => $ref === '#/components/parameters/IdentityAuthorization'), path);
+    assert.ok(!parameter(path, method).some(({ $ref }) => $ref === '#/components/parameters/BootstrapAuthorization'), path);
+  }
+  assert.equal(openapi.document.components.parameters.BootstrapAuthorization.name, 'Authorization');
+  assert.equal(openapi.document.components.parameters.IdentityAuthorization.name, 'Authorization');
+  assert.match(openapi.document.components.parameters.IdentityAuthorization.description, /Bearer access JWT issued by the local identity module/);
   assert.deepEqual(openapi.operations.map(({ method, operationId, path, responseSchemaName }) => ({ method, operationId, path, responseSchemaName })), [
     { method: 'GET', operationId: 'getLiveness', path: '/health/live', responseSchemaName: 'LivenessResponse' },
     { method: 'GET', operationId: 'getReadiness', path: '/health/ready', responseSchemaName: 'ReadinessResponse' },
@@ -52,6 +64,9 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     ],
     body: { schemaName: 'CreateTenantRequest', required: true },
   });
+  for (const operationId of ['logout', 'listMySessions', 'revokeMySession']) {
+    assert.deepEqual(openapi.operations.find((operation) => operation.operationId === operationId).inputs.header.find(({ name }) => name === 'Authorization'), { name: 'Authorization', required: true, type: 'string' });
+  }
   assert.deepEqual(openapi.operations.find(({ operationId }) => operationId === 'getOrgHierarchy').inputs.path, [
     { name: 'tenantId', required: true, type: 'string' },
   ]);

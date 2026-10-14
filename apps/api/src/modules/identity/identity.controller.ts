@@ -2,7 +2,6 @@ import { Body, Controller, Get, Headers, HttpCode, Param, Post, Req, Unauthorize
 import { IdentityService } from './identity.service';
 
 type RequestContext = { correlationId?: string };
-function correlation(request: RequestContext): string | undefined { return request.correlationId; }
 
 @Controller('v1/auth')
 export class IdentityAuthController {
@@ -10,24 +9,24 @@ export class IdentityAuthController {
 
   @Post('login')
   @HttpCode(200)
-  login(@Body() body: { login?: string; password?: string; deviceId?: string }, @Req() request: RequestContext, @Headers('x-correlation-id') header?: string) {
-    return this.identity.login(body, header ?? correlation(request));
+  login(@Body() body: { login?: string; password?: string; deviceId?: string }, @Req() request: RequestContext) {
+    return this.identity.login(body, request.correlationId);
   }
   @Post('mfa/verify')
   @HttpCode(200)
-  verifyMfa(@Body() body: { challengeToken?: string; code?: string }, @Req() request: RequestContext, @Headers('x-correlation-id') header?: string) {
-    return this.identity.verifyMfa(body, header ?? correlation(request));
+  verifyMfa(@Body() body: { challengeToken?: string; code?: string }, @Req() request: RequestContext) {
+    return this.identity.verifyMfa(body, request.correlationId);
   }
   @Post('refresh')
   @HttpCode(200)
-  refresh(@Body() body: { refreshToken?: string }, @Req() request: RequestContext, @Headers('x-correlation-id') header?: string) {
-    return this.identity.refresh(body, header ?? correlation(request));
+  refresh(@Body() body: { refreshToken?: string }, @Req() request: RequestContext) {
+    return this.identity.refresh(body, request.correlationId);
   }
   @Post('logout')
   @HttpCode(200)
-  async logout(@Headers('authorization') authorization: string | undefined, @Req() request: RequestContext, @Headers('x-correlation-id') header?: string) {
+  async logout(@Headers('authorization') authorization: string | undefined, @Req() request: RequestContext) {
     const context = await this.identity.authenticate(authorization);
-    return this.identity.logout(context, header ?? correlation(request));
+    return this.identity.logout(context, request.correlationId);
   }
 }
 
@@ -36,16 +35,16 @@ export class IdentitySessionsController {
   constructor(private readonly identity: IdentityService) {}
 
   @Get()
-  async list(@Headers('authorization') authorization?: string, @Req() request?: RequestContext, @Headers('x-correlation-id') header?: string) {
+  async list(@Headers('authorization') authorization?: string, @Req() request?: RequestContext) {
     const context = await this.identity.authenticate(authorization);
-    return this.identity.listSessions(context, header ?? (request ? correlation(request) : undefined));
+    return this.identity.listSessions(context, request?.correlationId);
   }
 
   @Post(':id/commands/revoke')
   @HttpCode(200)
-  async revoke(@Param('id') id: string, @Headers('authorization') authorization?: string, @Req() request?: RequestContext, @Headers('x-correlation-id') header?: string) {
+  async revoke(@Param('id') id: string, @Headers('authorization') authorization?: string, @Req() request?: RequestContext) {
     if (!authorization) throw new UnauthorizedException('Authentication required');
     const context = await this.identity.authenticate(authorization);
-    return this.identity.revoke(context, id, 'self_revoked', header ?? (request ? correlation(request) : undefined));
+    return this.identity.revoke(context, id, 'self_revoked', request?.correlationId);
   }
 }
