@@ -89,6 +89,7 @@ test('baseline, organization, and identity migrations are ordered and declare th
   for (const table of ['user_account', 'registered_device', 'mfa_authenticator', 'mfa_challenge', 'auth_session', 'refresh_token', 'login_throttle', 'security_audit', 'outbox_event']) {
     assert.match(migrations[2].sql, new RegExp(`CREATE TABLE identity\\.${table}\\b`, 'i'));
   }
+  assert.match(migrations[2].sql, /classification\s+text\s+NOT NULL\s+CHECK\s*\(classification\s*=\s*'SECURITY'\)/i);
 });
 
 test('database credentials are not exposed in psql process arguments', async () => {

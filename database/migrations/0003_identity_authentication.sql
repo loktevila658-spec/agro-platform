@@ -93,6 +93,7 @@ CREATE TABLE identity.security_audit (
   outcome text NOT NULL CHECK (outcome IN ('success', 'failure')),
   reason_code text NOT NULL,
   correlation_id text NOT NULL,
+  classification text NOT NULL CHECK (classification = 'SECURITY'),
   occurred_at timestamptz NOT NULL DEFAULT clock_timestamp(),
   previous_sha256 char(64) NOT NULL CHECK (previous_sha256 ~ '^[a-f0-9]{64}$'),
   event_hmac_sha256 char(64) NOT NULL CHECK (event_hmac_sha256 ~ '^[a-f0-9]{64}$'),

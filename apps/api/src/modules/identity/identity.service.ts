@@ -46,9 +46,10 @@ export class IdentityService implements OnModuleDestroy {
     if (!/^[a-f0-9]{64}$/.test(previous)) throw new ServiceUnavailableException('Authentication service is unavailable');
     const id = randomUUID();
     const occurredAt = new Date().toISOString();
-    const record = { id, tenantId: input.tenantId ?? null, actorType: input.actorId ? 'user' : 'anonymous', actorId: input.actorId ?? null, action: input.action, resourceType: input.resourceType, resourceId: input.resourceId ?? null, outcome: input.outcome, reasonCode: input.reasonCode, correlationId: input.correlationId, occurredAt };
+    const classification = 'SECURITY' as const;
+    const record = { id, tenantId: input.tenantId ?? null, actorType: input.actorId ? 'user' : 'anonymous', actorId: input.actorId ?? null, action: input.action, resourceType: input.resourceType, resourceId: input.resourceId ?? null, outcome: input.outcome, reasonCode: input.reasonCode, correlationId: input.correlationId, classification, occurredAt };
     const eventHmac = createHmac('sha256', key).update(previous).update('\n').update(JSON.stringify(record)).digest('hex');
-    await client.query(`INSERT INTO identity.security_audit(id,tenant_id,actor_type,actor_id,action,resource_type,resource_id,outcome,reason_code,correlation_id,occurred_at,previous_sha256,event_hmac_sha256) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, [id, input.tenantId ?? null, record.actorType, input.actorId ?? null, input.action, input.resourceType, input.resourceId ?? null, input.outcome, input.reasonCode, input.correlationId, occurredAt, previous, eventHmac]);
+    await client.query(`INSERT INTO identity.security_audit(id,tenant_id,actor_type,actor_id,action,resource_type,resource_id,outcome,reason_code,correlation_id,classification,occurred_at,previous_sha256,event_hmac_sha256) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`, [id, input.tenantId ?? null, record.actorType, input.actorId ?? null, input.action, input.resourceType, input.resourceId ?? null, input.outcome, input.reasonCode, input.correlationId, classification, occurredAt, previous, eventHmac]);
     await client.query('UPDATE identity.security_audit_head SET last_event_hmac_sha256=$1 WHERE singleton=true', [eventHmac]);
   }
   private async begin(): Promise<PoolClient> {
@@ -231,6 +232,7 @@ export class IdentityService implements OnModuleDestroy {
   }
   async logout(context: IdentityContext, correlation?: string): Promise<{ revoked: boolean }> { await this.revoke(context, context.sessionId, 'logout', correlation); return { revoked: true }; }
   async revoke(context: IdentityContext, sessionId: string, reason = 'self_revoked', correlation?: string): Promise<{ revoked: boolean }> {
+    if (!uuidPattern.test(sessionId)) throw new NotFoundException('Session not found');
     const correlationId = this.correlation(correlation);
     const client = await this.begin();
     try {

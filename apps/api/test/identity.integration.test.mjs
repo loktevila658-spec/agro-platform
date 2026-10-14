@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
-import { createCipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createCipheriv, createHash, createHmac, randomBytes, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import test from 'node:test';
 
@@ -179,7 +179,9 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     assert.ok(aliceSessions.some((session) => session.current));
     const listedOwners = await pool.query('SELECT DISTINCT user_id FROM identity.auth_session WHERE id=ANY($1::uuid[])', [aliceSessions.map((session) => session.sessionId)]);
     assert.deepEqual(listedOwners.rows.map((row) => row.user_id), [accounts.alice.id]);
-    const tampered = await fetch(`${base}/v1/me/sessions`, { headers: { authorization: `Bearer ${aliceToken.slice(0, -1)}x` } });
+    const [jwtHeader, jwtPayload, jwtSignature] = aliceToken.split('.');
+    const tamperedSignature = `${jwtSignature[0] === 'A' ? 'B' : 'A'}${jwtSignature.slice(1)}`;
+    const tampered = await fetch(`${base}/v1/me/sessions`, { headers: { authorization: `Bearer ${jwtHeader}.${jwtPayload}.${tamperedSignature}` } });
     assert.equal(tampered.status, 401);
     const aliceSession = (await pool.query('SELECT id FROM identity.auth_session WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1', [accounts.alice.id])).rows[0].id;
     const expiredJwt = await new SignJWT({ tid: tenantId, did: aliceDevice, sid: aliceSession, ast: 'password' }).setProtectedHeader({ alg: 'HS256' }).setSubject(accounts.alice.id).setIssuedAt(Math.floor(Date.now() / 1000) - 1200).setExpirationTime(Math.floor(Date.now() / 1000) - 1).sign(jwtKey);
@@ -200,6 +202,10 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     assert.equal(bobCorrelationEvent.payload.correlationId, replacedCorrelationId);
     const crossUser = await post(base, `/v1/me/sessions/${bobSession}/commands/revoke`, undefined, aliceToken);
     assert.equal(crossUser.response.status, 404);
+    const malformedSession = await post(base, '/v1/me/sessions/not-a-uuid/commands/revoke', undefined, aliceToken);
+    assert.equal(malformedSession.response.status, 404);
+    const healthyAfterMalformedSession = await fetch(`${base}/health/live`);
+    assert.equal(healthyAfterMalformedSession.status, 200);
     const selfRevoke = await post(base, `/v1/me/sessions/${aliceSecondSessionId}/commands/revoke`, undefined, aliceToken);
     assert.equal(selfRevoke.response.status, 200);
     assert.equal((await pool.query('SELECT revoked_at IS NOT NULL AS revoked FROM identity.auth_session WHERE id=$1', [aliceSecondSessionId])).rows[0].revoked, true);
@@ -240,9 +246,16 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     const revokedSessions = Number(psql(container, 'SELECT count(*) FROM identity.auth_session WHERE revoked_at IS NOT NULL;'));
     assert.ok(revokedEvents >= 3); assert.equal(revokedEvents, revokedSessions);
     assert.equal(Number(psql(container, `SELECT count(*) FROM identity.outbox_event WHERE event_name='security.mfa_changed';`)), 0);
-    const auditRows = (await pool.query('SELECT sequence_no,previous_sha256,event_hmac_sha256,reason_code,action FROM identity.security_audit ORDER BY sequence_no')).rows;
+    const auditRows = (await pool.query('SELECT id,tenant_id,actor_type,actor_id,action,resource_type,resource_id,outcome,reason_code,correlation_id,classification,occurred_at,sequence_no,previous_sha256,event_hmac_sha256 FROM identity.security_audit ORDER BY sequence_no')).rows;
     assert.ok(auditRows.length > 0); assert.equal(auditRows[0].previous_sha256, '0'.repeat(64));
-    for (let i = 1; i < auditRows.length; i += 1) assert.equal(auditRows[i].previous_sha256, auditRows[i - 1].event_hmac_sha256);
+    assert.ok(auditRows.every((row) => row.classification === 'SECURITY'));
+    for (let i = 0; i < auditRows.length; i += 1) {
+      const row = auditRows[i];
+      if (i > 0) assert.equal(row.previous_sha256, auditRows[i - 1].event_hmac_sha256);
+      const canonicalRecord = { id: row.id, tenantId: row.tenant_id, actorType: row.actor_type, actorId: row.actor_id, action: row.action, resourceType: row.resource_type, resourceId: row.resource_id, outcome: row.outcome, reasonCode: row.reason_code, correlationId: row.correlation_id, classification: row.classification, occurredAt: row.occurred_at.toISOString() };
+      const expectedHmac = createHmac('sha256', auditKey).update(row.previous_sha256).update('\n').update(JSON.stringify(canonicalRecord)).digest('hex');
+      assert.equal(row.event_hmac_sha256, expectedHmac);
+    }
     assert.ok(auditRows.every((row) => row.event_hmac_sha256 !== '0'.repeat(64)));
     await assert.rejects(pool.query('UPDATE identity.security_audit SET reason_code=\'changed\' WHERE sequence_no=1'), /append-only/);
     const secretEvidence = JSON.stringify((await pool.query(`SELECT (SELECT coalesce(jsonb_agg(to_jsonb(a)), '[]'::jsonb) FROM identity.security_audit a) AS audit,(SELECT coalesce(jsonb_agg(to_jsonb(e)), '[]'::jsonb) FROM identity.outbox_event e) AS events`)).rows);
