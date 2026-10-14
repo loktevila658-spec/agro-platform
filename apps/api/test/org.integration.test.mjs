@@ -198,6 +198,25 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
     assert.equal(denied.status, 401);
     const forbidden = await post(limited.url, '/org/tenants', { code: 'FORBIDDEN', name: 'Forbidden', timezone: 'Europe/Moscow' }, 'forbidden');
     assert.equal(forbidden.status, 403);
+    const readOnlyCannotCreateOrganization = await post(limited.url, '/org/organizations', {
+      tenantId: '6b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7', code: 'DENIED', name: 'Denied', organizationType: 'FARM',
+    }, 'read-only-cannot-create-organization');
+    assert.equal(readOnlyCannotCreateOrganization.status, 403);
+    const readOnlyCannotCreateUnit = await post(limited.url, '/org/organization-units', {
+      tenantId: '6b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7', organizationId: '9b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7',
+      code: 'DENIED', name: 'Denied', unitType: 'DIVISION',
+    }, 'read-only-cannot-create-unit');
+    assert.equal(readOnlyCannotCreateUnit.status, 403);
+    const readOnlyCannotCreateSite = await post(limited.url, '/org/sites', {
+      tenantId: '6b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7',
+      organizationId: '9b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7',
+      code: 'READ-ONLY-DENIED', name: 'Read-only denied', siteType: 'FARM', timezone: 'Europe/Moscow',
+    }, 'read-only-cannot-create-site');
+    assert.equal(readOnlyCannotCreateSite.status, 403);
+    const readOnlyHierarchyWithoutTenantScope = await fetch(`${limited.url}/org/tenants/6b7a5a80-01c9-4f88-9cc0-2c21d2eab1a7/hierarchy`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    assert.equal(readOnlyHierarchyWithoutTenantScope.status, 403);
     await stopApi(api);
     api = undefined;
     const full = await startApi(databaseUrl, actions);
@@ -279,6 +298,18 @@ test('WP49-011 HTTP hierarchy, authorization, idempotency, audit and outbox use 
       tenantId: otherTenant.id, organizationId: organization.id, code: 'CROSS', name: 'Cross tenant', siteType: 'FARM', timezone: 'Europe/Moscow',
     }, 'cross-tenant-site');
     assert.equal(crossTenantSite.status, 403);
+    const crossTenantOrganization = await post(baseUrl, '/org/organizations', {
+      tenantId: otherTenant.id, code: 'CROSS-ORG', name: 'Cross tenant', organizationType: 'FARM',
+    }, 'cross-tenant-organization');
+    assert.equal(crossTenantOrganization.status, 403);
+    const crossTenantUnit = await post(baseUrl, '/org/organization-units', {
+      tenantId: otherTenant.id, organizationId: organization.id, code: 'CROSS-UNIT', name: 'Cross tenant', unitType: 'DIVISION',
+    }, 'cross-tenant-unit');
+    assert.equal(crossTenantUnit.status, 403);
+    const crossTenantHierarchy = await fetch(`${baseUrl}/org/tenants/${otherTenant.id}/hierarchy`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    assert.equal(crossTenantHierarchy.status, 403);
 
     const siteCommand = {
       tenantId: tenant.id, organizationId: organization.id, organizationUnitId: child.id,
