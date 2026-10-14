@@ -2,9 +2,9 @@
 
 - WP ID: WP49-014
 - Title: Audit & correction framework
-- Branch / commit: `codex/wp49-014` / uncommitted working tree at baseline `715ecb50cbb465a7088be2a4ef1eb8947a0ffdce`; no commit or PR created.
+- Branch / implementation commit: `codex/wp49-014` / `58b9677dcdd9c4728abb103699f02cbcce55dae9`.
 - Date: 2026-10-14
-- Process status: implementation and local evidence prepared for review; **not DONE**. CR #25 and scope addendum #26 remain open. No post-merge CI exists.
+- Process status: [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27) is OPEN for review; **not DONE**. CR #25 and scope addendum #26 remain open. Pre-merge GitHub CI is pending; no post-merge CI exists.
 
 ## 1. Prerequisites verified
 
@@ -67,7 +67,8 @@ Every path is authorized by CR #25 or CR #26:
 - Contract gate: **PASS** — canonical contracts validate and generated clients have no drift.
 - Migration gate: **PASS** — PostgreSQL/PostGIS integration applies and repeats migrations, validates schema version 4 and API response, and verifies required stores/tables.
 - Runtime Compose smoke: **BLOCKED / NOT RUN**. Config validation passed, but the prescribed smoke cleanup runs `docker compose down --volumes --remove-orphans`, which can delete volumes in the shared Compose environment. No unsafe cleanup was performed. The prior incomplete local runtime attempt is not counted as PASS.
-- Post-merge CI: **NOT RUN** — no PR has been opened or merged.
+- PR #27 pre-merge CI: **PENDING** at report update; the PR workflow runs the required gates on its isolated runner.
+- Post-merge CI: **NOT RUN** — PR #27 has not been merged.
 
 - G0: PASS — dependencies and schema compatibility verified.
 - G1: PASS — build, typecheck, architecture checks; lint is N/A as noted.
@@ -81,19 +82,19 @@ Every path is authorized by CR #25 or CR #26:
 - G9: PASS — evidence/provenance and correction links are persisted and tested.
 - G10: PASS — deterministic framework-level PostgreSQL scenario passes; it is not a product workflow.
 - G11: PASS for applicable security checks — fail-closed authorization, existing identity security-audit assertions, and architecture checks pass. No separate performance/chaos gate was assigned or run.
-- G12: BLOCKED — report is prepared, but review/commit/PR, merge approval, post-merge CI, and remaining governance steps are outstanding.
+- G12: BLOCKED — report is prepared and PR #27 is open, but pre-merge CI, review/merge approval, post-merge CI, and remaining governance steps are outstanding.
 
 ## 6. Deterministic demo / evidence
 
 - Scenario: framework-level PostgreSQL test creates immutable evidence and a supersession link, verifies the original evidence remains intact, exercises transaction rollback and denied authorization, and confirms the existing audit stores remain unchanged.
 - Seed / clock: fixed test identifiers and payloads; database timestamps are not used as ordering oracles for expected business behavior.
 - Result: PASS for the framework scenario.
-- Evidence: this report; approved [CR #25](https://github.com/loktevila658-spec/agro-platform/issues/25); approved [scope addendum #26](https://github.com/loktevila658-spec/agro-platform/issues/26); local test and gate results listed above. No PR or GitHub Actions run for this implementation exists yet.
+- Evidence: this report; approved [CR #25](https://github.com/loktevila658-spec/agro-platform/issues/25); approved [scope addendum #26](https://github.com/loktevila658-spec/agro-platform/issues/26); [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27); local test and gate results listed above.
 
 ## 7. Limitations / follow-ups
 
 - Local Compose runtime smoke remains BLOCKED/NOT RUN because the prescribed cleanup deletes volumes in the shared environment. Do not report it as passing. A safe isolated CI/runtime execution is still required.
-- No commit, PR, pre-merge CI, post-merge CI, or merge exists.
+- Implementation commit `58b9677dcdd9c4728abb103699f02cbcce55dae9` and PR #27 exist; pre-merge CI is pending, and post-merge CI and merge do not exist.
 - CR #25 and CR #26 remain OPEN; neither has been closed.
 - WP49-014 is not marked DONE. Do not start WP49-015.
 
