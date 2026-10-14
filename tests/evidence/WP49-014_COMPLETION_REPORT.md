@@ -4,7 +4,7 @@
 - Title: Audit & correction framework
 - Branch / implementation commit: `codex/wp49-014` / `58b9677dcdd9c4728abb103699f02cbcce55dae9`.
 - Date: 2026-10-14
-- Process status: [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27) is OPEN for review; **not DONE**. CR #25 and scope addendum #26 remain open. Pre-merge GitHub CI is pending; no post-merge CI exists.
+- Process status: [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27) is OPEN for review; **not DONE**. CR #25 and scope addendum #26 remain open. The prior G0 review found that migration 0004 did not block `TRUNCATE`; this correction adds statement-level guards and PostgreSQL integration assertions. New-head CI is pending at this report update; no post-merge CI exists.
 
 ## 1. Prerequisites verified
 
@@ -59,6 +59,7 @@ Every path is authorized by CR #25 or CR #26:
 - Targeted identity integration test: **PASS**, real PostgreSQL, 1/1.
 - WP49-014 audit unit tests: **PASS**.
 - WP49-014 audit integration test: **PASS**, real PostgreSQL; checks append-only evidence/link, original-evidence retention, correction/supersession relation, rollback/atomicity, fail-closed authorization, and preservation of existing audit stores.
+- `TRUNCATE` denial: **PASS**, real PostgreSQL; direct `TRUNCATE` of `platform_audit.correction_link` and `TRUNCATE ... CASCADE` targeting `platform_audit.evidence` are rejected with SQLSTATE `23514`, and the original evidence plus supersession link are re-read and verified after each rejection.
 - Migration unit tests: **PASS**, 5/5.
 - Full API package test suite: **PASS**, 28/28.
 - Workspace unit gate (`node scripts/ci-gates.mjs unit`): **PASS** — workspace build, package tests, bootstrap regression (13/13), migration unit tests (5/5), and bootstrap validation.
@@ -67,7 +68,7 @@ Every path is authorized by CR #25 or CR #26:
 - Contract gate: **PASS** — canonical contracts validate and generated clients have no drift.
 - Migration gate: **PASS** — PostgreSQL/PostGIS integration applies and repeats migrations, validates schema version 4 and API response, and verifies required stores/tables.
 - Runtime Compose smoke: **BLOCKED / NOT RUN**. Config validation passed, but the prescribed smoke cleanup runs `docker compose down --volumes --remove-orphans`, which can delete volumes in the shared Compose environment. No unsafe cleanup was performed. The prior incomplete local runtime attempt is not counted as PASS.
-- PR #27 pre-merge CI: **PENDING** at report update; the PR workflow runs the required gates on its isolated runner.
+- Prior-head PR CI run [`38627127402`](https://github.com/loktevila658-spec/agro-platform/actions/runs/38627127402): **PASS** on head `2588c19136ef60138451713d6ca72e94321c0e97`; it predates this `TRUNCATE` correction and is not evidence for the corrected head. New-head pre-merge CI: **PENDING** at report update; the PR workflow runs required gates on its isolated runner.
 - Post-merge CI: **NOT RUN** — PR #27 has not been merged.
 
 - G0: PASS — dependencies and schema compatibility verified.
@@ -86,7 +87,7 @@ Every path is authorized by CR #25 or CR #26:
 
 ## 6. Deterministic demo / evidence
 
-- Scenario: framework-level PostgreSQL test creates immutable evidence and a supersession link, verifies the original evidence remains intact, exercises transaction rollback and denied authorization, and confirms the existing audit stores remain unchanged.
+- Scenario: framework-level PostgreSQL test creates immutable evidence and a supersession link, verifies the original evidence remains intact after UPDATE/DELETE/TRUNCATE denials, exercises transaction rollback and denied authorization, and confirms the existing audit stores remain unchanged.
 - Seed / clock: fixed test identifiers and payloads; database timestamps are not used as ordering oracles for expected business behavior.
 - Result: PASS for the framework scenario.
 - Evidence: this report; approved [CR #25](https://github.com/loktevila658-spec/agro-platform/issues/25); approved [scope addendum #26](https://github.com/loktevila658-spec/agro-platform/issues/26); [PR #27](https://github.com/loktevila658-spec/agro-platform/pull/27); local test and gate results listed above.
@@ -100,5 +101,5 @@ Every path is authorized by CR #25 or CR #26:
 
 ## 8. Unlock decision
 
-- **FAIL / NOT DONE** — required runtime evidence and governance/merge evidence are outstanding.
+- **FAIL / NOT DONE** — corrected-head CI, review/merge approval, post-merge CI, and remaining governance evidence are outstanding. Local Compose runtime smoke remains BLOCKED / NOT RUN for the documented destructive cleanup reason.
 - Newly unlockable WP: none.

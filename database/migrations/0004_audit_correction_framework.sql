@@ -37,7 +37,7 @@ CREATE INDEX platform_audit_correction_original_idx
 CREATE FUNCTION platform_audit.reject_mutation() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
-  RAISE EXCEPTION 'audit evidence and correction links are append-only'
+  RAISE EXCEPTION 'audit evidence and correction links are append-only: %', TG_TABLE_NAME
     USING ERRCODE = '23514';
 END;
 $$;
@@ -46,6 +46,14 @@ CREATE TRIGGER evidence_append_only
 BEFORE UPDATE OR DELETE ON platform_audit.evidence
 FOR EACH ROW EXECUTE FUNCTION platform_audit.reject_mutation();
 
+CREATE TRIGGER evidence_truncate_append_only
+BEFORE TRUNCATE ON platform_audit.evidence
+FOR EACH STATEMENT EXECUTE FUNCTION platform_audit.reject_mutation();
+
 CREATE TRIGGER correction_link_append_only
 BEFORE UPDATE OR DELETE ON platform_audit.correction_link
 FOR EACH ROW EXECUTE FUNCTION platform_audit.reject_mutation();
+
+CREATE TRIGGER correction_link_truncate_append_only
+BEFORE TRUNCATE ON platform_audit.correction_link
+FOR EACH STATEMENT EXECUTE FUNCTION platform_audit.reject_mutation();

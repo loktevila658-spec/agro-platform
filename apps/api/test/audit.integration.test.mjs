@@ -159,6 +159,40 @@ test('WP49-014 framework persists immutable evidence and correction links atomic
         (error) => error.code === '23514',
       );
 
+      const assertEvidenceAndLinkPreserved = async () => {
+        const preservedEvidence = await client.query(
+          'SELECT evidence_id, evidence FROM platform_audit.evidence WHERE evidence_id = $1',
+          [originalId],
+        );
+        assert.deepEqual(preservedEvidence.rows, [{
+          evidence_id: originalId,
+          evidence: { revision: 1, value: 'original' },
+        }]);
+        const preservedLink = await client.query(
+          `SELECT original_evidence_id, replacement_evidence_id, relation
+           FROM platform_audit.correction_link WHERE link_id = $1`,
+          [correction.linkId],
+        );
+        assert.deepEqual(preservedLink.rows, [{
+          original_evidence_id: originalId,
+          replacement_evidence_id: correction.evidenceId,
+          relation: 'SUPERSESSION',
+        }]);
+      };
+
+      await assert.rejects(
+        client.query('TRUNCATE TABLE platform_audit.correction_link'),
+        (error) => error.code === '23514' && /append-only: correction_link/.test(error.message),
+      );
+      await assertEvidenceAndLinkPreserved();
+
+      // PostgreSQL requires the referenced evidence table to be included or CASCADE used.
+      await assert.rejects(
+        client.query('TRUNCATE TABLE platform_audit.evidence CASCADE'),
+        (error) => error.code === '23514' && /append-only: evidence/.test(error.message),
+      );
+      await assertEvidenceAndLinkPreserved();
+
       await assert.rejects(
         AuditTransactionContext.run(client, async (tx) => {
           await tx.client.query('INSERT INTO owner_write_probe VALUES (2)');
