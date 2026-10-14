@@ -5,14 +5,14 @@
 - Branch / commit: `codex/wp49-015-command`; implementation commit [`c9d897106d09ce884d0ead7fec9beb1bceb9cb9e`](https://github.com/loktevila658-spec/agro-platform/commit/c9d897106d09ce884d0ead7fec9beb1bceb9cb9e).
 - Date: 2026-10-15
 - Implementation baseline: live `origin/main@c32bad99aa3db460b641a2ce0e96d4edc0c62aea`.
-- Current main after implementation merge: `92a98de5aa0078941e2842a3bcf3ba41f0f07f34`.
-- Governance: CR #31 is OPEN and approved by the owner in [comment #6180542708](https://github.com/loktevila658-spec/agro-platform/issues/31#issuecomment-6180542708). Its body and approved paths were checked against this diff.
+- Current main after report closeout PR #33: `4d533b13af141bcfc0e69e399be111aadb3039e6`.
+- Governance: CR #31 is CLOSED as completed. The owner approval is in [comment #6180542708](https://github.com/loktevila658-spec/agro-platform/issues/31#issuecomment-6180542708), and the completion/closure evidence is in [comment #6180817702](https://github.com/loktevila658-spec/agro-platform/issues/31#issuecomment-6180817702). Its approved body and paths were checked against this diff.
 - Frozen manifest values were preserved verbatim: `allowed_paths_raw: /apps/api/common`; `exit_criteria: idempotency key, commandId, optimistic version.`
 
 ## 1. Prerequisites verified
 
 - G0: PASS. Dependencies WP49-011, WP49-012, WP49-013 and WP49-014 are merged on the baseline; their evidence is in their completion reports and PRs #18/#19/#21/#23/#27. The verified WP49-014 merge is `716d745a585615331cb63f036fadab467daf81fb`. Existing organization API, database and event contracts are compatible; this change is an additive response field and introduces no schema or event migration.
-- Before implementation, `git ls-remote origin refs/heads/main` returned the exact implementation baseline above. After merge, the same live check returned `92a98de5aa0078941e2842a3bcf3ba41f0f07f34`. CR #31 remains OPEN for evidence closeout, its approved body is unchanged, and the approval comment author association is OWNER.
+- Before implementation, `git ls-remote origin refs/heads/main` returned the exact implementation baseline above. The implementation merged at `92a98de5aa0078941e2842a3bcf3ba41f0f07f34`; report closeout PR #33 then merged at `4d533b13af141bcfc0e69e399be111aadb3039e6`, the current verified live `main`. CR #31's body is unchanged, its owner approval is recorded, and it is closed with linked completion evidence.
 
 ## 2. Scope implemented
 
@@ -52,7 +52,7 @@ No manifest, status field, dependency, exit criterion, event catalog, migration,
 
 ## 5. Tests and quality gates
 
-All local checks below were run against implementation commit `c9d897106d09ce884d0ead7fec9beb1bceb9cb9e` before report creation. Implementation PR #32 and its required CI/post-merge evidence are now complete. This report's final G12 closeout is being recorded separately so the final report in `main` contains the merge evidence.
+All local checks below were run against implementation commit `c9d897106d09ce884d0ead7fec9beb1bceb9cb9e` before report creation. Implementation PR #32, report closeout PR #33, their required CI, and CR #31 closure are complete.
 
 - `pnpm install --frozen-lockfile` from `apps`: PASS.
 - API targeted tests: `node --test apps/api/test/org.unit.test.mjs apps/api/test/org.integration.test.mjs` — PASS, 12/12; integration used real PostgreSQL.
@@ -69,6 +69,8 @@ All local checks below were run against implementation commit `c9d897106d09ce884
 - PR [#32](https://github.com/loktevila658-spec/agro-platform/pull/32) — pre-merge workflow [run 38653962394](https://github.com/loktevila658-spec/agro-platform/actions/runs/38653962394): PASS on head `f5febe226043c0087262eba5b64294acb9507ff5`; all six quality jobs and aggregate `CI quality gates` passed. The repository requires the aggregate check and has no mandatory reviewer approval; the author performed a line-by-line review before merge.
 - PR #32 merged into implementation baseline `c32bad99aa3db460b641a2ce0e96d4edc0c62aea` as merge commit [`92a98de5aa0078941e2842a3bcf3ba41f0f07f34`](https://github.com/loktevila658-spec/agro-platform/commit/92a98de5aa0078941e2842a3bcf3ba41f0f07f34). Live `origin/main` points to this SHA.
 - Post-merge workflow [run 38654141205](https://github.com/loktevila658-spec/agro-platform/actions/runs/38654141205): SUCCESS on exact merge commit `92a98de5aa0078941e2842a3bcf3ba41f0f07f34`. Lint, typecheck, unit, contract, migration, runtime and aggregate `CI quality gates` all passed.
+- Report closeout PR [#33](https://github.com/loktevila658-spec/agro-platform/pull/33) merged at `4d533b13af141bcfc0e69e399be111aadb3039e6`. Its pre-merge run [38654396638](https://github.com/loktevila658-spec/agro-platform/actions/runs/38654396638) passed on head `33c512d5c34ec303bdc1de6322abb60d406f0daa`; post-merge run [38654595019](https://github.com/loktevila658-spec/agro-platform/actions/runs/38654595019) passed on exact merge commit `4d533b13af141bcfc0e69e399be111aadb3039e6`.
+- CR #31 was closed as completed with [closure comment #6180817702](https://github.com/loktevila658-spec/agro-platform/issues/31#issuecomment-6180817702), linking owner approval, implementation merge, report closeout and both post-merge CI runs.
 
 - G0: PASS — all four declared dependencies are merged and existing API/database/event contracts are compatible.
 - G1: PASS — API/workspace build and typecheck, architecture guard and diff check pass; lint is N/A because no lint tool is configured.
@@ -82,7 +84,7 @@ All local checks below were run against implementation commit `c9d897106d09ce884
 - G9: PASS — PostgreSQL integration verifies the command still commits one audit row and one outbox row atomically with one authoritative effect.
 - G10: PASS — deterministic org command create/replay API scenario passes against PostgreSQL. The WP manifest assigns no separate DEMO27 scenario; no unrelated demo profile is claimed as evidence.
 - G11: PASS for applicable checks — security/architecture and permission regressions pass; no new endpoint or performance-sensitive aggregate operation is added. No separate performance/chaos scenario is assigned to this WP.
-- G12: PASS — implementation PR #32 is merged; all required PR checks and post-merge CI passed on the exact head/merge SHAs above; this Completion Report is being finalized at the approved path with no unmapped scope.
+- G12: PASS — implementation PR #32 and report closeout PR #33 are merged; required PR checks and post-merge CI passed on the exact head/merge SHAs above; CR #31 is closed with linked evidence; no unmapped scope remains.
 
 ## 6. Deterministic demo / evidence
 
@@ -95,15 +97,15 @@ All local checks below were run against implementation commit `c9d897106d09ce884
 
 - The optimistic-version primitive has no current aggregate caller because no versioned update command or persistence target exists in frozen scope. It is production code used by the shared command executor and accepts an atomic, transaction-scoped caller guard; the isolated adapter tests stale rejection and concurrent compare-and-effect. No product version semantics are inferred.
 - The owner is also the PR author, so a second self-approval was not submitted. Repository branch protection requires `CI quality gates`, not a reviewer approval; all PR checks passed and the merge was performed without bypass or auto-merge.
-- CR #31 remains OPEN until this final report closeout is merged; its approved body and owner decision are linked above.
+- CR #31 is CLOSED as completed; the owner decision and closure evidence are linked above.
 
 ## 8. Unlock decision
 
-- **PASS / DONE (proposed final evidence closeout)** — implementation PR #32 is merged and post-merge CI passed. This final report update must itself be reviewed and merged before the DONE record is present in `main`. Newly prerequisite-satisfied WPs: WP49-016 and WP49-019. No adjacent WP was started.
+- **PASS / DONE** — implementation PR #32 is merged, post-merge CI passed, final report closeout PR #33 is merged, and CR #31 is closed with evidence. Newly prerequisite-satisfied WPs: WP49-016 and WP49-019. No adjacent WP was started.
 
 ## 9. Post-merge completion evidence
 
 - Implementation PR: [#32](https://github.com/loktevila658-spec/agro-platform/pull/32), merged head `f5febe226043c0087262eba5b64294acb9507ff5` into base `c32bad99aa3db460b641a2ce0e96d4edc0c62aea` as merge commit [`92a98de5aa0078941e2842a3bcf3ba41f0f07f34`](https://github.com/loktevila658-spec/agro-platform/commit/92a98de5aa0078941e2842a3bcf3ba41f0f07f34).
 - Pre-merge GitHub Actions [run 38653962394](https://github.com/loktevila658-spec/agro-platform/actions/runs/38653962394) completed SUCCESS on exact PR head `f5febe226043c0087262eba5b64294acb9507ff5`; all required quality jobs and aggregate passed.
 - Post-merge GitHub Actions [run 38654141205](https://github.com/loktevila658-spec/agro-platform/actions/runs/38654141205) completed SUCCESS on exact merge commit `92a98de5aa0078941e2842a3bcf3ba41f0f07f34`; all required quality jobs and aggregate passed.
-- Live `origin/main` was verified at `92a98de5aa0078941e2842a3bcf3ba41f0f07f34`. The report-only closeout is now the only remaining step before the PASS / DONE record is present in `main`.
+- Live `origin/main` was verified at `4d533b13af141bcfc0e69e399be111aadb3039e6`; this report's PASS / DONE record and closure evidence are present in `main`.
