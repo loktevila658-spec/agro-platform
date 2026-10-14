@@ -54,7 +54,7 @@ Source: [PR #23 changed files](https://github.com/loktevila658-spec/agro-platfor
 
 ## 5. Tests and quality gates
 
-Pre-merge run [38609031415](https://github.com/loktevila658-spec/agro-platform/actions/runs/38609031415) completed SUCCESS on head `53bd3fdb50dee81f234325d472060c9169998287`. Post-merge run [38610630581](https://github.com/loktevila658-spec/agro-platform/actions/runs/38610630581) completed SUCCESS on merge commit `0c648d51e419827edc27c508826ae9b0c9615033). Every job, including aggregate `CI quality gates`, passed in both runs. PR #23 records workspace build/typecheck/validation and API tests 25/25, including real PostgreSQL integration.
+Pre-merge run [38609031415](https://github.com/loktevila658-spec/agro-platform/actions/runs/38609031415) completed SUCCESS on head `53bd3fdb50dee81f234325d472060c9169998287`. Post-merge run [38610630581](https://github.com/loktevila658-spec/agro-platform/actions/runs/38610630581) completed SUCCESS on merge commit `0c648d51e419827edc27c508826ae9b0c9615033`. Every job, including aggregate `CI quality gates`, passed in both runs. PR #23 records workspace build/typecheck/validation and API tests 25/25, including real PostgreSQL integration.
 
 - G0: PASS — WP49-011 and WP49-012 are merged; prerequisite and compatibility evidence is listed above.
 - G1: PASS — PR #23 records workspace typecheck/build/validation; pre- and post-merge lint and typecheck gates passed.
