@@ -53,6 +53,22 @@ export interface LivenessResponse {
   readonly status: 'ok';
 }
 
+export interface LoginRequest {
+  readonly deviceId: string;
+  readonly login: string;
+  readonly password: string;
+}
+
+export interface LoginResponse {
+  readonly accessToken?: string;
+  readonly challengeToken?: string;
+  readonly expiresIn?: number;
+  readonly mfaRequired: boolean;
+  readonly refreshExpiresAt?: string;
+  readonly refreshToken?: string;
+  readonly tokenType?: string;
+}
+
 export interface MetricsResponse {
   readonly httpRequestCount: number;
   readonly httpRequestDurationMsTotal: number;
@@ -63,6 +79,11 @@ export interface MetricsResponse {
   readonly processHeapUsedBytes: number;
   readonly processResidentSetBytes: number;
   readonly processUptimeSeconds: number;
+}
+
+export interface MfaVerifyRequest {
+  readonly challengeToken: string;
+  readonly code: string;
 }
 
 export interface OrganizationResponse {
@@ -92,6 +113,14 @@ export interface ReadinessResponse {
   readonly status: 'ready' | 'not_ready';
 }
 
+export interface RefreshRequest {
+  readonly refreshToken: string;
+}
+
+export interface RevocationResponse {
+  readonly revoked: boolean;
+}
+
 export interface SchemaVersionResponse {
   readonly expectedSchemaVersion: number;
   readonly postgisVersion: string;
@@ -103,6 +132,22 @@ export interface SchemaVersionUnavailableResponse {
   readonly error: string;
   readonly message: string;
   readonly statusCode: number;
+}
+
+export interface SessionListResponse {
+  readonly sessions: readonly SessionSummary[];
+}
+
+export interface SessionSummary {
+  readonly authStrength: string;
+  readonly createdAt: string;
+  readonly current: boolean;
+  readonly deviceId: string;
+  readonly deviceLabel: string;
+  readonly expiresAt: string;
+  readonly lastSeenAt: string;
+  readonly revoked: boolean;
+  readonly sessionId: string;
 }
 
 export interface SiteResponse {
@@ -126,6 +171,14 @@ export interface TenantResponse {
   readonly id: string;
   readonly name: string;
   readonly timezone: string;
+}
+
+export interface TokenResponse {
+  readonly accessToken: string;
+  readonly expiresIn: number;
+  readonly refreshExpiresAt: string;
+  readonly refreshToken: string;
+  readonly tokenType: string;
 }
 
 export interface EventDefinition {
@@ -320,6 +373,184 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "occurredAt"
       ]
     }
+  },
+  {
+    "name": "security.session_created",
+    "version": "1.0.0",
+    "producer": "identity",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "authStrength": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "sessionId",
+        "userId",
+        "tenantId",
+        "actorId",
+        "deviceId",
+        "authStrength",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "security.session_revoked",
+    "version": "1.0.0",
+    "producer": "identity",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "sessionId",
+        "userId",
+        "tenantId",
+        "actorId",
+        "deviceId",
+        "reason",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "security.mfa_changed",
+    "version": "1.0.0",
+    "producer": "identity",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "userId",
+        "tenantId",
+        "actorId",
+        "enabled",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
   }
 ];
 
@@ -447,5 +678,67 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getSchemaVersion failed with HTTP ${response.status}`);
     return await response.json() as SchemaVersionResponse;
+  }
+
+  async login(body: LoginRequest, xCorrelationId?: string): Promise<LoginResponse> {
+    const url = new URL(`${this.baseUrl}/v1/auth/login`);
+    const headers: Record<string, string> = {};
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`login failed with HTTP ${response.status}`);
+    return await response.json() as LoginResponse;
+  }
+
+  async logout(authorization: string, xCorrelationId?: string): Promise<RevocationResponse> {
+    const url = new URL(`${this.baseUrl}/v1/auth/logout`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'POST', headers });
+    if (!response.ok) throw new Error(`logout failed with HTTP ${response.status}`);
+    return await response.json() as RevocationResponse;
+  }
+
+  async verifyMfa(body: MfaVerifyRequest, xCorrelationId?: string): Promise<TokenResponse> {
+    const url = new URL(`${this.baseUrl}/v1/auth/mfa/verify`);
+    const headers: Record<string, string> = {};
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`verifyMfa failed with HTTP ${response.status}`);
+    return await response.json() as TokenResponse;
+  }
+
+  async refreshSession(body: RefreshRequest, xCorrelationId?: string): Promise<TokenResponse> {
+    const url = new URL(`${this.baseUrl}/v1/auth/refresh`);
+    const headers: Record<string, string> = {};
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`refreshSession failed with HTTP ${response.status}`);
+    return await response.json() as TokenResponse;
+  }
+
+  async listMySessions(authorization: string, xCorrelationId?: string): Promise<SessionListResponse> {
+    const url = new URL(`${this.baseUrl}/v1/me/sessions`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`listMySessions failed with HTTP ${response.status}`);
+    return await response.json() as SessionListResponse;
+  }
+
+  async revokeMySession(id: string, authorization: string): Promise<RevocationResponse> {
+    const url = new URL(`${this.baseUrl}/v1/me/sessions/${encodeURIComponent(String(id))}/commands/revoke`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'POST', headers });
+    if (!response.ok) throw new Error(`revokeMySession failed with HTTP ${response.status}`);
+    return await response.json() as RevocationResponse;
   }
 }

@@ -135,6 +135,135 @@ events:
         - correlationId
         - causationId
         - occurredAt
+  - name: security.session_created
+    version: 1.0.0
+    producer: identity
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        sessionId:
+          type: string
+        userId:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        deviceId:
+          type: string
+        authStrength:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - sessionId
+        - userId
+        - tenantId
+        - actorId
+        - deviceId
+        - authStrength
+        - correlationId
+        - causationId
+        - occurredAt
+  - name: security.session_revoked
+    version: 1.0.0
+    producer: identity
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        sessionId:
+          type: string
+        userId:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        deviceId:
+          type: string
+        reason:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - sessionId
+        - userId
+        - tenantId
+        - actorId
+        - deviceId
+        - reason
+        - correlationId
+        - causationId
+        - occurredAt
+  - name: security.mfa_changed
+    version: 1.0.0
+    producer: identity
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+        userId:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        enabled:
+          type: boolean
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - entityType
+        - userId
+        - tenantId
+        - actorId
+        - enabled
+        - correlationId
+        - causationId
+        - occurredAt
 sources:
   - DOC02
   - DOC10

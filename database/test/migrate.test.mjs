@@ -71,11 +71,11 @@ test('migration program is deterministic and guards applied state', async () => 
   assert.match(first, /schema_migrations/);
 });
 
-test('baseline and organization migrations are ordered and declare the WP49-011 hierarchy', async () => {
+test('baseline, organization, and identity migrations are ordered and declare their owned schemas', async () => {
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -86,6 +86,9 @@ test('baseline and organization migrations are ordered and declare the WP49-011 
   }
   assert.match(migrations[1].sql, /CREATE TRIGGER/i);
   assert.match(migrations[1].sql, /WITH RECURSIVE/i);
+  for (const table of ['user_account', 'registered_device', 'mfa_authenticator', 'mfa_challenge', 'auth_session', 'refresh_token', 'login_throttle', 'security_audit', 'outbox_event']) {
+    assert.match(migrations[2].sql, new RegExp(`CREATE TABLE identity\\.${table}\\b`, 'i'));
+  }
 });
 
 test('database credentials are not exposed in psql process arguments', async () => {

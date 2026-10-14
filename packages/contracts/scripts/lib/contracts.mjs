@@ -237,7 +237,13 @@ export function validateOpenApi(source) {
     }
     if (!Array.isArray(schema.required) || !schema.required.every((key) => Object.hasOwn(schema.properties, key))) errors.push(`components.schemas.${name}.required must reference declared properties`);
     for (const [property, definition] of Object.entries(schema.properties)) {
-      if (!isObject(definition) || !['string', 'integer', 'number', 'boolean'].includes(definition.type)) errors.push(`components.schemas.${name}.properties.${property} has unsupported type`);
+      const validReference = isObject(definition) && typeof definition.$ref === 'string' && isObject(resolveReference(document, definition.$ref));
+      const validPrimitive = isObject(definition) && ['string', 'integer', 'number', 'boolean'].includes(definition.type);
+      const validArray = isObject(definition) && definition.type === 'array' && isObject(definition.items) && (
+        ['string', 'integer', 'number', 'boolean'].includes(definition.items.type)
+        || (typeof definition.items.$ref === 'string' && isObject(resolveReference(document, definition.items.$ref)))
+      );
+      if (!validReference && !validPrimitive && !validArray) errors.push(`components.schemas.${name}.properties.${property} has unsupported type`);
       if (definition?.enum && (!Array.isArray(definition.enum) || !definition.enum.every((entry) => typeof entry === 'string'))) errors.push(`components.schemas.${name}.properties.${property}.enum must contain strings`);
     }
   }
@@ -358,6 +364,8 @@ function hasOnlyOptionalHeaders(inputs) {
 }
 
 function tsType(definition) {
+  if (definition.$ref) return definition.$ref.split('/').at(-1);
+  if (definition.type === 'array') return `readonly ${tsType(definition.items)}[]`;
   if (definition.enum) return definition.enum.map((value) => `'${value}'`).join(' | ');
   return { string: 'string', integer: 'number', number: 'number', boolean: 'boolean' }[definition.type] ?? 'unknown';
 }
@@ -401,10 +409,20 @@ function dartLiteral(value) {
 }
 
 function dartType(definition) {
+  if (definition.$ref) return definition.$ref.split('/').at(-1);
+  if (definition.type === 'array') return `List<${dartType(definition.items)}>`;
   return { string: 'String', integer: 'int', number: 'num', boolean: 'bool' }[definition.type] ?? 'Object?';
 }
 
 function dartRead(property, definition) {
+  if (definition.$ref) return `${dartType(definition)}.fromJson(Map<String, Object?>.from(json[${dartString(property)}] as Map))`;
+  if (definition.type === 'array') {
+    const item = definition.items;
+    const parsed = item.$ref
+      ? `${dartType(item)}.fromJson(Map<String, Object?>.from(item as Map))`
+      : `item as ${dartType(item)}`;
+    return `(json[${dartString(property)}] as List<Object?>).map((item) => ${parsed}).toList(growable: false)`;
+  }
   if (definition.type === 'integer') return `(json[${dartString(property)}] as num).toInt()`;
   return `json[${dartString(property)}] as ${dartType(definition)}`;
 }

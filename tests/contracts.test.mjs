@@ -23,6 +23,12 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     '/org/tenants',
     '/org/tenants/{tenantId}/hierarchy',
     '/system/schema-version',
+    '/v1/auth/login',
+    '/v1/auth/logout',
+    '/v1/auth/mfa/verify',
+    '/v1/auth/refresh',
+    '/v1/me/sessions',
+    '/v1/me/sessions/{id}/commands/revoke',
   ]);
   assert.deepEqual(operations.map(({ method, operationId, path }) => ({ method, operationId, path })), [
     { method: 'GET', operationId: 'getLiveness', path: '/health/live' },
@@ -34,6 +40,12 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     { method: 'POST', operationId: 'createOrgTenant', path: '/org/tenants' },
     { method: 'GET', operationId: 'getOrgHierarchy', path: '/org/tenants/{tenantId}/hierarchy' },
     { method: 'GET', operationId: 'getSchemaVersion', path: '/system/schema-version' },
+    { method: 'POST', operationId: 'login', path: '/v1/auth/login' },
+    { method: 'POST', operationId: 'logout', path: '/v1/auth/logout' },
+    { method: 'POST', operationId: 'verifyMfa', path: '/v1/auth/mfa/verify' },
+    { method: 'POST', operationId: 'refreshSession', path: '/v1/auth/refresh' },
+    { method: 'GET', operationId: 'listMySessions', path: '/v1/me/sessions' },
+    { method: 'POST', operationId: 'revokeMySession', path: '/v1/me/sessions/{id}/commands/revoke' },
   ]);
 
   const compatibilityOperations = [
@@ -50,14 +62,15 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     ]);
   }
 
-  const forbiddenDomains = /\/(?:auth|identity|permissions?|audit|gis|fleet|warehouse|production)(?:\/|$)/i;
-  assert.doesNotMatch(Object.keys(document.paths).join('\n'), forbiddenDomains);
+  assert.deepEqual(operations.filter(({ path }) => path.startsWith('/v1/auth/') || path.startsWith('/v1/me/')).map(({ operationId }) => operationId), [
+    'login', 'logout', 'verifyMfa', 'refreshSession', 'listMySessions', 'revokeMySession',
+  ]);
   assert.deepEqual(operations.filter(({ path }) => path.startsWith('/org/')).map(({ operationId }) => operationId), [
     'createOrgOrganizationUnit', 'createOrgOrganization', 'createOrgSite', 'createOrgTenant', 'getOrgHierarchy',
   ]);
 });
 
-test('event catalog contains exactly the WP49-011 organization events', () => {
+test('event catalog preserves WP49-011 organization events and appends the DOC19 identity events', () => {
   const source = readFileSync('events/catalog/index.yaml', 'utf8');
   const catalog = parseYamlDocument(source);
 
@@ -67,5 +80,8 @@ test('event catalog contains exactly the WP49-011 organization events', () => {
     { name: 'org.organization.created', version: '1.0.0', producer: 'org' },
     { name: 'org.unit.created', version: '1.0.0', producer: 'org' },
     { name: 'org.site.created', version: '1.0.0', producer: 'org' },
+    { name: 'security.session_created', version: '1.0.0', producer: 'identity' },
+    { name: 'security.session_revoked', version: '1.0.0', producer: 'identity' },
+    { name: 'security.mfa_changed', version: '1.0.0', producer: 'identity' },
   ]);
 });

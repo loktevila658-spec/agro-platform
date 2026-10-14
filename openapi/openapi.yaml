@@ -6,6 +6,129 @@ servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
 paths:
+  /v1/auth/login:
+    post:
+      operationId: login
+      summary: Authenticate a local account
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication result or MFA challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Generic authentication failure
+        '503':
+          description: Authentication service unavailable
+  /v1/auth/mfa/verify:
+    post:
+      operationId: verifyMfa
+      summary: Verify a one-time MFA challenge
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MfaVerifyRequest'
+      responses:
+        '200':
+          description: Authenticated session credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Generic challenge or TOTP failure
+        '503':
+          description: Authentication service unavailable
+  /v1/auth/refresh:
+    post:
+      operationId: refreshSession
+      summary: Rotate a refresh credential
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Rotated session credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Generic refresh failure
+        '503':
+          description: Authentication service unavailable
+  /v1/auth/logout:
+    post:
+      operationId: logout
+      summary: Revoke the current authenticated session
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Current session revocation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevocationResponse'
+        '401':
+          description: Authentication required
+  /v1/me/sessions:
+    get:
+      operationId: listMySessions
+      summary: List sessions owned by the authenticated user
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Sessions owned by the authenticated account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+        '401':
+          description: Authentication required
+  /v1/me/sessions/{id}/commands/revoke:
+    post:
+      operationId: revokeMySession
+      summary: Revoke a selected session owned by the authenticated user
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session revocation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevocationResponse'
+        '401':
+          description: Authentication required
+        '404':
+          description: Session not found for authenticated user
   /system/schema-version:
     get:
       operationId: getSchemaVersion
@@ -287,6 +410,129 @@ components:
       schema:
         type: string
   schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - login
+        - password
+        - deviceId
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+        deviceId:
+          type: string
+    MfaVerifyRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - challengeToken
+        - code
+      properties:
+        challengeToken:
+          type: string
+        code:
+          type: string
+    RefreshRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    TokenResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - accessToken
+        - tokenType
+        - expiresIn
+        - refreshToken
+        - refreshExpiresAt
+      properties:
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+        expiresIn:
+          type: integer
+        refreshToken:
+          type: string
+        refreshExpiresAt:
+          type: string
+    LoginResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - mfaRequired
+      properties:
+        mfaRequired:
+          type: boolean
+        challengeToken:
+          type: string
+        expiresIn:
+          type: integer
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+        refreshToken:
+          type: string
+        refreshExpiresAt:
+          type: string
+    RevocationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - revoked
+      properties:
+        revoked:
+          type: boolean
+    SessionSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - sessionId
+        - deviceId
+        - deviceLabel
+        - authStrength
+        - createdAt
+        - lastSeenAt
+        - expiresAt
+        - revoked
+        - current
+      properties:
+        sessionId:
+          type: string
+        deviceId:
+          type: string
+        deviceLabel:
+          type: string
+        authStrength:
+          type: string
+        createdAt:
+          type: string
+        lastSeenAt:
+          type: string
+        expiresAt:
+          type: string
+        revoked:
+          type: boolean
+        current:
+          type: boolean
+    SessionListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - sessions
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionSummary'
     LivenessResponse:
       type: object
       additionalProperties: false
