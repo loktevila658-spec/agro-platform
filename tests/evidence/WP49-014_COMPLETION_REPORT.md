@@ -6,13 +6,13 @@
 - Initial implementation commit (historical): [`58b9677dcdd9c4728abb103699f02cbcce55dae9`](https://github.com/loktevila658-spec/agro-platform/commit/58b9677dcdd9c4728abb103699f02cbcce55dae9).
 - G0 `TRUNCATE` protection correction commit: [`1e69c7e52c8e56a645cab5156ddaf10345bb2fe4`](https://github.com/loktevila658-spec/agro-platform/commit/1e69c7e52c8e56a645cab5156ddaf10345bb2fe4).
 - Date: 2026-10-14
-- Process status: implementation PR [#27](https://github.com/loktevila658-spec/agro-platform/pull/27) is merged at `716d745a585615331cb63f036fadab467daf81fb`; its post-merge CI passed on that exact commit. CR #25 and scope addendum #26 remain OPEN pending governance closure; WP49-014 is **not DONE**. The prior G0 review found that migration 0004 did not block `TRUNCATE`; the correction commit above adds statement-level guards and PostgreSQL integration assertions. CI run `38630316221` passed on the correction commit. Previous report-only head `f0952281effb28f82221df737fe17f623831622d` was separately checked by run `38631428907`; this new report-only update does not claim that earlier run as evidence for its resulting head.
+- Process status: implementation PR [#27](https://github.com/loktevila658-spec/agro-platform/pull/27) is merged at `716d745a585615331cb63f036fadab467daf81fb`; its post-merge CI passed on that exact commit. Report-only evidence PR [#28](https://github.com/loktevila658-spec/agro-platform/pull/28) is merged at `2195408cc4d639b1bb6826385a73c8d688cc4f41`, and CR #25/#26 have since been closed as completed. The prior G0 review found that migration 0004 did not block `TRUNCATE`; the correction commit above adds statement-level guards and PostgreSQL integration assertions. CI run `38630316221` passed on the correction commit. Previous report-only head `f0952281effb28f82221df737fe17f623831622d` was separately checked by run `38631428907`; this final report-only closeout is proposed in PR #29 and has not yet been merged.
 
 ## 1. Prerequisites verified
 
 - Initial G0 baseline: `main@715ecb50cbb465a7088be2a4ef1eb8947a0ffdce`; PR #27 targeted that baseline. The implementation was subsequently merged, and the verified current `main` is merge commit `716d745a585615331cb63f036fadab467daf81fb`. At the corrected-code CI review, PR branch `codex/wp49-014` was at `1e69c7e52c8e56a645cab5156ddaf10345bb2fe4`.
-- CR #25: APPROVED and OPEN. Its original body and approval decision were preserved.
-- CR #26: APPROVED and OPEN. The project owner approval «одоряю» (obvious typo for «одобряю») was recorded in its body. It authorizes exactly the identity integration test expectation update and this report path.
+- CR #25: APPROVED; subsequently closed as completed after merged implementation/report evidence and successful post-merge CI. Its original body and approval decision were preserved.
+- CR #26: APPROVED; subsequently closed as completed after the authorized identity integration test expectation update, report merge and successful post-merge CI. The project owner approval «одоряю» (obvious typo for «одобряю») was recorded in its body. It authorizes exactly the identity integration test expectation update and this report path.
 - Frozen WP49-014 manifest was not edited:
   - `depends_on`: WP49-011, WP49-012, WP49-013
   - `allowed_paths_raw`: `/apps/api/modules/audit`
@@ -86,7 +86,7 @@ Every path is authorized by CR #25 or CR #26:
 - G9: PASS — evidence/provenance and correction links are persisted and tested.
 - G10: PASS — deterministic framework-level PostgreSQL scenario passes; it is not a product workflow.
 - G11: PASS for applicable security checks — fail-closed authorization, existing identity security-audit assertions, and architecture checks pass. No separate performance/chaos gate was assigned or run.
-- G12: BLOCKED — implementation PR #27 is merged and post-merge CI passed; CR #25 and #26 remain OPEN pending governance closure, and this report-only update remains subject to its separate review.
+- G12: PASS for the completed WP evidence — implementation PR #27 and report-only PR #28 are merged, merge approval is recorded, required post-merge CI passed, and CR #25/#26 were closed as completed with linked evidence comments. This final report-only closeout is proposed as PR #29; the DONE record takes effect when that authorized report update is reviewed and merged.
 
 ## 6. Deterministic demo / evidence
 
@@ -99,18 +99,18 @@ Every path is authorized by CR #25 or CR #26:
 
 - Local Compose runtime smoke remains BLOCKED/NOT RUN because the prescribed cleanup deletes volumes in the shared environment. Do not report local smoke as passing. The isolated GitHub Runtime quality gate passed in run `38630316221`.
 - Historical implementation commit `58b9677dcdd9c4728abb103699f02cbcce55dae9`, correction commit `1e69c7e52c8e56a645cab5156ddaf10345bb2fe4`, and PR #27 remain the implementation history. Run `38630316221` passed on the correction commit; run `38631428907` passed on prior report-only head `f0952281effb28f82221df737fe17f623831622d`; post-merge run `38633756492` passed on merge commit `716d745a585615331cb63f036fadab467daf81fb`.
-- CR #25 and CR #26 remain OPEN; neither has been closed.
-- WP49-014 is not marked DONE. Do not start WP49-015.
+- CR #25 and CR #26 were closed as completed after PR #28 and its successful post-merge CI; their closure comments link the implementation, report and CI evidence.
+- The main-branch report before PR #29 still records WP49-014 as NOT DONE. This PR proposes the final PASS / DONE closeout record; do not start WP49-015 before the report update is merged.
 
 ## 8. Unlock decision
 
-- **NOT DONE** — implementation merge and post-merge CI have passed, but CR #25 and #26 remain OPEN pending governance closure. Local Compose runtime smoke remains BLOCKED / NOT RUN for the documented destructive cleanup reason. The separate report-only PR also requires review and a merge decision.
+- **PASS / DONE (proposed closeout record)** — implementation PR #27 and report-only PR #28 are merged; post-merge CI passed; CR #25 and #26 are closed as completed. This final report update is the only remaining review/merge step before this DONE record is present in `main`. Local Compose runtime smoke remains BLOCKED / NOT RUN for the documented destructive cleanup reason; the GitHub Runtime quality gate passed.
 - Newly unlockable WP: none.
 
 ## 9. Post-merge completion evidence
 
 - Implementation PR: [#27](https://github.com/loktevila658-spec/agro-platform/pull/27), merged from head `11696b2dbf47fc590bc6a03950cf77ee51f419ba` into base `715ecb50cbb465a7088be2a4ef1eb8947a0ffdce` as merge commit [`716d745a585615331cb63f036fadab467daf81fb`](https://github.com/loktevila658-spec/agro-platform/commit/716d745a585615331cb63f036fadab467daf81fb). GitHub `main` points to this merge commit.
 - Post-merge GitHub Actions run [`38633756492`](https://github.com/loktevila658-spec/agro-platform/actions/runs/38633756492) completed **SUCCESS** on exact merge commit `716d745a585615331cb63f036fadab467daf81fb`. Required jobs all passed: Migration quality gate, Lint capability gate, Contract quality gate, Runtime quality gate, Unit quality gate, Typecheck quality gate, and aggregate `CI quality gates`.
-- CR #25 and CR #26 were both APPROVED and OPEN when this report update was prepared; neither was closed by this report-only change.
+- CR #25 and CR #26 were APPROVED and OPEN when PR #28's report update was prepared. Both were later closed as completed after the evidence below was in `main`; [CR #25 closure evidence](https://github.com/loktevila658-spec/agro-platform/issues/25#issuecomment-6178270712) and [CR #26 closure evidence](https://github.com/loktevila658-spec/agro-platform/issues/26#issuecomment-6178272572) link the PRs and CI runs.
 - Local Compose runtime smoke remains **BLOCKED / NOT RUN** because the prescribed cleanup would run destructive `docker compose down --volumes --remove-orphans` in the shared environment. The GitHub Runtime quality gate is **PASS** in post-merge run `38633756492`; this does not convert the local smoke status to PASS.
-- WP49-014 remains **NOT DONE** until CR #25 and #26 are closed through the project governance process. This report update itself requires a separate review/merge; no implementation scope is changed here.
+- WP49-014's final **PASS / DONE** record is proposed by PR #29 after implementation/report merges, successful post-merge CI and closure of CR #25/#26. It becomes the main-branch completion record when this report-only PR is reviewed and merged. No implementation scope or frozen manifest/status field is changed.
