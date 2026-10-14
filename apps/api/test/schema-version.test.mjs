@@ -8,9 +8,9 @@ import {
 } from '../dist/schema-version.service.js';
 
 test('schema-version output is parsed into the public API model', () => {
-  assert.deepEqual(parseSchemaVersionOutput('3|3.5.2\n'), {
-    schemaVersion: 3,
-    expectedSchemaVersion: 3,
+  assert.deepEqual(parseSchemaVersionOutput('4|3.5.2\n'), {
+    schemaVersion: 4,
+    expectedSchemaVersion: 4,
     postgisVersion: '3.5.2',
     status: 'current',
   });
@@ -18,7 +18,7 @@ test('schema-version output is parsed into the public API model', () => {
 
 test('schema-version state reports behind and ahead deterministically', () => {
   assert.equal(parseSchemaVersionOutput('1|3.5.2').status, 'behind');
-  assert.equal(parseSchemaVersionOutput('4|3.5.2').status, 'ahead');
+  assert.equal(parseSchemaVersionOutput('5|3.5.2').status, 'ahead');
 });
 
 test('malformed or incomplete database output fails closed', () => {
@@ -33,5 +33,5 @@ test('malformed or incomplete database output fails closed', () => {
 });
 
 test('API expected version matches the migration baseline', () => {
-  assert.equal(EXPECTED_SCHEMA_VERSION, 3);
+  assert.equal(EXPECTED_SCHEMA_VERSION, 4);
 });

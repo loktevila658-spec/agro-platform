@@ -71,11 +71,11 @@ test('migration program is deterministic and guards applied state', async () => 
   assert.match(first, /schema_migrations/);
 });
 
-test('baseline, organization, and identity migrations are ordered and declare their owned schemas', async () => {
+test('baseline, organization, identity, and audit framework migrations are ordered and declare owned schemas', async () => {
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -90,6 +90,12 @@ test('baseline, organization, and identity migrations are ordered and declare th
     assert.match(migrations[2].sql, new RegExp(`CREATE TABLE identity\\.${table}\\b`, 'i'));
   }
   assert.match(migrations[2].sql, /classification\s+text\s+NOT NULL\s+CHECK\s*\(classification\s*=\s*'SECURITY'\)/i);
+  assert.match(migrations[3].sql, /CREATE SCHEMA platform_audit/i);
+  assert.match(migrations[3].sql, /CREATE TABLE platform_audit\.evidence/i);
+  assert.match(migrations[3].sql, /CREATE TABLE platform_audit\.correction_link/i);
+  assert.match(migrations[3].sql, /BEFORE UPDATE OR DELETE ON platform_audit\.evidence/i);
+  assert.match(migrations[3].sql, /BEFORE UPDATE OR DELETE ON platform_audit\.correction_link/i);
+  assert.doesNotMatch(migrations[3].sql, /\b(?:ALTER|DROP|TRUNCATE)\s+(?:TABLE|SCHEMA)\s+(?:org\.audit_entry|identity\.security_audit)/i);
 });
 
 test('database credentials are not exposed in psql process arguments', async () => {
