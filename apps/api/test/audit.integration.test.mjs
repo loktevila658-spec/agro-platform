@@ -86,7 +86,7 @@ test('WP49-014 framework persists immutable evidence and correction links atomic
       env: { ...process.env, DATABASE_URL: migrationDatabaseUrl, PSQL_BIN: psqlWrapper },
     });
     assertCommand(migration, 'Database migrations');
-    assert.match(migration.stdout, /migration 4 applied/);
+    assert.match(migration.stdout, /migration 5 applied/);
 
     const existingStores = await pool.query(`
       SELECT to_regclass('org.audit_entry') AS org_store,

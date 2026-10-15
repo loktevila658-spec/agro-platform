@@ -7,9 +7,10 @@ import { SchemaVersionService } from './schema-version.service';
 import { OrgModule } from './modules/org/org.module';
 import { IdentityModule } from './modules/identity/identity.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { EventsModule } from './modules/events/events.module';
 
 @Module({
-  imports: [OrgModule, IdentityModule, AuditModule],
+  imports: [OrgModule, IdentityModule, AuditModule, EventsModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,
