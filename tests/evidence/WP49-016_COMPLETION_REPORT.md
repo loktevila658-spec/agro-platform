@@ -2,7 +2,7 @@
 
 - WP ID: WP49-016
 - Title: Transactional outbox/inbox
-- Branch / commit: `codex/wp49-016-transactional-outbox-inbox`; implementation commit and PR head are recorded by the PR containing this report.
+- Implementation PR: [#37](https://github.com/loktevila658-spec/agro-platform/pull/37), head `85c8eeb741269b8484314410e6878945261a2456`, merged by ordinary merge commit `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`.
 - Date: 2026-10-15
 - Implementation baseline: live `main@526d8a90ac076eec54ace955c7b61f5dc3617bf2`.
 - Governance: CR #35 is APPROVED and OPEN. The base path amendment is recorded in owner decision comments #6181418626 and #6181592433; the two migration assertion test paths are approved by owner comment #6181611998.
@@ -11,7 +11,7 @@
 ## 1. Prerequisites verified
 
 - G0: PASS. WP49-003 and WP49-015 are merged and their Completion Reports are present at the implementation baseline. WP49-016's event/schema dependencies are compatible. WP49-015's organization command already commits its domain row, audit row, idempotency response and catalog-shaped outbox event in one PostgreSQL transaction. Identity session events are also written in their authoritative transaction. No producer payload or catalog change is required.
-- Exact current baseline at implementation start: `526d8a90ac076eec54ace955c7b61f5dc3617bf2` (PR #36 report closeout). Dependency evidence and CI history are summarized in CR #35; this WP did not re-audit or alter those dependencies.
+- Exact implementation baseline: `526d8a90ac076eec54ace955c7b61f5dc3617bf2` (PR #36 report closeout). The implementation was merged to `main` at `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`.
 
 ## 2. Scope implemented
 
@@ -72,7 +72,7 @@ Gate decisions:
 - G9: PASS — authoritative producers and their existing audit/outbox transaction boundaries are unchanged; existing PostgreSQL producer tests and the new consumer transaction test pass.
 - G10: PASS — deterministic PostgreSQL event failure/retry/replay scenario passes with one committed consumer effect.
 - G11: PASS for applicable checks — no new network surface or external broker was added; workspace architecture/security regression checks pass. No separate performance or chaos scenario is defined for this WP.
-- G12: PENDING — report and implementation PR are prepared; PR review/merge and successful post-merge CI remain outstanding. This report does not mark the WP DONE.
+- G12: PASS for implementation — review of PR #37 found no blocking defect in the domain/outbox transaction boundaries, durable lease/retry, inbox deduplication and rollback, migration/version, or preserved owner-module permission/audit/provenance checks. The diff matched CR #35's approved paths and left the frozen manifest/exit criteria unchanged. PR #37 was merged with an ordinary merge commit at `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`. GitHub Actions post-merge run [38663300581](https://github.com/loktevila658-spec/agro-platform/actions/runs/38663300581) completed SUCCESS on that exact SHA; lint capability, typecheck, unit, contract, migration, runtime, and aggregate CI quality gates all succeeded. This report-only closeout PR records that evidence; its own post-merge run remains required before final governance closeout.
 
 ## 6. Deterministic demo / evidence
 
@@ -84,8 +84,8 @@ Gate decisions:
 ## 7. Limitations / follow-ups
 
 - No event consumers are defined in the current frozen catalog. The runtime therefore registers no product handler and does not invent downstream behavior; consumers can register through the exported event-handler token when their owning WP defines them.
-- No GitHub PR CI or post-merge evidence exists yet at report creation. Exact PR/head CI evidence must be added to the final review record. Merge requires a separate owner decision; WP49-016 remains not DONE until merge and successful post-merge CI.
+- PR #37 pre-merge GitHub Actions run [38662324405](https://github.com/loktevila658-spec/agro-platform/actions/runs/38662324405) completed SUCCESS on head `85c8eeb741269b8484314410e6878945261a2456`; its lint capability, typecheck, unit, contract, migration, runtime, and aggregate gates passed. Post-merge run [38663300581](https://github.com/loktevila658-spec/agro-platform/actions/runs/38663300581) completed SUCCESS on merge commit `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`.
 
 ## 8. Unlock decision
 
-- **PENDING / NOT DONE** — implementation is prepared for review. No downstream WP is declared newly unlocked before merge and successful post-merge CI.
+- **CLOSEOUT PENDING** — implementation and its post-merge CI are complete. Final DONE recording and CR #35 closure await this report-only PR's merge and successful post-merge CI.
