@@ -65,4 +65,4 @@ Evidence distinction: the following PASS results are **recorded in the merged PR
 ## 8. Unlock decision
 
 - **PASS for WP49-003 completion evidence** based on the merged implementation PR, the PR-recorded local validation evidence, and this Completion Report.
-- Newly prerequisite-satisfied WPs: WP49-005, WP49-006, WP49-007, WP49-008, WP49-009, WP49-010, WP49-011, WP49-016, WP49-026, WP49-089, subject to each WP's other direct dependency gates. WP49-016 must independently re-evaluate its full G0 against then-live main and WP49-015.
+- Newly unlocked WPs: **not determined by this report**. The implementation-order graph also has wave edges; no general wave audit is performed here. WP49-016 must separately re-evaluate its own G0 against then-live main and WP49-015 after this report is published.
