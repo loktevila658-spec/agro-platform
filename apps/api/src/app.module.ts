@@ -8,9 +8,10 @@ import { OrgModule } from './modules/org/org.module';
 import { IdentityModule } from './modules/identity/identity.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { EventsModule } from './modules/events/events.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [OrgModule, IdentityModule, AuditModule, EventsModule],
+  imports: [OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

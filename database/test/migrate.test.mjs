@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -101,6 +101,15 @@ test('baseline, organization, identity, and audit framework migrations are order
   assert.match(migrations[4].sql, /PRIMARY KEY \(source, event_id\)/i);
   assert.match(migrations[4].sql, /CREATE TABLE platform_events\.inbox_event/i);
   assert.match(migrations[4].sql, /PRIMARY KEY \(consumer_name, event_id\)/i);
+  assert.match(migrations[5].sql, /CREATE SCHEMA files/i);
+  assert.match(migrations[5].sql, /CREATE TABLE files\.attachment/i);
+  assert.match(migrations[5].sql, /CREATE TABLE files\.upload_part/i);
+  assert.match(migrations[5].sql, /offset_bytes bigint NOT NULL/i);
+  assert.match(migrations[5].sql, /part_status text NOT NULL DEFAULT 'STORED'/i);
+  assert.match(migrations[5].sql, /CREATE TABLE files\.audit_entry/i);
+  assert.match(migrations[5].sql, /BEFORE UPDATE OR DELETE OR TRUNCATE ON files\.audit_entry/i);
+  assert.match(migrations[5].sql, /state <> 'AVAILABLE'.*scan_status = 'CLEAN'/is);
+  assert.doesNotMatch(migrations[5].sql, /local_path|filesystem_path/i);
 });
 
 test('database credentials are not exposed in psql process arguments', async () => {

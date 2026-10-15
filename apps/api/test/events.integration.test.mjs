@@ -68,7 +68,7 @@ test('outbox retry, transactional inbox effect, and duplicate delivery are repla
       env: { ...process.env, DATABASE_URL: socketUrl, PSQL_BIN: psqlWrapper },
     });
     assertCommand(migration, 'Database migrations');
-    assert.match(migration.stdout, /migration 5 applied/);
+    assert.match(migration.stdout, /migration 6 applied/);
 
     const tenantId = randomUUID();
     const eventId = randomUUID();
