@@ -86,7 +86,7 @@ Gate decisions:
 - G9: PASS — migration full-chain, API schema-version, immutable audit and MinIO metadata integration assertions pass.
 - G10: PASS — deterministic integration covers retry after scanner outage, part replay, clean scan release and malware signature detection; unit tests cover the malware rejection transition with a test-only scanner fake.
 - G11: PASS for the WP's scoped security checks — tenant-scoped lookup, deny-by-default permission provider, content sniff/hash, quarantine, scanner fail-closed behavior, attachment disposition and immutable provenance are covered. Production availability requires configured authorization and ClamAV services; without them access remains denied/quarantined.
-- G12: PASS — full PR diff review found no blocking defect or scope deviation. PR #41 head `d6f63c7de67794d55b10f78d6bc83e5b6d249ed2` had no GitHub review submissions or unresolved inline threads; all CI jobs passed. PR #41 merged by ordinary merge commit `99041cf69721040a9749b9d7cfca726ff7fea8c3`. Post-merge run [38669122765](https://github.com/loktevila658-spec/agro-platform/actions/runs/38669122765) must complete successfully on that exact SHA. The report-only closeout PR and its post-merge CI are part of governance closeout and must also pass before DONE.
+- G12: PASS — full PR diff review found no blocking defect or scope deviation. PR #41 head `d6f63c7de67794d55b10f78d6bc83e5b6d249ed2` had no GitHub review submissions or unresolved inline threads; all CI jobs passed. PR #41 merged by ordinary merge commit `99041cf69721040a9749b9d7cfca726ff7fea8c3`. Post-merge run [38669122765](https://github.com/loktevila658-spec/agro-platform/actions/runs/38669122765) completed SUCCESS on exact implementation merge SHA `99041cf69721040a9749b9d7cfca726ff7fea8c3`; lint capability, typecheck, unit, contract, migration, runtime, and aggregate jobs all succeeded. The report-only closeout PR and its post-merge CI are part of governance closeout and must also pass before DONE.
 
 ## 6. Limitations and follow-up boundary
 
@@ -96,4 +96,4 @@ Gate decisions:
 
 ## 7. Unlock decision
 
-- **PENDING** — implementation and merge are complete, but WP49-017 is not DONE until the exact implementation merge SHA passes post-merge CI, this Completion Report is merged with successful post-merge CI, and CR #40 is closed with that evidence.
+- **PENDING** — implementation merge and its exact-SHA post-merge CI are complete. WP49-017 is not DONE until this Completion Report is merged with successful post-merge CI and CR #40 is closed with that evidence.
