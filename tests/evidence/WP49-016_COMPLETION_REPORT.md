@@ -5,7 +5,7 @@
 - Implementation PR: [#37](https://github.com/loktevila658-spec/agro-platform/pull/37), head `85c8eeb741269b8484314410e6878945261a2456`, merged by ordinary merge commit `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`.
 - Date: 2026-10-15
 - Implementation baseline: live `main@526d8a90ac076eec54ace955c7b61f5dc3617bf2`.
-- Governance: CR #35 is APPROVED and OPEN. The base path amendment is recorded in owner decision comments #6181418626 and #6181592433; the two migration assertion test paths are approved by owner comment #6181611998.
+- Governance: CR #35 approved the exact implementation paths. The base path amendment is recorded in owner decision comments #6181418626 and #6181592433; the two migration assertion test paths are approved by owner comment #6181611998. Final CR closeout is recorded after the implementation and report-only closeout CI evidence below.
 - Frozen manifest preserved verbatim: `allowed_paths_raw: /apps/api/modules/events /events`; `exit_criteria: domain events atomic with writes; replay safe.`
 
 ## 1. Prerequisites verified
@@ -72,7 +72,7 @@ Gate decisions:
 - G9: PASS — authoritative producers and their existing audit/outbox transaction boundaries are unchanged; existing PostgreSQL producer tests and the new consumer transaction test pass.
 - G10: PASS — deterministic PostgreSQL event failure/retry/replay scenario passes with one committed consumer effect.
 - G11: PASS for applicable checks — no new network surface or external broker was added; workspace architecture/security regression checks pass. No separate performance or chaos scenario is defined for this WP.
-- G12: PASS for implementation — review of PR #37 found no blocking defect in the domain/outbox transaction boundaries, durable lease/retry, inbox deduplication and rollback, migration/version, or preserved owner-module permission/audit/provenance checks. The diff matched CR #35's approved paths and left the frozen manifest/exit criteria unchanged. PR #37 was merged with an ordinary merge commit at `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`. GitHub Actions post-merge run [38663300581](https://github.com/loktevila658-spec/agro-platform/actions/runs/38663300581) completed SUCCESS on that exact SHA; lint capability, typecheck, unit, contract, migration, runtime, and aggregate CI quality gates all succeeded. This report-only closeout PR records that evidence; its own post-merge run remains required before final governance closeout.
+- G12: PASS — review of PR #37 found no blocking defect in the domain/outbox transaction boundaries, durable lease/retry, inbox deduplication and rollback, migration/version, or preserved owner-module permission/audit/provenance checks. The diff matched CR #35's approved paths and left the frozen manifest/exit criteria unchanged. PR #37 was merged with an ordinary merge commit at `d814ba0f768c9f9ba216954d2c9ec3e1708fb508`. GitHub Actions post-merge run [38663300581](https://github.com/loktevila658-spec/agro-platform/actions/runs/38663300581) completed SUCCESS on that exact SHA; lint capability, typecheck, unit, contract, migration, runtime, and aggregate CI quality gates all succeeded. Report-only PR #38 was merged at `809b97de487844bf7db3d64ab95cb84a582d937f`; its post-merge GitHub Actions run [38664024824](https://github.com/loktevila658-spec/agro-platform/actions/runs/38664024824) completed SUCCESS on that exact SHA with every quality gate successful.
 
 ## 6. Deterministic demo / evidence
 
@@ -88,4 +88,4 @@ Gate decisions:
 
 ## 8. Unlock decision
 
-- **CLOSEOUT PENDING** — implementation and its post-merge CI are complete. Final DONE recording and CR #35 closure await this report-only PR's merge and successful post-merge CI.
+- **DONE** — applicable G0–G12 gates are evidenced above; PR #37 implementation and its post-merge CI passed, and report-only PR #38 plus its post-merge CI completed successfully. CR #35 is ready for completed closeout with those references.
