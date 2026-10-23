@@ -5,7 +5,7 @@
 - Implementation branch: `codex/wp49-018-notifications`
 - Implementation baseline: live `main@99c3f8b599c71d4c1b70abe4950bb654f66b4490` (confirmed 2026-10-20; still the latest repository commit on 2026-10-23)
 - Implementation PR: [#45](https://github.com/loktevila658-spec/agro-platform/pull/45), head `70e070fc5bed8185f534647f370bc2d933e81d5d`, merged by ordinary merge commit `98260f7babcf2e40e506518b291b68cec7524770`.
-- Report closeout PR: this report-only update.
+- Report closeout PR: [#46](https://github.com/loktevila658-spec/agro-platform/pull/46).
 - Scope CR: [#44](https://github.com/loktevila658-spec/agro-platform/issues/44), approved by owner comment under pre-authorization
 - Frozen manifest: unchanged (`depends_on: WP49-016`; `allowed_paths_raw: /apps/api/modules/notifications`; `exit_criteria: rules consume events; no direct domain mutation.`; `release: V1`)
 - Status: DONE; applicable G0–G12 evidence is recorded below.
@@ -87,4 +87,4 @@ Gate decisions at this pre-merge report revision:
 
 ## 8. Unlock decision
 
-- **DONE** — applicable G0–G12 gates are evidenced; implementation PR #45 and ordinary merge `98260f7babcf2e40e506518b291b68cec7524770` are complete, and exact post-merge CI run 39983027147 succeeded. No additional work package is unlocked by this WP because the next package's other dependency gates remain unmet.
+- **DONE** — applicable G0–G12 gates are evidenced; implementation PR #45 and ordinary merge `98260f7babcf2e40e506518b291b68cec7524770` are complete, and exact post-merge CI run 39983027147 succeeded. WP49-018 has no outgoing edge in the explicit build graph. WP49-019 was already prerequisite-satisfied by WP49-015's closeout evidence, which records WP49-019 among newly prerequisite-satisfied packages.
