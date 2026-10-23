@@ -1,0 +1,1 @@
+export const NOTIFICATION_RULES = Symbol('NOTIFICATION_RULES');
