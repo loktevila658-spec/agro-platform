@@ -2,11 +2,13 @@
 
 - WP ID: WP49-018
 - Title: Notification/rules skeleton
-- Branch: `codex/wp49-018-notifications`
+- Implementation branch: `codex/wp49-018-notifications`
 - Implementation baseline: live `main@99c3f8b599c71d4c1b70abe4950bb654f66b4490` (confirmed 2026-10-20; still the latest repository commit on 2026-10-23)
+- Implementation PR: [#45](https://github.com/loktevila658-spec/agro-platform/pull/45), head `70e070fc5bed8185f534647f370bc2d933e81d5d`, merged by ordinary merge commit `98260f7babcf2e40e506518b291b68cec7524770`.
+- Report closeout PR: [#46](https://github.com/loktevila658-spec/agro-platform/pull/46).
 - Scope CR: [#44](https://github.com/loktevila658-spec/agro-platform/issues/44), approved by owner comment under pre-authorization
 - Frozen manifest: unchanged (`depends_on: WP49-016`; `allowed_paths_raw: /apps/api/modules/notifications`; `exit_criteria: rules consume events; no direct domain mutation.`; `release: V1`)
-- Status: implementation evidence prepared; merge and final G12 closeout pending.
+- Status: DONE; applicable G0–G12 evidence is recorded below.
 
 ## 1. Prerequisites verified
 
@@ -52,6 +54,7 @@ Every path is covered by the exact additional allowlist in approved CR #44; the 
 - Contract validation and generated drift: PASS.
 - Lint: N/A; no lint script/tool is configured.
 - The local `node scripts/ci-gates.mjs all` run passed lint, typecheck/architecture, and workspace build, then stalled in existing DB-backed tests because local Docker commands did not return. Hosted PR CI run [39982391582](https://github.com/loktevila658-spec/agro-platform/actions/runs/39982391582) completed SUCCESS on exact PR head `3e67f9efe1392398e11203bc65dd6fc486c3895f`; lint capability, typecheck, unit, contract, migration, runtime, and aggregate CI jobs all passed, including DB-backed integration.
+- Post-merge GitHub Actions run [39983027147](https://github.com/loktevila658-spec/agro-platform/actions/runs/39983027147) completed SUCCESS on exact implementation merge SHA `98260f7babcf2e40e506518b291b68cec7524770`; lint capability, typecheck, unit, contract, migration, runtime, and aggregate CI jobs all passed.
 
 Gate decisions at this pre-merge report revision:
 
@@ -67,7 +70,7 @@ Gate decisions at this pre-merge report revision:
 - G9: N/A — no authoritative domain change is performed; the consumer makes no database call. Existing inbox provenance contract remains unchanged.
 - G10: PASS — deterministic tests cover exact event/version matching, disabled/no-match rules, module registration and no domain client writes.
 - G11: PASS — no new external/network surface; debug observations avoid payloads; hosted migration/runtime/unit quality gates passed.
-- G12: PENDING — PR #45 diff review found no blocking defect or out-of-scope path; all required pre-merge checks passed on exact head. Ordinary merge, exact merge-SHA post-merge CI, and governance closeout remain outstanding.
+- G12: PASS — review of PR #45 found no blocking defect or out-of-scope path; the frozen manifest remained unchanged. Pre-merge run 39982391582 passed on code head `3e67f9efe1392398e11203bc65dd6fc486c3895f`. PR #45 merged with an ordinary merge commit, and post-merge run 39983027147 passed on exact merge SHA `98260f7babcf2e40e506518b291b68cec7524770` with every quality job successful. This report completes the governance evidence.
 
 ## 6. Deterministic demo / evidence
 
@@ -84,4 +87,4 @@ Gate decisions at this pre-merge report revision:
 
 ## 8. Unlock decision
 
-- **NOT DONE YET** — applicable pre-merge gates and PR review are evidenced; ordinary merge, exact post-merge CI, and final G12/governance closeout remain pending. Do not unlock dependent packages until closeout is complete.
+- **DONE** — applicable G0–G12 gates are evidenced; implementation PR #45 and ordinary merge `98260f7babcf2e40e506518b291b68cec7524770` are complete, and exact post-merge CI run 39983027147 succeeded. WP49-018 has no outgoing edge in the explicit build graph. WP49-019 was already prerequisite-satisfied by WP49-015's closeout evidence, which records WP49-019 among newly prerequisite-satisfied packages.
