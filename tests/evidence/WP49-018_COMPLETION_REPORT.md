@@ -51,30 +51,30 @@ Every path is covered by the exact additional allowlist in approved CR #44; the 
 - Workspace build: PASS.
 - Contract validation and generated drift: PASS.
 - Lint: N/A; no lint script/tool is configured.
-- The full `node scripts/ci-gates.mjs all` was started. Lint, typecheck/architecture, workspace build passed. The unit suite stalled in existing DB-backed tests at `docker image inspect`; Docker CLI health check (`docker ps`) also did not return. The local process was interrupted after confirming the Docker daemon was unresponsive. Therefore database-backed integration and runtime gates are **pending**, not PASS; hosted PR CI must complete them before merge.
+- The local `node scripts/ci-gates.mjs all` run passed lint, typecheck/architecture, and workspace build, then stalled in existing DB-backed tests because local Docker commands did not return. Hosted PR CI run [39982391582](https://github.com/loktevila658-spec/agro-platform/actions/runs/39982391582) completed SUCCESS on exact PR head `3e67f9efe1392398e11203bc65dd6fc486c3895f`; lint capability, typecheck, unit, contract, migration, runtime, and aggregate CI jobs all passed, including DB-backed integration.
 
 Gate decisions at this pre-merge report revision:
 
 - G0: PASS — direct dependency WP49-016 and preceding WP49-017 closeout have primary merged evidence.
 - G1: PASS — API/workspace build and typecheck, architecture guard; lint N/A.
-- G2: N/A for this WP — no migration or schema change; full migration gate remains required in hosted CI.
+- G2: PASS — no WP migration/schema change; full migration compatibility gate passed in hosted CI.
 - G3: PASS — focused tests 6/6 and API non-database regressions 43/43.
-- G4: PENDING — database-backed integration suite could not execute locally because Docker daemon commands hang; hosted CI required.
+- G4: PASS — hosted unit and migration gates completed successfully, including DB-backed integration.
 - G5: PASS — canonical contract validation and generated drift checks pass; no public contract changed.
-- G6: PASS for focused replay/retry contract tests — existing event runtime tests verify retry and inbox replay suppression. Real PostgreSQL verification remains pending with G4.
+- G6: PASS — existing event runtime tests verify retry and inbox replay suppression; hosted unit/migration gates passed.
 - G7: N/A — no permission-bearing endpoint, user action, or rule-management surface is added; existing deny-by-default regressions passed.
 - G8: N/A — no offline/mobile command or sync path is added.
 - G9: N/A — no authoritative domain change is performed; the consumer makes no database call. Existing inbox provenance contract remains unchanged.
 - G10: PASS — deterministic tests cover exact event/version matching, disabled/no-match rules, module registration and no domain client writes.
-- G11: PENDING hosted CI — no new external/network surface; debug observations avoid payloads. Docker-backed runtime/security gates remain to be confirmed by CI.
-- G12: PENDING — PR review, required checks, ordinary merge, exact merge-SHA post-merge CI, and governance closeout remain outstanding.
+- G11: PASS — no new external/network surface; debug observations avoid payloads; hosted migration/runtime/unit quality gates passed.
+- G12: PENDING — PR #45 diff review found no blocking defect or out-of-scope path; all required pre-merge checks passed on exact head. Ordinary merge, exact merge-SHA post-merge CI, and governance closeout remain outstanding.
 
 ## 6. Deterministic demo / evidence
 
 - Scenario: feed a catalog-shaped `org.tenant_created` event to a registered consumer with one exact match and mismatched/disabled rule fixtures; observe matching behavior and prove the consumer cannot query its domain transaction client.
 - Seed/clock: fixed event ID, event name/version and timestamp in the unit fixture.
 - Result: only the enabled exact name/version rule matches; empty registry yields no matches; consumer returns without a database operation. Existing outbox runtime tests separately verify a failed attempt retries and replay is suppressed by inbox deduplication.
-- Artifacts: `apps/api/test/notifications.rules.test.mjs`, `apps/api/test/events.runtime.test.mjs`, and `apps/api/test/events.integration.test.mjs` (the real PostgreSQL test is pending hosted CI).
+- Artifacts: `apps/api/test/notifications.rules.test.mjs`, `apps/api/test/events.runtime.test.mjs`, and `apps/api/test/events.integration.test.mjs`; hosted run 39982391582 passed the real PostgreSQL-backed integration tests.
 
 ## 7. Limitations / follow-ups
 
@@ -84,4 +84,4 @@ Gate decisions at this pre-merge report revision:
 
 ## 8. Unlock decision
 
-- **NOT DONE YET** — implementation and non-database checks are evidenced, but G4/G11 hosted checks, PR review/merge and exact post-merge CI/G12 closeout remain pending. Do not unlock dependent packages until those gates pass and this report is finalized.
+- **NOT DONE YET** — applicable pre-merge gates and PR review are evidenced; ordinary merge, exact post-merge CI, and final G12/governance closeout remain pending. Do not unlock dependent packages until closeout is complete.
