@@ -90,13 +90,13 @@ tests/ci-quality-gates.test.mjs
 tests/evidence/WP49-019_COMPLETION_REPORT.md
 ```
 
-Local schema v1 is the first persisted mobile schema; there is no prior mobile database to migrate. Supported v1 reopen preserves unsynced commands, identity/sequence and all queue state. Unsupported newer schemas fail without destructive downgrade/recreation. Future local schema upgrades require forward migration and snapshot/data-integrity tests. Public OpenAPI, generated Dart/TypeScript, server migrations and event contracts remain unchanged.
+Local schema v1 is the first persisted mobile schema; there is no prior mobile database to migrate. Schema DDL and the version marker commit atomically. A regression first reproduced partial-table creation after a forced DDL error (RED); wrapping creation/version in one Drift transaction makes it GREEN without deleting pre-existing data. Supported v1 reopen preserves unsynced commands, identity/sequence and all queue state. Unsupported newer schemas fail without destructive downgrade/recreation. Future local schema upgrades require forward migration and snapshot/data-integrity tests. Public OpenAPI, generated Dart/TypeScript, server migrations and event contracts remain unchanged.
 
 ## 5. Tests and gates
 
 Local confirmed results (Flutter 3.47.8 / Dart 3.13.7):
 
-- Complete Flutter unit/widget suite: PASS, 20/20, real native encrypted SQLite (including 50,000-command / 100,000-operational-row / 20,000-projection capacity fixture).
+- Complete Flutter unit/widget suite: PASS, 21/21, real native encrypted SQLite (including 50,000-command / 100,000-operational-row / 20,000-projection capacity fixture).
 - Flutter analyzer with flutter_lints and fatal infos: PASS, no issues. Formatter: PASS. Enforced pub lockfile: PASS.
 - Workspace build and typecheck: PASS; architecture guard 11/11. CI-gate regression 6/6; repository bootstrap/contract regressions PASS; generated contracts tests 19/19. Canonical validation/generated drift and bootstrap structural validation: PASS.
 - `git diff --check`: PASS.
@@ -111,7 +111,7 @@ Gate decisions before hosted PR CI:
 | G0 | PASS — direct dependencies and baseline/previous closeout verified live above. |
 | G1 | Local PASS — Flutter format/analyze, workspace typecheck/build, architecture rules. Hosted aggregate pending. |
 | G2 | Local PASS — first v1 creation/reopen integrity, unsynced sequence preserved, unsupported future schema denied. Hosted server migration regression pending. |
-| G3 | PASS — complete mobile suite 20/20 and target regressions above. |
+| G3 | PASS — complete mobile suite 21/21 and target regressions above. |
 | G4 | Pending hosted native Android + existing real server integration gates. |
 | G5 | PASS — unchanged canonical/generated contracts validate without drift. |
 | G6 | Local PASS — immutable command ID/key and repeat receipt tests. No server event/outbox contract change; hosted regressions pending. |
@@ -136,4 +136,4 @@ Fixture owner `Fixture:entity`, fixed observed UTC time, expected version 7, fix
 
 ## 8. Review, merge and closeout
 
-Pending. Required: exact final PR head with clean review findings and every required check SUCCESS; ordinary merge commit without auto-merge/bypass; exact successful post-merge CI; update this evidence and close CR #47. WP49-019 is not DONE yet.
+Implementation PR: [#48](https://github.com/loktevila658-spec/agro-platform/pull/48). Local critical review found and fixed non-atomic initial schema creation, backed by a real SQLite DDL-failure regression (RED -> GREEN). GitHub review submissions/threads are currently empty; no independent review approval is claimed. Required: exact final PR head with clean review findings and every required check SUCCESS; ordinary merge commit without auto-merge/bypass; exact successful post-merge CI; update this evidence and close CR #47. WP49-019 is not DONE yet.

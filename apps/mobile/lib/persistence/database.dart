@@ -39,11 +39,14 @@ class LocalDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => const [];
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (_) async {
+    onCreate: (_) => transaction(() async {
       for (final statement in schemaV1) {
         await customStatement(statement);
       }
-    },
+      // Drift normally stores user_version after onCreate returns. Commit it
+      // with the DDL so a crash cannot leave a complete v1 schema marked v0.
+      await customStatement('PRAGMA user_version=1');
+    }),
     onUpgrade: (_, from, to) async =>
         throw StateError('Unsupported local schema migration $from -> $to'),
     beforeOpen: (details) async {

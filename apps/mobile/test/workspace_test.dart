@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:crypto/crypto.dart' show sha256;
 import 'package:sqlite3/sqlite3.dart';
 import 'package:agroplatform_mobile/persistence.dart';
 
@@ -144,6 +145,36 @@ void main() {
     for (final ws in opened) {
       await ws.close();
     }
+  });
+
+  test('failed first schema creation rolls back every new table and version marker', () async {
+    final name = sha256.convert(utf8.encode(identity.encoded)).toString();
+    final directory = await Directory('${root.path}/$name').create();
+    final file = File('${directory.path}/workspace.db');
+    final key = List.filled(64, 'a').join();
+    secrets.values['agro.workspace.$name'] = key;
+    var raw = sqlite3.open(file.path);
+    raw.execute("PRAGMA key = '$key'");
+    // Pre-existing v0 table forces a real DDL failure after earlier CREATEs.
+    raw.execute('CREATE TABLE permission_snapshot(id TEXT PRIMARY KEY)');
+    raw.close();
+    await expectLater(
+      Workspace.open(identity, root: root, secrets: secrets),
+      throwsA(anything),
+    );
+    raw = sqlite3.open(file.path);
+    raw.execute("PRAGMA key = '$key'");
+    expect(
+      raw
+          .select(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+          )
+          .map((r) => r['name'])
+          .toSet(),
+      {'permission_snapshot'},
+    );
+    expect(raw.select('PRAGMA user_version').single.values.single, 0);
+    raw.close();
   });
 
   test('first schema creation and every supported snapshot preserve unsynced intent', () async {

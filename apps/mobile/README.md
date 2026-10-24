@@ -99,7 +99,8 @@ introduced in WP49-019.
 
 `local_schema_version = 1` is the first persisted mobile schema (the baseline
 Flutter shell had no database). `sync_schema_version = 1` is stored per intent;
-command payload versions are explicit. Creating v1 and reopening the only
+command payload versions are explicit. Initial schema DDL and its version marker commit in one transaction; a forced
+DDL failure rolls back every newly created table. Creating v1 and reopening the only
 supported v1 snapshot are tested for data integrity. Newer schemas are rejected
 without a downgrade or destructive recreation. Any future schema change must
 supply a forward migration plus every supported snapshot-to-latest preservation
