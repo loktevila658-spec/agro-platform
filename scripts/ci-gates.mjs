@@ -102,6 +102,36 @@ export const gateDefinitions = Object.freeze({
       },
     ],
   },
+  mobile: {
+    description: 'Flutter encrypted local persistence tests and Android build',
+    steps: [
+      {
+        label: 'mobile dependencies', command: 'flutter',
+        args: ['pub', 'get', '--enforce-lockfile'],
+        cwd: join(repositoryRoot, 'apps/mobile'),
+      },
+      {
+        label: 'mobile format', command: 'dart',
+        args: ['format', '--output=none', '--set-exit-if-changed', 'lib', 'test', 'integration_test'],
+        cwd: join(repositoryRoot, 'apps/mobile'),
+      },
+      {
+        label: 'mobile analyze', command: 'flutter',
+        args: ['analyze', '--fatal-infos'],
+        cwd: join(repositoryRoot, 'apps/mobile'),
+      },
+      {
+        label: 'mobile tests', command: 'flutter',
+        args: ['test', '--reporter', 'expanded'],
+        cwd: join(repositoryRoot, 'apps/mobile'),
+      },
+      {
+        label: 'Android build', command: 'flutter',
+        args: ['build', 'apk', '--debug'],
+        cwd: join(repositoryRoot, 'apps/mobile'),
+      },
+    ],
+  },
   runtime: {
     description: 'Docker Compose bootstrap regression',
     steps: [
@@ -149,7 +179,7 @@ export function configuredLintScripts() {
 export function runCommand(step) {
   process.stdout.write(`\n[CI gate] ${step.label}\n`);
   const result = spawnSync(step.command, step.args, {
-    cwd: repositoryRoot,
+    cwd: step.cwd ?? repositoryRoot,
     env: process.env,
     stdio: 'inherit',
   });

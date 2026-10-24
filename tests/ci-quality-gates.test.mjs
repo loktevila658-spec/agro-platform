@@ -23,6 +23,7 @@ test('CI exposes the complete deterministic gate set', () => {
     'unit',
     'contract',
     'migration',
+    'mobile',
     'runtime',
   ]);
 
@@ -88,7 +89,7 @@ test('pull-request workflow runs every blocking gate and a fail-closed aggregate
 
   assert.match(
     workflow,
-    /needs: \[lint, typecheck, unit, contract, migration, runtime\]/,
+    /needs: \[lint, typecheck, unit, contract, migration, mobile, runtime\]/,
   );
   assert.match(workflow, /name: CI quality gates/);
   assert.doesNotMatch(workflow, /continue-on-error:\s*true/);
@@ -97,4 +98,14 @@ test('pull-request workflow runs every blocking gate and a fail-closed aggregate
     /uses: [^\n]+@v\d/,
     'third-party actions must be pinned to immutable commits',
   );
+});
+
+
+test('mobile gate uses Flutter tests, native build and enforced lockfile', () => {
+  assert.deepEqual(gateDefinitions.mobile.steps.map((step) => step.command), ['flutter', 'dart', 'flutter', 'flutter', 'flutter']);
+  assert.deepEqual(gateDefinitions.mobile.steps.at(-1).args, ['build', 'apk', '--debug']);
+  assert.ok(gateDefinitions.mobile.steps.every((step) => step.cwd === join(repositoryRoot, 'apps/mobile')));
+  const workflow = readFileSync(workflowPath, 'utf8');
+  assert.match(workflow, /MOBILE_RESULT: \$\{\{ needs.mobile.result \}\}/);
+  assert.match(workflow, /flutter test integration_test/);
 });

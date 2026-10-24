@@ -4,15 +4,31 @@ publish_to: none
 version: 0.0.0+1
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: ">=3.13.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  drift: ^2.32.0
+  sqlite3: ^3.1.0
+  flutter_secure_storage: ^10.0.0
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  cryptography: ^2.7.0
+  crypto: ^3.0.6
+  uuid: ^4.5.1
 
 dev_dependencies:
+  flutter_lints: ^6.0.0
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
+
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
