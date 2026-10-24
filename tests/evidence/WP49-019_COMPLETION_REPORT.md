@@ -7,7 +7,8 @@
 - Frozen values, unchanged verbatim:
   - `allowed_paths_raw: /apps/mobile`
   - `exit_criteria: local DB adapter, command queue, attachment queue.`
-- Status: IN PROGRESS. No DONE claim until exact-head review/checks, ordinary merge and successful exact post-merge CI.
+- Implementation PR: [#48](https://github.com/loktevila658-spec/agro-platform/pull/48), final head `174d144f956301267e97783683b7d06870fbce9d`, ordinary merge `803d7e0e59ea5ae481f6b71b1499a2ad95a8cb0d` (two parents verified).
+- Final status: **DONE takes effect only after this evidence closeout is merged, its exact post-merge CI succeeds, and CR #47 is closed**. The final report-merge SHA/run and activation are recorded in the CR closeout comment to avoid a self-referential commit hash. Before those conditions, status remains IN PROGRESS.
 
 ## 1. Prerequisites and authority
 
@@ -101,26 +102,32 @@ Local confirmed results (Flutter 3.47.8 / Dart 3.13.7):
 - Workspace build and typecheck: PASS; architecture guard 11/11. CI-gate regression 6/6; repository bootstrap/contract regressions PASS; generated contracts tests 19/19. Canonical validation/generated drift and bootstrap structural validation: PASS.
 - `git diff --check`: PASS.
 - Local full server unit gate passed its build prerequisite and non-DB packages, then stalled in DB-backed tests due to the host Docker environment; the task-owned stalled process tree was stopped. This is not a passing integration gate. Initial pnpm dependency downloads timed out; reusing existing dependency artifacts in this clean worktree and disabling pnpm's automatic dependency reinstallation allowed build/typecheck/contract checks to complete.
-- No Android SDK is installed locally. The required hosted mobile job performs the full native APK build and Android emulator integration test; neither is substituted by server tests. Their exact-head results are pending.
+- No Android SDK is installed on the local Mac. The required hosted mobile job performs the full native APK build and Android emulator integration test; neither is substituted by server tests. Exact PR-head results: native APK build PASS; Android integration 1/1 PASS; enqueue P95 **7 ms** (100 measurements, limit 250 ms); shared wipe completed within the asserted 30 s. This is an emulator engineering measurement, not physical-device certification.
 - Drift's debug warning about multiple database instances is expected in tenant-isolation and concurrent-connection tests: they use distinct NativeDatabase executors. Writer serialization/fencing and persisted sequence checks pass.
 
-Gate decisions before hosted PR CI:
+Final applicable gate decisions (evidence becomes active at the closeout conditions above):
 
-| Gate | Evidence / current decision |
+| Gate | Decision and evidence |
 |---|---|
-| G0 | PASS — direct dependencies and baseline/previous closeout verified live above. |
-| G1 | Local PASS — Flutter format/analyze, workspace typecheck/build, architecture rules. Hosted aggregate pending. |
-| G2 | Local PASS — first v1 creation/reopen integrity, unsynced sequence preserved, unsupported future schema denied. Hosted server migration regression pending. |
-| G3 | PASS — complete mobile suite 21/21 and target regressions above. |
-| G4 | Pending hosted native Android + existing real server integration gates. |
-| G5 | PASS — unchanged canonical/generated contracts validate without drift. |
-| G6 | Local PASS — immutable command ID/key and repeat receipt tests. No server event/outbox contract change; hosted regressions pending. |
-| G7 | Local PASS — default-deny verifier/validator, tenant/scope/expiry/resource/O3 negative tests. Server permission revalidation remains WP49-020. |
-| G8 | Local PASS — atomic offline save/reopen, fenced retry, retained terminal states, independent file resume. Server push/pull/cursor flow is WP49-020. |
-| G9 | PASS — immutable observed time/intent, snapshot and device identity, local audit and immutable server receipt; no authoritative business write. |
-| G10 | Local PASS — fixed storage fixtures and widget status; native Android deterministic fixture pending hosted CI. |
-| G11 | Local PASS — cipher/key/plaintext/WAL, isolation, AEAD tamper, MIME/size/retention, shared wipe and capacity. Android enqueue latency/wipe timing pending. Physical-device certification belongs to release hardening. |
-| G12 | Pending review, exact-head checks, ordinary merge and post-merge closeout. |
+| G0 | PASS — dependencies, authority/order, compatibility, baseline and WP49-018 closeout independently verified live. |
+| G1 | PASS — Flutter format/analyze with fatal infos, workspace typecheck/build, architecture rules; hosted lint capability and all static jobs SUCCESS. Repository JS lint capability is N/A because none is configured; Flutter lint is enforced. |
+| G2 | PASS — atomic schema/v1 marker creation, DDL fault rollback RED->GREEN, v1 reopen/pending sequence integrity and future-version rejection; hosted server migration regression SUCCESS. |
+| G3 | PASS — complete mobile suite 21/21 plus contract and repository regressions; hosted Unit job SUCCESS. |
+| G4 | PASS — native Android build and OS-keystore/encrypted-SQLite integration 1/1; existing real server integration/migration/runtime jobs SUCCESS. |
+| G5 | PASS — canonical/generated contracts validate without drift; no public contract changed. |
+| G6 | PASS — immutable command ID/key and idempotent receipt replay; existing server event/outbox regressions SUCCESS. No new event contract. |
+| G7 | PASS — default-deny verifier/validator, tenant/scope/expiry/resource/O3 negatives; existing server permission regressions SUCCESS. Sync server revalidation remains WP49-020. |
+| G8 | PASS — atomic offline save/reopen, concurrent writers, fenced recovery/retry, retained conflict/rejection/action-required states, independent file resume. Server push/pull/cursor flow remains WP49-020. |
+| G9 | PASS — immutable observed time/intent, snapshot and device identity, audit and immutable server receipt; no authoritative operational business write. |
+| G10 | PASS — deterministic storage/widget fixtures plus Android reopen/file/wipe fixture. |
+| G11 | PASS — actual cipher/key/plaintext/WAL tests, isolation, AEAD tamper, MIME/size/retention, shared wipe, capacity; Android enqueue P95 7 ms and wipe <30 s. Physical-device battery/ANR certification remains a release gate. |
+| G12 | PASS at final activation — full allowlist (47 paths) verified, local critical review finding fixed, no open GitHub review threads; no independent reviewer approval is claimed or required by branch protection. Exact implementation PR-head and post-merge CI SUCCESS; final report closeout/CR evidence completes activation. |
+
+Exact checks:
+
+- Pre-merge [run 40087741399](https://github.com/loktevila658-spec/agro-platform/actions/runs/40087741399): SUCCESS on `174d144f956301267e97783683b7d06870fbce9d`; all eight jobs including Mobile and aggregate `CI quality gates` SUCCESS.
+- Implementation post-merge [run 40088257705](https://github.com/loktevila658-spec/agro-platform/actions/runs/40088257705): **SUCCESS**, exact head `803d7e0e59ea5ae481f6b71b1499a2ad95a8cb0d`. All eight jobs, including Mobile and aggregate `CI quality gates`, completed SUCCESS.
+- Report closeout exact head, merge and CI: final canonical record in [CR #47](https://github.com/loktevila658-spec/agro-platform/issues/47), recorded only after SUCCESS; no auto-merge, force/admin bypass or gate waiver.
 
 ## 6. Deterministic demo
 
@@ -136,4 +143,8 @@ Fixture owner `Fixture:entity`, fixed observed UTC time, expected version 7, fix
 
 ## 8. Review, merge and closeout
 
-Implementation PR: [#48](https://github.com/loktevila658-spec/agro-platform/pull/48). Local critical review found and fixed non-atomic initial schema creation, backed by a real SQLite DDL-failure regression (RED -> GREEN). GitHub review submissions/threads are currently empty; no independent review approval is claimed. Required: exact final PR head with clean review findings and every required check SUCCESS; ordinary merge commit without auto-merge/bypass; exact successful post-merge CI; update this evidence and close CR #47. WP49-019 is not DONE yet.
+Implementation PR [#48](https://github.com/loktevila658-spec/agro-platform/pull/48) was merged with the exact-head guard after all required checks succeeded and GitHub reported CLEAN/MERGEABLE. Live main still matched the original baseline before merge. The ordinary merge has parents `c2766541568e06da572573601b3cacf5ccec02a6` and `174d144f956301267e97783683b7d06870fbce9d`.
+
+Local critical review found non-atomic initial schema creation. The failing real DDL regression showed leftover tables; the transaction/version-marker correction made the complete 21-test suite GREEN. GitHub review submissions and threads were checked again at the final code head: empty, with no outstanding finding. Repository protection requires `CI quality gates` and conversation resolution; independent reviewer approval is not required, and no self-approval or bypass was submitted.
+
+Only the completion-report path is changed by the evidence closeout. Once its exact pre-/post-merge checks pass and the approved CR is closed with final SHA/run evidence, the status at the top becomes **DONE**. WP49-020 can consume this persistence foundation; no adjacent WP or server sync/file path was implemented.
