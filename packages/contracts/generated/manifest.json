@@ -2,12 +2,12 @@
   "generator": "@agroplatform/contracts",
   "formatVersion": 1,
   "sources": {
-    "openapi/openapi.yaml": "69fe2d0f853f0401db088f8d9db89385036bc200d5d37d5ccd99724e67b3c388",
+    "openapi/openapi.yaml": "983b4deb694a6805ce1320e89a35b6c56192b96e1829814c887919d18abd27b6",
     "events/catalog/index.yaml": "1e7b33a63bd4b2f0e1a72aceed58158127d7d6dc83c3d35e24dbf71a27225241",
     "events/schemas/event-catalog.schema.json": "f4e69757d5f24135c4578b3ef4b292895456a46b779178f071b763d01876957c"
   },
   "outputs": {
-    "generated/dart/contracts.dart": "b93c2506f530572ca742c6dfefd8fff4d2c0a7cfbc9871078384b37d0e6a7026",
-    "src/generated/contracts.ts": "acf235055a11ac0e96bdc872a257bd3409897dd75d623c60933a9082524839cd"
+    "generated/dart/contracts.dart": "144fd4098e9321ae844797bec06c852f5a872836cdf68a66be74c943931b15fd",
+    "src/generated/contracts.ts": "2d6c3fd7ae786adf1b669aedfb56348425f3a41ba8113687bf0bb9dd9d1d3db1"
   }
 }

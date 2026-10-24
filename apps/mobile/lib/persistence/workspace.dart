@@ -132,6 +132,9 @@ class Workspace {
               authorityUri?.toString(),
             ],
           );
+          await db.customStatement(
+            'UPDATE local_workspace SET schema_version=2 WHERE id=1',
+          );
           final stored = (await db.rows('SELECT * FROM local_workspace'))
               .single;
           if (stored['tenant_id'] != identity.tenantId ||

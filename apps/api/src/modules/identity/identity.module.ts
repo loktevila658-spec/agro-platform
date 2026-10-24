@@ -5,6 +5,7 @@ import { IdentityService } from './identity.service';
 import { IDENTITY_POOL } from './identity.tokens';
 
 @Module({
+  exports: [IdentityService],
   controllers: [IdentityAuthController, IdentitySessionsController],
   providers: [
     { provide: IDENTITY_POOL, useFactory: () => new Pool({ connectionString: process.env.DATABASE_URL }) },

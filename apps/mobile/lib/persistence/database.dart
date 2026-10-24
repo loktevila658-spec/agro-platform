@@ -32,7 +32,7 @@ class LocalDatabase extends GeneratedDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
   @override
@@ -40,15 +40,25 @@ class LocalDatabase extends GeneratedDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (_) => transaction(() async {
-      for (final statement in schemaV1) {
+      for (final statement in [...schemaV1, ...schemaV2]) {
         await customStatement(statement);
       }
       // Drift normally stores user_version after onCreate returns. Commit it
       // with the DDL so a crash cannot leave a complete v1 schema marked v0.
-      await customStatement('PRAGMA user_version=1');
+      await customStatement('PRAGMA user_version=2');
     }),
-    onUpgrade: (_, from, to) async =>
-        throw StateError('Unsupported local schema migration $from -> $to'),
+    onUpgrade: (_, from, to) async {
+      if (from != 1 || to != 2) {
+        throw StateError('Unsupported local schema migration $from -> $to');
+      }
+      await transaction(() async {
+        for (final statement in schemaV2) {
+          await customStatement(statement);
+        }
+        await customStatement('UPDATE local_workspace SET schema_version=2');
+        await customStatement('PRAGMA user_version=2');
+      });
+    },
     beforeOpen: (details) async {
       if (details.versionBefore != null &&
           details.versionBefore! > schemaVersion) {
@@ -78,6 +88,12 @@ class LocalDatabase extends GeneratedDatabase {
     return action();
   });
 
+  static const schemaV2 = [
+    "CREATE INDEX outbox_delivery_order ON sync_outbox(device_seq) WHERE status IN ('pending','retryWait','sending')",
+    "CREATE TABLE sync_cursor(stream TEXT PRIMARY KEY,cursor TEXT NOT NULL,last_seq INTEGER NOT NULL,scope_version INTEGER NOT NULL)",
+    "CREATE TABLE entity_cache(entity_type TEXT NOT NULL,entity_id TEXT NOT NULL,projection_json TEXT NOT NULL,server_version INTEGER,PRIMARY KEY(entity_type,entity_id))",
+    "CREATE TABLE entity_sync_meta(entity_type TEXT NOT NULL,entity_id TEXT NOT NULL,last_seq INTEGER NOT NULL,PRIMARY KEY(entity_type,entity_id))",
+  ];
   static const schemaV1 = [
     '''CREATE TABLE local_workspace (
       id INTEGER PRIMARY KEY CHECK(id=1), tenant_id TEXT NOT NULL, user_id TEXT NOT NULL,

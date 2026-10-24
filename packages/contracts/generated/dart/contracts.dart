@@ -2,6 +2,7 @@
 // Sources: openapi/openapi.yaml, events/catalog/index.yaml
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 const openApiVersion = '3.1.0';
 const apiContractVersion = '0.1.0';
@@ -527,6 +528,540 @@ class SiteResponse {
   final String timezone;
 }
 
+class SyncAckRequest {
+  const SyncAckRequest({
+    required this.cursor,
+    required this.deviceId,
+    required this.scopeVersion,
+  });
+
+  factory SyncAckRequest.fromJson(Map<String, Object?> json) => SyncAckRequest(
+        cursor: json['cursor'] as String,
+        deviceId: json['deviceId'] as String,
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'cursor': cursor, 'deviceId': deviceId, 'scopeVersion': scopeVersion};
+
+  final String cursor;
+  final String deviceId;
+  final int scopeVersion;
+}
+
+class SyncAckResponse {
+  const SyncAckResponse({
+    required this.acknowledged,
+  });
+
+  factory SyncAckResponse.fromJson(Map<String, Object?> json) => SyncAckResponse(
+        acknowledged: json['acknowledged'] as bool,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'acknowledged': acknowledged};
+
+  final bool acknowledged;
+}
+
+class SyncAggregate {
+  const SyncAggregate({
+    required this.id,
+    required this.type,
+  });
+
+  factory SyncAggregate.fromJson(Map<String, Object?> json) => SyncAggregate(
+        id: json['id'] as String,
+        type: json['type'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'id': id, 'type': type};
+
+  final String id;
+  final String type;
+}
+
+class SyncAttachmentIntent {
+  const SyncAttachmentIntent({
+    required this.evidenceType,
+    required this.localAttachmentId,
+    required this.mime,
+    required this.ownerRef,
+    required this.required,
+    required this.sha256,
+    required this.sizeBytes,
+  });
+
+  factory SyncAttachmentIntent.fromJson(Map<String, Object?> json) => SyncAttachmentIntent(
+        evidenceType: json['evidenceType'] as String,
+        localAttachmentId: json['localAttachmentId'] as String,
+        mime: json['mime'] as String,
+        ownerRef: json['ownerRef'] as String,
+        required: json['required'] as bool,
+        sha256: json['sha256'] as String,
+        sizeBytes: (json['sizeBytes'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'evidenceType': evidenceType, 'localAttachmentId': localAttachmentId, 'mime': mime, 'ownerRef': ownerRef, 'required': required, 'sha256': sha256, 'sizeBytes': sizeBytes};
+
+  final String evidenceType;
+  final String localAttachmentId;
+  final String mime;
+  final String ownerRef;
+  final bool required;
+  final String sha256;
+  final int sizeBytes;
+}
+
+class SyncAttachmentResponse {
+  const SyncAttachmentResponse({
+    required this.attachmentId,
+    required this.chunkSizeBytes,
+    required this.evidenceType,
+    required this.localAttachmentId,
+    required this.mime,
+    required this.ownerRef,
+    required this.resumable,
+    required this.sha256,
+    required this.sizeBytes,
+    required this.state,
+  });
+
+  factory SyncAttachmentResponse.fromJson(Map<String, Object?> json) => SyncAttachmentResponse(
+        attachmentId: json['attachmentId'] as String,
+        chunkSizeBytes: (json['chunkSizeBytes'] as num).toInt(),
+        evidenceType: json['evidenceType'] as String,
+        localAttachmentId: json['localAttachmentId'] as String,
+        mime: json['mime'] as String,
+        ownerRef: json['ownerRef'] as String,
+        resumable: json['resumable'] as bool,
+        sha256: json['sha256'] as String,
+        sizeBytes: (json['sizeBytes'] as num).toInt(),
+        state: json['state'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'attachmentId': attachmentId, 'chunkSizeBytes': chunkSizeBytes, 'evidenceType': evidenceType, 'localAttachmentId': localAttachmentId, 'mime': mime, 'ownerRef': ownerRef, 'resumable': resumable, 'sha256': sha256, 'sizeBytes': sizeBytes, 'state': state};
+
+  final String attachmentId;
+  final int chunkSizeBytes;
+  final String evidenceType;
+  final String localAttachmentId;
+  final String mime;
+  final String ownerRef;
+  final bool resumable;
+  final String sha256;
+  final int sizeBytes;
+  final String state;
+}
+
+class SyncBootstrapRequest {
+  const SyncBootstrapRequest({
+    required this.deviceId,
+    required this.schemaVersion,
+  });
+
+  factory SyncBootstrapRequest.fromJson(Map<String, Object?> json) => SyncBootstrapRequest(
+        deviceId: json['deviceId'] as String,
+        schemaVersion: (json['schemaVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'deviceId': deviceId, 'schemaVersion': schemaVersion};
+
+  final String deviceId;
+  final int schemaVersion;
+}
+
+class SyncBootstrapResponse {
+  const SyncBootstrapResponse({
+    required this.authorityMode,
+    required this.grants,
+    required this.initialCursor,
+    required this.schemaVersion,
+    required this.scopeVersion,
+  });
+
+  factory SyncBootstrapResponse.fromJson(Map<String, Object?> json) => SyncBootstrapResponse(
+        authorityMode: json['authorityMode'] as String,
+        grants: (json['grants'] as List<Object?>).map((item) => SyncGrant.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        initialCursor: json['initialCursor'] as String,
+        schemaVersion: (json['schemaVersion'] as num).toInt(),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'authorityMode': authorityMode, 'grants': grants, 'initialCursor': initialCursor, 'schemaVersion': schemaVersion, 'scopeVersion': scopeVersion};
+
+  final String authorityMode;
+  final List<SyncGrant> grants;
+  final String initialCursor;
+  final int schemaVersion;
+  final int scopeVersion;
+}
+
+class SyncChange {
+  const SyncChange({
+    required this.entityId,
+    required this.entityType,
+    this.entityVersion,
+    required this.op,
+    required this.projection,
+    required this.seq,
+  });
+
+  factory SyncChange.fromJson(Map<String, Object?> json) => SyncChange(
+        entityId: json['entityId'] as String,
+        entityType: json['entityType'] as String,
+        entityVersion: json['entityVersion'] == null ? null : (json['entityVersion'] as num).toInt(),
+        op: json['op'] as String,
+        projection: json['projection'] as Map<String, Object?>,
+        seq: json['seq'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'entityId': entityId, 'entityType': entityType, if (entityVersion != null) 'entityVersion': entityVersion, 'op': op, 'projection': projection, 'seq': seq};
+
+  final String entityId;
+  final String entityType;
+  final int? entityVersion;
+  final String op;
+  final Map<String, Object?> projection;
+  final String seq;
+}
+
+class SyncCommand {
+  const SyncCommand({
+    required this.aggregate,
+    required this.attachments,
+    this.baseVersion,
+    required this.commandVersion,
+    required this.deviceSeq,
+    required this.idempotencyKey,
+    required this.localCommandId,
+    required this.observedAt,
+    required this.offlineAuthId,
+    required this.payload,
+    required this.provenance,
+    required this.type,
+  });
+
+  factory SyncCommand.fromJson(Map<String, Object?> json) => SyncCommand(
+        aggregate: SyncAggregate.fromJson(Map<String, Object?>.from(json['aggregate'] as Map)),
+        attachments: (json['attachments'] as List<Object?>).map((item) => SyncAttachmentIntent.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        baseVersion: json['baseVersion'] == null ? null : (json['baseVersion'] as num).toInt(),
+        commandVersion: (json['commandVersion'] as num).toInt(),
+        deviceSeq: (json['deviceSeq'] as num).toInt(),
+        idempotencyKey: json['idempotencyKey'] as String,
+        localCommandId: json['localCommandId'] as String,
+        observedAt: json['observedAt'] as String,
+        offlineAuthId: json['offlineAuthId'] as String,
+        payload: json['payload'] as Map<String, Object?>,
+        provenance: json['provenance'] as Map<String, Object?>,
+        type: json['type'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'aggregate': aggregate, 'attachments': attachments, if (baseVersion != null) 'baseVersion': baseVersion, 'commandVersion': commandVersion, 'deviceSeq': deviceSeq, 'idempotencyKey': idempotencyKey, 'localCommandId': localCommandId, 'observedAt': observedAt, 'offlineAuthId': offlineAuthId, 'payload': payload, 'provenance': provenance, 'type': type};
+
+  final SyncAggregate aggregate;
+  final List<SyncAttachmentIntent> attachments;
+  final int? baseVersion;
+  final int commandVersion;
+  final int deviceSeq;
+  final String idempotencyKey;
+  final String localCommandId;
+  final String observedAt;
+  final String offlineAuthId;
+  final Map<String, Object?> payload;
+  final Map<String, Object?> provenance;
+  final String type;
+}
+
+class SyncCompleteRequest {
+  const SyncCompleteRequest({
+    required this.remoteId,
+  });
+
+  factory SyncCompleteRequest.fromJson(Map<String, Object?> json) => SyncCompleteRequest(
+        remoteId: json['remoteId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'remoteId': remoteId};
+
+  final String remoteId;
+}
+
+class SyncGrant {
+  const SyncGrant({
+    required this.commands,
+    required this.deviceId,
+    required this.expiresAt,
+    required this.id,
+    required this.issuedAt,
+    required this.owners,
+    required this.risk,
+    required this.scopeVersion,
+    required this.signedEnvelope,
+    required this.tenant,
+    required this.user,
+  });
+
+  factory SyncGrant.fromJson(Map<String, Object?> json) => SyncGrant(
+        commands: (json['commands'] as List<Object?>).map((item) => item as String).toList(growable: false),
+        deviceId: json['deviceId'] as String,
+        expiresAt: json['expiresAt'] as String,
+        id: json['id'] as String,
+        issuedAt: json['issuedAt'] as String,
+        owners: (json['owners'] as List<Object?>).map((item) => item as String).toList(growable: false),
+        risk: json['risk'] as String,
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+        signedEnvelope: json['signedEnvelope'] as String,
+        tenant: json['tenant'] as String,
+        user: json['user'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'commands': commands, 'deviceId': deviceId, 'expiresAt': expiresAt, 'id': id, 'issuedAt': issuedAt, 'owners': owners, 'risk': risk, 'scopeVersion': scopeVersion, 'signedEnvelope': signedEnvelope, 'tenant': tenant, 'user': user};
+
+  final List<String> commands;
+  final String deviceId;
+  final String expiresAt;
+  final String id;
+  final String issuedAt;
+  final List<String> owners;
+  final String risk;
+  final int scopeVersion;
+  final String signedEnvelope;
+  final String tenant;
+  final String user;
+}
+
+class SyncHealthResponse {
+  const SyncHealthResponse({
+    required this.authorityMode,
+    required this.schemaVersion,
+    required this.serverTime,
+  });
+
+  factory SyncHealthResponse.fromJson(Map<String, Object?> json) => SyncHealthResponse(
+        authorityMode: json['authorityMode'] as String,
+        schemaVersion: (json['schemaVersion'] as num).toInt(),
+        serverTime: json['serverTime'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'authorityMode': authorityMode, 'schemaVersion': schemaVersion, 'serverTime': serverTime};
+
+  final String authorityMode;
+  final int schemaVersion;
+  final String serverTime;
+}
+
+class SyncPartResponse {
+  const SyncPartResponse({
+    required this.partNumber,
+    required this.sha256,
+    required this.sizeBytes,
+  });
+
+  factory SyncPartResponse.fromJson(Map<String, Object?> json) => SyncPartResponse(
+        partNumber: (json['partNumber'] as num).toInt(),
+        sha256: json['sha256'] as String,
+        sizeBytes: (json['sizeBytes'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'partNumber': partNumber, 'sha256': sha256, 'sizeBytes': sizeBytes};
+
+  final int partNumber;
+  final String sha256;
+  final int sizeBytes;
+}
+
+class SyncPullRequest {
+  const SyncPullRequest({
+    required this.cursor,
+    required this.deviceId,
+    this.limit,
+    required this.scopeVersion,
+  });
+
+  factory SyncPullRequest.fromJson(Map<String, Object?> json) => SyncPullRequest(
+        cursor: json['cursor'] as String,
+        deviceId: json['deviceId'] as String,
+        limit: json['limit'] == null ? null : (json['limit'] as num).toInt(),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'cursor': cursor, 'deviceId': deviceId, if (limit != null) 'limit': limit, 'scopeVersion': scopeVersion};
+
+  final String cursor;
+  final String deviceId;
+  final int? limit;
+  final int scopeVersion;
+}
+
+class SyncPullResponse {
+  const SyncPullResponse({
+    required this.changes,
+    this.code,
+    required this.hasMore,
+    required this.nextCursor,
+    required this.resetRequired,
+  });
+
+  factory SyncPullResponse.fromJson(Map<String, Object?> json) => SyncPullResponse(
+        changes: (json['changes'] as List<Object?>).map((item) => SyncChange.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        code: json['code'] == null ? null : json['code'] as String,
+        hasMore: json['hasMore'] as bool,
+        nextCursor: json['nextCursor'] as String,
+        resetRequired: json['resetRequired'] as bool,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'changes': changes, if (code != null) 'code': code, 'hasMore': hasMore, 'nextCursor': nextCursor, 'resetRequired': resetRequired};
+
+  final List<SyncChange> changes;
+  final String? code;
+  final bool hasMore;
+  final String nextCursor;
+  final bool resetRequired;
+}
+
+class SyncPushRequest {
+  const SyncPushRequest({
+    required this.commands,
+    required this.deviceId,
+    required this.schemaVersion,
+    required this.scopeVersion,
+  });
+
+  factory SyncPushRequest.fromJson(Map<String, Object?> json) => SyncPushRequest(
+        commands: (json['commands'] as List<Object?>).map((item) => SyncCommand.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        deviceId: json['deviceId'] as String,
+        schemaVersion: (json['schemaVersion'] as num).toInt(),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'commands': commands, 'deviceId': deviceId, 'schemaVersion': schemaVersion, 'scopeVersion': scopeVersion};
+
+  final List<SyncCommand> commands;
+  final String deviceId;
+  final int schemaVersion;
+  final int scopeVersion;
+}
+
+class SyncPushResponse {
+  const SyncPushResponse({
+    required this.results,
+    required this.serverTime,
+  });
+
+  factory SyncPushResponse.fromJson(Map<String, Object?> json) => SyncPushResponse(
+        results: (json['results'] as List<Object?>).map((item) => SyncResult.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        serverTime: json['serverTime'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'results': results, 'serverTime': serverTime};
+
+  final List<SyncResult> results;
+  final String serverTime;
+}
+
+class SyncRegisterRequest {
+  const SyncRegisterRequest({
+    required this.deviceId,
+    required this.installationId,
+    required this.schemaVersion,
+  });
+
+  factory SyncRegisterRequest.fromJson(Map<String, Object?> json) => SyncRegisterRequest(
+        deviceId: json['deviceId'] as String,
+        installationId: json['installationId'] as String,
+        schemaVersion: (json['schemaVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'deviceId': deviceId, 'installationId': installationId, 'schemaVersion': schemaVersion};
+
+  final String deviceId;
+  final String installationId;
+  final int schemaVersion;
+}
+
+class SyncRegisterResponse {
+  const SyncRegisterResponse({
+    required this.authorityMode,
+    required this.deviceId,
+    required this.schemaVersion,
+    required this.scopeVersion,
+  });
+
+  factory SyncRegisterResponse.fromJson(Map<String, Object?> json) => SyncRegisterResponse(
+        authorityMode: json['authorityMode'] as String,
+        deviceId: json['deviceId'] as String,
+        schemaVersion: (json['schemaVersion'] as num).toInt(),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'authorityMode': authorityMode, 'deviceId': deviceId, 'schemaVersion': schemaVersion, 'scopeVersion': scopeVersion};
+
+  final String authorityMode;
+  final String deviceId;
+  final int schemaVersion;
+  final int scopeVersion;
+}
+
+class SyncResult {
+  const SyncResult({
+    this.aggregateVersion,
+    this.canonical,
+    this.code,
+    required this.localCommandId,
+    this.localIntent,
+    required this.receivedAt,
+    required this.status,
+  });
+
+  factory SyncResult.fromJson(Map<String, Object?> json) => SyncResult(
+        aggregateVersion: json['aggregateVersion'] == null ? null : (json['aggregateVersion'] as num).toInt(),
+        canonical: json['canonical'] == null ? null : json['canonical'] as Map<String, Object?>,
+        code: json['code'] == null ? null : json['code'] as String,
+        localCommandId: json['localCommandId'] as String,
+        localIntent: json['localIntent'] == null ? null : SyncCommand.fromJson(Map<String, Object?>.from(json['localIntent'] as Map)),
+        receivedAt: json['receivedAt'] as String,
+        status: json['status'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (aggregateVersion != null) 'aggregateVersion': aggregateVersion, if (canonical != null) 'canonical': canonical, if (code != null) 'code': code, 'localCommandId': localCommandId, if (localIntent != null) 'localIntent': localIntent, 'receivedAt': receivedAt, 'status': status};
+
+  final int? aggregateVersion;
+  final Map<String, Object?>? canonical;
+  final String? code;
+  final String localCommandId;
+  final SyncCommand? localIntent;
+  final String receivedAt;
+  final String status;
+}
+
+class SyncUploadResponse {
+  const SyncUploadResponse({
+    required this.attachmentId,
+    required this.chunkSizeBytes,
+    required this.resumable,
+    this.session,
+    required this.sizeBytes,
+    required this.state,
+  });
+
+  factory SyncUploadResponse.fromJson(Map<String, Object?> json) => SyncUploadResponse(
+        attachmentId: json['attachmentId'] as String,
+        chunkSizeBytes: (json['chunkSizeBytes'] as num).toInt(),
+        resumable: json['resumable'] as bool,
+        session: json['session'] == null ? null : json['session'] as String,
+        sizeBytes: (json['sizeBytes'] as num).toInt(),
+        state: json['state'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'attachmentId': attachmentId, 'chunkSizeBytes': chunkSizeBytes, 'resumable': resumable, if (session != null) 'session': session, 'sizeBytes': sizeBytes, 'state': state};
+
+  final String attachmentId;
+  final int chunkSizeBytes;
+  final bool resumable;
+  final String? session;
+  final int sizeBytes;
+  final String state;
+}
+
 class TenantResponse {
   const TenantResponse({
     required this.code,
@@ -656,12 +1191,15 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
 typedef ApiTransport = Future<Map<String, Object?>> Function(Uri uri, String method);
 typedef ApiRequestTransport = Future<Map<String, Object?>> Function(Uri uri, String method, {required Map<String, String> headers, String? body});
 
+typedef ApiBinaryTransport = Future<Map<String, Object?>> Function(Uri uri, String method, {required Map<String,String> headers, required Uint8List body});
+
 class AgroPlatformApiClient {
-  AgroPlatformApiClient({required this.baseUri, required this.transport, this.requestTransport});
+  AgroPlatformApiClient({required this.baseUri, required this.transport, this.requestTransport, this.binaryTransport});
 
   final Uri baseUri;
   final ApiTransport transport;
   final ApiRequestTransport? requestTransport;
+  final ApiBinaryTransport? binaryTransport;
 
   Future<LivenessResponse> getLiveness({String? xCorrelationId}) async {
     final headers = <String, String>{if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!};
@@ -754,6 +1292,26 @@ class AgroPlatformApiClient {
     return SchemaVersionResponse.fromJson(json);
   }
 
+  Future<SyncUploadResponse> initSyncAttachment({required String authorization, required SyncAttachmentIntent body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for initSyncAttachment');
+    final json = await send(baseUri.resolve('/v1/attachments/init'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncUploadResponse.fromJson(json);
+  }
+
+  Future<SyncAttachmentResponse> completeSyncAttachment({required String localId, required String authorization, required SyncCompleteRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for completeSyncAttachment');
+    final json = await send(baseUri.resolve('/v1/attachments/' + Uri.encodeComponent(localId) + '/complete'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncAttachmentResponse.fromJson(json);
+  }
+
+  Future<SyncPartResponse> putSyncAttachmentPart({required String localId, required String number, required String authorization, required String xPartSha256, required String xRemoteId, required Uint8List body}) async {
+    final send=binaryTransport;
+    if(send==null)throw StateError('binaryTransport is required for putSyncAttachmentPart');
+    return SyncPartResponse.fromJson(await send(baseUri.resolve('/v1/attachments/' + Uri.encodeComponent(localId) + '/parts/' + Uri.encodeComponent(number) + ''),'PUT',headers:<String,String>{if (authorization != null) 'Authorization': authorization, if (xPartSha256 != null) 'X-Part-Sha256': xPartSha256, if (xRemoteId != null) 'X-Remote-Id': xRemoteId,'Content-Type':'application/octet-stream'},body:body));
+  }
+
   Future<LoginResponse> login({String? xCorrelationId, required LoginRequest body}) async {
     final send = requestTransport;
     if (send == null) throw StateError('requestTransport is required for login');
@@ -794,5 +1352,47 @@ class AgroPlatformApiClient {
     if (send == null) throw StateError('requestTransport is required for revokeMySession');
     final json = await send(baseUri.resolve('/v1/me/sessions/' + Uri.encodeComponent(id) + '/commands/revoke'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
     return RevocationResponse.fromJson(json);
+  }
+
+  Future<SyncAckResponse> ackSync({required String authorization, required SyncAckRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for ackSync');
+    final json = await send(baseUri.resolve('/v1/sync/ack'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncAckResponse.fromJson(json);
+  }
+
+  Future<SyncBootstrapResponse> bootstrapSync({required String authorization, required SyncBootstrapRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for bootstrapSync');
+    final json = await send(baseUri.resolve('/v1/sync/bootstrap'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncBootstrapResponse.fromJson(json);
+  }
+
+  Future<SyncRegisterResponse> registerSyncDevice({required String authorization, required SyncRegisterRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for registerSyncDevice');
+    final json = await send(baseUri.resolve('/v1/sync/devices/register'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncRegisterResponse.fromJson(json);
+  }
+
+  Future<SyncHealthResponse> syncHealth({required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for syncHealth');
+    final json = await send(baseUri.resolve('/v1/sync/health'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return SyncHealthResponse.fromJson(json);
+  }
+
+  Future<SyncPullResponse> pullSync({required String authorization, required SyncPullRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for pullSync');
+    final json = await send(baseUri.resolve('/v1/sync/pull'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPullResponse.fromJson(json);
+  }
+
+  Future<SyncPushResponse> pushSync({required String authorization, required SyncPushRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for pushSync');
+    final json = await send(baseUri.resolve('/v1/sync/push'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
   }
 }
