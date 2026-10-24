@@ -1,3 +1,4 @@
+import { SyncPolicyModule, SyncRegistry } from '../sync/sync.registry';
 import { Module } from '@nestjs/common';
 import { Client } from 'minio';
 import { Pool } from 'pg';
@@ -6,9 +7,10 @@ import { MinioObjectStorage } from '../../../../../packages/storage/src/index.cj
 import { FILES_AUTHORIZATION, FILES_POOL, FILES_SCANNER, FILES_SIZE_POLICY, FILES_STORAGE } from './files.tokens';
 import { ClamAvScanner } from './clamav-scanner';
 import { FilesService } from './files.service';
-import { DenyAllFileAuthorization, EnvironmentFileSizePolicy } from './files.types';
+import { EnvironmentFileSizePolicy } from './files.types';
 
 @Module({
+  imports: [SyncPolicyModule],
   providers: [
     { provide: FILES_POOL, useFactory: () => new Pool({ connectionString: process.env.DATABASE_URL }) },
     {
@@ -26,7 +28,7 @@ import { DenyAllFileAuthorization, EnvironmentFileSizePolicy } from './files.typ
       },
     },
     { provide: FILES_SCANNER, useClass: ClamAvScanner },
-    { provide: FILES_AUTHORIZATION, useClass: DenyAllFileAuthorization },
+    { provide: FILES_AUTHORIZATION, useExisting: SyncRegistry },
     { provide: FILES_SIZE_POLICY, useClass: EnvironmentFileSizePolicy },
     FilesService,
   ],

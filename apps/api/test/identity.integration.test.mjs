@@ -261,7 +261,7 @@ test('WP49-012 identity, MFA, rotation, self-session policy and redaction use re
     const secretEvidence = JSON.stringify((await pool.query(`SELECT (SELECT coalesce(jsonb_agg(to_jsonb(a)), '[]'::jsonb) FROM identity.security_audit a) AS audit,(SELECT coalesce(jsonb_agg(to_jsonb(e)), '[]'::jsonb) FROM identity.outbox_event e) AS events`)).rows);
     for (const secret of [accounts.alice.password, accounts.bob.password, accounts.mfa.password, aliceToken, aliceRefresh, mfaLogin.body.challengeToken, totpSecret, jwtEncoded, mfaEncoded, auditEncoded]) assert.ok(!secretEvidence.includes(secret));
     for (const secret of [accounts.alice.password, aliceRefresh, mfaLogin.body.challengeToken, totpSecret, jwtEncoded, mfaEncoded, auditEncoded]) assert.ok(!api.stdoutText.includes(secret) && !api.stderrText.includes(secret));
-    assert.equal(Number(psql(container, 'SELECT current_version FROM platform_meta.schema_version;')), 6);
+    assert.equal(Number(psql(container, 'SELECT current_version FROM platform_meta.schema_version;')), 7);
   } finally {
     await stopApi(api);
     if (pool) await pool.end();

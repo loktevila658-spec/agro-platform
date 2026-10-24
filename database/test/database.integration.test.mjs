@@ -157,6 +157,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(first.stdout, /migration 4 applied/);
     assert.match(first.stdout, /migration 5 applied/);
     assert.match(first.stdout, /migration 6 applied/);
+    assert.match(first.stdout, /migration 7 applied/);
 
     const second = spawnSync(process.execPath, ['database/migrate.mjs'], {
       cwd: repositoryRoot,
@@ -170,6 +171,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(second.stdout, /migration 4 already applied/);
     assert.match(second.stdout, /migration 5 already applied/);
     assert.match(second.stdout, /migration 6 already applied/);
+    assert.match(second.stdout, /migration 7 already applied/);
 
     assert.equal(
       query(
@@ -177,7 +179,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT current_version FROM platform_meta.schema_version;',
       ),
-      '6',
+      '7',
     );
     assert.match(
       query(
@@ -193,7 +195,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT COUNT(*) FROM platform_meta.schema_migrations;',
       ),
-      '6',
+      '7',
     );
 
     assert.equal(
@@ -255,8 +257,8 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body, {
-      schemaVersion: 6,
-      expectedSchemaVersion: 6,
+      schemaVersion: 7,
+      expectedSchemaVersion: 7,
       postgisVersion: body.postgisVersion,
       status: 'current',
     });

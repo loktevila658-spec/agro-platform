@@ -6,6 +6,329 @@ servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
 paths:
+  /v1/sync/devices/register:
+    post:
+      operationId: "registerSyncDevice"
+      summary: "DOC12 registerSyncDevice"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncRegisterResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncRegisterRequest"
+  /v1/sync/bootstrap:
+    post:
+      operationId: "bootstrapSync"
+      summary: "DOC12 bootstrapSync"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncBootstrapResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncBootstrapRequest"
+  /v1/sync/push:
+    post:
+      operationId: "pushSync"
+      summary: "DOC12 pushSync"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPushResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncPushRequest"
+  /v1/sync/pull:
+    post:
+      operationId: "pullSync"
+      summary: "DOC12 pullSync"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPullResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncPullRequest"
+  /v1/sync/ack:
+    post:
+      operationId: "ackSync"
+      summary: "DOC12 ackSync"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAckResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncAckRequest"
+  /v1/sync/health:
+    get:
+      operationId: "syncHealth"
+      summary: "DOC12 syncHealth"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncHealthResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+  /v1/attachments/init:
+    post:
+      operationId: "initSyncAttachment"
+      summary: "DOC12 initSyncAttachment"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncUploadResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncAttachmentIntent"
+  /v1/attachments/{localId}/parts/{number}:
+    put:
+      operationId: "putSyncAttachmentPart"
+      summary: "DOC12 putSyncAttachmentPart"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+        -
+          name: "localId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        -
+          name: "number"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        -
+          name: "X-Remote-Id"
+          in: "header"
+          required: true
+          schema:
+            type: "string"
+        -
+          name: "X-Part-Sha256"
+          in: "header"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPartResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              maxLength: 5242880
+  /v1/attachments/{localId}/complete:
+    post:
+      operationId: "completeSyncAttachment"
+      summary: "DOC12 completeSyncAttachment"
+      description: "LOCAL_PRIMARY only. Session and registered device binding required; server current owner-module permissions and domain validation deny by default. No offline snapshot authorizes canonical writes. Push <=50 commands/1 MiB; pull <=500 records/2 MiB; 90-day signed cursor reset preserves pending intents. Upload requires owner file policy."
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+        -
+          name: "localId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Protocol result; inspect per-command status or resetRequired."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncAttachmentResponse"
+        '400':
+          description: "Schema/envelope/batch invalid; explicit forced upgrade for unsupported schema"
+        '401':
+          description: "Session expired or revoked; reauthenticate without losing queue"
+        '403':
+          description: "Authority/device/current permissions denied"
+        '409':
+          description: "Scope/sequence or immutable idempotency mismatch"
+        '429':
+          description: "Retry after Retry-After"
+        '503':
+          description: "Retry after backoff, retaining stable IDs"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncCompleteRequest"
   /v1/auth/login:
     post:
       operationId: login
@@ -423,6 +746,431 @@ components:
       schema:
         type: string
   schemas:
+    SyncAggregate:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "type"
+        - "id"
+      properties:
+        type:
+          type: "string"
+        id:
+          type: "string"
+    SyncAttachmentIntent:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "localAttachmentId"
+        - "ownerRef"
+        - "evidenceType"
+        - "sha256"
+        - "mime"
+        - "sizeBytes"
+        - "required"
+      properties:
+        localAttachmentId:
+          type: "string"
+        ownerRef:
+          type: "string"
+        evidenceType:
+          type: "string"
+        sha256:
+          type: "string"
+        mime:
+          type: "string"
+        sizeBytes:
+          type: "integer"
+        required:
+          type: "boolean"
+    SyncCommand:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "localCommandId"
+        - "idempotencyKey"
+        - "deviceSeq"
+        - "aggregate"
+        - "type"
+        - "commandVersion"
+        - "observedAt"
+        - "offlineAuthId"
+        - "payload"
+        - "provenance"
+        - "attachments"
+      properties:
+        localCommandId:
+          type: "string"
+        idempotencyKey:
+          type: "string"
+        deviceSeq:
+          type: "integer"
+        aggregate:
+          $ref: "#/components/schemas/SyncAggregate"
+        baseVersion:
+          type: "integer"
+        type:
+          type: "string"
+        commandVersion:
+          type: "integer"
+        observedAt:
+          type: "string"
+        offlineAuthId:
+          type: "string"
+        payload:
+          type: "object"
+          additionalProperties: true
+        provenance:
+          type: "object"
+          additionalProperties: true
+        attachments:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/SyncAttachmentIntent"
+    SyncResult:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "localCommandId"
+        - "status"
+        - "receivedAt"
+      properties:
+        localCommandId:
+          type: "string"
+        status:
+          type: "string"
+          enum:
+            - "ACCEPTED"
+            - "CONFLICT"
+            - "REJECTED"
+            - "ACTION_REQUIRED"
+        code:
+          type: "string"
+        canonical:
+          type: "object"
+          additionalProperties: true
+        aggregateVersion:
+          type: "integer"
+        receivedAt:
+          type: "string"
+        localIntent:
+          $ref: "#/components/schemas/SyncCommand"
+    SyncRegisterRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "deviceId"
+        - "installationId"
+        - "schemaVersion"
+      properties:
+        deviceId:
+          type: "string"
+        installationId:
+          type: "string"
+        schemaVersion:
+          type: "integer"
+    SyncRegisterResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "deviceId"
+        - "authorityMode"
+        - "schemaVersion"
+        - "scopeVersion"
+      properties:
+        deviceId:
+          type: "string"
+        authorityMode:
+          type: "string"
+        schemaVersion:
+          type: "integer"
+        scopeVersion:
+          type: "integer"
+    SyncBootstrapRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "deviceId"
+        - "schemaVersion"
+      properties:
+        deviceId:
+          type: "string"
+        schemaVersion:
+          type: "integer"
+    SyncGrant:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "id"
+        - "tenant"
+        - "user"
+        - "deviceId"
+        - "scopeVersion"
+        - "issuedAt"
+        - "expiresAt"
+        - "commands"
+        - "owners"
+        - "risk"
+        - "signedEnvelope"
+      properties:
+        id:
+          type: "string"
+        tenant:
+          type: "string"
+        user:
+          type: "string"
+        deviceId:
+          type: "string"
+        scopeVersion:
+          type: "integer"
+        issuedAt:
+          type: "string"
+        expiresAt:
+          type: "string"
+        commands:
+          type: "array"
+          items:
+            type: "string"
+        owners:
+          type: "array"
+          items:
+            type: "string"
+        risk:
+          type: "string"
+        signedEnvelope:
+          type: "string"
+    SyncBootstrapResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "authorityMode"
+        - "schemaVersion"
+        - "scopeVersion"
+        - "initialCursor"
+        - "grants"
+      properties:
+        authorityMode:
+          type: "string"
+        schemaVersion:
+          type: "integer"
+        scopeVersion:
+          type: "integer"
+        initialCursor:
+          type: "string"
+        grants:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/SyncGrant"
+    SyncPushRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "deviceId"
+        - "scopeVersion"
+        - "schemaVersion"
+        - "commands"
+      properties:
+        deviceId:
+          type: "string"
+        scopeVersion:
+          type: "integer"
+        schemaVersion:
+          type: "integer"
+        commands:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/SyncCommand"
+    SyncPushResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "results"
+        - "serverTime"
+      properties:
+        results:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/SyncResult"
+        serverTime:
+          type: "string"
+    SyncPullRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "deviceId"
+        - "scopeVersion"
+        - "cursor"
+      properties:
+        deviceId:
+          type: "string"
+        scopeVersion:
+          type: "integer"
+        cursor:
+          type: "string"
+        limit:
+          type: "integer"
+    SyncChange:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "seq"
+        - "entityType"
+        - "entityId"
+        - "op"
+        - "projection"
+      properties:
+        seq:
+          type: "string"
+        entityType:
+          type: "string"
+        entityId:
+          type: "string"
+        entityVersion:
+          type: "integer"
+        op:
+          type: "string"
+          enum:
+            - "UPSERT"
+            - "PURGE"
+        projection:
+          type: "object"
+          additionalProperties: true
+    SyncPullResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "changes"
+        - "nextCursor"
+        - "hasMore"
+        - "resetRequired"
+      properties:
+        changes:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/SyncChange"
+        nextCursor:
+          type: "string"
+        hasMore:
+          type: "boolean"
+        resetRequired:
+          type: "boolean"
+        code:
+          type: "string"
+    SyncAckRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "deviceId"
+        - "scopeVersion"
+        - "cursor"
+      properties:
+        deviceId:
+          type: "string"
+        scopeVersion:
+          type: "integer"
+        cursor:
+          type: "string"
+    SyncAckResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "acknowledged"
+      properties:
+        acknowledged:
+          type: "boolean"
+    SyncHealthResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "authorityMode"
+        - "schemaVersion"
+        - "serverTime"
+      properties:
+        authorityMode:
+          type: "string"
+        schemaVersion:
+          type: "integer"
+        serverTime:
+          type: "string"
+    SyncUploadResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "attachmentId"
+        - "state"
+        - "sizeBytes"
+        - "chunkSizeBytes"
+        - "resumable"
+      properties:
+        attachmentId:
+          type: "string"
+        state:
+          type: "string"
+        sizeBytes:
+          type: "integer"
+        chunkSizeBytes:
+          type: "integer"
+        resumable:
+          type: "boolean"
+        session:
+          type: "string"
+    SyncPartResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "partNumber"
+        - "sha256"
+        - "sizeBytes"
+      properties:
+        partNumber:
+          type: "integer"
+        sha256:
+          type: "string"
+        sizeBytes:
+          type: "integer"
+    SyncCompleteRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "remoteId"
+      properties:
+        remoteId:
+          type: "string"
+    SyncAttachmentResponse:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "attachmentId"
+        - "localAttachmentId"
+        - "state"
+        - "sizeBytes"
+        - "chunkSizeBytes"
+        - "resumable"
+        - "sha256"
+        - "mime"
+        - "ownerRef"
+        - "evidenceType"
+      properties:
+        attachmentId:
+          type: "string"
+        localAttachmentId:
+          type: "string"
+        state:
+          type: "string"
+        sizeBytes:
+          type: "integer"
+        chunkSizeBytes:
+          type: "integer"
+        resumable:
+          type: "boolean"
+        sha256:
+          type: "string"
+        mime:
+          type: "string"
+        ownerRef:
+          type: "string"
+        evidenceType:
+          type: "string"
     LoginRequest:
       type: object
       additionalProperties: false

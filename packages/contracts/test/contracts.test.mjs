@@ -47,12 +47,21 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     { method: 'POST', operationId: 'createOrgTenant', path: '/org/tenants', responseSchemaName: 'TenantResponse' },
     { method: 'GET', operationId: 'getOrgHierarchy', path: '/org/tenants/{tenantId}/hierarchy', responseSchemaName: 'HierarchyResponse' },
     { method: 'GET', operationId: 'getSchemaVersion', path: '/system/schema-version', responseSchemaName: 'SchemaVersionResponse' },
+    { method: 'POST', operationId: 'initSyncAttachment', path: '/v1/attachments/init', responseSchemaName: 'SyncUploadResponse' },
+    { method: 'POST', operationId: 'completeSyncAttachment', path: '/v1/attachments/{localId}/complete', responseSchemaName: 'SyncAttachmentResponse' },
+    { method: 'PUT', operationId: 'putSyncAttachmentPart', path: '/v1/attachments/{localId}/parts/{number}', responseSchemaName: 'SyncPartResponse' },
     { method: 'POST', operationId: 'login', path: '/v1/auth/login', responseSchemaName: 'LoginResponse' },
     { method: 'POST', operationId: 'logout', path: '/v1/auth/logout', responseSchemaName: 'RevocationResponse' },
     { method: 'POST', operationId: 'verifyMfa', path: '/v1/auth/mfa/verify', responseSchemaName: 'TokenResponse' },
     { method: 'POST', operationId: 'refreshSession', path: '/v1/auth/refresh', responseSchemaName: 'TokenResponse' },
     { method: 'GET', operationId: 'listMySessions', path: '/v1/me/sessions', responseSchemaName: 'SessionListResponse' },
     { method: 'POST', operationId: 'revokeMySession', path: '/v1/me/sessions/{id}/commands/revoke', responseSchemaName: 'RevocationResponse' },
+    { method: 'POST', operationId: 'ackSync', path: '/v1/sync/ack', responseSchemaName: 'SyncAckResponse' },
+    { method: 'POST', operationId: 'bootstrapSync', path: '/v1/sync/bootstrap', responseSchemaName: 'SyncBootstrapResponse' },
+    { method: 'POST', operationId: 'registerSyncDevice', path: '/v1/sync/devices/register', responseSchemaName: 'SyncRegisterResponse' },
+    { method: 'GET', operationId: 'syncHealth', path: '/v1/sync/health', responseSchemaName: 'SyncHealthResponse' },
+    { method: 'POST', operationId: 'pullSync', path: '/v1/sync/pull', responseSchemaName: 'SyncPullResponse' },
+    { method: 'POST', operationId: 'pushSync', path: '/v1/sync/push', responseSchemaName: 'SyncPushResponse' },
   ]);
   const tenant = openapi.operations.find(({ operationId }) => operationId === 'createOrgTenant');
   assert.deepEqual(tenant.inputs, {
@@ -290,6 +299,7 @@ test('repeated canonical generation is byte-identical with stable output orderin
   assert.deepEqual(first, second);
   assert.deepEqual([...first.keys()], [
     'generated/dart/contracts.dart',
+    '../../apps/mobile/lib/generated/contracts.dart',
     'generated/manifest.json',
     'src/generated/contracts.ts',
   ]);
@@ -308,4 +318,22 @@ test('canonical generated clients remain free of unauthorized domains', async ()
     assert.doesNotMatch(generated, /\/(?:identity|permissions?|audit|gis|fleet|warehouse|production)(?:\/|['`])/i);
     assert.doesNotMatch(generated, /(?:auth|identity|permissions?|audit|gis|fleet|warehouse)\.(?:created|updated|deleted)/i);
   }
+});
+
+
+test('sync clients retain immutable command identity, nested intent, evidence and cursor DTOs',async()=>{
+ const contracts=await loadAndValidateContracts();
+ const artifacts=renderGeneratedArtifacts(contracts);
+ const compiled=typescript.transpileModule(artifacts.get('src/generated/contracts.ts'),{compilerOptions:{target:typescript.ScriptTarget.ES2022,module:typescript.ModuleKind.ESNext}}).outputText;
+ const {AgroPlatformApiClient}=await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+ const calls=[];
+ const client=new AgroPlatformApiClient({baseUrl:'https://authority.test',transport:async(url,init)=>{calls.push({url,init});return {ok:true,status:200,json:async()=>({results:[],serverTime:'2026-10-01T00:00:00Z'})};}});
+ const body={deviceId:'device',scopeVersion:1,schemaVersion:1,commands:[{localCommandId:'stable',idempotencyKey:'stable',deviceSeq:7,aggregate:{type:'Fixture',id:'one'},baseVersion:3,type:'RecordFixture',commandVersion:1,observedAt:'2026-10-01T00:00:00Z',offlineAuthId:'signed',payload:{nested:{one:[1,2]}},provenance:{gps:[1,2]},attachments:[{localAttachmentId:'photo',ownerRef:'Fixture:one',evidenceType:'photo',sha256:'hash',mime:'image/jpeg',sizeBytes:4,required:false}]}]};
+ await client.pushSync('Bearer session',body);
+ assert.equal(calls[0].url,'https://authority.test/v1/sync/push');
+ assert.equal(calls[0].init.headers.Authorization,'Bearer session');assert.deepEqual(JSON.parse(calls[0].init.body),body);
+ const dart=artifacts.get('generated/dart/contracts.dart');
+ assert.match(dart,/final Map<String, Object\?> payload;/);assert.match(dart,/final List<SyncAttachmentIntent> attachments;/);
+ assert.equal(artifacts.get('../../apps/mobile/lib/generated/contracts.dart').endsWith(dart),true);
+ for(const path of ['/v1/sync/push','/v1/sync/pull','/v1/attachments/init']) assert.ok(contracts.openapi.document.paths[path].post.description.includes('permissions'));
 });

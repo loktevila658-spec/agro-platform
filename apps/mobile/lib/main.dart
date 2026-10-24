@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'persistence.dart';
+import 'sync.dart';
 import 'widgets/queue_status.dart';
 
 const apiBase = String.fromEnvironment(
@@ -62,18 +63,26 @@ class AgroPlatformShell extends StatefulWidget {
   State<AgroPlatformShell> createState() => _AgroPlatformShellState();
 }
 
-class _AgroPlatformShellState extends State<AgroPlatformShell> {
+class _AgroPlatformShellState extends State<AgroPlatformShell>
+    with WidgetsBindingObserver {
   final login = TextEditingController();
   final password = TextEditingController();
   final code = TextEditingController();
   String? deviceId;
   Workspace? workspace;
   WorkspaceIdentity? workspaceIdentity;
+  AuthorityHttpTransport? syncTransport;
+  SyncEngine? syncEngine;
+  AttachmentWorker? mediaWorker;
+  bool syncForeground = true;
+  Timer? syncTimer;
+  Future<void>? syncTask, mediaTask;
   QueueCounts queueCounts = const QueueCounts(0, 0, 0, 0);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     unawaited(initializeDevice());
   }
 
@@ -115,8 +124,95 @@ class _AgroPlatformShellState extends State<AgroPlatformShell> {
       return;
     }
     workspace = opened;
+    final transport = AuthorityHttpTransport(
+      authority: Uri.parse(apiBase),
+      accessToken: () async {
+        final value = accessToken;
+        if (value == null) {
+          throw const SyncFailure('AUTHENTICATION_REQUIRED', status: 401);
+        }
+        return value;
+      },
+    );
+    syncTransport = transport;
+    const publicKey = String.fromEnvironment(
+      'SYNC_AUTHORITY_ED25519_PUBLIC_KEY',
+    );
+    final verifier = publicKey.isEmpty
+        ? null
+        : AuthorityGrantVerifier(base64.decode(publicKey), deviceId!);
+    syncEngine = SyncEngine(
+      opened,
+      opened.commands(verify: verifier?.verify ?? (_) async => false),
+      transport,
+      grantVerifier: verifier,
+    );
+    mediaWorker = AttachmentWorker(opened.attachments, transport);
+    startSync(connectivityRestored: true);
     final counts = await opened.commands(verify: (_) async => false).counts();
     if (mounted) setState(() => queueCounts = counts);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    syncForeground = state == AppLifecycleState.resumed;
+    if (state == AppLifecycleState.resumed) {
+      startSync(connectivityRestored: true);
+    } else {
+      syncTimer?.cancel();
+    }
+  }
+
+  void startSync({bool connectivityRestored = false}) {
+    final engine = syncEngine, opened = workspace;
+    if (engine == null || opened == null || syncTask != null) return;
+    syncTimer?.cancel();
+    syncTask =
+        (() async {
+          try {
+            await engine.run(
+              connectivityRestored: connectivityRestored,
+              maxBatches: 20,
+            );
+          } catch (_) {
+            /* queue remains durable; authentication/authority is never bypassed */
+          }
+          if (!identical(syncEngine, engine)) return;
+          final counts = await opened
+              .commands(verify: (_) async => false)
+              .counts();
+          if (mounted) setState(() => queueCounts = counts);
+        })().catchError((Object _) {}).whenComplete(() {
+          syncTask = null;
+          if (mounted && syncForeground && identical(syncEngine, engine)) {
+            syncTimer = Timer(
+              Duration(seconds: queueCounts.pending > 0 ? 5 : 30),
+              startSync,
+            );
+          }
+        });
+    final worker = mediaWorker;
+    if (worker != null && mediaTask == null) {
+      // Conservatively treat unknown network type as mobile data. Wi-Fi-only
+      // evidence remains queued until an owner/platform network policy permits it.
+      mediaTask = worker
+          .run(isWifi: false)
+          .whenComplete(() => mediaTask = null);
+    }
+  }
+
+  Future<void> stopSync() async {
+    syncTimer?.cancel();
+    syncEngine = null;
+    mediaWorker = null;
+    syncTransport?.close();
+    syncTransport = null;
+    final pending = [syncTask, mediaTask].whereType<Future<void>>().toList();
+    for (final task in pending) {
+      try {
+        await task;
+      } catch (_) {}
+    }
   }
 
   String? challenge;
@@ -131,7 +227,8 @@ class _AgroPlatformShellState extends State<AgroPlatformShell> {
     login.dispose();
     password.dispose();
     code.dispose();
-    unawaited(workspace?.close());
+    WidgetsBinding.instance.removeObserver(this);
+    unawaited(stopSync().then((_) => workspace?.close()));
     super.dispose();
   }
 
@@ -237,6 +334,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell> {
   }
 
   Future<void> logout() async {
+    await stopSync();
     final token = accessToken;
     if (token != null) {
       try {
