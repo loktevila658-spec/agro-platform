@@ -1,7 +1,11 @@
 # WP49-020 Completion Report — Sync protocol & conflict model
 
-Status: **IN PROGRESS**. No DONE activation until required exact-head review/checks,
-ordinary merge and exact post-merge CI, final evidence closeout and CR #50 closure.
+Final status: **DONE takes effect only after** the final exact PR-head required
+checks and review are clear, PR #51 is ordinarily merged, CI succeeds on that exact
+merge SHA, and [CR #50](https://github.com/loktevila658-spec/agro-platform/issues/50)
+is closed as completed with the final SHA/run evidence. Until those observed
+conditions are recorded, status is **IN PROGRESS**. Final commit/run identifiers
+are recorded in the CR closeout after success, avoiding a self-referential hash.
 
 Baseline: live `main@77656151eceb1e54536acdc3b6dabd1ff0b2389f`, independently verified
 with ls-remote/fetch on 2026-10-24. No intervening main changes at G0. Work runs in a
@@ -115,7 +119,7 @@ CI definitions and required aggregate are unchanged.
 - Physical-device battery/ANR/full business workflow performance remain release
   qualification; this package claims protocol engineering tests only.
 
-## G0–G12 decisions (pending exact-head CI)
+## Historical initial-PR G0–G12 decisions (superseded at final activation)
 
 | Gate | Decision |
 |---|---|
@@ -133,8 +137,8 @@ CI definitions and required aggregate are unchanged.
 | G11 | 14-day/50k capacity/convergence PASS; hosted server 100-command/1000-change NFR and security pending |
 | G12 | IN PROGRESS — full approved path check/review/exact-head CI/ordinary merge/post-merge/closeout pending |
 
-Final exact PR head, merge SHA/run, review and final path inventory will be added
-only after observed results. DONE activation will use final CR closeout to avoid
+Final exact PR head, merge SHA/run and review are recorded in CR #50 only after
+observed results. The full 49-file path inventory is below. DONE activation will use final CR closeout to avoid
 self-referential report commit hashes. No auto-merge, force/admin bypass or waiver.
 
 ## Approved changed paths at initial implementation head
@@ -218,3 +222,47 @@ changes without gaps in **10.0 ms** (four <=500-row pages), 100-command P95
 `node scripts/ci-gates.mjs unit` **PASS** after starting the existing Docker runtime.
 The earlier local Docker limitation no longer blocks real integration verification.
 Final exact-head CI, merge and post-merge activation remain pending.
+
+
+## Final gate evaluation and activation contract
+
+This evaluation becomes PASS only when the explicit final status conditions at
+the top are observed and the CR closeout records the exact final PR head, ordinary
+two-parent merge SHA and its successful post-merge run. It does not treat pending,
+cancelled, skipped or failed checks as successful. Initial failed run 40092617342
+remains recorded above and is not completion evidence. Final-head changes after
+`1236136c8d500ddb9de22f8dbb1bcb01119d798a` are this report only.
+
+| Gate | Evidence and final activation decision |
+|---|---|
+| G0 | PASS — live baseline/order/graph and dependency 015/016/019 reports, closed CRs, exact post-merge CI independently verified; main did not advance before implementation |
+| G1 | PASS on activation — local build/typecheck/architecture and fatal Flutter analyze/format; required exact-head static jobs must also succeed |
+| G2 | PASS on activation — additive server v7 and mobile v2, encrypted v1 migration preserves IDs/queue/evidence, future version fails closed; required real clean/repeated PostgreSQL migration |
+| G3 | PASS on activation — full local Unit PASS, API 52/52; hosted Mobile 33/33 and final-head Unit/Mobile required |
+| G4 | PASS on activation — real PostgreSQL atomic effect/audit/outbox/receipt/feed, delayed binding and HTTP acceptance locally PASS; required final-head PostgreSQL/PostGIS/MinIO/ClamAV plus Android APK/native integration |
+| G5 | PASS on activation — additive canonical JSON/binary OpenAPI; generated TS/shared Dart/mobile copy, nested intent serialization, no drift; all previous assertions retained |
+| G6 | PASS on activation — ten concurrent duplicate sends/restart/lost response/partial batch cause one fixture effect/audit/outbox; receipt and owner effect share transaction; no event catalog changes |
+| G7 | PASS on activation — default deny, current server auth/permission/domain guard, tenant/device isolation, stale versions and permission-revoked projections PURGE; rejected receipt replay preserved |
+| G8 | PASS on activation — mobile reconnect/partial/duplicate/conflict/rejection/cursor crash/reset/migration/delayed upload/restart; deterministic 14-day profiles and 50k IDs with zero loss |
+| G9 | PASS on activation — immutable original command/provenance/evidence and explicit conflict snapshot; authoritative fixture effect/audit/outbox/receipt/feed commit or roll back together; production writes only sync-owned tables through owner application ports |
+| G10 | PASS on activation — fixed-seed/time-shaped protocol fixtures, real HTTP/server and native Android pull interruption/reopen; future business flows are not claimed |
+| G11 | PASS on activation — 100k operational rows/20k entities, 50k convergence <30 min; server 100-command P95 <2 s and all 1503 changes <2 s, numeric-order RED->GREEN, current permissions/authority/redirect protections; physical-device release qualification remains explicit |
+| G12 | PASS only at activation — all 49 paths mapped to frozen/approved scope, manifest byte-identical, review findings clear, mandatory exact final-head checks successful, ordinary merge and exact successful post-merge CI, CR #50 closed with canonical evidence |
+
+Review: numeric cursor alias data-loss defect and ordering-index performance issue
+were corrected with meaningful regression evidence. Final review checks are made
+again on the final head. No independent approval or self-approval is claimed;
+repository protection requires `CI quality gates` and conversation resolution,
+with no reviewer approval requirement. No auto-merge, admin/force bypass or test
+waiver is used. The initial preflight omission is disclosed and approved in the
+single Scope CR, rather than silently broadening paths.
+
+Implemented boundaries/limits remain as documented: no registered invented
+business command, no cloud operational writes, no direct foreign repository write,
+no new event fields/broker/connector framework/UX redesign. File authorization and
+required business evidence remain owner-domain rules; client transport hints never
+authorize canonical domain changes. Feed compaction is not scheduled without a
+snapshot adapter; retained history and pending intent are preserved. Unknown network
+type keeps Wi-Fi-only media queued. Physical Android battery/ANR/production workflow
+qualification belongs to the declared release profile and is not replaced by these
+protocol engineering fixtures.
