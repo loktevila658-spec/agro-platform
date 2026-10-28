@@ -17,6 +17,8 @@ importers:
 
   ../packages/config: {}
 
+  ../packages/connectors: {}
+
   ../packages/contracts: {}
 
   ../packages/testkit: {}
