@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -111,6 +111,8 @@ test('baseline, organization, identity, and audit framework migrations are order
   assert.match(migrations[5].sql, /state <> 'AVAILABLE'.*scan_status = 'CLEAN'/is);
   assert.doesNotMatch(migrations[5].sql, /local_path|filesystem_path/i);
   for (const table of ['tenant_clock','device','command_receipt','change','ack','conflict_record','attachment_reference']) assert.match(migrations[6].sql,new RegExp(`CREATE TABLE sync\\.${table}\\b`,'i'));
+  for (const table of ['profile','job','attempt','external_link','link_revision','audit_entry','outbox']) assert.match(migrations[7].sql,new RegExp(`CREATE TABLE integrations\\.${table}\\b`,'i'));
+  assert.doesNotMatch(migrations[7].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files|sync)\./i);
   assert.doesNotMatch(migrations[6].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files)\./i);
 });
 
