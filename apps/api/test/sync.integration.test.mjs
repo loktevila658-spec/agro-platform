@@ -24,7 +24,7 @@ const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../.
 const image = process.env.POSTGIS_TEST_IMAGE ?? 'agroplatform/wp49-003-postgis:test';
 
 function docker(args) {
-  return spawnSync('docker', args, { cwd: repositoryRoot, encoding: 'utf8' });
+  return spawnSync('docker', args, { cwd: repositoryRoot, encoding: 'utf8', timeout:180000 });
 }
 
 function assertCommand(result, action) {
@@ -58,7 +58,9 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     const port = portResult.stdout.trim();
     const databaseUrl = `postgresql://postgres:${password}@127.0.0.1:${port}/agro_test`;
     const socketUrl = 'postgresql:///agro_test?host=%2Fvar%2Frun%2Fpostgresql&user=postgres';
-    pool = new Pool({ connectionString: databaseUrl, connectionTimeoutMillis: 1000 });
+    pool = new Pool({ connectionString: databaseUrl, connectionTimeoutMillis: 1000, statement_timeout: 15000 });
+    const phase=(name)=>console.log(`sync integration: ${name}`);
+    phase('PostgreSQL started');
 
     let ready = false;
     for (let attempt = 0; attempt < 100; attempt += 1) {
@@ -77,6 +79,7 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     });
     assertCommand(migration, 'Database migrations');
     assert.match(migration.stdout, /migration 7 applied/);
+    phase('migration v7 applied');
 
 
     process.env.AGRO_DEPLOYMENT_MODE='LOCAL_PRIMARY';
@@ -116,6 +119,7 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     let sequence=0;
     const command=(version=7)=>{const id=uuid7();return {localCommandId:id,idempotencyKey:id,deviceSeq:++sequence,aggregate:{type:'Fixture',id:'one'},baseVersion:version,type:'RecordFixture',commandVersion:1,observedAt:'2026-10-01T00:30:00Z',offlineAuthId:'provisioned',payload:{value:'offline intent'},provenance:{gps:[1,2],observedBy:'fixture'},attachments:[]};};
     const push=(commands)=>sync.push(auth,{deviceId:actor.deviceId,scopeVersion:1,schemaVersion:1,commands});
+    phase('device/bootstrap/grant binding checked');
     const first=command();
     const receipts=await Promise.all(Array.from({length:10},()=>push([first])));
     for(const r of receipts)assert.deepEqual(r.results[0],receipts[0].results[0]);
@@ -141,6 +145,7 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     fail=false;registry.get('RecordFixture').execute=originalExecute;
     const replay=await push([good,later]);assert.ok(replay.results.every(r=>r.status==='ACCEPTED'));
     assert.equal((await pool.query('SELECT count(*)::int n FROM sync_test.outbox')).rows[0].n,3);
+    phase('duplicate/restart/permission/conflict/partial batch checked');
     const page=await sync.pull(auth,{deviceId:actor.deviceId,scopeVersion:1,cursor:bootstrap.initialCursor,limit:1});
     assert.equal(page.changes.length,1);assert.equal(page.hasMore,true);
     assert.deepEqual((await sync.pull(auth,{deviceId:actor.deviceId,scopeVersion:1,cursor:bootstrap.initialCursor,limit:1})).changes,page.changes);
@@ -155,6 +160,7 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     actor.tenantId=tenant;
     revoked=true;await assert.rejects(push([first]),/AUTH_DENIED/);revoked=false;
     process.env.AGRO_DEPLOYMENT_MODE='CLOUD_PRIMARY';await assert.rejects(push([first]),/AUTHORITY_MODE_MISMATCH/);process.env.AGRO_DEPLOYMENT_MODE='LOCAL_PRIMARY';
+    phase('cursor/tenant/auth/authority negatives checked');
     // 100 lightweight commands benchmark executes two DOC12-bounded batches.
     registry.register({commandType:'AppendFixture',version:1,requiresVersion:false,async authorize(){return true;},async execute(tx,a,c){await tx.query('INSERT INTO sync_test.outbox VALUES($1)',[c.localCommandId]);return {canonical:{},changes:[{entityType:'Fixture',entityId:c.localCommandId,op:'UPSERT',projection:{},visibleUserIds:[a.userId]}]};}});
     const samples=[];
@@ -165,8 +171,25 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     await sync.appendChanges(writer,actor.tenantId,Array.from({length:1000},(_,i)=>({entityType:'Fixture',entityId:`projection-${i}`,op:'UPSERT',projection:{value:i},visibleUserIds:[actor.userId]})));
     await writer.query('COMMIT');writer.release();
     const pullStarted=performance.now();let pullCursor=bootstrap.initialCursor;let pulled=0;
-    while(pulled<1000){const p=await sync.pull(auth,{deviceId:actor.deviceId,scopeVersion:1,cursor:pullCursor,limit:500});pulled+=p.changes.length;pullCursor=p.nextCursor;}
+    const expectedSeq=(await pool.query('SELECT seq::text FROM sync.change WHERE tenant_id=$1 ORDER BY sync.change.seq',[actor.tenantId])).rows.map(r=>r.seq);
+    // Explicit bigint ordering regression: text aliases sort 1,10,100,... and
+    // would both lose facts and stall convergence after skipping numeric ranges.
+    const observedSeq=[];
+    for(let pageNumber=0;pageNumber<10;pageNumber++) {
+      const page=await sync.pull(auth,{deviceId:actor.deviceId,scopeVersion:1,cursor:pullCursor,limit:500});
+      assert.equal(page.resetRequired,false);
+      assert.ok(page.changes.length>0,'pull must make progress until hasMore=false');
+      for(const change of page.changes) {
+        if(observedSeq.length)assert.ok(BigInt(change.seq)>BigInt(observedSeq.at(-1)),'numeric sequence must strictly increase');
+        observedSeq.push(change.seq);
+      }
+      pulled+=page.changes.length;pullCursor=page.nextCursor;
+      if(!page.hasMore)break;
+    }
+    assert.equal(pulled,expectedSeq.length);assert.deepEqual(observedSeq,expectedSeq);
+    assert.ok(pulled>=1000);
     assert.ok(performance.now()-pullStarted<2000);t.diagnostic(`1000 change records <=2 MiB/page delivered in ${(performance.now()-pullStarted).toFixed(1)}ms`);
+    phase(`all ${pulled} changes delivered in numeric order without gaps`);
     // Delayed media keeps stable local reference even after command receipt.
     const localId=uuid7(),remoteId=uuid7();const intent={localAttachmentId:localId,ownerRef:'Fixture:one',evidenceType:'photo',sha256:'a'.repeat(64),mime:'image/jpeg',sizeBytes:4,required:false};
     const media=new SyncFiles(sync,{async initUpload(){return {attachmentId:remoteId,state:'QUARANTINED',sizeBytes:4,chunkSizeBytes:5242880,resumable:false};},async uploadPart(){return {partNumber:1,sha256:intent.sha256,sizeBytes:4};},async completeUpload(){},async getAvailableReference(){return {attachmentId:remoteId,state:'AVAILABLE',sizeBytes:4,sha256:intent.sha256,mime:'image/jpeg',ownerRef:intent.ownerRef,evidenceType:intent.evidenceType};}});
@@ -175,6 +198,7 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     await media.init(auth,intent);await media.part(auth,localId,remoteId,1,intent.sha256,Buffer.from([255,216,255,0]));await media.complete(auth,localId,remoteId);
     assert.equal((await pool.query('SELECT remote_id FROM sync.attachment_reference WHERE tenant_id=$1 AND local_id=$2',[actor.tenantId,localId])).rows[0].remote_id,remoteId);
     await assert.rejects(media.init(auth,{...intent,ownerRef:'Fixture:other'}),/ATTACHMENT_OWNER_MISMATCH/);
+    phase('delayed attachment binding checked');
     // Competing writer cannot publish a later seq before earlier transaction commits.
     const c1=await pool.connect(),c2=await pool.connect();await c1.query('BEGIN');await c2.query('BEGIN');
     const before=(await pool.query('SELECT seq::text FROM sync.tenant_clock WHERE tenant_id=$1',[actor.tenantId])).rows[0].seq;
@@ -184,6 +208,7 @@ test('sync PostgreSQL atomicity, reconnect, conflicts and durable scoped cursor'
     await new Promise(r=>setTimeout(r,30));assert.equal(secondDone,false);
     assert.equal((await pool.query('SELECT seq::text FROM sync.tenant_clock WHERE tenant_id=$1',[actor.tenantId])).rows[0].seq,before);
     await c1.query('COMMIT');await second;await c2.query('COMMIT');c1.release();c2.release();
+    phase('commit-order serialization checked');
     // HTTP module binding runs real service/PostgreSQL through canonical route.
     class HttpFixture {}
     Module({controllers:[SyncController],providers:[{provide:SyncService,useValue:{push:(...a)=>sync.push(...a),pull:(...a)=>sync.pull(...a),register:(...a)=>sync.register(...a),bootstrap:(...a)=>sync.bootstrap(...a),ack:(...a)=>sync.ack(...a),health:(...a)=>sync.health(...a)}}]})(HttpFixture);

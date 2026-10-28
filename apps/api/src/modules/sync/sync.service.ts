@@ -173,7 +173,7 @@ export class SyncService {
       return { changes:[],resetRequired:true,code:error instanceof Error && error.message==='CURSOR_EXPIRED' ? 'CURSOR_EXPIRED' : 'RESET_REQUIRED',hasMore:false,nextCursor:body.cursor };
     }
     const rows = (await this.pool.query(`SELECT seq::text,entity_type AS "entityType",entity_id AS "entityId",entity_version::int AS "entityVersion",op,projection FROM sync.change
-      WHERE tenant_id=$1 AND seq>$2 AND $3::uuid=ANY(visible_user_ids) ORDER BY seq LIMIT $4`,[actor.tenantId,cursor.seq,actor.userId,(body.limit??500)+1])).rows;
+      WHERE tenant_id=$1 AND seq>$2 AND $3::uuid=ANY(visible_user_ids) ORDER BY sync.change.seq LIMIT $4`,[actor.tenantId,cursor.seq,actor.userId,(body.limit??500)+1])).rows;
     const changes = []; let bytes = 4096;
     for (const raw of rows.slice(0,body.limit??500)) { const row = await this.registry.canRead(actor,raw.entityType,raw.entityId) ? raw : {seq:raw.seq,entityType:raw.entityType,entityId:raw.entityId,op:'PURGE',projection:{}}; const size = Buffer.byteLength(JSON.stringify(row)); if (bytes+size>2*1024*1024) break; changes.push(row); bytes += size; }
     const seq = changes.at(-1)?.seq ?? cursor.seq;

@@ -190,3 +190,31 @@ packages/contracts/test/contracts.test.mjs
 tests/contracts.test.mjs
 tests/evidence/WP49-020_COMPLETION_REPORT.md
 ```
+
+
+## Resume audit and numeric cursor regression — 2026-10-28
+
+Live main remains the baseline above and PR [#51](https://github.com/loktevila658-spec/agro-platform/pull/51)
+remains open. Initial exact-head run [40092617342](https://github.com/loktevila658-spec/agro-platform/actions/runs/40092617342)
+on `34af3fd4c1cd902f68def6221e8f2a2bdd389d53` did NOT pass: Unit reached its timeout
+and the aggregate failed. Lint/typecheck/contract/migration/runtime and Mobile passed.
+Hosted Mobile: **33/33** unit/widget tests, 14-day/50k convergence **264,980 ms**,
+Android debug APK PASS, native encrypted-SQLite/OS-keystore/pull rollback/reopen
+integration **1/1 PASS**, enqueue P95 **12 ms**, shared wipe <30 s. Those passes do
+not substitute for the failed Unit/aggregate or authorize a merge.
+
+Root cause: `SELECT seq::text ... ORDER BY seq` ordered the returned text alias
+lexicographically. Beyond single digits it could advance a cursor past unseen
+numeric changes and then stall convergence. Fixed to `ORDER BY sync.change.seq`
+(the original bigint). The strengthened fixture requires strictly increasing
+numeric sequence, exact equality with every persisted change ID, nonempty progress
+until hasMore=false, and a bounded page loop. No timeout/acceptance threshold was
+increased. Statement/probe diagnostics fail boundedly instead of silently hanging.
+
+Real PostgreSQL RED -> GREEN reproduced on the same strengthened fixture: old SQL
+fails `numeric sequence must strictly increase`; fixed SQL delivers **all 1,503**
+changes without gaps in **10.0 ms** (four <=500-row pages), 100-command P95
+**204.4 ms** (five samples, two <=50-command requests per sample). Full local
+`node scripts/ci-gates.mjs unit` **PASS** after starting the existing Docker runtime.
+The earlier local Docker limitation no longer blocks real integration verification.
+Final exact-head CI, merge and post-merge activation remain pending.
