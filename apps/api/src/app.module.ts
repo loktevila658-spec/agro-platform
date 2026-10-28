@@ -1,3 +1,4 @@
+import { SyncModule } from './modules/sync/sync.module';
 import { Module } from '@nestjs/common';
 
 import { ObservabilityMetrics, StructuredLogger } from '../../../packages/observability/src/index.cjs';
@@ -11,7 +12,7 @@ import { EventsModule } from './modules/events/events.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule],
+  imports: [OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

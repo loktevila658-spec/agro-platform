@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import type { INestApplication, Type } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { NestFactory } from '@nestjs/core';
 
 import {
@@ -19,7 +20,8 @@ const { installBaselineSecurityHeaders } = require('../../../security/headers.cj
 };
 
 export async function createApp(module: Type<unknown> = AppModule): Promise<INestApplication> {
-  const app = await NestFactory.create(module, { logger: false });
+  const app = await NestFactory.create<NestExpressApplication>(module, { logger: false });
+  app.useBodyParser('json', { limit: '1mb' });
   installBaselineSecurityHeaders(app.getHttpAdapter().getInstance(), process.env);
   app.use(
     createRequestObservabilityMiddleware(

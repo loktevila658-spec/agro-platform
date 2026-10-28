@@ -172,7 +172,9 @@ function operationInputs(document, operation, route, label, errors) {
   if (routeParameters.some((name) => !pathParameters.includes(name)) || pathParameters.some((name) => !routeParameters.includes(name))) errors.push(`${label} path parameters must match route placeholders`);
   const body = operation.requestBody ? dereference(document, operation.requestBody) : undefined;
   const schema = body?.content?.['application/json']?.schema;
-  if (operation.requestBody && (!isObject(body) || !isObject(schema))) errors.push(`${label} requestBody must define an application/json schema`);
+  const binary=body?.content?.['application/octet-stream']?.schema;
+  if(binary?.type==='string' && binary?.format==='binary') inputs.binary={required:body.required===true};
+  if (operation.requestBody && !inputs.binary && (!isObject(body) || !isObject(schema))) errors.push(`${label} requestBody must define an application/json schema`);
   if (schema) {
     const reference = schema.$ref;
     if (typeof reference !== 'string' || !isObject(resolveReference(document, reference))) errors.push(`${label} requestBody schema must reference a declared component schema`);
@@ -238,7 +240,7 @@ export function validateOpenApi(source) {
     if (!Array.isArray(schema.required) || !schema.required.every((key) => Object.hasOwn(schema.properties, key))) errors.push(`components.schemas.${name}.required must reference declared properties`);
     for (const [property, definition] of Object.entries(schema.properties)) {
       const validReference = isObject(definition) && typeof definition.$ref === 'string' && isObject(resolveReference(document, definition.$ref));
-      const validPrimitive = isObject(definition) && ['string', 'integer', 'number', 'boolean'].includes(definition.type);
+      const validPrimitive = isObject(definition) && ['string', 'integer', 'number', 'boolean', 'object'].includes(definition.type);
       const validArray = isObject(definition) && definition.type === 'array' && isObject(definition.items) && (
         ['string', 'integer', 'number', 'boolean'].includes(definition.items.type)
         || (typeof definition.items.$ref === 'string' && isObject(resolveReference(document, definition.items.$ref)))
@@ -367,7 +369,7 @@ function tsType(definition) {
   if (definition.$ref) return definition.$ref.split('/').at(-1);
   if (definition.type === 'array') return `readonly ${tsType(definition.items)}[]`;
   if (definition.enum) return definition.enum.map((value) => `'${value}'`).join(' | ');
-  return { string: 'string', integer: 'number', number: 'number', boolean: 'boolean' }[definition.type] ?? 'unknown';
+  return { string: 'string', integer: 'number', number: 'number', boolean: 'boolean', object: 'Readonly<Record<string, unknown>>' }[definition.type] ?? 'unknown';
 }
 
 function renderTypeScript(contracts) {
@@ -382,18 +384,19 @@ function renderTypeScript(contracts) {
     const parameters = [...(inputs.path ?? []), ...(inputs.query ?? []), ...(inputs.header ?? [])];
     const optionalHeadersOnly = hasOnlyOptionalHeaders(inputs);
     const args = parameters.map((parameter) => ({ required: parameter.required, value: `${argumentName(parameter.name)}${parameter.required ? '' : '?'}: ${tsType({ type: parameter.type })}` }));
+    if(inputs.binary)args.push({required:true,value:'body: Uint8Array<ArrayBuffer>'});
     if (inputs.body) args.push({ required: inputs.body.required, value: `body${inputs.body.required ? '' : '?'}: ${inputs.body.schemaName}` });
     args.sort((left, right) => Number(right.required) - Number(left.required));
     const route = operation.path.replace(/\{([^}]+)\}/g, (_, name) => `\${encodeURIComponent(String(${argumentName(name)}))}`);
     const query = (inputs.query ?? []).map((parameter) => `    if (${argumentName(parameter.name)} !== undefined) url.searchParams.set(${JSON.stringify(parameter.name)}, String(${argumentName(parameter.name)}));`).join('\n');
     const headers = (inputs.header ?? []).map((parameter) => `    if (${argumentName(parameter.name)} !== undefined) headers[${JSON.stringify(parameter.name)}] = String(${argumentName(parameter.name)});`).join('\n');
-    const body = inputs.body ? `    headers['Content-Type'] = 'application/json';\n    const requestBody = ${inputs.body.required ? 'JSON.stringify(body)' : 'body === undefined ? undefined : JSON.stringify(body)'};\n` : '';
+    const body = inputs.binary ? `    headers['Content-Type'] = 'application/octet-stream';\n    const requestBody = body;\n` : inputs.body ? `    headers['Content-Type'] = 'application/json';\n    const requestBody = ${inputs.body.required ? 'JSON.stringify(body)' : 'body === undefined ? undefined : JSON.stringify(body)'};\n` : '';
     const init = optionalHeadersOnly
       ? `method: '${operation.method}', ...(Object.keys(headers).length ? { headers } : {})`
-      : `method: '${operation.method}'${parameters.length || inputs.body ? `, headers${inputs.body ? ', body: requestBody' : ''}` : ''}`;
+      : `method: '${operation.method}'${parameters.length || inputs.body || inputs.binary ? `, headers${inputs.body || inputs.binary ? ', body: requestBody' : ''}` : ''}`;
     return `  async ${operation.operationId}(${args.map(({ value }) => value).join(', ')}): Promise<${operation.responseSchemaName}> {\n    const url = new URL(\`${'${this.baseUrl}'}${route}\`);${query ? `\n${query}` : ''}\n    const headers: Record<string, string> = {};${headers ? `\n${headers}` : ''}\n${body}    const response = await this.transport(url.toString(), { ${init} });\n    if (!response.ok) throw new Error(\`${operation.operationId} failed with HTTP ${'${response.status}'}\`);\n    return await response.json() as ${operation.responseSchemaName};\n  }`;
   }).join('\n\n');
-  return `/**\n * @generated by @agroplatform/contracts. DO NOT EDIT.\n * Sources: ${OPENAPI_PATH}, ${EVENT_CATALOG_PATH}\n */\n\nexport const OPENAPI_VERSION = '${contracts.openapi.document.openapi}' as const;\nexport const API_CONTRACT_VERSION = '${contracts.openapi.document.info.version}' as const;\nexport const EVENT_CATALOG_VERSION = '${contracts.events.catalogVersion}' as const;\n\n${models}\n\nexport interface EventDefinition {\n  readonly name: string;\n  readonly version: string;\n  readonly producer: string;\n  readonly consumers: readonly string[];\n  readonly schema: Readonly<Record<string, unknown>>;\n}\n\nexport const EVENT_DEFINITIONS: readonly EventDefinition[] = ${JSON.stringify(contracts.events.events, null, 2)};\n\nexport interface ApiTransportResponse {\n  readonly ok: boolean;\n  readonly status: number;\n  json(): Promise<unknown>;\n}\n\nexport type ApiTransport = (url: string, init: { readonly method: string; readonly headers?: Readonly<Record<string, string>>; readonly body?: string }) => Promise<ApiTransportResponse>;\n\nexport interface ApiClientOptions {\n  readonly baseUrl: string;\n  readonly transport?: ApiTransport;\n}\n\nconst defaultTransport: ApiTransport = (url, init) => fetch(url, init);\n\nexport class AgroPlatformApiClient {\n  readonly baseUrl: string;\n  private readonly transport: ApiTransport;\n\n  constructor(options: ApiClientOptions) {\n    this.baseUrl = options.baseUrl.replace(/\\/+$/, '');\n    this.transport = options.transport ?? defaultTransport;\n  }\n\n${methods}\n}\n`;
+  return `/**\n * @generated by @agroplatform/contracts. DO NOT EDIT.\n * Sources: ${OPENAPI_PATH}, ${EVENT_CATALOG_PATH}\n */\n\nexport const OPENAPI_VERSION = '${contracts.openapi.document.openapi}' as const;\nexport const API_CONTRACT_VERSION = '${contracts.openapi.document.info.version}' as const;\nexport const EVENT_CATALOG_VERSION = '${contracts.events.catalogVersion}' as const;\n\n${models}\n\nexport interface EventDefinition {\n  readonly name: string;\n  readonly version: string;\n  readonly producer: string;\n  readonly consumers: readonly string[];\n  readonly schema: Readonly<Record<string, unknown>>;\n}\n\nexport const EVENT_DEFINITIONS: readonly EventDefinition[] = ${JSON.stringify(contracts.events.events, null, 2)};\n\nexport interface ApiTransportResponse {\n  readonly ok: boolean;\n  readonly status: number;\n  json(): Promise<unknown>;\n}\n\nexport type ApiTransport = (url: string, init: { readonly method: string; readonly headers?: Readonly<Record<string, string>>; readonly body?: string | Uint8Array<ArrayBuffer> }) => Promise<ApiTransportResponse>;\n\nexport interface ApiClientOptions {\n  readonly baseUrl: string;\n  readonly transport?: ApiTransport;\n}\n\nconst defaultTransport: ApiTransport = (url, init) => fetch(url, init);\n\nexport class AgroPlatformApiClient {\n  readonly baseUrl: string;\n  private readonly transport: ApiTransport;\n\n  constructor(options: ApiClientOptions) {\n    this.baseUrl = options.baseUrl.replace(/\\/+$/, '');\n    this.transport = options.transport ?? defaultTransport;\n  }\n\n${methods}\n}\n`;
 }
 
 function dartString(value) {
@@ -411,7 +414,7 @@ function dartLiteral(value) {
 function dartType(definition) {
   if (definition.$ref) return definition.$ref.split('/').at(-1);
   if (definition.type === 'array') return `List<${dartType(definition.items)}>`;
-  return { string: 'String', integer: 'int', number: 'num', boolean: 'bool' }[definition.type] ?? 'Object?';
+  return { string: 'String', integer: 'int', number: 'num', boolean: 'bool', object: 'Map<String, Object?>' }[definition.type] ?? 'Object?';
 }
 
 function dartRead(property, definition) {
@@ -441,6 +444,7 @@ function renderDart(contracts) {
     const optionalHeadersOnly = hasOnlyOptionalHeaders(inputs);
     const args = parameters.map((parameter) => `${parameter.required ? 'required ' : ''}${dartType({ type: parameter.type })}${parameter.required ? '' : '?'} ${argumentName(parameter.name)}`);
     if (inputs.body) args.push(`${inputs.body.required ? 'required ' : ''}${inputs.body.schemaName}${inputs.body.required ? '' : '?'} body`);
+    if(inputs.binary)args.push('required Uint8List body');
     const routeParts = operation.path.split(/\{([^}]+)\}/g);
     const route = routeParts.map((part, index) => index % 2 ? `Uri.encodeComponent(${argumentName(part)}${(inputs.path ?? []).find((item) => item.name === part)?.required ? '' : '!'})` : dartString(part)).join(' + ');
     const queryEntries = (inputs.query ?? []).map(({ name }) => `if (${argumentName(name)} != null) ${dartString(name)}: ${argumentName(name)}!.toString()`);
@@ -451,13 +455,16 @@ function renderDart(contracts) {
       const url = `baseUri.resolve(${route})${query}`;
       return `  Future<${operation.responseSchemaName}> ${operation.operationId}(${args.length ? `{${args.join(', ')}}` : ''}) async {\n    final headers = <String, String>{${requestHeaders}};\n    final url = ${url};\n    final Map<String, Object?> json;\n    if (headers.isEmpty) {\n      json = await transport(url, ${dartString(operation.method)});\n    } else {\n      final send = requestTransport;\n      if (send == null) throw StateError('requestTransport is required for ${operation.operationId} when optional headers are supplied');\n      json = await send(url, ${dartString(operation.method)}, headers: headers, body: null);\n    }\n    return ${operation.responseSchemaName}.fromJson(json);\n  }`;
     }
+    if(inputs.binary) {
+      return `  Future<${operation.responseSchemaName}> ${operation.operationId}({${args.join(', ')}}) async {\n    final send=binaryTransport;\n    if(send==null)throw StateError('binaryTransport is required for ${operation.operationId}');\n    return ${operation.responseSchemaName}.fromJson(await send(baseUri.resolve(${route}),${dartString(operation.method)},headers:<String,String>{${headers},'Content-Type':'application/octet-stream'},body:body));\n  }`;
+    }
     const usesRequestTransport = parameters.length > 0 || Boolean(inputs.body);
     const call = usesRequestTransport
       ? `requestTransport!(baseUri.resolve(${route})${query}, ${dartString(operation.method)}, headers: <String, String>{${requestHeaders}}, body: ${inputs.body ? 'jsonEncode(body.toJson())' : 'null'})`
       : `transport(baseUri.resolve(${route})${query}, ${dartString(operation.method)})`;
     return `  Future<${operation.responseSchemaName}> ${operation.operationId}(${args.length ? `{${args.join(', ')}}` : ''}) async {\n${usesRequestTransport ? `    final send = requestTransport;\n    if (send == null) throw StateError('requestTransport is required for ${operation.operationId}');\n` : ''}    final json = await ${usesRequestTransport ? call.replace('requestTransport!', 'send') : call};\n    return ${operation.responseSchemaName}.fromJson(json);\n  }`;
   }).join('\n\n');
-  return `// @generated by @agroplatform/contracts. DO NOT EDIT.\n// Sources: ${OPENAPI_PATH}, ${EVENT_CATALOG_PATH}\n\nimport 'dart:convert';\n\nconst openApiVersion = '${contracts.openapi.document.openapi}';\nconst apiContractVersion = '${contracts.openapi.document.info.version}';\nconst eventCatalogVersion = '${contracts.events.catalogVersion}';\n\n${models}\n\nclass EventDefinition {\n  const EventDefinition({\n    required this.name,\n    required this.version,\n    required this.producer,\n    required this.consumers,\n    required this.schema,\n  });\n\n  final String name;\n  final String version;\n  final String producer;\n  final List<String> consumers;\n  final Map<String, Object?> schema;\n}\n\nconst List<EventDefinition> eventDefinitions = <EventDefinition>[\n${events}\n];\n\ntypedef ApiTransport = Future<Map<String, Object?>> Function(Uri uri, String method);\ntypedef ApiRequestTransport = Future<Map<String, Object?>> Function(Uri uri, String method, {required Map<String, String> headers, String? body});\n\nclass AgroPlatformApiClient {\n  AgroPlatformApiClient({required this.baseUri, required this.transport, this.requestTransport});\n\n  final Uri baseUri;\n  final ApiTransport transport;\n  final ApiRequestTransport? requestTransport;\n\n${methods}\n}\n`;
+  return `// @generated by @agroplatform/contracts. DO NOT EDIT.\n// Sources: ${OPENAPI_PATH}, ${EVENT_CATALOG_PATH}\n\nimport 'dart:convert';\nimport 'dart:typed_data';\n\nconst openApiVersion = '${contracts.openapi.document.openapi}';\nconst apiContractVersion = '${contracts.openapi.document.info.version}';\nconst eventCatalogVersion = '${contracts.events.catalogVersion}';\n\n${models}\n\nclass EventDefinition {\n  const EventDefinition({\n    required this.name,\n    required this.version,\n    required this.producer,\n    required this.consumers,\n    required this.schema,\n  });\n\n  final String name;\n  final String version;\n  final String producer;\n  final List<String> consumers;\n  final Map<String, Object?> schema;\n}\n\nconst List<EventDefinition> eventDefinitions = <EventDefinition>[\n${events}\n];\n\ntypedef ApiTransport = Future<Map<String, Object?>> Function(Uri uri, String method);\ntypedef ApiRequestTransport = Future<Map<String, Object?>> Function(Uri uri, String method, {required Map<String, String> headers, String? body});\n\ntypedef ApiBinaryTransport = Future<Map<String, Object?>> Function(Uri uri, String method, {required Map<String,String> headers, required Uint8List body});\n\nclass AgroPlatformApiClient {\n  AgroPlatformApiClient({required this.baseUri, required this.transport, this.requestTransport, this.binaryTransport});\n\n  final Uri baseUri;\n  final ApiTransport transport;\n  final ApiRequestTransport? requestTransport;\n  final ApiBinaryTransport? binaryTransport;\n\n${methods}\n}\n`;
 }
 
 export function renderGeneratedArtifacts(contracts) {
@@ -472,6 +479,7 @@ export function renderGeneratedArtifacts(contracts) {
   };
   return new Map([
     ['generated/dart/contracts.dart', dart],
+    ['../../apps/mobile/lib/generated/contracts.dart', '// dart format off\n// ignore_for_file: unnecessary_null_comparison, unnecessary_non_null_assertion, unnecessary_brace_in_string_interps, prefer_interpolation_to_compose_strings, use_null_aware_elements\n'+dart],
     ['generated/manifest.json', `${JSON.stringify(manifest, null, 2)}\n`],
     ['src/generated/contracts.ts', typescript],
   ]);

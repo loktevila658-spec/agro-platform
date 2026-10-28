@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:agroplatform_mobile/persistence.dart';
+import 'package:agroplatform_mobile/sync.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +70,54 @@ void main() {
         45,
         49,
       ]);
+      final pull = PullStore(workspace.db);
+      await pull.bootstrap(
+        const SyncBootstrapResponse(
+          authorityMode: 'LOCAL_PRIMARY',
+          schemaVersion: 1,
+          scopeVersion: 1,
+          initialCursor: 'native-0',
+          grants: [],
+        ),
+      );
+      const page = SyncPullResponse(
+        changes: [
+          SyncChange(
+            seq: '1',
+            entityType: 'Fixture',
+            entityId: 'entity',
+            entityVersion: 3,
+            op: 'UPSERT',
+            projection: {'source': 'local-authority'},
+          ),
+        ],
+        nextCursor: 'native-1',
+        hasMore: false,
+        resetRequired: false,
+      );
+      await expectLater(
+        pull.apply(
+          'native-0',
+          page,
+          beforeCommit: () async => throw StateError('native interruption'),
+        ),
+        throwsStateError,
+      );
+      expect(await pull.cursor(), 'native-0');
+      await pull.apply('native-0', page);
+      await workspace.close();
+      workspace = await Workspace.open(identity);
+      expect(await PullStore(workspace.db).cursor(), 'native-1');
+      expect(
+        await workspace.db.rows('SELECT * FROM entity_cache'),
+        hasLength(1),
+      );
+      expect(
+        await workspace
+            .commands(verify: (_) async => false)
+            .get(draft.commandId),
+        isNotNull,
+      );
       final samples = <int>[];
       for (var i = 0; i < 100; i++) {
         final timer = Stopwatch()..start();

@@ -167,6 +167,170 @@ export interface SiteResponse {
   readonly timezone: string;
 }
 
+export interface SyncAckRequest {
+  readonly cursor: string;
+  readonly deviceId: string;
+  readonly scopeVersion: number;
+}
+
+export interface SyncAckResponse {
+  readonly acknowledged: boolean;
+}
+
+export interface SyncAggregate {
+  readonly id: string;
+  readonly type: string;
+}
+
+export interface SyncAttachmentIntent {
+  readonly evidenceType: string;
+  readonly localAttachmentId: string;
+  readonly mime: string;
+  readonly ownerRef: string;
+  readonly required: boolean;
+  readonly sha256: string;
+  readonly sizeBytes: number;
+}
+
+export interface SyncAttachmentResponse {
+  readonly attachmentId: string;
+  readonly chunkSizeBytes: number;
+  readonly evidenceType: string;
+  readonly localAttachmentId: string;
+  readonly mime: string;
+  readonly ownerRef: string;
+  readonly resumable: boolean;
+  readonly sha256: string;
+  readonly sizeBytes: number;
+  readonly state: string;
+}
+
+export interface SyncBootstrapRequest {
+  readonly deviceId: string;
+  readonly schemaVersion: number;
+}
+
+export interface SyncBootstrapResponse {
+  readonly authorityMode: string;
+  readonly grants: readonly SyncGrant[];
+  readonly initialCursor: string;
+  readonly schemaVersion: number;
+  readonly scopeVersion: number;
+}
+
+export interface SyncChange {
+  readonly entityId: string;
+  readonly entityType: string;
+  readonly entityVersion?: number;
+  readonly op: 'UPSERT' | 'PURGE';
+  readonly projection: Readonly<Record<string, unknown>>;
+  readonly seq: string;
+}
+
+export interface SyncCommand {
+  readonly aggregate: SyncAggregate;
+  readonly attachments: readonly SyncAttachmentIntent[];
+  readonly baseVersion?: number;
+  readonly commandVersion: number;
+  readonly deviceSeq: number;
+  readonly idempotencyKey: string;
+  readonly localCommandId: string;
+  readonly observedAt: string;
+  readonly offlineAuthId: string;
+  readonly payload: Readonly<Record<string, unknown>>;
+  readonly provenance: Readonly<Record<string, unknown>>;
+  readonly type: string;
+}
+
+export interface SyncCompleteRequest {
+  readonly remoteId: string;
+}
+
+export interface SyncGrant {
+  readonly commands: readonly string[];
+  readonly deviceId: string;
+  readonly expiresAt: string;
+  readonly id: string;
+  readonly issuedAt: string;
+  readonly owners: readonly string[];
+  readonly risk: string;
+  readonly scopeVersion: number;
+  readonly signedEnvelope: string;
+  readonly tenant: string;
+  readonly user: string;
+}
+
+export interface SyncHealthResponse {
+  readonly authorityMode: string;
+  readonly schemaVersion: number;
+  readonly serverTime: string;
+}
+
+export interface SyncPartResponse {
+  readonly partNumber: number;
+  readonly sha256: string;
+  readonly sizeBytes: number;
+}
+
+export interface SyncPullRequest {
+  readonly cursor: string;
+  readonly deviceId: string;
+  readonly limit?: number;
+  readonly scopeVersion: number;
+}
+
+export interface SyncPullResponse {
+  readonly changes: readonly SyncChange[];
+  readonly code?: string;
+  readonly hasMore: boolean;
+  readonly nextCursor: string;
+  readonly resetRequired: boolean;
+}
+
+export interface SyncPushRequest {
+  readonly commands: readonly SyncCommand[];
+  readonly deviceId: string;
+  readonly schemaVersion: number;
+  readonly scopeVersion: number;
+}
+
+export interface SyncPushResponse {
+  readonly results: readonly SyncResult[];
+  readonly serverTime: string;
+}
+
+export interface SyncRegisterRequest {
+  readonly deviceId: string;
+  readonly installationId: string;
+  readonly schemaVersion: number;
+}
+
+export interface SyncRegisterResponse {
+  readonly authorityMode: string;
+  readonly deviceId: string;
+  readonly schemaVersion: number;
+  readonly scopeVersion: number;
+}
+
+export interface SyncResult {
+  readonly aggregateVersion?: number;
+  readonly canonical?: Readonly<Record<string, unknown>>;
+  readonly code?: string;
+  readonly localCommandId: string;
+  readonly localIntent?: SyncCommand;
+  readonly receivedAt: string;
+  readonly status: 'ACCEPTED' | 'CONFLICT' | 'REJECTED' | 'ACTION_REQUIRED';
+}
+
+export interface SyncUploadResponse {
+  readonly attachmentId: string;
+  readonly chunkSizeBytes: number;
+  readonly resumable: boolean;
+  readonly session?: string;
+  readonly sizeBytes: number;
+  readonly state: string;
+}
+
 export interface TenantResponse {
   readonly code: string;
   readonly commandId?: string;
@@ -564,7 +728,7 @@ export interface ApiTransportResponse {
   json(): Promise<unknown>;
 }
 
-export type ApiTransport = (url: string, init: { readonly method: string; readonly headers?: Readonly<Record<string, string>>; readonly body?: string }) => Promise<ApiTransportResponse>;
+export type ApiTransport = (url: string, init: { readonly method: string; readonly headers?: Readonly<Record<string, string>>; readonly body?: string | Uint8Array<ArrayBuffer> }) => Promise<ApiTransportResponse>;
 
 export interface ApiClientOptions {
   readonly baseUrl: string;
@@ -684,6 +848,41 @@ export class AgroPlatformApiClient {
     return await response.json() as SchemaVersionResponse;
   }
 
+  async initSyncAttachment(authorization: string, body: SyncAttachmentIntent): Promise<SyncUploadResponse> {
+    const url = new URL(`${this.baseUrl}/v1/attachments/init`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`initSyncAttachment failed with HTTP ${response.status}`);
+    return await response.json() as SyncUploadResponse;
+  }
+
+  async completeSyncAttachment(localId: string, authorization: string, body: SyncCompleteRequest): Promise<SyncAttachmentResponse> {
+    const url = new URL(`${this.baseUrl}/v1/attachments/${encodeURIComponent(String(localId))}/complete`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`completeSyncAttachment failed with HTTP ${response.status}`);
+    return await response.json() as SyncAttachmentResponse;
+  }
+
+  async putSyncAttachmentPart(localId: string, number: string, authorization: string, xPartSha256: string, xRemoteId: string, body: Uint8Array<ArrayBuffer>): Promise<SyncPartResponse> {
+    const url = new URL(`${this.baseUrl}/v1/attachments/${encodeURIComponent(String(localId))}/parts/${encodeURIComponent(String(number))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xPartSha256 !== undefined) headers["X-Part-Sha256"] = String(xPartSha256);
+    if (xRemoteId !== undefined) headers["X-Remote-Id"] = String(xRemoteId);
+    headers['Content-Type'] = 'application/octet-stream';
+    const requestBody = body;
+    const response = await this.transport(url.toString(), { method: 'PUT', headers, body: requestBody });
+    if (!response.ok) throw new Error(`putSyncAttachmentPart failed with HTTP ${response.status}`);
+    return await response.json() as SyncPartResponse;
+  }
+
   async login(body: LoginRequest, xCorrelationId?: string): Promise<LoginResponse> {
     const url = new URL(`${this.baseUrl}/v1/auth/login`);
     const headers: Record<string, string> = {};
@@ -744,5 +943,69 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'POST', headers });
     if (!response.ok) throw new Error(`revokeMySession failed with HTTP ${response.status}`);
     return await response.json() as RevocationResponse;
+  }
+
+  async ackSync(authorization: string, body: SyncAckRequest): Promise<SyncAckResponse> {
+    const url = new URL(`${this.baseUrl}/v1/sync/ack`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`ackSync failed with HTTP ${response.status}`);
+    return await response.json() as SyncAckResponse;
+  }
+
+  async bootstrapSync(authorization: string, body: SyncBootstrapRequest): Promise<SyncBootstrapResponse> {
+    const url = new URL(`${this.baseUrl}/v1/sync/bootstrap`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`bootstrapSync failed with HTTP ${response.status}`);
+    return await response.json() as SyncBootstrapResponse;
+  }
+
+  async registerSyncDevice(authorization: string, body: SyncRegisterRequest): Promise<SyncRegisterResponse> {
+    const url = new URL(`${this.baseUrl}/v1/sync/devices/register`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`registerSyncDevice failed with HTTP ${response.status}`);
+    return await response.json() as SyncRegisterResponse;
+  }
+
+  async syncHealth(authorization: string): Promise<SyncHealthResponse> {
+    const url = new URL(`${this.baseUrl}/v1/sync/health`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`syncHealth failed with HTTP ${response.status}`);
+    return await response.json() as SyncHealthResponse;
+  }
+
+  async pullSync(authorization: string, body: SyncPullRequest): Promise<SyncPullResponse> {
+    const url = new URL(`${this.baseUrl}/v1/sync/pull`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`pullSync failed with HTTP ${response.status}`);
+    return await response.json() as SyncPullResponse;
+  }
+
+  async pushSync(authorization: string, body: SyncPushRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/sync/push`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`pushSync failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
   }
 }

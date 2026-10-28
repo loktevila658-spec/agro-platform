@@ -158,6 +158,7 @@ class CommandQueue {
   /// Expired leases recover the SAME ID after crash, never a replacement command.
   Future<QueuedCommand?> claim({
     DateTime? now,
+    Set<String> batchCommandIds = const {},
     Duration lease = const Duration(minutes: 2),
   }) async {
     _ensureOpen();
@@ -165,14 +166,20 @@ class CommandQueue {
     final at = (now ?? DateTime.now()).toUtc();
     return _db.write(() async {
       final candidates = await _db.rows(
-        '''SELECT q.* FROM sync_outbox q WHERE
-        ((status IN ('pending','retryWait') AND next_retry_at<=?) OR (status='sending' AND lease_until<=?))
-        AND NOT EXISTS (SELECT 1 FROM command_attachment ca JOIN local_attachment a ON a.id=ca.attachment_id
-          WHERE ca.command_id=q.local_command_id AND a.required_evidence=1 AND a.upload_state!='confirmed')
-        ORDER BY device_seq LIMIT 1''',
-        [at.millisecondsSinceEpoch, at.millisecondsSinceEpoch],
+        "SELECT * FROM sync_outbox INDEXED BY outbox_delivery_order WHERE status IN ('pending','retryWait','sending') AND local_command_id NOT IN (${batchCommandIds.isEmpty ? "''" : List.filled(batchCommandIds.length, '?').join(',')}) ORDER BY device_seq LIMIT 1",
+        [...batchCommandIds],
       );
       if (candidates.isEmpty) return null;
+      final candidate = candidates.single;
+      final ready = candidate['status'] == 'sending'
+          ? (candidate['lease_until'] as int) <= at.millisecondsSinceEpoch
+          : (candidate['next_retry_at'] as int) <= at.millisecondsSinceEpoch;
+      if (!ready) return null;
+      final blocked = await _db.rows(
+        "SELECT 1 FROM command_attachment c JOIN local_attachment a ON a.id=c.attachment_id WHERE c.command_id=? AND a.required_evidence=1 AND a.upload_state!='confirmed' LIMIT 1",
+        [candidate['local_command_id']],
+      );
+      if (blocked.isNotEmpty) return null;
       final id = candidates.single['local_command_id'] as String;
       await _db.customStatement(
         "UPDATE sync_outbox SET status='sending',attempts=attempts+1,lease_token=?,lease_until=? WHERE local_command_id=?",
@@ -249,6 +256,13 @@ class CommandQueue {
       );
       await _audit(id, 'SERVER_${state.name.toUpperCase()}', serverReceivedAt);
     });
+  }
+
+  Future<void> connectivityRestored() async {
+    _ensureOpen();
+    await _db.customStatement(
+      "UPDATE sync_outbox SET next_retry_at=0 WHERE status='retryWait'",
+    );
   }
 
   Future<void> _requireLease(String id, String token) async {

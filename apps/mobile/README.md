@@ -118,3 +118,85 @@ mid-range Android latency/battery/ANR certification remains a release gate.
 
 Scope and pre-code impact evidence: [IMPACT_SCOPE.md](IMPACT_SCOPE.md).
 G0–G12 and exact CI/merge evidence: `tests/evidence/WP49-019_COMPLETION_REPORT.md`.
+
+
+## WP49-020 synchronization
+
+`lib/sync.dart` exports `SyncEngine`, `PullStore`, `AttachmentWorker`, pinned
+`AuthorityGrantVerifier` and `AuthorityHttpTransport`. Provision the workspace
+with the authenticated identity device ID and its fixed LOCAL_PRIMARY URI.
+The transport uses generated DTOs and canonical clients, refuses redirects and
+never retries against an alternate/cloud host. Inject a token provider backed by
+secure session storage; a revoked/expired session requires authentication, without
+replacing queued command IDs. TLS is required by the existing Android profile.
+
+The existing authentication shell now starts the data and media workers after workspace open, refreshes on foreground/resume, cancels them before logout/wipe, and uses 5-second pending / 30-second idle foreground scheduling. Provision the pinned public key using `SYNC_AUTHORITY_ED25519_PUBLIC_KEY` (base64 raw Ed25519 public key). Unknown network type is conservatively treated as mobile data: Wi-Fi-only files remain queued until a platform/owner network policy permits them.
+
+Compose `SyncEngine(workspace, queue, transport, grantVerifier: verifier)` with
+owning domain offline validators. Run on foreground/resume, connectivity restore
+(`connectivityRestored: true`) and policy/debounce triggers. OS background timing
+is best effort. Run `AttachmentWorker` separately so slow media cannot hold data
+sync, except a command's explicitly required evidence. There are no enabled
+business commands in this foundation: owner modules register application handlers,
+current permission policies and projections in their own WPs. The shell does not
+invent a workflow, authority fallback or conflict resolution UX.
+
+Server `SyncRegistry` is deny-by-default. Handlers must validate current permission,
+state and rules and write their own facts + audit + outbox through the supplied
+transaction; versioned handlers provide an atomic lock/version guard and canonical
+current snapshot. Sync writes only sync-owned protocol tables. Projection policies
+recheck current read access; denied cached projections become PURGE. File policies
+are separately registered by owner type and run inside the existing FilesService.
+No foreign repository SQL is used by production sync code.
+
+Bootstrap verifies Ed25519 grants with a public key pinned during trusted authority
+provisioning; every field and device binding is signed. It never trusts a key from
+an unsigned bootstrap response. Server requires `AGRO_DEPLOYMENT_MODE=LOCAL_PRIMARY`,
+`SYNC_CURSOR_KEY` (stable secret >=32 bytes), and `SYNC_GRANT_PRIVATE_KEY` (Ed25519
+PKCS8 PEM) when issuing offline grants. No signing key or valid policy means no
+new offline authorization. O1 TTL is capped at 7 days; O2 TTL/resource limits belong
+to tenant/owner policy and the local validator. Fourteen days without external WAN
+includes Local Server LAN operation/renewal, not a fabricated extension of O1 TTL.
+
+Push is <=50 commands / 1 MiB, in device order. Every immutable command retains ID,
+idempotency key, base version, observed time, provenance and stable local attachment
+references. Individual command transactions permit partial batches; lost responses
+retry original IDs. Receipts/conflict evidence are retained (no pruning job).
+Critical conflict is explicit, never last-write-wins; user action creates a new
+command/correction under the owning domain. Request-level auth/schema/scope errors
+never fabricate a terminal domain receipt. Backoff is 5/15/45/120/300/900/1800 seconds
+with bounded jitter and Retry-After; reconnect clears retry waits.
+
+Pull is <=500 changes / 2 MiB, signed opaque tenant/user/device/scope/schema cursor.
+Feed counters are locked until commit so racing transactions cannot skip changes.
+Each page and cursor commit in one encrypted SQLite transaction; ACK follows commit
+and can replay after restart. Scope/expired/corrupt cursor resets clear canonical
+cache only, retaining outbox, snapshots, provisional intent, evidence and upload ACKs.
+The v1 -> v2 migration is additive and preserves all v1 intent. Current/unknown
+future schemas use explicit upgrade rejection, never destructive downgrade.
+The feed is not compacted by this WP: 90-day-old cursors reset and replay retained
+history. Compaction requires an owner snapshot/bootstrap adapter before advancing
+`retained_from`; without one, bootstrap fails closed rather than skipping history.
+
+Attachments retain their local UUID regardless of remote UUID. Init/part/complete
+use the existing file authority, hash/MIME/owner/evidence checks, quarantine and
+AVAILABLE result. Network interruption retains session/5 MiB part ACKs; reopen
+resumes unacknowledged parts. Required evidence holds the earlier device sequence;
+optional delayed evidence remains associated after command confirmation. Local
+bytes are removed only under the existing remote-ACK/retention policy.
+
+Canonical OpenAPI produces TS, shared Dart and the identical in-package Dart copy
+(`lib/generated/contracts.dart`). `contracts:check` detects drift in every copy;
+no DTO is hand-maintained. Generated style ignores affect generator syntax only;
+all application code uses Flutter lint/analyzer with fatal infos.
+
+Validation: `flutter test` includes disconnect/restart/partial/replay/conflict/auth,
+pull transaction crash/purge/reset, v1 snapshot upgrade, pinned grant verification,
+delayed/resumed parts and deterministic 14-day fixtures. The long fixture provisions
+50k UUIDv7 intents, 100k operational rows and 20k cached entities, reopens on day 14
+and delivers every ID under the 30-minute lightweight convergence budget. It is a
+protocol engineering profile, not a claim to implement future Task/Stock/etc. flows
+or certify physical Android battery/ANR performance. The existing required Mobile
+CI job runs all tests, debug APK and Android OS-keystore/cipher/pull recovery fixture.
+No new CI path/job is needed: API `test/*.test.mjs` and all Flutter tests are already
+mandatory in the required aggregate.
