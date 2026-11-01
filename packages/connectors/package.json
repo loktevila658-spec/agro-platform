@@ -1,0 +1,11 @@
+{
+  "name": "@agroplatform/connectors",
+  "version": "0.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node --check src/index.cjs",
+    "typecheck": "node --check src/index.cjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

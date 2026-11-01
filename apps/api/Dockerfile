@@ -18,5 +18,6 @@ COPY --from=build /workspace/apps/api/package.json ./package.json
 COPY --from=build /workspace/packages/observability/src/index.cjs /workspace/packages/observability/src/index.cjs
 COPY --from=build /workspace/packages/storage/src/index.cjs /workspace/packages/storage/src/index.cjs
 COPY --from=build /workspace/security/headers.cjs /workspace/security/headers.cjs
+COPY --from=build /workspace/packages/connectors/src /workspace/packages/connectors/src
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
