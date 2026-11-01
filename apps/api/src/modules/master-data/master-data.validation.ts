@@ -39,6 +39,14 @@ export function validateMaterial(input: MaterialInput): Required<MaterialInput> 
   for(const k of ['code','name','itemType','baseUom'])if(!Object.hasOwn(fields,k))throw Error('MASTER_DATA_INVALID_MATERIAL');
   return {...input,organizationId,active:input.active??true};
 }
+export function timestamp(value: unknown): value is string {
+  if(typeof value!=='string')return false;
+  const m=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if(!m||!Number.isFinite(Date.parse(value)))return false;
+  const [y,month,day,hour,minute,second]=m.slice(1,7).map(Number) as [number,number,number,number,number,number];
+  const days=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  return month>=1&&month<=12&&day>=1&&day<=days[month-1]!&&hour<24&&minute<60&&second<60;
+}
 export function uuidv7(): string {
   const bytes=randomBytes(16);bytes.writeUIntBE(Date.now(),0,6);bytes[6]=(bytes[6]!&15)|0x70;bytes[8]=(bytes[8]!&63)|0x80;
   const h=bytes.toString('hex');return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;

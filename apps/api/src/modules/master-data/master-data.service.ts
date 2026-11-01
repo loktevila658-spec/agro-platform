@@ -8,7 +8,7 @@ import { IntegrationsService } from '../integrations/integrations.service';
 import type { OwnerCommand } from '../integrations/integrations.registry';
 import { MasterDataRegistry } from './master-data.registry';
 import type { MasterActor, MasterContext, MasterCorrection, MasterKind, MaterialInput, UnitInput } from './master-data.types';
-import { FIELDS, UUID, kind, keys, object, text, uuidv7, validateFields, validateMaterial, validateUnit, version } from './master-data.validation';
+import { FIELDS, UUID, kind, keys, object, text, timestamp, uuidv7, validateFields, validateMaterial, validateUnit, version } from './master-data.validation';
 export const MASTER_DATA_POOL=Symbol('MASTER_DATA_POOL');
 const tables={Material:'master_data.material',UnitOfMeasure:'master_data.unit_of_measure'};
 const columns: Record<string,string>={code:'code',name:'name',itemType:'item_type',baseUom:'base_uom',active:'active',accountingCode:'accounting_code',gtin:'gtin',dimension:'dimension',precision:'precision'};
@@ -75,7 +75,7 @@ export class MasterDataService implements OnModuleDestroy {
     const policy=this.registry.field(actor.tenantId,e.entityType,field);
     if(policy.master!=='EXTERNAL_SYSTEM'||policy.profileId!==e.profileId||policy.profileVersion!==e.profileVersion||!policy.source)throw Error('MASTER_DATA_SOURCE_OF_TRUTH_CONFLICT');
    }
-   if(!text(e.externalId,512)||!text(e.observedAt)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(e.observedAt)||!Number.isFinite(Date.parse(e.observedAt))||!Number.isSafeInteger(e.profileVersion)||e.profileVersion<1||!UUID.test(e.id))throw Error('MASTER_DATA_INVALID_PROVENANCE');
+   if(!text(e.externalId,512)||!timestamp(e.observedAt)||!Number.isSafeInteger(e.profileVersion)||e.profileVersion<1||!UUID.test(e.id))throw Error('MASTER_DATA_INVALID_PROVENANCE');
    object(e.provenance);
    const provided=['importBatch','fileHash','sourceRow'].filter(k=>Object.hasOwn(e.provenance,k));
    if(provided.length&& (provided.length!==3||!text(e.provenance.importBatch)||!text(e.provenance.sourceRow)||typeof e.provenance.fileHash!=='string'||!/^[a-f0-9]{64}$/.test(e.provenance.fileHash)))throw Error('MASTER_DATA_INVALID_IMPORT_PROVENANCE');

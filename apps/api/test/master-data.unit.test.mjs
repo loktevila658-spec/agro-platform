@@ -56,7 +56,7 @@ test('external owner validation rejects wrong source, malformed observation and 
  const m={expectedVersion:'1',reason:'Fixture projection',accountingCode:'fixture-code'};
  try {
   await port.validate({},actor,e,m);
-  for(const bad of [{...e,observedAt:'1'},{...e,provenance:{importBatch:'partial'}},{...e,profileId:'unapproved'},{...e,direction:'OUTBOUND'}])await assert.rejects(port.validate({},actor,bad,m),/SOURCE|PROVENANCE|ENVELOPE/);
+  for(const bad of [{...e,observedAt:'1'},{...e,observedAt:'2026-02-30T00:00:00Z'},{...e,observedAt:'2026-11-02T24:00:00Z'},{...e,provenance:{importBatch:'partial'}},{...e,profileId:'unapproved'},{...e,direction:'OUTBOUND'}])await assert.rejects(port.validate({},actor,bad,m),/SOURCE|PROVENANCE|ENVELOPE/);
   await assert.rejects(port.validate({},actor,e,{...m,name:'external-overwrite'}),/SOURCE/);
  }finally{if(prior===undefined)delete process.env.AGRO_DEPLOYMENT_MODE;else process.env.AGRO_DEPLOYMENT_MODE=prior;}
 });
