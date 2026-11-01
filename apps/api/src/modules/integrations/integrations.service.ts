@@ -93,6 +93,17 @@ export class IntegrationsService implements OnModuleInit,OnModuleDestroy {
  private async attempt(tx:PoolClient,job:Job,phase:string,outcome:string):Promise<void> {
   await tx.query('INSERT INTO integrations.attempt(tenant_id,job_id,number,phase,outcome) VALUES($1,$2,$3,$4,$5)',[job.tenant_id,job.id,job.attempts,phase,outcome]);
  }
+ /** Query contracts owned by integrations: external aliases never become a second domain identity. */
+ async externalReferencesFor(actor:IntegrationActor,profileId:string,entityType:string,localId:string):Promise<Record<string,unknown>[]> {
+  await this.registry.authorize(actor,'READ',profileId);
+  if(!text(profileId)||!text(entityType)||!text(localId))throw Error('INVALID_EXTERNAL_REFERENCE');
+  return (await this.pool.query(`SELECT l.*,COALESCE((SELECT jsonb_agg(jsonb_build_object('revision',r.revision,'jobId',r.job_id,'provenance',r.provenance) ORDER BY r.revision) FROM integrations.link_revision r WHERE r.tenant_id=l.tenant_id AND r.profile_id=l.profile_id AND r.entity_type=l.entity_type AND r.external_id=l.external_id),'[]'::jsonb) AS revisions FROM integrations.external_link l WHERE l.tenant_id=$1 AND l.profile_id=$2 AND l.entity_type=$3 AND l.local_id=$4 ORDER BY l.external_id LIMIT 1000`,[actor.tenantId,profileId,entityType,localId])).rows;
+ }
+ async resolveExternalReference(actor:IntegrationActor,profileId:string,entityType:string,externalId:string):Promise<Record<string,unknown>|undefined> {
+  await this.registry.authorize(actor,'READ',profileId);
+  if(!text(profileId)||!text(entityType)||!text(externalId))throw Error('INVALID_EXTERNAL_REFERENCE');
+  return (await this.pool.query('SELECT * FROM integrations.external_link WHERE tenant_id=$1 AND profile_id=$2 AND entity_type=$3 AND external_id=$4',[actor.tenantId,profileId,entityType,externalId])).rows[0];
+ }
  private async link(tx:PoolClient,job:Job,externalId:string):Promise<void> {
   const e=job.envelope;
   if(!text(externalId))throw new ConnectorError('EXTERNAL_ID_MISSING');
