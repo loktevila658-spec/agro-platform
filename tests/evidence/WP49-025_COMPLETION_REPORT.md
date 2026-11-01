@@ -170,8 +170,9 @@ Schema/HTTP compatibility expands forward-only; no purge or destructive DOWN.
 
 Acceptance tests written before runtime. Unit RED: missing master-data registry;
 integration initial import RED stopped first on the unbuilt baseline inbox module
-(the fresh worktree had no dist). No claim that the latter exercised domain rules. API build PASS. Final focused local unit/schema/migration/
-package+root contracts 37/37 PASS; full static typecheck/architecture11/11, contract
+(the fresh worktree had no dist). No claim that the latter exercised domain rules. API build PASS. Initial focused local unit/schema/migration/
+package+root contracts37/37 PASS; after strict permission/provenance additions,
+final focused43/43 PASS; full static typecheck/architecture11/11, contract
 validation/codegen drift and lint capability PASS (lint N/A, no tool configured).
 Generated outputs regenerated from canonical catalog, not hand-edited.
 
@@ -215,6 +216,8 @@ one narrow amendment/approval in the same CR #62. Revised complete scope is28
 paths. Original org action/scope assertions are retained against its owned subset;
 exact combined9 actions/effects/scopes and master registry equality are asserted,
 all old negative tests retained. No acceptance weakened or extra feature added.
+Review added negative tests for persisted policy same-version conflict/restart,
+explicit upgrade and stale-policy rejection, plus policy history immutability.
 Review also strengthened enum input type validation (no array coercion) and RFC3339
 source observation timestamp validation within already approved paths.
 

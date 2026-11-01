@@ -47,3 +47,16 @@ test('compiled runtime registers exported master-data services with no public en
  const app=readFileSync(new URL('../src/app.module.ts',import.meta.url),'utf8');assert.match(app,/MasterDataModule/);
  assert.equal(Reflect.getMetadata('controllers',MasterDataModule)?.length??0,0);
 });
+
+test('external owner validation rejects wrong source, malformed observation and incomplete import provenance before effects',async()=>{
+ const registry=new MasterDataRegistry();registry.installPolicy(async()=>true);registry.registerSourcePolicy(policy);
+ const service=new MasterDataService({},registry,{}),port=service.externalCommand();
+ const prior=process.env.AGRO_DEPLOYMENT_MODE;process.env.AGRO_DEPLOYMENT_MODE='LOCAL_PRIMARY';
+ const e={id:subjectId,tenantId,direction:'INBOUND',operation:'master-data.apply-external',entityType:'Material',localId:tenantId,profileId:'fixture-codes',profileVersion:1,externalId:'fixture-guid',observedAt:'2026-11-02T00:00:00Z',provenance:{}};
+ const m={expectedVersion:'1',reason:'Fixture projection',accountingCode:'fixture-code'};
+ try {
+  await port.validate({},actor,e,m);
+  for(const bad of [{...e,observedAt:'1'},{...e,provenance:{importBatch:'partial'}},{...e,profileId:'unapproved'},{...e,direction:'OUTBOUND'}])await assert.rejects(port.validate({},actor,bad,m),/SOURCE|PROVENANCE|ENVELOPE/);
+  await assert.rejects(port.validate({},actor,e,{...m,name:'external-overwrite'}),/SOURCE/);
+ }finally{if(prior===undefined)delete process.env.AGRO_DEPLOYMENT_MODE;else process.env.AGRO_DEPLOYMENT_MODE=prior;}
+});
