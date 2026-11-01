@@ -1,3 +1,4 @@
+import { OneCModule } from './modules/integrations/1c/one-c.module';
 import { IntegrationsModule } from './modules/integrations/integrations.module';
 import { SyncModule } from './modules/sync/sync.module';
 import { Module } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { EventsModule } from './modules/events/events.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
+  imports: [OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,
