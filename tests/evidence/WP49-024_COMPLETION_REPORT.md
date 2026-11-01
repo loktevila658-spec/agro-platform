@@ -1,11 +1,36 @@
 # WP49-024 Completion Report — Cloud replication pipeline
 
 Date: 2026-11-01–02 (Europe/Moscow). Branch: `codex/wp49-024-replication`.
-Status: IN PROGRESS until exact final PR-head required checks and findings are
-clear, ordinary merge succeeds, exact merge-SHA push CI succeeds and Scope CR #58
-is closed completed. Observing those conditions activates DONE and final gate
-verdicts below. Exact head/merge/run IDs are recorded in CR closeout, avoiding a
-report that must embed its own resulting commit hash.
+Status: **DONE**. All applicable G0–G12 PASS. This report-only correction records
+already completed closeout; it changes no implementation or frozen scope and does
+not reopen CR #58.
+
+Observed final closeout evidence:
+- [PR #59](https://github.com/loktevila658-spec/agro-platform/pull/59), tested head
+  `d92d2fa9d29c8055a81c19c0d82eb036a409c19a`; exact-head
+  [run 41350221688](https://github.com/loktevila658-spec/agro-platform/actions/runs/41350221688),
+  attempt 1, all eight required jobs SUCCESS; no outstanding review findings.
+- Ordinary two-parent merge `f20d89c48ff5fc3b753548f785961e9578c19b28`, parents
+  baseline `d7b2cdac29ee7e4dfc5aad5fc48658866ac836e3` and tested head above;
+  tree `0b787fb569664f85da3df26b73c121665b626e6b` equals tested-head tree.
+- Exact merge-SHA event=push
+  [run 41350936656](https://github.com/loktevila658-spec/agro-platform/actions/runs/41350936656),
+  attempt 1, completed SUCCESS: Unit, Migration, Runtime, Mobile, Typecheck,
+  Contract, Lint and aggregate CI quality gates (8/8).
+- [Final DONE/G0–G12 closeout comment](https://github.com/loktevila658-spec/agro-platform/issues/58#issuecomment-6564065197);
+  [CR #58](https://github.com/loktevila658-spec/agro-platform/issues/58) CLOSED,
+  state_reason=completed, closed 2026-11-01T21:21:57Z. Activation conditions fulfilled.
+- Rechecked 2026-11-02: live main equals exact merge SHA, CR closure and final
+  comment retained, exact push run and all eight successful jobs observed.
+
+Hosted final-head Unit API 112/112, replication 19/19, contracts 20/20, config
+17/17, connectors 2/2, root regressions 15/15 and migration units 5/5 PASS.
+Post-merge Unit API 112/112 (zero failures/skips), unchanged sync P95=648.1ms
+(<2s), all 1503 changes without gaps. Mobile 33/33 and native Android 1/1 PASS;
+14-day/50k convergence=89610ms, 100k operational rows/20k entities/zero lost IDs,
+emulator enqueue P95=7ms. Hosted evidence resolves the local Docker/Flutter
+verification limitations disclosed below; no local failed attempt is relabelled.
+These emulator measurements do not certify physical devices or production WAN/TLS.
 
 ## 1. G0 and authority
 
@@ -220,21 +245,21 @@ Local gate results and disclosed initial attempts:
   before ordinary merge; exact merge-SHA push CI and completed CR closure remain
   mandatory before DONE.
 
-| Gate | Final decision, only activated after observed closeout |
+| Gate | Final decision — closeout observed |
 |---|---|
 | G0 | PASS — live main, order/DAG/manifest, merged reports/closed CRs/exact dependency push runs |
-| G1 | PASS on activation — typecheck/architecture/lint capability, diff scope and required exact-head static jobs |
-| G2 | PASS on activation — additive v10, real clean/repeated/current/checksum-invalid migration/API |
-| G3 | PASS on activation — targeted 19/19, full Unit and all exact-head mandatory checks |
-| G4 | PASS on activation — real Local/Holding/fresh rebuild PG transactions/grants plus existing integration/runtime regressions |
-| G5 | PASS on activation — unchanged public HTTP/event/mobile clients; strict internal replication/1 and codegen drift PASS |
-| G6 | PASS on activation — WP016 transactional capture, commit-visible sequence, signed exact ACK/inbox dedup/retry/crash rollback |
-| G7 | PASS on activation — Local-only append/send, default deny READ/EXECUTE/REPLAY, tenant/site/installation/key negatives, actual restricted Cloud grants |
-| G8 | PASS on activation — WAN/timeout/lost ACK/SENDING resume retain Local; separate unchanged mobile sync/Mobile mandatory checks |
-| G9 | PASS on activation — immutable Local/Cloud content/journal, source provenance/corrections/tombstones, audited reasoned replay/rebuild |
-| G10 | PASS on activation — deterministic full protocol/fault/rebuild scenario above |
-| G11 | PASS on activation — limits/rate/bounded retry/security negatives and unchanged performance/offline checks |
-| G12 | PASS only at activation — exact approved 19 paths/report, clear findings, required exact-head success, ordinary merge, exact merge-SHA push success, CR #58 completed |
+| G1 | PASS — typecheck/architecture/lint capability, diff scope and required exact-head static jobs |
+| G2 | PASS — additive v10, real clean/repeated/current/checksum-invalid migration/API |
+| G3 | PASS — targeted 19/19, full Unit and all exact-head mandatory checks |
+| G4 | PASS — real Local/Holding/fresh rebuild PG transactions/grants plus existing integration/runtime regressions |
+| G5 | PASS — unchanged public HTTP/event/mobile clients; strict internal replication/1 and codegen drift PASS |
+| G6 | PASS — WP016 transactional capture, commit-visible sequence, signed exact ACK/inbox dedup/retry/crash rollback |
+| G7 | PASS — Local-only append/send, default deny READ/EXECUTE/REPLAY, tenant/site/installation/key negatives, actual restricted Cloud grants |
+| G8 | PASS — WAN/timeout/lost ACK/SENDING resume retain Local; separate unchanged mobile sync/Mobile mandatory checks |
+| G9 | PASS — immutable Local/Cloud content/journal, source provenance/corrections/tombstones, audited reasoned replay/rebuild |
+| G10 | PASS — deterministic full protocol/fault/rebuild scenario above |
+| G11 | PASS — limits/rate/bounded retry/security negatives and unchanged performance/offline checks |
+| G12 | PASS — exact approved 19 paths/report, clear findings, required exact-head success, ordinary merge, exact merge-SHA push success, CR #58 completed |
 
 Executable gate names follow DOC50 QUALITY_GATES.yaml; older DOC49 labels do not
 omit any substantive requirement. Review checks runtime wiring, transaction/clock/
@@ -270,7 +295,7 @@ head. Full staged diff/path set must exactly equal CR #58 before commit.
 
 ## 7. Unlock
 
-DONE only at the observed activation conditions at the top and completed CR #58
-closeout. No next WP is started here. Physical WAN/TLS/cloud deployment, future
+DONE: all activation conditions at the top are observed and CR #58 is closed
+completed. This report-only update implements no next WP. Physical WAN/TLS/cloud deployment, future
 owner snapshots/analytics, independent object-byte transport/retention profiles
 remain their specified deployment/owner contracts, not invented implementations.
