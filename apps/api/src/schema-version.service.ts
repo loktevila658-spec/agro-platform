@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 
 const execFileAsync = promisify(execFile);
 
-export const EXPECTED_SCHEMA_VERSION = 9;
+export const EXPECTED_SCHEMA_VERSION = 10;
 
 export type SchemaVersionStatus = 'current' | 'behind' | 'ahead';
 

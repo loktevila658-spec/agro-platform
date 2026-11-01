@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -116,6 +116,10 @@ test('baseline, organization, identity, and audit framework migrations are order
     assert.match(migrations[8].sql,new RegExp(`CREATE TABLE integrations\\.${table}\\b`,'i'));
     assert.match(migrations[8].sql,new RegExp(`BEFORE UPDATE OR DELETE OR TRUNCATE ON integrations\\.${table}`,'i'));
   }
+  for (const table of ['local_clock','local_outbox','journal','cloud_stream','cloud_history','cloud_read_model']) assert.match(migrations[9].sql,new RegExp(`CREATE TABLE replication\\.${table}\\b`,'i'));
+  assert.match(migrations[9].sql,/immutable_cloud_history/);
+  assert.match(migrations[9].sql,/immutable_local_content/);
+  assert.doesNotMatch(migrations[9].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files|sync|integrations)\./i);
   assert.doesNotMatch(migrations[8].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files|sync|warehouse)\./i);
   assert.doesNotMatch(migrations[7].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files|sync)\./i);
   assert.doesNotMatch(migrations[6].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files)\./i);
