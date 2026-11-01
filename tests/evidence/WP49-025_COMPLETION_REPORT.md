@@ -221,6 +221,13 @@ explicit upgrade and stale-policy rejection, plus policy history immutability.
 Review also strengthened enum input type validation (no array coercion) and RFC3339
 source observation timestamp validation within already approved paths.
 
+Hosted run41354172094 onad1b7f2 passed all original core scenarios and permission
+regressions, but the added policy-history TRUNCATE assertion hit PostgreSQL's
+foreign-key refusal before the immutability trigger. The fixture now requests
+TRUNCATE of both referenced policy and revision tables, so the unchanged strict
+IMMUTABLE expectation exercises the actual protection. It does not relax the
+assertion or remove the foreign key. Failed attempt remains failed evidence.
+
 ## 6. Limits and closeout
 
 No UI, mobile write registration/snapshot distribution, GIS/fields, inventory ledger,

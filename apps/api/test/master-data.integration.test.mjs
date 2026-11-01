@@ -177,7 +177,7 @@ test('master-data: canonical references, field SoT, immutable correction and sha
       const upgradedService=new MasterDataService(pool,upgradedRegistry,integrations);
       await upgradedService.correctUnit(actor,unit.id,{expectedVersion:'1',reason:'Explicit policy version',patch:{name:'Fixture governed count'}},context());
       await assert.rejects(service.createMaterial(actor,{...material,code:'stale-policy'},context()),/SOURCE_POLICY_STALE/);
-      for(const sql of ['UPDATE master_data.source_policy SET version=version','DELETE FROM master_data.source_policy','TRUNCATE master_data.source_policy'])await assert.rejects(pool.query(sql),/IMMUTABLE/);
+      for(const sql of ['UPDATE master_data.source_policy SET version=version','DELETE FROM master_data.source_policy','TRUNCATE master_data.source_policy, master_data.revision'])await assert.rejects(pool.query(sql),/IMMUTABLE/);
     });
     await t.test('catalogued outbox dispatch is transactionally replay-safe',async()=>{
       const {events}=await loadAndValidateContracts();const catalog=new Map(events.events.map(e=>[e.name,e]));
