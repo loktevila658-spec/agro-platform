@@ -26,3 +26,19 @@ permissions:
     description: Create a physical site belonging to an organization.
     effect: allow
     scope: tenant
+  - action: master-data.read
+    description: Read tenant canonical references, history and external links.
+    effect: allow
+    scope: tenant
+  - action: master-data.write
+    description: Create canonical tenant materials and units.
+    effect: allow
+    scope: tenant
+  - action: master-data.correct
+    description: Correct or deactivate tenant references with expected version and reason.
+    effect: allow
+    scope: tenant
+  - action: master-data.external
+    description: Apply an explicit field source policy through an owner command.
+    effect: allow
+    scope: tenant
