@@ -19,8 +19,8 @@ export function validateFields(type: MasterKind, input: Record<string,unknown>, 
   for(const [field,value] of Object.entries(input)) {
     const max=field==='code'?(type==='Material'?64:16):field==='name'?(type==='Material'?255:128):field==='baseUom'?16:field==='gtin'?32:128;
     if(field==='precision') {if(!Number.isInteger(value)||Number(value)<0||Number(value)>6)throw Error('MASTER_DATA_INVALID_PRECISION');}
-    else if(field==='dimension') {if(!DIMENSIONS.includes(String(value)))throw Error('MASTER_DATA_INVALID_DIMENSION');}
-    else if(field==='itemType') {if(!ITEM_TYPES.includes(String(value)))throw Error('MASTER_DATA_INVALID_ITEM_TYPE');}
+    else if(field==='dimension') {if(typeof value!=='string'||!DIMENSIONS.includes(value))throw Error('MASTER_DATA_INVALID_DIMENSION');}
+    else if(field==='itemType') {if(typeof value!=='string'||!ITEM_TYPES.includes(value))throw Error('MASTER_DATA_INVALID_ITEM_TYPE');}
     else if(field==='active') {if(typeof value!=='boolean')throw Error('MASTER_DATA_INVALID_ACTIVE');}
     else if((field==='accountingCode'||field==='gtin')&&!external)throw Error('MASTER_DATA_INVALID_EXTERNAL_LOCAL_FIELD');
     else if(!text(value,max)) throw Error('MASTER_DATA_INVALID_'+field);

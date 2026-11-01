@@ -33,10 +33,10 @@ test('field source policies are explicit immutable copies and never infer whole 
 });
 test('unit/material contracts reject invented enums, external local writes and invalid precision',()=>{
  const u={code:'fixture-count',name:'Fixture count',dimension:'COUNT',precision:0};assert.deepEqual(validateUnit(u),u);
- for(const input of [{...u,dimension:'GUESS'},{...u,precision:7},{...u,precision:null},{...u,code:''},{...u,extra:1}])assert.throws(()=>validateUnit(input),/INVALID/);
+ for(const input of [{...u,dimension:'GUESS'},{...u,dimension:['COUNT']},{...u,precision:7},{...u,precision:null},{...u,code:''},{...u,extra:1}])assert.throws(()=>validateUnit(input),/INVALID/);
  const m={code:'fixture-product',name:'Fixture product',itemType:'FINISHED',baseUom:'fixture-count'};
  assert.equal(validateMaterial(m).itemType,'FINISHED');
- for(const input of [{...m,itemType:'GUESS'},{...m,accountingCode:'forbidden'},{...m,gtin:'external'},{...m,name:null},{...m,id:tenantId}])assert.throws(()=>validateMaterial(input),/INVALID/);
+ for(const input of [{...m,itemType:'GUESS'},{...m,itemType:['FINISHED']},{...m,accountingCode:'forbidden'},{...m,gtin:'external'},{...m,name:null},{...m,id:tenantId}])assert.throws(()=>validateMaterial(input),/INVALID/);
 });
 test('canonical identity is UUIDv7 and not an external ID',()=>{
  const a=uuidv7(),b=uuidv7();assert.match(a,/^[a-f0-9]{8}-[a-f0-9]{4}-7[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/);assert.notEqual(a,b);

@@ -75,7 +75,7 @@ export class MasterDataService implements OnModuleDestroy {
     const policy=this.registry.field(actor.tenantId,e.entityType,field);
     if(policy.master!=='EXTERNAL_SYSTEM'||policy.profileId!==e.profileId||policy.profileVersion!==e.profileVersion||!policy.source)throw Error('MASTER_DATA_SOURCE_OF_TRUTH_CONFLICT');
    }
-   if(!text(e.externalId,512)||!text(e.observedAt)||!Number.isFinite(Date.parse(e.observedAt))||!Number.isSafeInteger(e.profileVersion)||e.profileVersion<1||!UUID.test(e.id))throw Error('MASTER_DATA_INVALID_PROVENANCE');
+   if(!text(e.externalId,512)||!text(e.observedAt)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(e.observedAt)||!Number.isFinite(Date.parse(e.observedAt))||!Number.isSafeInteger(e.profileVersion)||e.profileVersion<1||!UUID.test(e.id))throw Error('MASTER_DATA_INVALID_PROVENANCE');
    object(e.provenance);
    const provided=['importBatch','fileHash','sourceRow'].filter(k=>Object.hasOwn(e.provenance,k));
    if(provided.length&& (provided.length!==3||!text(e.provenance.importBatch)||!text(e.provenance.sourceRow)||typeof e.provenance.fileHash!=='string'||!/^[a-f0-9]{64}$/.test(e.provenance.fileHash)))throw Error('MASTER_DATA_INVALID_IMPORT_PROVENANCE');

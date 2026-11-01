@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test, { before } from 'node:test';
 
+import { MASTER_ACTIONS } from '../dist/modules/master-data/master-data.types.js';
 import { PermissionEngine } from '../dist/modules/permissions/permission-engine.js';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -47,10 +48,12 @@ async function loadCatalogPermissions() {
 }
 
 test('OrgService action registry stays synchronized with the canonical permission catalog', async () => {
-  const [catalog, orgSource] = await Promise.all([
+  const [allPermissions, orgSource] = await Promise.all([
     loadCatalogPermissions(),
     readFile(resolve(repositoryRoot, 'apps/api/src/modules/org/org.service.ts'), 'utf8'),
   ]);
+  const catalog = allPermissions.filter(({action})=>action.startsWith('org.'));
+  assert.deepEqual([...MASTER_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('master-data.')).map(({action})=>action).sort());
   const actionSet = orgSource.match(/const ACTIONS = new Set\(\[([\s\S]*?)\]\);/);
   assert.ok(actionSet, 'OrgService must keep an explicit action allowlist');
   const actions = [...actionSet[1].matchAll(/'([^']+)'/g)].map((match) => match[1]).sort();
@@ -71,7 +74,17 @@ test('OrgService action registry stays synchronized with the canonical permissio
 
 test('allows configured catalog actions at their declared global or tenant scope', async () => {
   const catalog = await loadCatalogPermissions();
-  assert.equal(catalog.length, 5);
+  assert.deepEqual(catalog.map(({action,effect,scope})=>({action,effect,scope})), [
+    {action:'org.hierarchy.read',effect:'allow',scope:'tenant'},
+    {action:'org.tenant.create',effect:'allow',scope:'global'},
+    {action:'org.organization.create',effect:'allow',scope:'tenant'},
+    {action:'org.organization_unit.create',effect:'allow',scope:'tenant'},
+    {action:'org.site.create',effect:'allow',scope:'tenant'},
+    {action:'master-data.read',effect:'allow',scope:'tenant'},
+    {action:'master-data.write',effect:'allow',scope:'tenant'},
+    {action:'master-data.correct',effect:'allow',scope:'tenant'},
+    {action:'master-data.external',effect:'allow',scope:'tenant'},
+  ]);
 
   for (const permission of catalog) {
     const check = {

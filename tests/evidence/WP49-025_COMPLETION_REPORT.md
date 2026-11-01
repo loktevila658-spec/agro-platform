@@ -132,7 +132,7 @@ metadata-only and discovered by WP016 with existing lease/retry/inbox dedup. Cur
 org/identity contracts/consumers remain compatible, no new product/replica consumer.
 Schema/HTTP compatibility expands forward-only; no purge or destructive DOWN.
 
-## 4. Exact approved changed files (27)
+## 4. Exact approved changed files (28)
 
 | Path | Function |
 |---|---|
@@ -164,10 +164,13 @@ Schema/HTTP compatibility expands forward-only; no purge or destructive DOWN.
 | tests/contracts.test.mjs | Keep exact existing root event assertions and append exact two new definitions |
 | tests/evidence/WP49-025_COMPLETION_REPORT.md | G0/full scope/field ownership/implementation/tests/gates/limits and exact closeout evidence |
 
+| apps/api/test/permissions.test.mjs | Approved amendment in CR #62: exact existing org and combined nine action/scope/effect assertions; retain all negatives |
+
 ## 5. Tests, demo and gates
 
-Acceptance imports RED before runtime: both new test files failed missing compiled
-master-data modules. API build PASS. Final focused local unit/schema/migration/
+Acceptance tests written before runtime. Unit RED: missing master-data registry;
+integration initial import RED stopped first on the unbuilt baseline inbox module
+(the fresh worktree had no dist). No claim that the latter exercised domain rules. API build PASS. Final focused local unit/schema/migration/
 package+root contracts 37/37 PASS; full static typecheck/architecture11/11, contract
 validation/codegen drift and lint capability PASS (lint N/A, no tool configured).
 Generated outputs regenerated from canonical catalog, not hand-edited.
@@ -203,6 +206,17 @@ observed in hosted CI before claiming G10 PASS.
 | G10 | Pending hosted deterministic real PostgreSQL scenario |
 | G11 | Static/security negatives PASS; hosted full regression including existing performance budget required |
 | G12 | Pending exact-head findings/checks, ordinary merge, exact push CI, CR #62 completed |
+
+Initial hosted run41353718892 on08e66c6: new real-PG scenario PASS, Migration
+and Runtime PASS; full Unit FAIL due exactly two old org-only full-catalog
+assertions in permissions.test.mjs. This was a missed pre-code scope dependency.
+Stopped before editing that path, repeated full catalog/assertion scan and recorded
+one narrow amendment/approval in the same CR #62. Revised complete scope is28
+paths. Original org action/scope assertions are retained against its owned subset;
+exact combined9 actions/effects/scopes and master registry equality are asserted,
+all old negative tests retained. No acceptance weakened or extra feature added.
+Review also strengthened enum input type validation (no array coercion) and RFC3339
+source observation timestamp validation within already approved paths.
 
 ## 6. Limits and closeout
 
