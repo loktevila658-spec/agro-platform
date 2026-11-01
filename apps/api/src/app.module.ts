@@ -1,3 +1,4 @@
+import { ReplicationModule } from './modules/replication/replication.module';
 import { ProvidersModule } from './modules/providers/providers.module';
 import { OneCModule } from './modules/integrations/1c/one-c.module';
 import { IntegrationsModule } from './modules/integrations/integrations.module';
@@ -15,7 +16,7 @@ import { EventsModule } from './modules/events/events.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
+  imports: [ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

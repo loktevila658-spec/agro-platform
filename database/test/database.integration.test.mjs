@@ -160,6 +160,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(first.stdout, /migration 7 applied/);
     assert.match(first.stdout, /migration 8 applied/);
     assert.match(first.stdout, /migration 9 applied/);
+    assert.match(first.stdout, /migration 10 applied/);
 
     const second = spawnSync(process.execPath, ['database/migrate.mjs'], {
       cwd: repositoryRoot,
@@ -176,6 +177,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(second.stdout, /migration 7 already applied/);
     assert.match(second.stdout, /migration 8 already applied/);
     assert.match(second.stdout, /migration 9 already applied/);
+    assert.match(second.stdout, /migration 10 already applied/);
 
     assert.equal(
       query(
@@ -183,7 +185,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT current_version FROM platform_meta.schema_version;',
       ),
-      '9',
+      '10',
     );
     assert.match(
       query(
@@ -199,7 +201,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT COUNT(*) FROM platform_meta.schema_migrations;',
       ),
-      '9',
+      '10',
     );
 
     assert.equal(
@@ -242,6 +244,12 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
       '2',
     );
 
+    assert.equal(
+      query(container,databaseUrl,`SELECT count(*) FROM information_schema.tables
+        WHERE table_schema='replication' AND table_name IN ('local_clock','local_outbox','journal','cloud_stream','cloud_history','cloud_read_model');`),
+      '6',
+    );
+
     api = spawn(process.execPath, ['apps/api/dist/main.js'], {
       cwd: repositoryRoot,
       env: {
@@ -261,8 +269,8 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body, {
-      schemaVersion: 9,
-      expectedSchemaVersion: 9,
+      schemaVersion: 10,
+      expectedSchemaVersion: 10,
       postgisVersion: body.postgisVersion,
       status: 'current',
     });
