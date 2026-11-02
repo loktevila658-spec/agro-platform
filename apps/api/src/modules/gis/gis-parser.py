@@ -1,6 +1,7 @@
 """One bounded, read-only parse. Receives local temporary paths only, never URLs."""
 import csv
 import json
+import io
 import math
 import os
 import pathlib
@@ -132,8 +133,13 @@ def main():
             crs = srs(opts.get('sourceCrs'))
             mapping = opts.get('csv', {})
             require(mapping.get('mode') in ('POINTS', 'VERTICES') and mapping.get('x') and mapping.get('y') and mapping['x'] != mapping['y'], 'GIS_CSV_MAPPING_REQUIRED')
-            rows = list(csv.DictReader(raw.decode('utf-8-sig').splitlines()))
-            require(0 < len(rows) <= 5000 and len(set(rows[0])) == len(rows[0]), 'GIS_CSV_ROW_LIMIT')
+            reader = csv.DictReader(io.StringIO(raw.decode('utf-8-sig'), newline=''))
+            fields = reader.fieldnames or []
+            require(len(fields) == len(set(fields)), 'GIS_CSV_AMBIGUOUS_COLUMNS')
+            require(mapping['x'] in fields and mapping['y'] in fields, 'GIS_CSV_MAPPING_REQUIRED')
+            rows = list(reader)
+            require(0 < len(rows) <= 5000, 'GIS_CSV_ROW_LIMIT')
+            require(all(None not in row for row in rows), 'GIS_CSV_UNMAPPED_COLUMNS')
             layers.append('coordinates')
             points = []
             for index, row in enumerate(rows):
