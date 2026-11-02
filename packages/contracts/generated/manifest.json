@@ -3,11 +3,11 @@
   "formatVersion": 1,
   "sources": {
     "openapi/openapi.yaml": "983b4deb694a6805ce1320e89a35b6c56192b96e1829814c887919d18abd27b6",
-    "events/catalog/index.yaml": "17fe2ecc8e205635ed189fbcd4c972ebb52c4b4da99887ded7c345fd33ff3516",
+    "events/catalog/index.yaml": "31c94606340ab0cb7051d040f60e5fe1d39a1457eb4e1ec049eb9648ac649a9f",
     "events/schemas/event-catalog.schema.json": "f4e69757d5f24135c4578b3ef4b292895456a46b779178f071b763d01876957c"
   },
   "outputs": {
-    "generated/dart/contracts.dart": "f06380ba18e7abaf53280d68a7030d9f3db9988570cdeb7385151934a623fa4d",
-    "src/generated/contracts.ts": "7dc81c1dc32e3d070489ded8895a62ae327c14ff7d37bb7850726eda571b52f3"
+    "generated/dart/contracts.dart": "b0a010420cf9936ddb9f26ae5e28871157189c7e6ba33bfbdbe25ad9f71cfad7",
+    "src/generated/contracts.ts": "45770e09af57abe44352de76686f057d283bc07a65badf5abf9b84b88d2fb9c1"
   }
 }

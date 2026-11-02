@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test, { before } from 'node:test';
 
+import { GIS_ACTIONS } from '../dist/modules/gis/gis.types.js';
 import { MASTER_ACTIONS } from '../dist/modules/master-data/master-data.types.js';
 import { PermissionEngine } from '../dist/modules/permissions/permission-engine.js';
 
@@ -54,6 +55,7 @@ test('OrgService action registry stays synchronized with the canonical permissio
   ]);
   const catalog = allPermissions.filter(({action})=>action.startsWith('org.'));
   assert.deepEqual([...MASTER_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('master-data.')).map(({action})=>action).sort());
+  assert.deepEqual([...GIS_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('gis.')).map(({action})=>action).sort());
   const actionSet = orgSource.match(/const ACTIONS = new Set\(\[([\s\S]*?)\]\);/);
   assert.ok(actionSet, 'OrgService must keep an explicit action allowlist');
   const actions = [...actionSet[1].matchAll(/'([^']+)'/g)].map((match) => match[1]).sort();
@@ -84,6 +86,11 @@ test('allows configured catalog actions at their declared global or tenant scope
     {action:'master-data.write',effect:'allow',scope:'tenant'},
     {action:'master-data.correct',effect:'allow',scope:'tenant'},
     {action:'master-data.external',effect:'allow',scope:'tenant'},
+    {action:'gis.read',effect:'allow',scope:'tenant'},
+    {action:'gis.propose',effect:'allow',scope:'tenant'},
+    {action:'gis.approve',effect:'allow',scope:'tenant'},
+    {action:'gis.reject',effect:'allow',scope:'tenant'},
+    {action:'gis.import',effect:'allow',scope:'tenant'},
   ]);
 
   for (const permission of catalog) {

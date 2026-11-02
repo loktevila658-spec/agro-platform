@@ -110,6 +110,7 @@ test('canonical event schema and single YAML catalog validate', async () => {
     { name: 'security.mfa_changed', version: '1.0.0', producer: 'identity' },
     { name: 'master_data.unit.changed', version: '1.0.0', producer: 'master-data' },
     { name: 'master_data.material.changed', version: '1.0.0', producer: 'master-data' },
+    { name: 'gis.geometry.changed', version: '1.0.0', producer: 'gis' },
   ]);
   assert.deepEqual(Object.keys(contracts.sources).sort(), [
     'events/catalog/index.yaml',

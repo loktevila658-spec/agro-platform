@@ -1,0 +1,13 @@
+.gis-workspace { box-sizing: border-box; min-height: 100dvh; padding: clamp(16px, 3vw, 40px); background: #f6f7f3; color: #24382b; font: 16px/1.5 system-ui, sans-serif; }
+.gis-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.gis-header h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; }
+.gis-header p, .gis-footnote { margin: 0; color: #445b49; max-width: 70ch; }
+.gis-header a { color: #245d38; text-underline-offset: 4px; }
+.gis-map-frame { position: relative; height: 68dvh; min-height: 300px; border: 1px solid #b7c5b5; overflow: hidden; }
+.gis-map-canvas { position: absolute; inset: 0; }
+.gis-map-message { position: absolute; left: 12px; right: 56px; bottom: 36px; width: fit-content; max-width: 52ch; padding: 12px 16px; background: #fff; color: #24382b; border: 1px solid #b7c5b5; pointer-events: auto; }
+.gis-map-message button { color: #fff; background: #245d38; border: 0; padding: 8px 12px; margin: 8px 0 0; font: inherit; cursor: pointer; }
+.gis-workspace :focus-visible { outline: 3px solid #24733e; outline-offset: 4px; }
+.gis-workspace ::selection { color: #fff; background: #245d38; }
+.gis-footnote { margin-top: 12px; font-size: 14px; }
+@media (max-width: 480px) { .gis-map-message { font-size: 14px; padding: 10px; } }
