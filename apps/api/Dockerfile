@@ -9,7 +9,7 @@ RUN cd apps && pnpm install --no-frozen-lockfile
 RUN cd apps && pnpm --filter @agroplatform/api build
 
 FROM node:22-alpine
-RUN apk add --no-cache postgresql-client
+RUN apk add --no-cache postgresql-client py3-gdal
 WORKDIR /workspace/apps/api
 COPY --from=build /workspace/apps/node_modules ../node_modules
 COPY --from=build /workspace/apps/api/node_modules ./node_modules
@@ -19,5 +19,7 @@ COPY --from=build /workspace/packages/observability/src/index.cjs /workspace/pac
 COPY --from=build /workspace/packages/storage/src/index.cjs /workspace/packages/storage/src/index.cjs
 COPY --from=build /workspace/security/headers.cjs /workspace/security/headers.cjs
 COPY --from=build /workspace/packages/connectors/src /workspace/packages/connectors/src
+COPY --from=build /workspace/apps/api/src/modules/gis/gis-parser.py ./dist/modules/gis/gis-parser.py
+ENV GIS_PARSER_SCRIPT=/workspace/apps/api/dist/modules/gis/gis-parser.py
 EXPOSE 3000
 CMD ["node", "dist/main.js"]

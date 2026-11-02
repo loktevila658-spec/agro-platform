@@ -1,3 +1,4 @@
+import { GisModule } from './modules/gis/gis.module';
 import { MasterDataModule } from './modules/master-data/master-data.module';
 import { ReplicationModule } from './modules/replication/replication.module';
 import { ProvidersModule } from './modules/providers/providers.module';
@@ -17,7 +18,7 @@ import { EventsModule } from './modules/events/events.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [MasterDataModule, ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
+  imports: [GisModule, MasterDataModule, ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

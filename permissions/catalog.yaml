@@ -42,3 +42,23 @@ permissions:
     description: Apply an explicit field source policy through an owner command.
     effect: allow
     scope: tenant
+  - action: gis.read
+    description: Read tenant GIS geometry versions and bounded spatial views.
+    effect: allow
+    scope: tenant
+  - action: gis.propose
+    description: Create a GIS geometry candidate with immutable provenance.
+    effect: allow
+    scope: tenant
+  - action: gis.approve
+    description: Approve a geometry candidate at an explicit effective instant.
+    effect: allow
+    scope: tenant
+  - action: gis.reject
+    description: Reject a geometry candidate with an auditable reason.
+    effect: allow
+    scope: tenant
+  - action: gis.import
+    description: Scan, stage, preview and commit GIS source candidates.
+    effect: allow
+    scope: tenant

@@ -135,5 +135,6 @@ test('event catalog preserves WP49-011 organization events and appends the DOC19
     { name: 'security.mfa_changed', version: '1.0.0', producer: 'identity' },
     { name: 'master_data.unit.changed', version: '1.0.0', producer: 'master-data' },
     { name: 'master_data.material.changed', version: '1.0.0', producer: 'master-data' },
+    { name: 'gis.geometry.changed', version: '1.0.0', producer: 'gis' },
   ]);
 });

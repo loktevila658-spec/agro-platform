@@ -32,6 +32,6 @@ import { EnvironmentFileSizePolicy } from './files.types';
     { provide: FILES_SIZE_POLICY, useClass: EnvironmentFileSizePolicy },
     FilesService,
   ],
-  exports: [FilesService],
+  exports: [FilesService, FILES_STORAGE, FILES_SCANNER],
 })
 export class FilesModule {}

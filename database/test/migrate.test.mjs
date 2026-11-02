@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -117,6 +117,9 @@ test('baseline, organization, identity, and audit framework migrations are order
     assert.match(migrations[8].sql,new RegExp(`BEFORE UPDATE OR DELETE OR TRUNCATE ON integrations\\.${table}`,'i'));
   }
   for (const table of ['local_clock','local_outbox','journal','cloud_stream','cloud_history','cloud_read_model']) assert.match(migrations[9].sql,new RegExp(`CREATE TABLE replication\\.${table}\\b`,'i'));
+  for (const table of ['geometry_head','geometry_version','geometry_decision','import_batch','feature_staging','audit','command_idempotency','outbox_event']) assert.match(migrations[11].sql,new RegExp(`CREATE TABLE gis\\.${table}\\b`,'i'));
+  assert.match(migrations[11].sql,/USING gist\(geometry\)/i);
+  assert.match(migrations[11].sql,/BEFORE UPDATE OR DELETE OR TRUNCATE ON gis\.geometry_version/i);
   for (const table of ['source_policy','unit_of_measure','material','revision','command_idempotency','outbox_event']) assert.match(migrations[10].sql,new RegExp(`CREATE TABLE master_data\\.${table}\\b`,'i'));
   assert.match(migrations[10].sql,/BEFORE UPDATE OR DELETE OR TRUNCATE ON master_data\.revision/i);
   assert.doesNotMatch(migrations[10].sql,/\b(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:org|identity|files|sync|integrations|platform_events)\./i);

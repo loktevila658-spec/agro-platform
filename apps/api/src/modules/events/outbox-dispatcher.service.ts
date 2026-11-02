@@ -80,6 +80,8 @@ export class OutboxDispatcherService implements OnModuleInit, OnModuleDestroy {
       SELECT 'identity', id FROM identity.outbox_event
       UNION ALL
       SELECT 'master-data', id FROM master_data.outbox_event
+      UNION ALL
+      SELECT 'gis', id FROM gis.outbox_event
       ON CONFLICT (source, event_id) DO NOTHING
     `);
   }
@@ -108,7 +110,7 @@ export class OutboxDispatcherService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async loadEvent(source: EventSource, eventId: string): Promise<DomainEvent | undefined> {
-    const table = source === 'org' ? 'org.outbox_event' : source === 'identity' ? 'identity.outbox_event' : 'master_data.outbox_event';
+    const table = source === 'org' ? 'org.outbox_event' : source === 'identity' ? 'identity.outbox_event' : source === 'master-data' ? 'master_data.outbox_event' : 'gis.outbox_event';
     const actorColumn = source === 'org' ? "payload->>'actorId'" : 'actor_id';
     const result = await this.pool.query<{
       id: string;

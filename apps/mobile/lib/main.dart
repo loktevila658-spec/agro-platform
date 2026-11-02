@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'persistence.dart';
 import 'sync.dart';
 import 'widgets/queue_status.dart';
+import 'widgets/gis_map.dart';
 
 const apiBase = String.fromEnvironment(
   'API_BASE_URL',
@@ -385,6 +386,16 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Signed in'),
+                    Builder(
+                      builder: (context) => TextButton(
+                        onPressed: () => Navigator.of(context).push<void>(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const GisMapPage(),
+                          ),
+                        ),
+                        child: const Text('Карта'),
+                      ),
+                    ),
                     if (workspace != null) QueueStatus(counts: queueCounts),
                     Row(
                       children: [
