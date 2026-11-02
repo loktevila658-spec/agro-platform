@@ -29,10 +29,11 @@ test('GIS actual GDAL parser preserves GeoJSON and normalizes WKT/WKB/CSV/KML/GP
   await assert.rejects(parser.parse(Buffer.from('x,y\n0,0,extra\n1,0\n1,1\n0,0'),csvOptions),/GIS_CSV_UNMAPPED_COLUMNS/);
   const multiline=await parser.parse(Buffer.from('x,y,label\n0,0,"line1\nline2"\n1,0,b\n1,1,c\n0,0,d'),csvOptions);
   assert.equal(multiline.features[0].properties.rows[0].label,'line1\nline2');
-  const kml=Buffer.from('<kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><Polygon><outerBoundaryIs><LinearRing><coordinates>30,50 30.01,50 30.01,50.01 30,50</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>');
-  assert.deepEqual((await parser.parse(kml,{format:'KML'})).features[0].issues,[]);
+  const kml=Buffer.from('<kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><name>Тест UTF16</name><Polygon><outerBoundaryIs><LinearRing><coordinates>30,50 30.01,50 30.01,50.01 30,50</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>');
+  const kmlParsed=await parser.parse(kml,{format:'KML'});assert.deepEqual(kmlParsed.features[0].issues,[]);
   const utf16=xml=>Buffer.from('\uFEFF<?xml version="1.0" encoding="UTF-16"?>'+xml,'utf16le');
-  assert.deepEqual((await parser.parse(utf16(kml.toString()),{format:'KML'})).features[0].issues,[]);
+  const utf16Parsed=await parser.parse(utf16(kml.toString()),{format:'KML'});assert.deepEqual(utf16Parsed.features[0].issues,[]);
+  assert.deepEqual(utf16Parsed.features[0].geometry,kmlParsed.features[0].geometry);assert.deepEqual(utf16Parsed.features[0].properties,kmlParsed.features[0].properties);
   const external=kml.toString().replace('</Document>','<NetworkLink><Link><href>https://example.invalid/source.kml</href></Link></NetworkLink></Document>');
   await assert.rejects(parser.parse(utf16(external),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
   await assert.rejects(parser.parse(utf16('<!DOCTYPE kml [<!ENTITY value "safe-test">]>'+kml.toString()),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);

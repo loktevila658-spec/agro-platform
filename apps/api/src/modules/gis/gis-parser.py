@@ -134,6 +134,11 @@ def main():
         kml_2d = False
         if fmt in ('KML', 'KMZ'):
             root = parse_kml(path.read_bytes())
+            # GDAL driver identification can reject UTF-16 before Expat reads it.
+            # Normalize only the private temporary copy; source bytes/hash stay original.
+            if root.tag.startswith('{'):
+                ET.register_namespace('', root.tag[1:].split('}')[0])
+            path.write_bytes(ET.tostring(root, encoding='utf-8', xml_declaration=True))
             coordinate_nodes = [n for n in root.iter() if n.tag.split('}')[-1] == 'coordinates']
             kml_2d = bool(coordinate_nodes) and all(len(token.split(',')) == 2 for n in coordinate_nodes for token in (n.text or '').split())
         if fmt in ('WKT', 'WKB'):
