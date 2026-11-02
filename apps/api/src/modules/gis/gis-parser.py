@@ -1,6 +1,7 @@
 """One bounded, read-only parse. Receives local temporary paths only, never URLs."""
 import csv
 import json
+import io
 import math
 import os
 import pathlib
@@ -38,6 +39,21 @@ def srs(value):
     crs.ImportFromEPSG(int(value[5:]))
     crs.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     return crs
+
+
+class SafeKmlTreeBuilder(ET.TreeBuilder):
+    def doctype(self, name, pubid, system):
+        raise ValueError('GIS_EXTERNAL_REFERENCE_FORBIDDEN')
+
+
+def parse_kml(raw):
+    # Parse the declared XML encoding before testing structure (including UTF-16).
+    root = ET.fromstring(raw, parser=ET.XMLParser(target=SafeKmlTreeBuilder()))
+    for node in root.iter():
+        local = node.tag.split('}')[-1].lower()
+        require(local not in ('networklink', 'href') and not node.tag.startswith('{http://www.w3.org/2001/XInclude}'), 'GIS_EXTERNAL_REFERENCE_FORBIDDEN')
+        require(all(key.split('}')[-1].lower() != 'href' for key in node.attrib), 'GIS_EXTERNAL_REFERENCE_FORBIDDEN')
+    return root
 
 
 def geometry_json(geom):
@@ -117,10 +133,12 @@ def main():
                     require(cpg.exists() and cpg.read_text().strip().upper() in ('UTF-8', '65001', 'CP1251', '1251', 'CP1252', '1252', 'ISO-8859-1'), 'GIS_SHP_ENCODING_REQUIRED')
         kml_2d = False
         if fmt in ('KML', 'KMZ'):
-            xml = path.read_bytes().lower()
-            for token in (b'<!doctype', b'<!entity', b'networklink', b'<href', b'xinclude'):
-                require(token not in xml, 'GIS_EXTERNAL_REFERENCE_FORBIDDEN')
-            root = ET.fromstring(path.read_bytes())
+            root = parse_kml(path.read_bytes())
+            # GDAL driver identification can reject UTF-16 before Expat reads it.
+            # Normalize only the private temporary copy; source bytes/hash stay original.
+            if root.tag.startswith('{'):
+                ET.register_namespace('', root.tag[1:].split('}')[0])
+            path.write_bytes(ET.tostring(root, encoding='utf-8', xml_declaration=True))
             coordinate_nodes = [n for n in root.iter() if n.tag.split('}')[-1] == 'coordinates']
             kml_2d = bool(coordinate_nodes) and all(len(token.split(',')) == 2 for n in coordinate_nodes for token in (n.text or '').split())
         if fmt in ('WKT', 'WKB'):
@@ -132,8 +150,13 @@ def main():
             crs = srs(opts.get('sourceCrs'))
             mapping = opts.get('csv', {})
             require(mapping.get('mode') in ('POINTS', 'VERTICES') and mapping.get('x') and mapping.get('y') and mapping['x'] != mapping['y'], 'GIS_CSV_MAPPING_REQUIRED')
-            rows = list(csv.DictReader(raw.decode('utf-8-sig').splitlines()))
-            require(0 < len(rows) <= 5000 and len(set(rows[0])) == len(rows[0]), 'GIS_CSV_ROW_LIMIT')
+            reader = csv.DictReader(io.StringIO(raw.decode('utf-8-sig'), newline=''))
+            fields = reader.fieldnames or []
+            require(len(fields) == len(set(fields)), 'GIS_CSV_AMBIGUOUS_COLUMNS')
+            require(mapping['x'] in fields and mapping['y'] in fields, 'GIS_CSV_MAPPING_REQUIRED')
+            rows = list(reader)
+            require(0 < len(rows) <= 5000, 'GIS_CSV_ROW_LIMIT')
+            require(all(None not in row for row in rows), 'GIS_CSV_UNMAPPED_COLUMNS')
             layers.append('coordinates')
             points = []
             for index, row in enumerate(rows):

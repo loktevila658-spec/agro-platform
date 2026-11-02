@@ -24,8 +24,20 @@ test('GIS actual GDAL parser preserves GeoJSON and normalizes WKT/WKB/CSV/KML/GP
   const csv=Buffer.from('x,y\n30,50\n30.01,50\n30.01,50.01\n30,50');
   assert.equal((await parser.parse(csv,{format:'CSV',sourceCrs:'EPSG:4326',csv:{x:'x',y:'y',mode:'VERTICES'}})).features[0].geometry.type,'Polygon');
   await assert.rejects(parser.parse(csv,{format:'CSV',sourceCrs:'EPSG:4326'}),/MAPPING/);
-  const kml=Buffer.from('<kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><Polygon><outerBoundaryIs><LinearRing><coordinates>30,50 30.01,50 30.01,50.01 30,50</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>');
-  assert.deepEqual((await parser.parse(kml,{format:'KML'})).features[0].issues,[]);
+  const csvOptions={format:'CSV',sourceCrs:'EPSG:4326',csv:{x:'x',y:'y',mode:'VERTICES'}};
+  for(const bytes of ['x,y,x\n10,0,0\n11,0,1\n11,1,1\n10,0,0','x,y,y\n0,10,0\n1,10,0\n1,11,1\n0,10,0'])await assert.rejects(parser.parse(Buffer.from(bytes),csvOptions),/GIS_CSV_AMBIGUOUS_COLUMNS/);
+  await assert.rejects(parser.parse(Buffer.from('x,y\n0,0,extra\n1,0\n1,1\n0,0'),csvOptions),/GIS_CSV_UNMAPPED_COLUMNS/);
+  const multiline=await parser.parse(Buffer.from('x,y,label\n0,0,"line1\nline2"\n1,0,b\n1,1,c\n0,0,d'),csvOptions);
+  assert.equal(multiline.features[0].properties.rows[0].label,'line1\nline2');
+  const kml=Buffer.from('<kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><name>Тест UTF16</name><Polygon><outerBoundaryIs><LinearRing><coordinates>30,50 30.01,50 30.01,50.01 30,50</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>');
+  const kmlParsed=await parser.parse(kml,{format:'KML'});assert.deepEqual(kmlParsed.features[0].issues,[]);
+  const utf16=xml=>Buffer.from('\uFEFF<?xml version="1.0" encoding="UTF-16"?>'+xml,'utf16le');
+  const utf16Parsed=await parser.parse(utf16(kml.toString()),{format:'KML'});assert.deepEqual(utf16Parsed.features[0].issues,[]);
+  assert.deepEqual(utf16Parsed.features[0].geometry,kmlParsed.features[0].geometry);assert.deepEqual(utf16Parsed.features[0].properties,kmlParsed.features[0].properties);
+  const external=kml.toString().replace('</Document>','<NetworkLink><Link><href>https://example.invalid/source.kml</href></Link></NetworkLink></Document>');
+  await assert.rejects(parser.parse(utf16(external),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
+  await assert.rejects(parser.parse(utf16('<!DOCTYPE kml [<!ENTITY value "safe-test">]>'+kml.toString()),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
+  await assert.rejects(parser.parse(Buffer.from(kml.toString().replace('</Document>','<k:href xmlns:k="urn:fixture">file:///not-readable</k:href></Document>')),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
   execFileSync(process.env.GIS_PYTHON??'/usr/bin/python3',['-c',String.raw`
 from osgeo import ogr,osr
 import pathlib,sys,zipfile
