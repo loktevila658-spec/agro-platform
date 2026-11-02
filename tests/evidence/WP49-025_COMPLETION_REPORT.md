@@ -1,8 +1,33 @@
 # WP49-025 Completion Report — Master Data core
 
 Date: 2026-11-02 (Europe/Moscow). Branch: codex/wp49-025-master-data.
-Status: IN PROGRESS. No DONE claim before clear exact-head findings/required CI,
-ordinary merge, exact merge-SHA push CI and completed Scope CR #62 closeout.
+Status: **DONE**. All applicable G0–G12 PASS. This report-only update records
+the completed implementation closeout; it changes no runtime code or frozen scope.
+
+- Implementation [PR #63](https://github.com/loktevila658-spec/agro-platform/pull/63),
+  tested head `5e53fbac7c638fb3332a1f0a6468d9438cf3dd10`.
+- Exact-head [run 41354805870](https://github.com/loktevila658-spec/agro-platform/actions/runs/41354805870),
+  all eight required jobs completed SUCCESS.
+- Ordinary two-parent implementation merge `73591bc241a4a64d76cbf62cd32dd87259ec2216`, pre-merge baseline
+  `961b8a5421155e5fe42226dc2666bfddcb77fb59`; merge tree equals tested-head tree.
+- Exact merge-SHA event=push
+  [run 41355973494](https://github.com/loktevila658-spec/agro-platform/actions/runs/41355973494),
+  all eight jobs completed SUCCESS, individually observed including full Unit,
+  Migration, Runtime, Mobile/native Android and aggregate.
+- [Final DONE/G0–G12 closeout](https://github.com/loktevila658-spec/agro-platform/issues/62#issuecomment-6583684194),
+  CR #62 CLOSED/completed. Required review/findings/protection and exact28-path
+  diff/frozen-manifest checks cleared; no auto-merge/bypass or independent review claim.
+- WP024 report-only PR #60 merged `961b8a5421155e5fe42226dc2666bfddcb77fb59`,
+  exact-head41353582321 and exact push41354560401 all8 SUCCESS, CR #58 stays closed.
+  WP011 report PR #61 merged `b62830ef3e7a673d5b5990e6a44b81ade12e72b9`,
+  exact-head41352405133 and exact push41353416415 all8 SUCCESS.
+
+Final hosted exact-head/post-merge checks resolve the disclosed local Docker/Flutter
+verification limits. API126/126, contracts20/20, config17/17, connectors2/2,
+root regressions15/15 and migration units5/5 PASS; no skipped API tests.
+The real-PG deterministic scenario and immutable policy upgrade/restart tests pass.
+Mobile unit tests and native Android scenario pass; this does not certify physical
+devices or production WAN/TLS/1C deployments. Failed earlier attempts remain below.
 
 ## 1. G0 and frozen authority
 
@@ -36,9 +61,9 @@ Prior wave WP024: live SHA matches owner's expected f20d89c…, CR #58 closed
 completed, final DONE/G0–G12 comment6564065197 and exact push41350936656 all8
 SUCCESS confirmed without re-auditing implementation. Report-only PR #60 changes
 only its already approved Completion Report to reflect those fulfilled facts.
-Its initial Mobile failure is hosted system-image installation `No space left on
-device`, before Android test launch; unchanged failed-job retry, then strict-base
-update proceed normally. No gate bypass or CR reopening. These report-only checks
+Its initial Mobile failure was hosted system-image installation `No space left on
+device`, before Android test launch; unchanged failed-job retry and strict-base
+update were followed by the successful exact-head/post-merge runs above. No gate bypass or CR reopening. These report-only checks
 are separate from already established WP024 implementation/dependency closeout.
 
 Authority: DOC50 execution > DOC48 scope/release/RTM > DOC47 reconciliation/REV47
@@ -181,7 +206,7 @@ unchanged, failed before relevant database scenarios because Docker Desktop is
 unable to start. Full Unit also affects unchanged integration suites; no local
 full-Unit or real-PG/runtime PASS is claimed. No test skip/threshold relaxation,
 destructive Docker reset or CI change. Local Flutter absent; exact-head and exact
-merge-SHA hosted full Unit/Migration/Runtime/Mobile/native Android remain mandatory.
+merge-SHA hosted full Unit/Migration/Runtime/Mobile/native Android have passed.
 
 Deterministic fixture scenario uses only test-specific values, source observation
 2026-11-02T00:00:00Z, explicit expected versions; generated IDs isolate runs rather
@@ -189,24 +214,24 @@ than determine business decisions. It covers tenant/org uniqueness, races, one-e
 replay, stale/concurrent correction, original history, deactivation, unit semantics,
 forced audit/outbox rollback, revoked permission, cloud rejection, explicit mock
 external field ownership, GUID aliases/collision/actionable mismatch, and actual
-WP016 outbox/inbox failure/retry/replay. Successful real-PG demo output must be
-observed in hosted CI before claiming G10 PASS.
+WP016 outbox/inbox failure/retry/replay. Successful real-PG demo output was observed in hosted CI; G10 PASS.
 
-| Gate | Current evidence / required activation |
+| Gate | Final decision |
 |---|---|
-| G0 | PASS — merged compatible direct implementations, reports/closed CRs/exact push evidence |
-| G1 | PASS locally — typecheck/architecture/contract/diff; exact-head required |
-| G2 | Pending hosted real clean/repeated/current/invalid v11 migration |
-| G3 | Focused37/37 PASS; full Unit pending hosted Docker |
-| G4 | Pending hosted real PostgreSQL/core/integration/runtime |
-| G5 | PASS locally — unchanged HTTP, exact new event contract/codegen; hosted required |
-| G6 | Pending hosted actual atomic outbox/inbox/idempotency rollback/replay |
-| G7 | Unit default deny/field SoT PASS; hosted permission/tenant/owner negatives required |
-| G8 | No new offline workflow; unchanged sync/mobile mandatory hosted regression |
-| G9 | Pending hosted immutable correction/provenance/source policy/mapping scenario |
-| G10 | Pending hosted deterministic real PostgreSQL scenario |
-| G11 | Static/security negatives PASS; hosted full regression including existing performance budget required |
-| G12 | Pending exact-head findings/checks, ordinary merge, exact push CI, CR #62 completed |
+| G0 | PASS — compatible merged dependencies, reports/closed CRs/exact push evidence |
+| G1 | PASS — final typecheck/architecture11/11, contracts, lint capability and exact diff |
+| G2 | PASS — real clean/repeated/current/checksum-invalid v11 migrations/API |
+| G3 | PASS — targeted43/43 and hosted full Unit/API126/126, no skips |
+| G4 | PASS — real PG owner/core/framework integration and full runtime |
+| G5 | PASS — compatible HTTP, exact event contracts and all4 generated outputs/drift |
+| G6 | PASS — actual atomic revision/outbox/idempotency rollback, WP016 inbox retry/replay |
+| G7 | PASS — deny by default, current/revoked permissions, tenant/org/source negatives |
+| G8 | PASS for applicable regressions — unchanged sync/mobile/native Android; no new offline write workflow |
+| G9 | PASS — immutable before/after revision chain, reason/version/source policies/import provenance and aliases |
+| G10 | PASS — deterministic real PostgreSQL/mock-field/mapping/fault scenario |
+| G11 | PASS — source/security/type/bounds negatives and unchanged full performance/offline budgets |
+| G12 | PASS — exact28 approved paths/report, clear findings/checks, ordinary merge/exact push success, completed CR |
+
 
 Initial hosted run41353718892 on08e66c6: new real-PG scenario PASS, Migration
 and Runtime PASS; full Unit FAIL due exactly two old org-only full-catalog
@@ -240,8 +265,9 @@ profile automatically active. Physical device/WAN/production deployments are not
 certified by fixture/hosted tests. MASTER_HISTORY retains prior data; no cleanup can
 delete these records. No future/FUTURE/REJECTED requirement promoted.
 
-Final exact-head/merge/run/CR IDs and all gate decisions are recorded after actual
-observation in the CR closeout and this report. Ordinary merge only after clear
-findings and strict required checks, no auto-merge/admin/force/check bypass. DONE
-requires all applicable G0–G12 observed, exact merge push all8 SUCCESS and completed
-CR closure. This interim report does not assert that outcome yet.
+Final input review also rejects impossible calendar dates and 24:00 timestamps,
+which Date.parse would otherwise normalize; negative tests pass. Final exact-head/
+merge/run/CR evidence is recorded above after observation. All
+applicable gates passed before completed CR closure. No subsequent WP is started
+in this closeout. This report-only reconciliation uses the already approved report
+path and does not reopen the CR or re-audit implementation.
