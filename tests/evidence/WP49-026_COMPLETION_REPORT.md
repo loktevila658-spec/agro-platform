@@ -195,14 +195,17 @@ omitted digits, truncating GIS_GEOJSON_RFC7946_REQUIRED to GIS_GEOJSON_RFC. The
 strict expected error assertion remains; sanitizer now retains digits. Real GIS
 PostGIS/MinIO/ClamAV owner/import/version/rollback/outbox scenario PASS, actual
 GDAL3.8.4 format scenario PASS, representative10k GiST query P95=1.333252ms.
-These focused results do not relabel the failed full Unit gate as PASS. Mobile
-still pending when this note was written. Review also made PROPOSED explicit,
+These focused results do not relabel the failed full Unit gate as PASS. Mobile SUCCESS, including enforce-lockfile/format0 changes/analyze,34 Flutter
+tests, Android build and2 actual emulator tests (including MapLibre local style). Review also made PROPOSED explicit,
 added cut antimeridian query and successful/all-effects-rollback ALL_OR_NOTHING
 coverage, real KMZ success and projected3857->4326 normalization/unknown EPSG tests.
 Review additionally snapshots actor/command inputs before asynchronous policy
 checks; a new negative race test proves query tenant stays bound to authorized
 identity. Final local targeted suite42/42 and root regression15/15 PASS.
-No acceptance changed to accommodate a failure. All changes remain in CR65 paths.
+No acceptance changed to accommodate a failure. All changes remain in CR65 paths. Final review also routes import commit from
+retained original geometry, not rounded rendering GeoJSON; real PG acceptance
+asserts preservation of1e-20 coordinates. Prior run41501385344 onab86b5c is
+superseded by this final correction and will not be claimed as final-head evidence.
 
 ## Limits and closeout
 

@@ -179,7 +179,8 @@ test('GIS foundation real PostGIS/storage/import/version/security deterministic 
       const history=await service.history(actor,result.committed[0].geometryId);assert.equal(history[0].source.fileSha256,preview.sha256);assert.equal(history[0].source.importBatchId,staged.batchId);assert.equal(history[0].status,'PROPOSED','import remains a proposal');
       const key=(await pool.query('SELECT object_key FROM gis.import_batch WHERE id=$1',[staged.batchId])).rows[0].object_key;
       const chunks=[];for await(const b of await storage.getObject(key))chunks.push(b);assert.deepEqual(Buffer.concat(chunks),bytes);
-      const validBytes=Buffer.from(JSON.stringify({type:'FeatureCollection',features:[0,1].map(dx=>({type:'Feature',properties:{name:'Fixture valid '+dx},geometry:shape(dx)}))}));
+      const preciseShape={type:'Polygon',coordinates:[[[1e-20,0],[0.01,0],[0.01,0.01],[1e-20,0.01],[1e-20,0]]]};
+      const validBytes=Buffer.from(JSON.stringify({type:'FeatureCollection',features:[0,1].map(dx=>({type:'Feature',properties:{name:'Fixture valid '+dx},geometry:dx===0?preciseShape:shape(dx)}))}));
       const all=await imports.stage(actor,{...input,bytes:validBytes},ctx());
       const prior=(await pool.query('SELECT count(*)::int AS n FROM gis.geometry_version')).rows[0].n;
       await pool.query(`CREATE FUNCTION gis.fixture_batch_fail() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action='IMPORT_COMMITTED' THEN RAISE EXCEPTION 'fixture batch final audit failure'; END IF;RETURN NEW;END $$; CREATE TRIGGER fixture_batch_fail BEFORE INSERT ON gis.audit FOR EACH ROW EXECUTE FUNCTION gis.fixture_batch_fail()`);
@@ -187,6 +188,7 @@ test('GIS foundation real PostGIS/storage/import/version/security deterministic 
       assert.equal((await pool.query('SELECT count(*)::int AS n FROM gis.geometry_version')).rows[0].n,prior,'both valid owner effects roll back with final batch audit');
       await pool.query('DROP TRIGGER fixture_batch_fail ON gis.audit');
       const accepted=await imports.commit(actor,{batchId:all.batchId,mode:'ALL_OR_NOTHING',reason:'Fixture all'},ctx());assert.equal(accepted.committed.length,2);assert.equal(accepted.skipped,0);
+      const exactX=(await pool.query('SELECT ST_X(ST_PointN(ST_ExteriorRing(ST_GeometryN(geometry,1)),1)) AS x FROM gis.geometry_version WHERE id=$1',[accepted.committed[0].versionId])).rows[0].x;assert.equal(exactX,1e-20,'owner commit must not re-import a rounded render representation');
       assert.ok((await imports.preview(actor,all.batchId)).features[0].duplicate_candidates.length>0);
       const infected=Buffer.from('X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*');
       await assert.rejects(imports.stage(actor,{...input,bytes:infected},ctx()),/MALWARE/);

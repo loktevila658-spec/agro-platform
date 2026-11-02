@@ -66,7 +66,7 @@ export class GisImportsService {
    // One commit per immutable batch; other idempotency keys cannot import it twice.
    await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,26))',[`${actor.tenantId}:${input.batchId}`]);
    if((await tx.query("SELECT id FROM gis.audit WHERE tenant_id=$1 AND entity_id=$2 AND action='IMPORT_COMMITTED'",[actor.tenantId,input.batchId])).rowCount)throw Error('GIS_IMPORT_ALREADY_COMMITTED');
-   const rows=(await tx.query('SELECT feature_index,source_feature_id,source_crs,ST_AsGeoJSON(geometry,17,0)::json AS geometry,issues FROM gis.feature_staging WHERE tenant_id=$1 AND batch_id=$2 ORDER BY feature_index',[actor.tenantId,input.batchId])).rows;
+   const rows=(await tx.query('SELECT feature_index,source_feature_id,source_crs,original_geometry AS geometry,issues FROM gis.feature_staging WHERE tenant_id=$1 AND batch_id=$2 ORDER BY feature_index',[actor.tenantId,input.batchId])).rows;
    const invalid=rows.filter(r=>r.issues.length>0);if(invalid.length&&input.mode==='ALL_OR_NOTHING')throw Error('GIS_IMPORT_HAS_ERRORS');
    const committed:GisResult[]=[];
    for(const row of rows){if(row.issues.length)continue;
