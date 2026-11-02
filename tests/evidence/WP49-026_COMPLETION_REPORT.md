@@ -1,6 +1,6 @@
 # WP49-026 Completion Report — GIS spatial foundation
 
-Status: IN PROGRESS. No DONE or unobserved CI PASS claimed.
+Status: IMPLEMENTATION VALIDATED. G0–G11 PASS; G12 awaits exact final PR-head checks, ordinary merge and post-merge CI. No DONE or unobserved merge evidence claimed.
 
 Baseline live main: `0ba90c70cb2b88556c3c01165fb2ec14ba44b476`.
 Branch: `codex/wp49-026-gis`, separate initially clean worktree.
@@ -157,7 +157,8 @@ Actual GDAL parser test attempted locally and failed before scenarios because
 Python GDAL is absent. Real PostGIS integration attempted and failed before
 scenarios because Docker Desktop is unable to start. No local parser/PostGIS PASS.
 Full local Unit/Migration/Runtime attempted: blocked by unavailable Docker/GDAL,
-not PASS. Local Mobile stops at flutter ENOENT. Hosted results pending.
+not PASS. Local Mobile stops at flutter ENOENT. Hosted real-service checks below
+resolve these environment limits without relabeling local failures.
 Flutter absent locally; native smoke and unchanged offline regressions mandatory
 in hosted Mobile. SDK provisioning attempts were read-only and unavailable;
 no replacement of frozen project toolchain.
@@ -168,23 +169,61 @@ races/stale conflict, old versions, tenant/current/revoked permissions/cloud den
 invalid geometry, audit/outbox rollback and actual inbox retry/replay; real MinIO/
 ClamAV/GDAL stage, dry-run, source hash/object provenance, invalid-point feature,
 both commit modes and atomic owner failure. Representative10k spatial grid/GiST
-plan and P95<=1500ms measured by integration, not claimed until observed.
+plan and P95<=1500ms are observed in the successful hosted integration below.
 
 | Gate | Current verdict |
 |---|---|
 | G0 | PASS — verified merged compatible prerequisites and accepted evidence |
 | G1 | PASS locally — static/typecheck/architecture/contracts/diff |
-| G2 | PENDING hosted — migration12 real PostGIS |
-| G3 | Targeted PASS41/41; full Unit pending |
-| G4 | PENDING hosted — real PostGIS/MinIO/ClamAV/GDAL |
+| G2 | PASS — hosted clean/repeated/current/checksum-negative PostGIS schema12 |
+| G3 | PASS — local targeted42/42; hosted API140/140, root15/15, migration5/5; no skips |
+| G4 | PASS — actual PostGIS/MinIO/ClamAV/GDAL and production image runtime |
 | G5 | PASS locally — unchanged HTTP, event codegen/drift |
-| G6 | PENDING hosted — actual outbox/inbox/rollback |
-| G7 | Unit PASS; real tenant/security pending |
-| G8 | PENDING hosted — unchanged offline/mobile/native regressions |
-| G9 | PENDING hosted — immutable source/version/decision/audit |
-| G10 | PENDING hosted — deterministic scenario |
-| G11 | PENDING hosted — parser security/10k spatial threshold/native |
-| G12 | PENDING — full diff review, exact-head checks/ordinary merge/post-merge/CR closeout |
+| G6 | PASS — atomic producer, actual dispatcher/inbox retry/replay and batch rollback |
+| G7 | PASS — default deny, current/revoked permissions, tenant/async-actor/cloud negatives |
+| G8 | PASS — Flutter offline/persistence/sync/capacity regressions and native map; no new sync workflow |
+| G9 | PASS — immutable original/hash/staging/version/decision/audit and reasoned corrections |
+| G10 | PASS — fixed-source-clock actual PostGIS/storage/scanner/parser/owner/event scenario |
+| G11 | PASS — bounded parser security/encoding/CRS, exact precision, 10k GiST P95=1.822ms<=1500ms, native render |
+| G12 | PENDING MERGE — full45-path diff and review clear, approved CR; final PR-head and merge evidence pending |
+
+## Exact validated code head and PR
+
+Implementation PR is being prepared; its exact link/head/checks will be recorded
+in CR #65 and final closeout below.
+Code head `6f196513b56f762a3d67362978953c891f661d57`, exact workflow_dispatch
+[41502255358](https://github.com/loktevila658-spec/agro-platform/actions/runs/41502255358)
+SUCCESS, all8 jobs individually verified: Lint capability, Typecheck, Unit,
+Contract, Migration, Runtime, Mobile and aggregate CI quality gates. This run
+preceded PR creation. The report update changes no executable behavior; ordinary
+PR CI must still pass on its precise final head before merge. No auto-merge/bypass.
+API140/140, contracts20/20, config17/17, connectors2/2, root15/15, migration5/5;
+Flutter34/34 plus2 actual Android emulator tests, enforce-lockfile, format/analyze,
+APK and MapLibre local-style lifecycle. Deterministic10k query P95=1.821898ms,
+actual GiST plan, actual positive spheroidal area, precise1e-20 import preserved.
+First historical failed run remains failed; superseded41501385344 was cancelled
+by the existing workflow concurrency rule after a new precision correction.
+
+Supplemental dependency publication evidence rechecked during review: WP003
+report PR36 merge `526d8a90ac076eec54ace955c7b61f5dc3617bf2`, exact event=push
+[38659988701](https://github.com/loktevila658-spec/agro-platform/actions/runs/38659988701)
+all7 SUCCESS; this does NOT invent CI for original PR3. WP011 report PR61 exact
+merge `b62830ef3e7a673d5b5990e6a44b81ade12e72b9`, push41353416415 all8 SUCCESS.
+WP017 final report PR43 merge `99c3f8b599c71d4c1b70abe4950bb654f66b4490`,
+push38669938779 SUCCESS. Original G0 prerequisite implementation evidence remains
+as recorded before code; these publication checks supplement it.
+
+| Applicable frozen slice | Observable proof |
+|---|---|
+| GIS005/012–015/019–020; BR-GIS001/006/007 | GIS versions, source/status, explicit permissioned decisions/effective history; no Field/LandPlot mutation |
+| GIS021–040; BR-GIS002/003; TZ50-039/040 | Typed4326, known source CRS, validation, geography area/method, GiST, bounded cut-antimeridian queries, canonical precision retained |
+| GIS061–073 import portion / MASTER017 enabling core | Real formats, original hashes/attributes/feature metadata, preview/mapping/issues, dry-run, explicit commit modes/atomic owner commands, exact duplicate candidates |
+| GIS091–092/104–105 base | Pinned MapLibre web/native local style; no unauthorized domain data/default provider; native lifecycle smoke |
+| GIS161/163–167/170; INV01/06/09/10 | Trusted tenant policy, private scanned originals, bounded isolated parser, actual security/10k budget, immutable audit/outbox and replay |
+
+This enables MASTER015/017 foundations; it does not claim completion of the entire
+MASTER013–026 product lifecycle, field/season UI, advanced export or offline GIS
+package assigned to neighboring WPs. Frozen scope is not promoted or rewritten.
 
 ## Hosted attempts and review findings
 
@@ -218,6 +257,7 @@ No automatic repair, arbitrary fuzzy merge, accounting/land facts or future scop
 Sources retained privately; failed DB command may leave an unreferenced private
 object; no unapproved destructive lifecycle cleanup. Referenced evidence is retained.
 Mobile lock entries use exact published package metadata/hashes; Flutter hosted
-enforce-lockfile must validate resolution. Native plugin requires JDK21 in CI.
-Implementation PR/head/merge/exact runs and final CR/evidence verdict are pending.
+enforce-lockfile validated resolution. Native plugin requires JDK21 in CI.
+Implementation PR and validated code-head run are recorded above. Final exact
+PR-head/ordinary merge/push-run and CR closeout evidence remain pending.
 WP49-027 is not started.

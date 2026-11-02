@@ -92,8 +92,9 @@ copies can be safely removed. Database evidence remains authoritative.
 Production image installs Python/GDAL and copies the parser alongside compiled
 runtime (`GIS_PARSER_SCRIPT`). Direct source build resolves the source Python file;
 `GIS_PYTHON` defaults `/usr/bin/python3`. Hosted Unit provisions python3-gdal and
-runs real parser acceptance; runtime smoke builds the actual image. GDAL/PROJ
-versions are included in import provenance. Existing file storage and ClamAV
+runs real parser acceptance; runtime smoke builds the actual image. GDAL version
+is included in import provenance; PROJ is supplied by that runtime and network
+grid downloads are disabled. Existing file storage and ClamAV
 configuration applies. Schema12 is additive; migrate before starting new runtime.
 Older clients/OpenAPI/sync command contracts are unchanged.
 
