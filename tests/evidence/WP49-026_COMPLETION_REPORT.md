@@ -1,22 +1,49 @@
-# WP49-026 Completion Report — GIS spatial foundation
+# WP49 Completion Report
 
-Status: IMPLEMENTATION VALIDATED. G0–G11 PASS; G12 awaits exact final PR-head checks, ordinary merge and post-merge CI. No DONE or unobserved merge evidence claimed.
+- WP ID: WP49-026
+- Title: GIS spatial foundation
+- Status: **DONE — all applicable G0–G12 PASS**
+- Baseline live main: `0ba90c70cb2b88556c3c01165fb2ec14ba44b476`
+- Implementation branches: `codex/wp49-026-gis`, `codex/wp49-026-csv-validation`
+- Final corrective executable/PR head: `5289c3ef2b24fb161a64dc4c87f5112a2a30dd61`
+- Original validated executable code: `6f196513b56f762a3d67362978953c891f661d57`
+- Original implementation PR head: `146bfd9f0c03e4b0f15ce01d37cc49cf3d4eb2a3`
+- [Implementation PR #66](https://github.com/loktevila658-spec/agro-platform/pull/66), original merge `4d02a867c72a6f88b49a512d4028e449cb426950`
+- [Corrective PR #67](https://github.com/loktevila658-spec/agro-platform/pull/67), final ordinary merge `97574a4768085ec8e9c72bc96dd7372527f356f5`
+- Exact corrective PR-head [run 41514111313](https://github.com/loktevila658-spec/agro-platform/actions/runs/41514111313): SUCCESS all8
+- Exact merge-SHA event=push [run 41516292979](https://github.com/loktevila658-spec/agro-platform/actions/runs/41516292979): SUCCESS, all8 jobs individually verified
+- Date: 2026-11-02 Europe/Moscow
+- [Scope CR #65](https://github.com/loktevila658-spec/agro-platform/issues/65), [delegated owner approval](https://github.com/loktevila658-spec/agro-platform/issues/65#issuecomment-6584511976), [final closeout](https://github.com/loktevila658-spec/agro-platform/issues/65#issuecomment-6587567965)
 
-Baseline live main: `0ba90c70cb2b88556c3c01165fb2ec14ba44b476`.
-Branch: `codex/wp49-026-gis`, separate initially clean worktree.
-Date: 2026-11-02 Europe/Moscow. Original dirty checkout untouched.
-[Scope CR #65](https://github.com/loktevila658-spec/agro-platform/issues/65),
-[delegated owner approval](https://github.com/loktevila658-spec/agro-platform/issues/65#issuecomment-6584511976).
-Approval precedes acceptance/runtime changes. It is not independent review.
+This report reconciles observed implementation evidence in the already approved
+report path. Publication-only checks for the reconciliation are recorded in CR #65;
+no unobserved publication run is asserted here. Original dirty checkout untouched;
+all implementation took place in a separate initially clean worktree.
 
-## Authority and G0
+## 1. Prerequisites verified
 
-DOC50 > DOC48 > DOC47 > DOC49 > DOC33/MASTER > domain contracts.
-No latest-document-wins. DOC10/11 common canonical spatial/CRS/source/version rules,
-DOC24 §§3/6–9 and GIS005/012–015/019–040/061–073/091–092/104–105/161/163–167/170,
-GIS-T005–013/023–027, DOC34 geometry consumer boundary.
-Frozen DOC49 manifest matches owner's supplied values verbatim:
+Authority: DOC50 > DOC48 > DOC47 > DOC49 > DOC33/MASTER > detailed contracts.
+No latest-document-wins. G0 PASS before code; all dependency implementations and
+reports were merged and compatible with baseline schema11. Their merges are
+ancestors. Actual live main SHA, branches/PR/CR search, src-only tsc/AppModule/
+Docker wiring, schema/migrations/test globs, web/mobile, OpenAPI/codegen/catalog
+regressions, files/storage/ClamAV, integration owner ports, dispatcher/inbox and
+all7 CI quality jobs+aggregate were inspected before implementation.
 
+| Dependency | Accepted completion and exact evidence |
+|---|---|
+| WP49-003 | PR3 merge73dfd95e6196a5ccb5f253d656b1dede6570af18; original exact-head/merge Actions query returned ZERO runs. Accepted report explicitly attributes historical local/PostGIS/migration/API checks; no historical CI PASS invented. Report PR36 merge526d8a90ac076eec54ace955c7b61f5dc3617bf2, actual push38659988701 all7 SUCCESS supplements publication evidence. |
+| WP49-011 | PR18 plus corrective19 mergec66da8d67c019ca4a91556ff2289ed194040c13a; exact push38366585524 all7 SUCCESS; CR17 CLOSED/completed. Report PR61 mergeb62830ef3e7a673d5b5990e6a44b81ade12e72b9/push41353416415 all8 SUCCESS. Original readiness failure remains in its report. |
+| WP49-017 | PR41 merge99041cf69721040a9749b9d7cfca726ff7fea8c3/push38669122765 all7 SUCCESS; CR40 completed; report42/final43 merged. Final report43 merge99c3f8b599c71d4c1b70abe4950bb654f66b4490/push38669938779 SUCCESS. |
+
+Reports: tests/evidence/WP49-003_COMPLETION_REPORT.md,
+WP49-011_COMPLETION_REPORT.md and WP49-017_COMPLETION_REPORT.md. Publication
+supplements were rechecked during review and do not replace historical execution
+facts. Prior W3 WP49-025 merge73591bc241a4a64d76cbf62cd32dd87259ec2216/
+push41355973494 all8 SUCCESS, report64 merged and CR62 completed. Static
+NOT_STARTED fields never served as evidence of incompletion or completion.
+
+Frozen manifest matched the supplied values verbatim, with no discrepancy:
 ```yaml
 id: WP49-026
 title: GIS spatial foundation
@@ -30,36 +57,67 @@ allowed_paths_raw: /apps/api/modules/gis /apps/web /apps/mobile
 exit_criteria: PostGIS, geometry versions, MapLibre base, imports.
 ```
 
-G0 PASS before code. All dependency implementations and reports are merged and
-their merges ancestors of baseline; current schema11 compatible. Reports read:
-tests/evidence/WP49-{003,011,017}_COMPLETION_REPORT.md.
-- WP003 PR3 merge `73dfd95e6196a5ccb5f253d656b1dede6570af18`.
-  Live exact-SHA Actions query returned ZERO runs. Accepted merged report attributes
-  historical local/PostGIS/migration/API checks to original PR. No historical CI
-  PASS invented; this is the established evidence-reconstruction procedure.
-- WP011 PR18 plus corrective19, merge
-  `c66da8d67c019ca4a91556ff2289ed194040c13a`, actual event=push
-  [38366585524](https://github.com/loktevila658-spec/agro-platform/actions/runs/38366585524),
-  all7 then-required jobs individually SUCCESS; CR17 CLOSED/completed. Evidence-only
-  report PR61 merged. Historical original readiness failure remains in that report.
-- WP017 PR41 merge `99041cf69721040a9749b9d7cfca726ff7fea8c3`,
-  event=push [38669122765](https://github.com/loktevila658-spec/agro-platform/actions/runs/38669122765)
-  all7 jobs individually SUCCESS; report42/final closeout merged, CR40 completed.
-- Prior W3 WP025 merge `73591bc241a4a64d76cbf62cd32dd87259ec2216`,
-  event=push [41355973494](https://github.com/loktevila658-spec/agro-platform/actions/runs/41355973494)
-  all8 SUCCESS, report64 merged, CR62 completed.
-Static NOT_STARTED fields never used as completion evidence. No existing WP026
-PR/CR/implementation branch found at preflight. Full live main SHA reconfirmed.
-API src-only tsc, runtime imports/Docker/schema/migrations/test globs, web/mobile,
-canonical contracts/codegen/event/permission regressions, storage/files/ClamAV,
-integrations owner ports, dispatcher/inbox and complete CI workflow inspected.
+## 2. Scope implemented
 
-## Unified expected/approved paths
+SpecRefs: DOC49/DOC50 execution, DOC48 frozen scope, DOC47/REV47 GIS ownership;
+DOC10/11 shared fields/CRS/version rules, DOC24 §§3/6–9 and detailed spatial/import/
+map/operations contracts, DOC34 consumes GIS geometry authority. MASTER-015/017
+enabling foundation, BR-GIS-001/002/003/006/007, TZ50-034/035/039/040, INV-01…INV-12.
+No FUTURE/REJECTED requirement or neighboring WP was promoted.
 
-Frozen raw roots stay verbatim, including uncompiled /apps/api/modules/gis.
-Actual compiled runtime and necessary companion paths authorized by CR #65.
-This unified table was complete and approved BEFORE first code; no manifest,
-dependency, exit criterion or quality gate change. All45 exact expected paths:
+GIS owns typed geometry assets, immutable versions, append-only approve/reject
+and effective-time decisions, immutable sources/staging, audit, command receipts
+and outbox. Stable geometry identity survives corrections; expected head version
+and reason required. Only approved effective versions appear in bounded spatial
+reads; historical facts retain explicit version references. Source/time/CRS/
+available accuracy/method/quality metadata retained. No silent repair/overwrite,
+no Field/LandPlot/FieldSeason identity or foreign canonical writes.
+
+Import scans and hashes a bounded original, retains it privately, then inspects/
+stages/previews/mapping/validates. GeoJSON, KML/KMZ, GeoPackage, SHP bundle,
+WKT/WKB and explicit CSV coordinate mapping use an isolated read-only GDAL worker.
+Per-feature issues and exact spatial duplicate candidates are exposed. Explicit
+ALL_OR_NOTHING or VALID_ONLY calls GIS owner commands in the same transaction.
+Imports create candidates only, never automatically approve or create a field.
+Original attributes and mapped metadata remain resolvable through batch/feature
+provenance; replay is one-effect and a batch cannot commit twice.
+
+Pinned MapLibre GL JS5.23.0 and Flutter0.27.1 provide web /gis and authenticated
+native navigation with a local background-only style and honest empty state.
+No remote provider, fake fields, credentials or location permission; native map
+loads without WAN and disposes its renderer. Offline region/task/field cache and
+sync package belong to WP49-029; land/farm/season/split/merge to WP49-027/028. No public
+GIS HTTP endpoint, advanced maps, exports, agronomy, rasters, accounting, hardware
+or AI implementation.
+
+| Applicable slice | Observable proof |
+|---|---|
+| GIS-005/012–015/019–020 | Immutable versions/source/status, permissioned effective decisions and correction history |
+| GIS-021–040 | Typed4326, known source CRS, validity, geography method/version, GiST, bounded cut-antimeridian reads, canonical precision retained |
+| GIS-061–073 import portion / MASTER-017 foundation | Actual formats, immutable original hash/attributes/feature provenance, preview/mapping/issues, dry-run, explicit atomic commit modes and exact duplicates |
+| GIS-091–092/104–105 base | Pinned provider-neutral web/native renderer; no unauthorized domain layers or invented attribution |
+| GIS-161/163–167/170 | Trusted tenant permissions, private scanned originals, bounded parser, actual 10k budget, audit/outbox and replay |
+
+This does not claim the entire MASTER-013–026 product lifecycle or later-WP UI.
+
+Corrective PR #67 fixes existing GIS-066/068/165 import-boundary contracts in
+only the two originally approved parser/test paths: duplicate CSV headers and
+unnamed surplus cells fail explicit mapping; quoted multiline attributes are
+preserved. KML DTD/prohibited references are checked on parsed XML structure
+across encodings/namespaces. A validated temporary copy is encoded as UTF-8 for
+GDAL identification; original bytes/hash remain unchanged. Positive UTF-16 input
+compares geometry and Cyrillic attributes with UTF-8; negative encoded DTD/links
+remain blocked. No source/business contract/schema/permission/gate change or new
+scope path. This correction is part of WP49-026, not a new WP.
+
+## 3. Changed files
+
+Single unified complete pre-code matrix:45 exact files, approved in CR #65 before
+first acceptance/runtime edits. Literal frozen roots remain verbatim; compiled
+src runtime and companion files have explicit CR authorization. No manifest,
+dependency, release, exit criterion, compiler or gate weakening. Published PR
+filenames match this exact matrix with no outside or missing path. This report-only
+reconciliation changes only its already approved evidence path.
 
 | Path | Purpose | Authorization |
 |---|---|---|
@@ -109,155 +167,128 @@ dependency, exit criterion or quality gate change. All45 exact expected paths:
 | .github/workflows/ci-quality-gates.yml | Provision real GDAL for Unit parser tests and JDK21 required by pinned native plugin; all existing gates unchanged | CR #65 |
 | tests/evidence/WP49-026_COMPLETION_REPORT.md | Unified path matrix/G0-G12/exact commit PR run CR and closeout evidence | CR #65 |
 
-## Implemented behavior and compatibility
+## 4. Database / contracts
 
-Compiled GIS application module owns typed PostGIS4326 geometry assets, immutable
-versions, append-only approve/reject/effective-time decisions, immutable sources,
-staging, audit, receipts and outbox. It owns no LandPlot/Field/FieldSeason identity.
-Future domain owners retain geometryVersionId; no foreign canonical writes.
-Canonical 2D Polygon/MultiPolygon validation, geography area/method/version, no
-silent repair/precision loss/overwrite. Corrections retain stable asset identity,
-require current expected head version/reason; per-time reads select approved
-effective winner, while historical version references remain resolvable.
-Permission/action/tenant policy is trusted, immutable in composition, default deny,
-checked before reads and again inside commands/replays. LOCAL_PRIMARY, shared
-optimistic guard, transaction, idempotency, audit and existing dispatcher/inbox.
+Expand-only migration0012, schema12. GIS-owned geometry_head, geometry_version,
+geometry_decision, import_batch, feature_staging, audit, command_idempotency and
+outbox_event. Canonical2D MultiPolygon4326, ST_IsValid/nonempty constraints,
+GiST and tenant composite references. Area uses PostGIS geography spheroid,
+method/library version retained; business declared area is not invented or
+replaced. Old versions, decisions, sources, staging, audit/outbox are immutable;
+head identity cannot change or be hard deleted. As-of reads preserve old boundary
+interpretation. Imported owner effects use original normalized geometry, never a
+rounded rendering representation; exact1e-20 preservation is tested.
 
-Dedicated GIS source ingress reuses real storage/scanner adapters; files' existing
-media MIME allowlist unchanged. Source copied before awaits, scanned, SHA256 hashed,
-private original retained. Read-only isolated GDAL handles GeoJSON/KML/KMZ/GPKG/SHP
-bundle/WKT/WKB and explicit CSV coordinates; source CRS/encoding/layer/attributes/
-feature provenance preserved. Bounded archive/time/memory/output checks, no remote
-references/paths/VRT/extensions. Dry-run staging and preview create no canonical
-geometry; explicit mapping, per-feature issues and exact spatial duplicate candidates.
-ALL_OR_NOTHING/VALID_ONLY commit calls GIS owner commands within one transaction,
-creates candidates only, replay safe and one batch cannot be committed twice.
+OpenAPI: unchanged, no public HTTP contract. Event: additive version1.0.0
+`gis.geometry.changed`, producer gis, nine existing envelope metadata fields;
+source enumeration/dispatcher extended, existing lease/retry/inbox semantics kept.
+All4 canonical TypeScript/Dart/mobile/hash outputs regenerated. Permissions:
+`gis.read`, `gis.propose`, `gis.approve`, `gis.reject`, `gis.import`, all tenant
+scoped; no default role grants. Trusted current policy, actor snapshot before
+async checks, deny-by-default and LOCAL_PRIMARY on mutations. Shared optimistic
+guard, idempotency, transaction, audit and outbox; no Redis business authority.
 
-Additive migration0012, schema12; only current-version regression expectations
-advance. New versioned gis.geometry.changed event/action catalog and all4 generated
-outputs regenerated together. No public HTTP API/OpenAPI or sync contract change.
-Existing outbox delivery source enumeration expanded; lease/retry/inbox unchanged.
-MapLibre GL JS5.23.0 and Flutter0.27.1 base uses network-free local style, honest
-empty state, no fabricated fields/provider/credentials/location permissions.
-Web /gis and authenticated native navigation; disposal releases renderer. No
-offline region/task/sync package (WP029), land/farm/split/merge (WP027/028), agronomy,
-remote sensing, exports, hardware/AI or production provider implementation.
+GIS source ingress reuses existing private MinIO and real ClamAV adapters through
+exported tokens; media attachment MIME allowlist unchanged. Missing scanner/
+storage/parser fails closed. No public buckets, raw object paths/URLs, embedded
+provider credentials or binary database storage. Production image installs GDAL/
+Python and copies the parser with compiled runtime; CI provisions real GDAL and
+JDK21 required by the pinned native plugin. No test/check removed.
 
-## Tests and evidence so far
+## 5. Tests and quality gates
 
-Acceptance unit tests RED before runtime (missing compiled GIS module); failure
-recorded locally, not claimed as successful domain execution. API build, web
-production build, targeted41/41 unit/schema/migration/contracts/permission tests,
-full typecheck+architecture11/11, contract validation/codegen drift, lint capability
-PASS (lint tool not configured/N/A); git diff --check PASS. UI mechanical detector
-returned zero findings. Desktop and390px web browser inspection shows the actual
-MapLibre canvas/controls and honest empty state, with no overflow. No weakened/removed test or skip.
+Acceptance unit tests RED before runtime (missing GIS module). Local final
+API/web builds, targeted42/42, root15/15, static+architecture11/11, contracts/
+codegen drift and git diff --check PASS. Lint capability PASS/N/A: project has no
+configured lint tool. Mechanical UI detector0 findings; desktop and390px browser
+inspection shows actual MapLibre controls/canvas and readable empty state.
 
-Actual GDAL parser test attempted locally and failed before scenarios because
-Python GDAL is absent. Real PostGIS integration attempted and failed before
-scenarios because Docker Desktop is unable to start. No local parser/PostGIS PASS.
-Full local Unit/Migration/Runtime attempted: blocked by unavailable Docker/GDAL,
-not PASS. Local Mobile stops at flutter ENOENT. Hosted real-service checks below
-resolve these environment limits without relabeling local failures.
-Flutter absent locally; native smoke and unchanged offline regressions mandatory
-in hosted Mobile. SDK provisioning attempts were read-only and unavailable;
-no replacement of frozen project toolchain.
+Local GDAL/PostGIS/full Unit/Migration/Runtime attempts failed before relevant
+scenarios because GDAL/Docker Desktop unavailable; local Mobile stops at flutter
+ENOENT. These are not recast as local PASS. Hosted full real-service/native checks
+resolve those limits: API140/140, contracts20/20, config17/17, connectors2/2,
+root15/15, migration5/5, Flutter34/34 plus2 actual Android emulator tests,
+enforce-lockfile, format0 changes, analyze, APK and native MapLibre lifecycle.
+No skipped tests or weakened assertions. Actual parser environment GDAL3.8.4.
 
-Deterministic scenario uses test-only geometry, source clock2026-11-02T00:00:00Z,
-explicit versions/effective instants. Covers proposal->approval->correction/as-of,
-races/stale conflict, old versions, tenant/current/revoked permissions/cloud denial,
-invalid geometry, audit/outbox rollback and actual inbox retry/replay; real MinIO/
-ClamAV/GDAL stage, dry-run, source hash/object provenance, invalid-point feature,
-both commit modes and atomic owner failure. Representative10k spatial grid/GiST
-plan and P95<=1500ms are observed in the successful hosted integration below.
-
-| Gate | Current verdict |
+| Exact run | Decision |
 |---|---|
-| G0 | PASS — verified merged compatible prerequisites and accepted evidence |
-| G1 | PASS locally — static/typecheck/architecture/contracts/diff |
-| G2 | PASS — hosted clean/repeated/current/checksum-negative PostGIS schema12 |
-| G3 | PASS — local targeted42/42; hosted API140/140, root15/15, migration5/5; no skips |
-| G4 | PASS — actual PostGIS/MinIO/ClamAV/GDAL and production image runtime |
-| G5 | PASS locally — unchanged HTTP, event codegen/drift |
-| G6 | PASS — atomic producer, actual dispatcher/inbox retry/replay and batch rollback |
-| G7 | PASS — default deny, current/revoked permissions, tenant/async-actor/cloud negatives |
-| G8 | PASS — Flutter offline/persistence/sync/capacity regressions and native map; no new sync workflow |
-| G9 | PASS — immutable original/hash/staging/version/decision/audit and reasoned corrections |
-| G10 | PASS — fixed-source-clock actual PostGIS/storage/scanner/parser/owner/event scenario |
-| G11 | PASS — bounded parser security/encoding/CRS, exact precision, 10k GiST P95=1.822ms<=1500ms, native render |
-| G12 | PENDING MERGE — full45-path diff and review clear, approved CR; final PR-head and merge evidence pending |
+| workflow_dispatch41499222446, head2c04c4b2c868dd4656c9e056c2bf9fe159bfbf51 | FAILED Unit138 PASS/1 FAIL: error sanitizer stripped digits from RFC7946 code. Strict assertion retained; sanitizer fixed. Other quality jobs incl native passed. |
+| workflow_dispatch41501385344, headab86b5c1e1f71c4a38359a432d4ccddeff6f0f2f | CANCELLED/superseded by final precision correction; never claimed final-head PASS. |
+| workflow_dispatch41502255358, code6f196513b56f762a3d67362978953c891f661d57 | SUCCESS all8, before PR creation. Following146bfd9 only docs/evidence. |
+| pull_request41504803803, final head146bfd9f0c03e4b0f15ce01d37cc49cf3d4eb2a3 | SUCCESS all8 on exact PR head before merge. |
+| push41507077817, original merge4d02a867c72a6f88b49a512d4028e449cb426950 | Attempt1 FAILED Mobile Maven lookup for two Kotlin2.2.21 jars; Flutter34/34 and other jobs passed. Both exact official URLs returned HTTP200; unchanged failed-jobs retry attempt2 SUCCESS all8. Original failure retained. |
+| workflow_dispatch41508856176, head00a8d924cea2c96b766274ae7d94181b4a8f3601 | CANCELLED/superseded by encoded KML guard; not final-head evidence. |
+| workflow_dispatch41510468074, headcbc70754e56a51caae8ebc5690a9bbab64b0bbdf | Overall CANCELLED/superseded; Unit FAILED new positive UTF-16 GDAL3.8 identification. Assertion retained/strengthened; temporary encoding normalization fixed the implementation. |
+| workflow_dispatch41511712980, corrective head5289c3ef2b24fb161a64dc4c87f5112a2a30dd61 | SUCCESS all8 before corrective PR. API140/140 and real parser/PG/native cases including CSV/XML fixes. |
+| pull_request41514111313, corrective head5289c3ef2b24fb161a64dc4c87f5112a2a30dd61 | SUCCESS all8 exact corrective PR head before ordinary merge. |
+| push41516292979, final merge97574a4768085ec8e9c72bc96dd7372527f356f5 | SUCCESS all8 on exact ordinary merge SHA. |
 
-## Exact validated code head and PR
+Eight jobs individually verified: Lint capability, Typecheck, Unit, Contract,
+Migration, Runtime, Mobile and aggregate CI quality gates. Review fixes additionally
+cover CSV/XML source fidelity/security, explicit PROPOSED, immutable async actor binding, antimeridian/effective
+history, real KMZ/projected CRS and full-batch rollback/precision. No independent
+reviewer claimed; no GitHub review submissions/unresolved threads/blocking findings.
+Protected main required current CI quality gates with enforce_admins; no bypass
+actors, auto-merge/admin/check bypass. Merge has two parents and tested-head tree.
 
-Implementation PR is being prepared; its exact link/head/checks will be recorded
-in CR #65 and final closeout below.
-Code head `6f196513b56f762a3d67362978953c891f661d57`, exact workflow_dispatch
-[41502255358](https://github.com/loktevila658-spec/agro-platform/actions/runs/41502255358)
-SUCCESS, all8 jobs individually verified: Lint capability, Typecheck, Unit,
-Contract, Migration, Runtime, Mobile and aggregate CI quality gates. This run
-preceded PR creation. The report update changes no executable behavior; ordinary
-PR CI must still pass on its precise final head before merge. No auto-merge/bypass.
-API140/140, contracts20/20, config17/17, connectors2/2, root15/15, migration5/5;
-Flutter34/34 plus2 actual Android emulator tests, enforce-lockfile, format/analyze,
-APK and MapLibre local-style lifecycle. Deterministic10k query P95=1.821898ms,
-actual GiST plan, actual positive spheroidal area, precise1e-20 import preserved.
-First historical failed run remains failed; superseded41501385344 was cancelled
-by the existing workflow concurrency rule after a new precision correction.
-
-Supplemental dependency publication evidence rechecked during review: WP003
-report PR36 merge `526d8a90ac076eec54ace955c7b61f5dc3617bf2`, exact event=push
-[38659988701](https://github.com/loktevila658-spec/agro-platform/actions/runs/38659988701)
-all7 SUCCESS; this does NOT invent CI for original PR3. WP011 report PR61 exact
-merge `b62830ef3e7a673d5b5990e6a44b81ade12e72b9`, push41353416415 all8 SUCCESS.
-WP017 final report PR43 merge `99c3f8b599c71d4c1b70abe4950bb654f66b4490`,
-push38669938779 SUCCESS. Original G0 prerequisite implementation evidence remains
-as recorded before code; these publication checks supplement it.
-
-| Applicable frozen slice | Observable proof |
+| Gate | Final verdict |
 |---|---|
-| GIS005/012–015/019–020; BR-GIS001/006/007 | GIS versions, source/status, explicit permissioned decisions/effective history; no Field/LandPlot mutation |
-| GIS021–040; BR-GIS002/003; TZ50-039/040 | Typed4326, known source CRS, validation, geography area/method, GiST, bounded cut-antimeridian queries, canonical precision retained |
-| GIS061–073 import portion / MASTER017 enabling core | Real formats, original hashes/attributes/feature metadata, preview/mapping/issues, dry-run, explicit commit modes/atomic owner commands, exact duplicate candidates |
-| GIS091–092/104–105 base | Pinned MapLibre web/native local style; no unauthorized domain data/default provider; native lifecycle smoke |
-| GIS161/163–167/170; INV01/06/09/10 | Trusted tenant policy, private scanned originals, bounded isolated parser, actual security/10k budget, immutable audit/outbox and replay |
+| G0 | PASS — merged compatible prerequisites and accepted exact evidence |
+| G1 | PASS — static/typecheck/architecture/contracts/diff; applicable formatting |
+| G2 | PASS — actual clean/repeated/current/checksum-negative schema12 PostGIS |
+| G3 | PASS — targeted42/42 and full hosted suites, no skips |
+| G4 | PASS — real PostGIS/MinIO/ClamAV/GDAL and production image/runtime |
+| G5 | PASS — unchanged HTTP, additive event codegen and compatibility/drift |
+| G6 | PASS — atomic producer/owner/outbox and actual dispatcher/inbox retry/replay |
+| G7 | PASS — default/current/revoked/tenant/async actor/cloud negatives |
+| G8 | PASS for applicable unchanged offline/persistence/sync/capacity/native regressions; no new sync workflow |
+| G9 | PASS — immutable originals/hash/staging/versions/decisions/audit and reasoned corrections |
+| G10 | PASS — fixed-source-clock actual owner/import/storage/event scenario |
+| G11 | PASS — parser/encoding/archive/CRS security, exact precision and10k GiST threshold/native |
+| G12 | PASS — complete report/45 approved paths/review, approved ordinary merge and exact push success; CR #65 closed completed |
 
-This enables MASTER015/017 foundations; it does not claim completion of the entire
-MASTER013–026 product lifecycle, field/season UI, advanced export or offline GIS
-package assigned to neighboring WPs. Frozen scope is not promoted or rewritten.
+## 6. Deterministic demo / evidence
 
-## Hosted attempts and review findings
+Scenario WP49-026-GIS: propose->approve->correct/as-of; stale/concurrent conflicts,
+retained versions, cut antimeridian, invalid geometry, current/revoked/tenant/cloud
+permissions, audit/outbox failure, raw source/scan/hash/object provenance, dry-run,
+invalid point feature, both commit policies, two owner effects rolled back by final
+batch audit failure, precise1e-20 and actual inbox retry/replay. All PASS.
+Source clock2026-11-02T00:00:00Z, explicit versions/effective instants; isolated
+fixture IDs do not decide outcomes.10k synthetic test-only spatial grid, actual
+GiST plan and service query P95=2.343044ms in final corrective pre-PR run41511712980 (limit1500ms).
+No production reference GIS values or fabricated provider results.
 
-First workflow_dispatch run [41499222446](https://github.com/loktevila658-spec/agro-platform/actions/runs/41499222446)
-on exact head `2c04c4b2c868dd4656c9e056c2bf9fe159bfbf51`: Lint/Typecheck/Contract/
-Migration/Runtime SUCCESS. Unit FAIL138 PASS/1 FAIL: error-code sanitizer regex
-omitted digits, truncating GIS_GEOJSON_RFC7946_REQUIRED to GIS_GEOJSON_RFC. The
-strict expected error assertion remains; sanitizer now retains digits. Real GIS
-PostGIS/MinIO/ClamAV owner/import/version/rollback/outbox scenario PASS, actual
-GDAL3.8.4 format scenario PASS, representative10k GiST query P95=1.333252ms.
-These focused results do not relabel the failed full Unit gate as PASS. Mobile SUCCESS, including enforce-lockfile/format0 changes/analyze,34 Flutter
-tests, Android build and2 actual emulator tests (including MapLibre local style). Review also made PROPOSED explicit,
-added cut antimeridian query and successful/all-effects-rollback ALL_OR_NOTHING
-coverage, real KMZ success and projected3857->4326 normalization/unknown EPSG tests.
-Review additionally snapshots actor/command inputs before asynchronous policy
-checks; a new negative race test proves query tenant stays bound to authorized
-identity. Final local targeted suite42/42 and root regression15/15 PASS.
-No acceptance changed to accommodate a failure. All changes remain in CR65 paths. Final review also routes import commit from
-retained original geometry, not rounded rendering GeoJSON; real PG acceptance
-asserts preservation of1e-20 coordinates. Prior run41501385344 onab86b5c is
-superseded by this final correction and will not be claimed as final-head evidence.
+Artifacts: apps/api/test/gis.unit.test.mjs, gis.parser.test.mjs and
+gis.integration.test.mjs; database/test/migrate.test.mjs and
+database.integration.test.mjs; apps/mobile/test/gis_map_test.dart and
+apps/mobile/integration_test/gis_map_test.dart. Exact CI job logs in runs above
+contain deterministic scenario output, parser/native cases and all regressions.
 
-## Limits and closeout
+## 7. Limitations / follow-ups
 
-No production/WAN/physical-device certification. Trusted deployment policy must
-supply actual current permissions; no default role grants or source providers.
-Parser deployment resource caps are explicit technical bounds, not invented
-precision/tolerance/business data. Oversize sources require an approved processing
-profile. Nonpolygon/Z/M/ambiguous encoding/unknown CRS stage issues or fail closed.
-No automatic repair, arbitrary fuzzy merge, accounting/land facts or future scope.
-Sources retained privately; failed DB command may leave an unreferenced private
-object; no unapproved destructive lifecycle cleanup. Referenced evidence is retained.
-Mobile lock entries use exact published package metadata/hashes; Flutter hosted
-enforce-lockfile validated resolution. Native plugin requires JDK21 in CI.
-Implementation PR and validated code-head run are recorded above. Final exact
-PR-head/ordinary merge/push-run and CR closeout evidence remain pending.
-WP49-027 is not started.
+No production/WAN/physical-device certification. Trusted deployment supplies real
+current permissions; no default grants/provider profiles. Internal GIS application
+ports are the foundation; no new public API or import UI is promised.2D polygons
+baseline; points/tracks/unsupported Z/M/ambiguous encoding/unknown CRS remain
+issues or fail closed, never fabricated boundaries. RFC7946 cut MultiPolygons are
+supported; uncut antimeridian input retains supplied planar semantics and callers
+should cut ambiguous interiors explicitly. No automatic repair/fuzzy merge.
+
+Explicit technical deployment bounds:16MiB source/decompressed/parsed payload,
+32 archive members/layers,100x expansion,1000 features,5000 vertices, CPU15s,
+wall20s/memory768MiB/output16MiB, bounded bbox3600 square degrees and1000 responses.
+No invented business precision/tolerance. Larger sources require an approved
+processing profile. Original private evidence retained; failed DB transaction can
+leave an unreferenced private object. No destructive cleanup/retention policy was
+invented. Existing media MIME/security and offline sync contracts unchanged.
+No land/field/season/agronomy/rasters/advanced maps/exports/provider/accounting/
+hardware/AI scope. CR #65 (CR-0026) is the sole scope authorization; no scope amendment needed.
+
+## 8. Unlock decision
+
+PASS — WP49-026 DONE, applicable G0–G12 and frozen exit criteria evidenced.
+CR #65 closed completed with exact head/merge/push evidence and delegated approval.
+WP49-027 becomes eligible because WP49-025 and WP49-026 are complete; it is NOT started.
+No general wave or other dependent WP unlock is asserted. Stop at WP49-026.
