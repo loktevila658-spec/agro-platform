@@ -188,7 +188,6 @@ Schema/HTTP compatibility expands forward-only; no purge or destructive DOWN.
 | packages/contracts/test/contracts.test.mjs | Keep exact existing event assertions and append exact two new definitions |
 | tests/contracts.test.mjs | Keep exact existing root event assertions and append exact two new definitions |
 | tests/evidence/WP49-025_COMPLETION_REPORT.md | G0/full scope/field ownership/implementation/tests/gates/limits and exact closeout evidence |
-
 | apps/api/test/permissions.test.mjs | Approved amendment in CR #62: exact existing org and combined nine action/scope/effect assertions; retain all negatives |
 
 ## 5. Tests, demo and gates
