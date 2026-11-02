@@ -31,6 +31,12 @@ test('GIS actual GDAL parser preserves GeoJSON and normalizes WKT/WKB/CSV/KML/GP
   assert.equal(multiline.features[0].properties.rows[0].label,'line1\nline2');
   const kml=Buffer.from('<kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><Polygon><outerBoundaryIs><LinearRing><coordinates>30,50 30.01,50 30.01,50.01 30,50</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>');
   assert.deepEqual((await parser.parse(kml,{format:'KML'})).features[0].issues,[]);
+  const utf16=xml=>Buffer.from('\uFEFF<?xml version="1.0" encoding="UTF-16"?>'+xml,'utf16le');
+  assert.deepEqual((await parser.parse(utf16(kml.toString()),{format:'KML'})).features[0].issues,[]);
+  const external=kml.toString().replace('</Document>','<NetworkLink><Link><href>https://example.invalid/source.kml</href></Link></NetworkLink></Document>');
+  await assert.rejects(parser.parse(utf16(external),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
+  await assert.rejects(parser.parse(utf16('<!DOCTYPE kml [<!ENTITY value "safe-test">]>'+kml.toString()),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
+  await assert.rejects(parser.parse(Buffer.from(kml.toString().replace('</Document>','<k:href xmlns:k="urn:fixture">file:///not-readable</k:href></Document>')),{format:'KML'}),/GIS_EXTERNAL_REFERENCE_FORBIDDEN/);
   execFileSync(process.env.GIS_PYTHON??'/usr/bin/python3',['-c',String.raw`
 from osgeo import ogr,osr
 import pathlib,sys,zipfile

@@ -41,6 +41,21 @@ def srs(value):
     return crs
 
 
+class SafeKmlTreeBuilder(ET.TreeBuilder):
+    def doctype(self, name, pubid, system):
+        raise ValueError('GIS_EXTERNAL_REFERENCE_FORBIDDEN')
+
+
+def parse_kml(raw):
+    # Parse the declared XML encoding before testing structure (including UTF-16).
+    root = ET.fromstring(raw, parser=ET.XMLParser(target=SafeKmlTreeBuilder()))
+    for node in root.iter():
+        local = node.tag.split('}')[-1].lower()
+        require(local not in ('networklink', 'href') and not node.tag.startswith('{http://www.w3.org/2001/XInclude}'), 'GIS_EXTERNAL_REFERENCE_FORBIDDEN')
+        require(all(key.split('}')[-1].lower() != 'href' for key in node.attrib), 'GIS_EXTERNAL_REFERENCE_FORBIDDEN')
+    return root
+
+
 def geometry_json(geom):
     # Python float JSON round-trips the double; no GDAL decimal-rounding profile.
     name = geom.GetGeometryName()
@@ -118,10 +133,7 @@ def main():
                     require(cpg.exists() and cpg.read_text().strip().upper() in ('UTF-8', '65001', 'CP1251', '1251', 'CP1252', '1252', 'ISO-8859-1'), 'GIS_SHP_ENCODING_REQUIRED')
         kml_2d = False
         if fmt in ('KML', 'KMZ'):
-            xml = path.read_bytes().lower()
-            for token in (b'<!doctype', b'<!entity', b'networklink', b'<href', b'xinclude'):
-                require(token not in xml, 'GIS_EXTERNAL_REFERENCE_FORBIDDEN')
-            root = ET.fromstring(path.read_bytes())
+            root = parse_kml(path.read_bytes())
             coordinate_nodes = [n for n in root.iter() if n.tag.split('}')[-1] == 'coordinates']
             kml_2d = bool(coordinate_nodes) and all(len(token.split(',')) == 2 for n in coordinate_nodes for token in (n.text or '').split())
         if fmt in ('WKT', 'WKB'):
