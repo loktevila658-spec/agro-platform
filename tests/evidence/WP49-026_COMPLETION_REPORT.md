@@ -186,6 +186,21 @@ plan and P95<=1500ms measured by integration, not claimed until observed.
 | G11 | PENDING hosted — parser security/10k spatial threshold/native |
 | G12 | PENDING — full diff review, exact-head checks/ordinary merge/post-merge/CR closeout |
 
+## Hosted attempts and review findings
+
+First workflow_dispatch run [41499222446](https://github.com/loktevila658-spec/agro-platform/actions/runs/41499222446)
+on exact head `2c04c4b2c868dd4656c9e056c2bf9fe159bfbf51`: Lint/Typecheck/Contract/
+Migration/Runtime SUCCESS. Unit FAIL138 PASS/1 FAIL: error-code sanitizer regex
+omitted digits, truncating GIS_GEOJSON_RFC7946_REQUIRED to GIS_GEOJSON_RFC. The
+strict expected error assertion remains; sanitizer now retains digits. Real GIS
+PostGIS/MinIO/ClamAV owner/import/version/rollback/outbox scenario PASS, actual
+GDAL3.8.4 format scenario PASS, representative10k GiST query P95=1.333252ms.
+These focused results do not relabel the failed full Unit gate as PASS. Mobile
+still pending when this note was written. Review also made PROPOSED explicit,
+added cut antimeridian query and successful/all-effects-rollback ALL_OR_NOTHING
+coverage, real KMZ success and projected3857->4326 normalization/unknown EPSG tests.
+No acceptance changed to accommodate a failure. All changes remain in CR65 paths.
+
 ## Limits and closeout
 
 No production/WAN/physical-device certification. Trusted deployment policy must

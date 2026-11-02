@@ -18,6 +18,9 @@ test('GIS actual GDAL parser preserves GeoJSON and normalizes WKT/WKB/CSV/KML/GP
   const wkt='POLYGON ((30 50,30.01 50,30.01 50.01,30 50))';
   assert.equal((await parser.parse(Buffer.from(wkt),{format:'WKT',sourceCrs:'EPSG:4326'})).features[0].geometry.type,'Polygon');
   await assert.rejects(parser.parse(Buffer.from(wkt),{format:'WKT'}),/CRS/);
+  const projected=await parser.parse(Buffer.from('POLYGON ((0 0,111319.49079327357 0,111319.49079327357 111325.1428663851,0 0))'),{format:'WKT',sourceCrs:'EPSG:3857'});
+  assert.ok(Math.abs(projected.features[0].geometry.coordinates[0][2][0]-1)<1e-9);assert.ok(Math.abs(projected.features[0].geometry.coordinates[0][2][1]-1)<1e-9);
+  await assert.rejects(parser.parse(Buffer.from(wkt),{format:'WKT',sourceCrs:'EPSG:99999999'}),/REJECTED|CRS/);
   const csv=Buffer.from('x,y\n30,50\n30.01,50\n30.01,50.01\n30,50');
   assert.equal((await parser.parse(csv,{format:'CSV',sourceCrs:'EPSG:4326',csv:{x:'x',y:'y',mode:'VERTICES'}})).features[0].geometry.type,'Polygon');
   await assert.rejects(parser.parse(csv,{format:'CSV',sourceCrs:'EPSG:4326'}),/MAPPING/);
@@ -38,10 +41,11 @@ with zipfile.ZipFile(p/'source.zip','w') as z:
 with zipfile.ZipFile(p/'ambiguous.zip','w') as z:
  for f in p.glob('source.*'):
   if f.suffix in ['.shp','.dbf','.shx','.prj']:z.write(f,f.name)
+with zipfile.ZipFile(p/'valid.kmz','w') as z:z.writestr('source.kml','<kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><Polygon><outerBoundaryIs><LinearRing><coordinates>30,50 30.01,50 30.01,50.01 30,50</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>')
 with zipfile.ZipFile(p/'traversal.zip','w') as z:z.writestr('../source.kml','bad')
 with zipfile.ZipFile(p/'bomb.zip','w',compression=zipfile.ZIP_DEFLATED) as z:z.writestr('source.kml','x'*1000000)
 `,dir]);
-  for(const [file,options] of [['source.wkb',{format:'WKB',sourceCrs:'EPSG:4326'}],['source.gpkg',{format:'GPKG'}],['source.zip',{format:'SHP'}]]){
+  for(const [file,options] of [['valid.kmz',{format:'KMZ'}],['source.wkb',{format:'WKB',sourceCrs:'EPSG:4326'}],['source.gpkg',{format:'GPKG'}],['source.zip',{format:'SHP'}]]){
    const parsed=await parser.parse(await readFile(join(dir,file)),options);assert.deepEqual(parsed.features[0].issues,[]);assert.equal(parsed.features[0].sourceCrs,'EPSG:4326');
   }
   await assert.rejects(parser.parse(await readFile(join(dir,'ambiguous.zip')),{format:'SHP'}),/ENCODING/);

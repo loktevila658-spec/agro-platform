@@ -26,7 +26,7 @@ export class GisParser {
    const {stdout}=await exec(process.env.GIS_PYTHON??'/usr/bin/python3',['-I',script,path,config],{timeout:20000,maxBuffer:GIS_FILE_LIMIT+1024,env:{PATH:'/usr/bin:/bin',PROJ_NETWORK:'OFF',GDAL_HTTP_TIMEOUT:'1'}});
    const parsed=JSON.parse(stdout) as ParsedImport;
    if(!parsed||!Array.isArray(parsed.features)||parsed.features.length<1||parsed.features.length>1000||!text(parsed.parserVersion,100))throw Error('GIS_PARSER_INVALID_RESPONSE');return parsed;
-  }catch(error){const e=error as {stderr?:string;message?:string};const match=e.stderr?.match(/GIS_[A-Z_]+/);throw Error(match?.[0]??'GIS_PARSER_UNAVAILABLE_OR_REJECTED');}
+  }catch(error){const e=error as {stderr?:string;message?:string};const match=e.stderr?.match(/GIS_[A-Z0-9_]+/);throw Error(match?.[0]??'GIS_PARSER_UNAVAILABLE_OR_REJECTED');}
   finally{await rm(dir,{recursive:true,force:true});}
  }
 }

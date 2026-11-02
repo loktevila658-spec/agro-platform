@@ -7,7 +7,7 @@ import { GisRegistry } from './gis.registry';
 import type { GisActor,GisContext,GisResult,Proposal } from './gis.types';
 import { bbox,context,geometry,id,keys,source,text,timestamp,uuidv7,version } from './gis.validation';
 export const GIS_POOL=Symbol('GIS_POOL');
-const selection=`v.id,v.geometry_id,v.revision,v.source,v.reason,v.area_ha,v.measurement_method,ST_AsGeoJSON(ST_ForcePolygonCCW(v.geometry),17,0)::json AS geometry,d.status,d.effective_at`;
+const selection=`v.id,v.geometry_id,v.revision,v.source,v.reason,v.area_ha,v.measurement_method,ST_AsGeoJSON(ST_ForcePolygonCCW(v.geometry),17,0)::json AS geometry,COALESCE(d.status,'PROPOSED') AS status,d.effective_at`;
 @Injectable()
 export class GisService implements OnModuleDestroy {
  constructor(@Inject(GIS_POOL) readonly pool:Pool,readonly registry:GisRegistry){}
