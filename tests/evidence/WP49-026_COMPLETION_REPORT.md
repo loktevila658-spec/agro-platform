@@ -199,6 +199,9 @@ These focused results do not relabel the failed full Unit gate as PASS. Mobile
 still pending when this note was written. Review also made PROPOSED explicit,
 added cut antimeridian query and successful/all-effects-rollback ALL_OR_NOTHING
 coverage, real KMZ success and projected3857->4326 normalization/unknown EPSG tests.
+Review additionally snapshots actor/command inputs before asynchronous policy
+checks; a new negative race test proves query tenant stays bound to authorized
+identity. Final local targeted suite42/42 and root regression15/15 PASS.
 No acceptance changed to accommodate a failure. All changes remain in CR65 paths.
 
 ## Limits and closeout

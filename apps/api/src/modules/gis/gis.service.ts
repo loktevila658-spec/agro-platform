@@ -35,9 +35,10 @@ export class GisService implements OnModuleDestroy {
   const result=await tx.query(`WITH candidate AS (SELECT ST_Multi(ST_SetSRID(ST_GeomFromGeoJSON($1),4326)) AS g) SELECT ST_IsValid(g) AND NOT ST_IsEmpty(g) AS valid,ST_Area(g::geography)/10000 AS area FROM candidate`,[JSON.stringify(g)]);
   if(!result.rows[0]?.valid||!(Number(result.rows[0].area)>0))throw Error('GIS_INVALID_GEOMETRY');return g;
  }
- async propose(actor:GisActor,input:Proposal,ctx:GisContext):Promise<GisResult>{await this.registry.authorize(actor,'gis.propose');return this.transaction(tx=>this.proposeInTransaction(tx,actor,input,ctx));}
+ async propose(actor:GisActor,input:Proposal,ctx:GisContext):Promise<GisResult>{actor=Object.freeze({...actor});input=structuredClone(input);ctx=structuredClone(ctx);await this.registry.authorize(actor,'gis.propose');return this.transaction(tx=>this.proposeInTransaction(tx,actor,input,ctx));}
  /** Reject an autocommit handle; imports call this owned command inside their transaction. */
  async proposeInTransaction(tx:PoolClient,actor:GisActor,input:Proposal,ctx:GisContext):Promise<GisResult>{
+  actor=Object.freeze({...actor});input=structuredClone(input);ctx=structuredClone(ctx);
   await tx.query('SAVEPOINT gis_owner');
   try{const r=await this.command(tx,actor,'gis.propose',input,ctx,async()=>{
    keys(input,['geometryId','expectedVersion','geometry','source','reason']);version(input.expectedVersion);source(input.source);
@@ -64,6 +65,7 @@ export class GisService implements OnModuleDestroy {
   }catch(e){await tx.query('ROLLBACK TO SAVEPOINT gis_owner').catch(()=>undefined);await tx.query('RELEASE SAVEPOINT gis_owner').catch(()=>undefined);throw e;}
  }
  async decide(actor:GisActor,input:{geometryId:string;versionId:string;expectedVersion:string;decision:'APPROVED'|'REJECTED';effectiveAt?:string;reason:string},ctx:GisContext):Promise<GisResult>{
+  actor=Object.freeze({...actor});input=structuredClone(input);ctx=structuredClone(ctx);
   const action=input?.decision==='APPROVED'?'gis.approve':'gis.reject';await this.registry.authorize(actor,action);
   keys(input,['geometryId','versionId','expectedVersion','decision','effectiveAt','reason']);id(input.geometryId);id(input.versionId);version(input.expectedVersion);
   if(!['APPROVED','REJECTED'].includes(input.decision)||!text(input.reason)||(input.decision==='APPROVED'?!timestamp(input.effectiveAt):input.effectiveAt!==undefined))throw Error('GIS_INVALID_DECISION');
@@ -79,8 +81,9 @@ export class GisService implements OnModuleDestroy {
    await this.audit(tx,actor,input.geometryId,input.decision,{headVersion:head.row_version},{...result,effectiveAt:input.effectiveAt??null},input.reason,ctx);await this.changed(tx,actor,result,ctx);return result;
   }));
  }
- async history(actor:GisActor,geometryId:string):Promise<Record<string,unknown>[]>{await this.registry.authorize(actor,'gis.read');id(geometryId);return(await this.pool.query(`SELECT ${selection},h.row_version AS head_version FROM gis.geometry_version v JOIN gis.geometry_head h ON h.tenant_id=v.tenant_id AND h.id=v.geometry_id LEFT JOIN gis.geometry_decision d ON d.tenant_id=v.tenant_id AND d.version_id=v.id WHERE v.tenant_id=$1 AND v.geometry_id=$2 ORDER BY v.revision`,[actor.tenantId,geometryId])).rows;}
+ async history(actor:GisActor,geometryId:string):Promise<Record<string,unknown>[]>{actor=Object.freeze({...actor});await this.registry.authorize(actor,'gis.read');id(geometryId);return(await this.pool.query(`SELECT ${selection},h.row_version AS head_version FROM gis.geometry_version v JOIN gis.geometry_head h ON h.tenant_id=v.tenant_id AND h.id=v.geometry_id LEFT JOIN gis.geometry_decision d ON d.tenant_id=v.tenant_id AND d.version_id=v.id WHERE v.tenant_id=$1 AND v.geometry_id=$2 ORDER BY v.revision`,[actor.tenantId,geometryId])).rows;}
  async query(actor:GisActor,bounds:number[],asOf:string,limit=100):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});bounds=structuredClone(bounds);
   await this.registry.authorize(actor,'gis.read');bbox(bounds,limit);if(!timestamp(asOf))throw Error('GIS_INVALID_AS_OF');
   const [w,s,e,n]=bounds;
   const envelope=w!>e!?`ST_Union(ST_MakeEnvelope($2,$3,180,$5,4326),ST_MakeEnvelope(-180,$3,$4,$5,4326))`:`ST_MakeEnvelope($2,$3,$4,$5,4326)`;

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { GisService } from '../dist/modules/gis/gis.service.js';
 import { GisRegistry } from '../dist/modules/gis/gis.registry.js';
 import { geometry, context, source, bbox, uuidv7 } from '../dist/modules/gis/gis.validation.js';
 const polygon={type:'Polygon',coordinates:[[[30,50],[31,50],[31,51],[30,50]]]};
@@ -30,4 +31,12 @@ test('GIS bounds queries with explicit limits and supports antimeridian bbox',()
  assert.deepEqual(bbox([170,-10,-170,10],100),[170,-10,-170,10]);
  for(const b of [[0,0,1,100],[0,10,1,-10],[NaN,0,1,1],[0,0,0,1]])assert.throws(()=>bbox(b,100),/BBOX/);
  assert.throws(()=>bbox([0,0,1,1],1001),/LIMIT/);
+});
+
+test('GIS query binds tenant to the authorized immutable actor across async policy checks',async()=>{
+ const tenantId=uuidv7(),actor={tenantId,subjectId:uuidv7()},registry=new GisRegistry();let release,seen;
+ registry.installPolicy(async(a)=>{await new Promise(resolve=>{release=resolve;});return a.tenantId===tenantId;});
+ const pool={async query(_sql,params){seen=params;return{rows:[]};}};
+ const service=new GisService(pool,registry),pending=service.history(actor,uuidv7());
+ actor.tenantId=uuidv7();release();await pending;assert.equal(seen[0],tenantId);
 });

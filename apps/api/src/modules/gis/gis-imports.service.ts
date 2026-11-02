@@ -13,11 +13,13 @@ export class GisImportsService {
  constructor(private readonly gis:GisService,private readonly parser:GisParser,@Inject(FILES_STORAGE) private readonly storage:ObjectStorage,@Inject(FILES_SCANNER) private readonly scanner:MalwareScanner){}
  /** Dedicated GIS ingress; NOT the media attachment uploader or an unchecked file reference. */
  async stage(actor:GisActor,input:{bytes:Buffer;filename:string;options:ImportOptions},ctx:GisContext):Promise<{batchId:string;count:number;invalid:number}>{
-  this.gis.local();await this.gis.registry.authorize(actor,'gis.import');
+  actor=Object.freeze({...actor});ctx=structuredClone(ctx);
+  this.gis.local();
   keys(input,['bytes','filename','options']);
   if(!text(input.filename,255)||/[\\/]/.test(input.filename)||!Buffer.isBuffer(input.bytes)||!input.bytes.length||input.bytes.length>GIS_FILE_LIMIT)throw Error('GIS_INVALID_FILE');
   // Freeze caller-owned buffers/options before awaits; no mutable source can race scan/hash/parse.
   const bytes=Buffer.from(input.bytes),options=structuredClone(input.options),filename=input.filename;
+  await this.gis.registry.authorize(actor,'gis.import');
   const hash=createHash('sha256').update(bytes).digest('hex');
   if(await this.scanner.scan(Readable.from([bytes]))!=='CLEAN')throw Error('GIS_MALWARE_REJECTED');
   const parsed=await this.parser.parse(bytes,options);
@@ -45,6 +47,7 @@ export class GisImportsService {
   return result;
  }
  async preview(actor:GisActor,batchId:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});
   await this.gis.registry.authorize(actor,'gis.import');id(batchId);
   const batch=(await this.gis.pool.query('SELECT id,sha256,size_bytes,filename,format,options,parser_version,layers FROM gis.import_batch WHERE tenant_id=$1 AND id=$2',[actor.tenantId,batchId])).rows[0];if(!batch)throw Error('GIS_NOT_FOUND');
   const features=(await this.gis.pool.query('SELECT feature_index,source_feature_id,layer,source_crs,ST_AsGeoJSON(geometry,17,0)::json AS geometry,properties,mapped_properties,issues FROM gis.feature_staging WHERE tenant_id=$1 AND batch_id=$2 ORDER BY feature_index',[actor.tenantId,batchId])).rows;
@@ -55,6 +58,7 @@ export class GisImportsService {
  }
  /** Whole batch + GIS owner effects share one DB transaction; never writes foreign facts. */
  async commit(actor:GisActor,input:{batchId:string;mode:'ALL_OR_NOTHING'|'VALID_ONLY';reason:string},ctx:GisContext):Promise<{batchId:string;committed:GisResult[];skipped:number}>{
+  actor=Object.freeze({...actor});input=structuredClone(input);ctx=structuredClone(ctx);
   await this.gis.registry.authorize(actor,'gis.import');keys(input,['batchId','mode','reason']);id(input.batchId);
   if(!['ALL_OR_NOTHING','VALID_ONLY'].includes(input.mode)||!text(input.reason))throw Error('GIS_INVALID_COMMIT_POLICY');
   return this.gis.transaction(tx=>this.gis.command(tx,actor,'gis.import',{operation:'COMMIT',...input},ctx,async()=>{
