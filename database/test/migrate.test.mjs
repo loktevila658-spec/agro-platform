@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -154,4 +154,11 @@ test('database credentials are not exposed in psql process arguments', async () 
   assert.ok(
     invocation.argv.includes('postgresql://migration_user@example.invalid/agro'),
   );
+});
+
+test('Land metadata migration preserves geometry ownership and immutable history', async()=>{
+ const migrations=await discoverMigrations(new URL('../migrations', import.meta.url));
+ for(const table of ['land_plot','snapshot','cadastral_reference','audit','command_idempotency','outbox_event'])assert.match(migrations[12].sql,new RegExp(`CREATE TABLE land\\.${table}\\b`,'i'));
+ assert.match(migrations[12].sql,/DEFERRABLE INITIALLY DEFERRED/);
+ assert.doesNotMatch(migrations[12].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) gis\./i);
 });

@@ -1,3 +1,4 @@
+import { LandModule } from './modules/land/land.module';
 import { GisModule } from './modules/gis/gis.module';
 import { MasterDataModule } from './modules/master-data/master-data.module';
 import { ReplicationModule } from './modules/replication/replication.module';
@@ -18,7 +19,7 @@ import { EventsModule } from './modules/events/events.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [GisModule, MasterDataModule, ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
+  imports: [LandModule, GisModule, MasterDataModule, ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

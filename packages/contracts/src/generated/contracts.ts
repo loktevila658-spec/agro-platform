@@ -869,6 +869,56 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "revision"
       ]
     }
+  },
+  {
+    "name": "land.plot.changed",
+    "version": "1.0.0",
+    "producer": "land",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt",
+        "revision"
+      ]
+    }
   }
 ];
 

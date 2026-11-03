@@ -62,3 +62,15 @@ permissions:
     description: Scan, stage, preview and commit GIS source candidates.
     effect: allow
     scope: tenant
+  - action: land.read
+    effect: allow
+    scope: tenant
+    description: LandPlot read through trusted tenant application commands
+  - action: land.create
+    effect: allow
+    scope: tenant
+    description: LandPlot create through trusted tenant application commands
+  - action: land.correct
+    effect: allow
+    scope: tenant
+    description: LandPlot correct through trusted tenant application commands
