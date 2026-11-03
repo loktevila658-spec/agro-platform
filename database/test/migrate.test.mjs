@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -161,4 +161,14 @@ test('Land metadata migration preserves geometry ownership and immutable history
  for(const table of ['land_plot','snapshot','cadastral_reference','audit','command_idempotency','outbox_event'])assert.match(migrations[12].sql,new RegExp(`CREATE TABLE land\\.${table}\\b`,'i'));
  assert.match(migrations[12].sql,/DEFERRABLE INITIALLY DEFERRED/);
  assert.doesNotMatch(migrations[12].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) gis\./i);
+});
+
+
+test('Farm migration separates identities and preserves immutable allocation/lineage/history',async()=>{
+ const migrations=await discoverMigrations(new URL('../migrations',import.meta.url));
+ const sql=migrations[13].sql;
+ for(const table of ['entity','field','agricultural_season','field_season','revision','field_site','allocation','lineage','audit','command_idempotency','outbox_event'])assert.match(sql,new RegExp(`CREATE TABLE farm\\.${table}\\b`,'i'));
+ assert.match(sql,/UNIQUE\(tenant_id,field_id,business_year\)/);assert.match(sql,/WITH RECURSIVE/);
+ assert.match(sql,/DEFERRABLE INITIALLY DEFERRED/);assert.match(sql,/BEFORE UPDATE OR DELETE OR TRUNCATE ON farm\.lineage/);
+ assert.doesNotMatch(sql,/(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:land|gis|org)\./i);
 });

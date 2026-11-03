@@ -91,6 +91,13 @@ export class GisService implements OnModuleDestroy {
    await tx.query('RELEASE SAVEPOINT gis_version_query');return r.rows[0];
   }catch(e){await tx.query('ROLLBACK TO SAVEPOINT gis_version_query').catch(()=>undefined);await tx.query('RELEASE SAVEPOINT gis_version_query').catch(()=>undefined);throw e;}
  }
+ /** Resolve an approved effective operational version through the geometry owner. */
+ async approvedVersionInTransaction(tx:PoolClient,actor:GisActor,versionId:string,asOf:string):Promise<Record<string,unknown>>{
+  if(!timestamp(asOf))throw Error('GIS_INVALID_AS_OF');
+  const v=await this.versionInTransaction(tx,actor,versionId);
+  const r=await tx.query(`SELECT d.effective_at FROM gis.geometry_decision d JOIN gis.geometry_version v ON v.tenant_id=d.tenant_id AND v.id=d.version_id WHERE d.tenant_id=$1 AND d.version_id=$2 AND d.status='APPROVED' AND d.effective_at<=$3 AND NOT EXISTS(SELECT 1 FROM gis.geometry_decision newer JOIN gis.geometry_version nv ON nv.tenant_id=newer.tenant_id AND nv.id=newer.version_id WHERE newer.tenant_id=d.tenant_id AND newer.geometry_id=d.geometry_id AND newer.status='APPROVED' AND newer.effective_at<=$3 AND (newer.effective_at,nv.revision)>(d.effective_at,v.revision))`,[actor.tenantId,versionId,asOf]);
+  if(!r.rowCount)throw Error('GIS_APPROVED_EFFECTIVE_VERSION_REQUIRED');return {...v,effectiveAt:r.rows[0].effective_at};
+ }
  async history(actor:GisActor,geometryId:string):Promise<Record<string,unknown>[]>{actor=Object.freeze({...actor});await this.registry.authorize(actor,'gis.read');id(geometryId);return(await this.pool.query(`SELECT ${selection},h.row_version AS head_version FROM gis.geometry_version v JOIN gis.geometry_head h ON h.tenant_id=v.tenant_id AND h.id=v.geometry_id LEFT JOIN gis.geometry_decision d ON d.tenant_id=v.tenant_id AND d.version_id=v.id WHERE v.tenant_id=$1 AND v.geometry_id=$2 ORDER BY v.revision`,[actor.tenantId,geometryId])).rows;}
  async query(actor:GisActor,bounds:number[],asOf:string,limit=100):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});bounds=structuredClone(bounds);

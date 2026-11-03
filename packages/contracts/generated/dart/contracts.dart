@@ -1213,6 +1213,13 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     producer: 'land',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt', 'revision']},
+  ),
+  EventDefinition(
+    name: 'farm.entity.changed',
+    version: '1.0.0',
+    producer: 'farm',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt', 'revision']},
   )
 ];
 
