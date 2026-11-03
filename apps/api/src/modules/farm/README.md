@@ -30,7 +30,8 @@ An absent geometry means no boundary has been bound, not a fabricated shape.
 
 AgriculturalSeason registration requires supplied name, business year and actual dates;
 dates may span calendar years. FieldSeason references a real registered season and field
-in one organization. Field/season and primary Field/business-year are unique. Year is
+in one organization and captures their immutable revision IDs, preserving the seasonal
+boundary context when Field geometry later changes. Field/season and primary Field/business-year are unique. Year is
 part of seasonal identity in this slice and cannot be silently reassigned by correction.
 Correction revises seasonal metadata with expected version and reason. Cataloged statuses
 are accepted as correction metadata; this module does not invent agronomic transition,

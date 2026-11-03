@@ -93,6 +93,7 @@ export class GisService implements OnModuleDestroy {
  }
  /** Resolve an approved effective operational version through the geometry owner. */
  async approvedVersionInTransaction(tx:PoolClient,actor:GisActor,versionId:string,asOf:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});
   if(!timestamp(asOf))throw Error('GIS_INVALID_AS_OF');
   const v=await this.versionInTransaction(tx,actor,versionId);
   const r=await tx.query(`SELECT d.effective_at FROM gis.geometry_decision d JOIN gis.geometry_version v ON v.tenant_id=d.tenant_id AND v.id=d.version_id WHERE d.tenant_id=$1 AND d.version_id=$2 AND d.status='APPROVED' AND d.effective_at<=$3 AND NOT EXISTS(SELECT 1 FROM gis.geometry_decision newer JOIN gis.geometry_version nv ON nv.tenant_id=newer.tenant_id AND nv.id=newer.version_id WHERE newer.tenant_id=d.tenant_id AND newer.geometry_id=d.geometry_id AND newer.status='APPROVED' AND newer.effective_at<=$3 AND (newer.effective_at,nv.revision)>(d.effective_at,v.revision))`,[actor.tenantId,versionId,asOf]);

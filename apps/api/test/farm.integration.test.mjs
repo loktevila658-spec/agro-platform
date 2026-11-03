@@ -116,16 +116,20 @@ test('Field/FieldSeason real PostGIS deterministic identity/allocation/lineage/a
     await t.test('corrections preserve geometry references and effective history; optimistic concurrency',async()=>{
       const p=await gis.propose(actor,{geometryId:proposal.geometryId,expectedVersion:'2',geometry:shape,source:{type:'MANUAL',sourceCrs:'EPSG:4326',capturedAt:later},reason:'Fixture revised survey'},ctx());
       await gis.decide(actor,{geometryId:p.geometryId,versionId:p.versionId,expectedVersion:'3',decision:'APPROVED',effectiveAt:later,reason:'Reviewed revised survey'},ctx());
+      await assert.rejects(service.createField(actor,field('superseded-boundary',{...data(),geometryVersionId:proposal.versionId},later),ctx()),/APPROVED/);
       const c={expectedVersion:'1',data:{...data(),geometryVersionId:p.versionId},effectiveAt:later,reason:'Correct boundary reference'};
       const r=await Promise.allSettled([service.correctField(actor,first.entityId,c,ctx()),service.correctField(actor,first.entityId,c,ctx())]);assert.equal(r.filter(x=>x.status==='fulfilled').length,1);
       assert.equal((await service.read(actor,first.entityId,at)).geometry_provenance.id,proposal.versionId);assert.equal((await service.read(actor,first.entityId,later)).geometry_provenance.id,p.versionId);
-      assert.equal((await service.history(actor,first.entityId)).length,2);assert.equal((await service.read(actor,fs.entityId)).row_version,'2');
+      assert.equal((await service.history(actor,first.entityId)).length,2);assert.equal((await service.read(actor,fs.entityId)).row_version,'2');assert.equal((await service.read(actor,fs.entityId)).field_geometry_provenance.id,proposal.versionId);
       await assert.rejects(service.correctField(actor,first.entityId,c,ctx()),/version conflict/i);
       await assert.rejects(pool.query('UPDATE farm.revision SET reason=$1 WHERE tenant_id=$2',['silent',tenantId]),/IMMUTABLE/);
     });
     await t.test('tenant/org/site/current/default/revoked/owner permissions and Local authority',async()=>{
       await assert.rejects(service.read(other,first.entityId),/NOT_FOUND/);
       await assert.rejects(service.createField(other,field('wrong-org'),ctx()),/foreign key/i);
+      await assert.rejects(service.createField(other,field('foreign-parcel',{...data(),allocations:[{landPlotId:parcels[0].landPlotId,validFrom:at,source:'Fixture',reason:'Foreign fixture'}]}),ctx()),/LAND_NOT_FOUND/);
+      const mutableActor={...actor},mutableInput=field('immutable-input');const pending=service.createField(mutableActor,mutableInput,ctx());mutableActor.tenantId=otherTenant;mutableInput.code='tampered';mutableInput.data.name='tampered';
+      const bound=await pending;assert.equal((await service.read(actor,bound.entityId)).code,'immutable-input');assert.equal((await service.read(actor,bound.entityId)).metadata.name,'Fixture field');await assert.rejects(service.read(other,bound.entityId),/NOT_FOUND/);
       await assert.rejects(service.createField(actor,field('wrong-site',{...data(),siteId:randomUUID()}),ctx()),/foreign key/i);
       const denied=new FarmService(pool,new FarmRegistry(),land,gis);await assert.rejects(denied.read(actor,first.entityId),/FORBIDDEN/);
       const input=field('revoke');await service.createField(actor,input,ctx('revoke'));allowed=false;await assert.rejects(service.createField(actor,input,ctx('revoke')),/FORBIDDEN/);allowed=true;
@@ -137,7 +141,7 @@ test('Field/FieldSeason real PostGIS deterministic identity/allocation/lineage/a
     });
     await t.test('atomic split then merge forms historical DAG; no transfer of seasonal facts',async()=>{
       const split=await service.split(actor,{sources:[{fieldId:first.entityId,expectedVersion:'2'}],targets:[field('split-a',data(),'2026-11-05T00:00:00Z'),field('split-b',data(),'2026-11-05T00:00:00Z')],effectiveAt:'2026-11-05T00:00:00Z',reason:'Fixture split'},ctx('split'));
-      assert.equal(split.targets.length,2);assert.equal((await service.read(actor,first.entityId)).metadata.status,'ARCHIVED');assert.equal((await service.read(actor,fs.entityId)).row_version,'2');
+      assert.equal(split.targets.length,2);assert.equal((await service.read(actor,first.entityId)).metadata.status,'ARCHIVED');assert.equal((await service.read(actor,fs.entityId)).row_version,'2');assert.equal((await service.read(actor,fs.entityId)).field_geometry_provenance.id,proposal.versionId);
       const merge=await service.merge(actor,{sources:split.targets.map(x=>({fieldId:x.entityId,expectedVersion:'1'})),targets:[field('merged',data(),'2026-11-06T00:00:00Z')],effectiveAt:'2026-11-06T00:00:00Z',reason:'Fixture merge'},ctx('merge'));
       const edges=await service.lineage(actor,first.entityId);assert.equal(edges.length,4);assert.ok(edges.every(e=>e.reason&&e.actor_id===subjectId));assert.equal((await service.read(actor,merge.targets[0].entityId)).metadata.allocations.length,0);
       await assert.rejects(service.split(actor,{sources:[{fieldId:first.entityId,expectedVersion:'3'}],targets:[field('again-a'),field('again-b')],effectiveAt:later,reason:'Invalid repeat'},ctx()),/ARCHIVED/);
@@ -160,6 +164,7 @@ test('Field/FieldSeason real PostGIS deterministic identity/allocation/lineage/a
     await t.test('real dispatcher/inbox retry/replay and one outbox event per revision',async()=>{
       const events=(await pool.query('SELECT * FROM farm.outbox_event WHERE tenant_id=$1',[tenantId])).rows;
       assert.equal(events.length,Number((await pool.query('SELECT count(*) AS n FROM farm.revision WHERE tenant_id=$1',[tenantId])).rows[0].n));
+      for(const e of events){assert.equal(e.event_version,'1.0.0');assert.ok(['Field','AgriculturalSeason','FieldSeason'].includes(e.payload.entityType));assert.deepEqual(Object.keys(e.payload).sort(),['eventId','entityId','entityType','tenantId','actorId','correlationId','causationId','occurredAt','revision'].sort());}
       const catalog=await loadAndValidateContracts();assert.ok(catalog.events.events.some(e=>e.name==='farm.entity.changed'));
       await pool.query('CREATE TABLE farm.fixture_delivery(id uuid PRIMARY KEY)');let fail=true;
       const inbox=new InboxService(pool),dispatcher=new OutboxDispatcherService(pool,[{name:'wp028-fixture',async handle(tx,event){if(event.source!=='farm')return;if(fail)throw Error('fixture delivery failure');await tx.query('INSERT INTO farm.fixture_delivery(id) VALUES($1)',[event.id]);}}],inbox);

@@ -20,7 +20,7 @@ CREATE TABLE farm.agricultural_season (
  FOREIGN KEY(tenant_id,id,organization_id) REFERENCES farm.entity(tenant_id,id,organization_id)
 );
 CREATE TABLE farm.field_season (
- tenant_id uuid NOT NULL,id uuid NOT NULL,organization_id uuid NOT NULL,field_id uuid NOT NULL,season_id uuid NOT NULL,business_year smallint NOT NULL,
+ tenant_id uuid NOT NULL,id uuid NOT NULL,organization_id uuid NOT NULL,field_id uuid NOT NULL,season_id uuid NOT NULL,field_revision_id uuid NOT NULL,season_revision_id uuid NOT NULL,business_year smallint NOT NULL,
  kind text NOT NULL DEFAULT 'FIELD_SEASON' CHECK(kind='FIELD_SEASON'),PRIMARY KEY(tenant_id,id),UNIQUE(tenant_id,field_id,season_id),UNIQUE(tenant_id,field_id,business_year),
  FOREIGN KEY(tenant_id,id,kind) REFERENCES farm.entity(tenant_id,id,kind),
  FOREIGN KEY(tenant_id,id,organization_id) REFERENCES farm.entity(tenant_id,id,organization_id),
@@ -38,6 +38,8 @@ CREATE TABLE farm.revision (
  CHECK((metadata->>'geometryVersionId' IS NULL)=(geometry_provenance IS NULL)),
  CHECK((metadata->>'geometryVersionId') IS NOT DISTINCT FROM (geometry_provenance->>'id'))
 );
+ALTER TABLE farm.field_season ADD CONSTRAINT seasonal_field_revision FOREIGN KEY(tenant_id,field_id,field_revision_id) REFERENCES farm.revision(tenant_id,entity_id,id);
+ALTER TABLE farm.field_season ADD CONSTRAINT seasonal_season_revision FOREIGN KEY(tenant_id,season_id,season_revision_id) REFERENCES farm.revision(tenant_id,entity_id,id);
 CREATE INDEX farm_revision_effective ON farm.revision(tenant_id,entity_id,effective_at DESC,revision DESC);
 ALTER TABLE farm.entity ADD CONSTRAINT farm_current_revision FOREIGN KEY(tenant_id,id,row_version,current_revision_id) REFERENCES farm.revision(tenant_id,entity_id,revision,id) DEFERRABLE INITIALLY DEFERRED;
 CREATE TABLE farm.field_site (

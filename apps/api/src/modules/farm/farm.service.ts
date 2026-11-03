@@ -20,9 +20,10 @@ export class FarmService implements OnModuleDestroy {
   await this.registry.authorize(actor,action);if(process.env.AGRO_DEPLOYMENT_MODE!=='LOCAL_PRIMARY')throw Error('FARM_LOCAL_PRIMARY_REQUIRED');context(ctx);
   const hash=fingerprint({actor:actor.subjectId,action,input}),tx=await this.pool.connect();
   try{
-   await tx.query('BEGIN');await this.registry.authorize(actor,action);
+   await tx.query('BEGIN');
    // All Farm writers share this tenant lock; version guards below still reject stale intents.
    await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('farm-command/'||$1,0))",[actor.tenantId]);
+   await this.registry.authorize(actor,action);
    const reserved=await tx.query('INSERT INTO farm.command_idempotency(tenant_id,idempotency_key,action,fingerprint,response) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING idempotency_key',[actor.tenantId,ctx.idempotencyKey,action,hash,{pending:true}]);
    let result:T;
    if(!reserved.rowCount){
@@ -90,7 +91,7 @@ export class FarmService implements OnModuleDestroy {
    const field=await this.head(tx,actor,input.fieldId,'FIELD'),season=await this.head(tx,actor,input.seasonId,'SEASON');
    if(field.metadata.status==='ARCHIVED')throw Error('FARM_FIELD_ARCHIVED');if(field.organization_id!==season.organization_id)throw Error('FARM_SEASON_ORGANIZATION');
    const result=await this.append(tx,actor,'FIELD_SEASON',field.organization_id,uuidv7(),null,input.data,'0',input.effectiveAt,input.reason,'field-season.create',ctx);
-   await tx.query('INSERT INTO farm.field_season(tenant_id,id,organization_id,field_id,season_id,business_year) VALUES($1,$2,$3,$4,$5,$6)',[actor.tenantId,result.entityId,field.organization_id,input.fieldId,input.seasonId,season.metadata.year]);return result;
+   await tx.query('INSERT INTO farm.field_season(tenant_id,id,organization_id,field_id,season_id,field_revision_id,season_revision_id,business_year) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[actor.tenantId,result.entityId,field.organization_id,input.fieldId,input.seasonId,field.current_revision_id,season.current_revision_id,season.metadata.year]);return result;
   });
  }
  async correctField(actor:FarmActor,entityId:string,input:Correction<FieldData>,ctx:FarmContext):Promise<EntityResult>{return this.correct(actor,entityId,'FIELD','field.correct',input,ctx);}
@@ -122,7 +123,7 @@ export class FarmService implements OnModuleDestroy {
  }
  async read(actor:FarmActor,entityId:string,asOf?:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);if(asOf!==undefined&&!timestamp(asOf))throw Error('FARM_INVALID_AS_OF');
-  const r=await this.pool.query(`SELECT e.*,f.code,fs.field_id,fs.season_id,COALESCE(fs.business_year,s.business_year) AS business_year,r.id AS revision_id,r.revision,r.metadata,r.geometry_provenance,r.effective_at FROM farm.entity e LEFT JOIN farm.field f ON f.tenant_id=e.tenant_id AND f.id=e.id LEFT JOIN farm.field_season fs ON fs.tenant_id=e.tenant_id AND fs.id=e.id LEFT JOIN farm.agricultural_season s ON s.tenant_id=e.tenant_id AND s.id=e.id JOIN LATERAL (SELECT * FROM farm.revision v WHERE v.tenant_id=e.tenant_id AND v.entity_id=e.id ${asOf===undefined?'AND v.id=e.current_revision_id':'AND v.effective_at<=$3'} ORDER BY v.effective_at DESC,v.revision DESC LIMIT 1) r ON true WHERE e.tenant_id=$1 AND e.id=$2`,asOf===undefined?[actor.tenantId,entityId]:[actor.tenantId,entityId,asOf]);
+  const r=await this.pool.query(`SELECT e.*,f.code,fs.field_id,fs.season_id,fs.field_revision_id,fs.season_revision_id,fr.geometry_provenance AS field_geometry_provenance,COALESCE(fs.business_year,s.business_year) AS business_year,r.id AS revision_id,r.revision,r.metadata,r.geometry_provenance,r.effective_at FROM farm.entity e LEFT JOIN farm.field f ON f.tenant_id=e.tenant_id AND f.id=e.id LEFT JOIN farm.field_season fs ON fs.tenant_id=e.tenant_id AND fs.id=e.id LEFT JOIN farm.agricultural_season s ON s.tenant_id=e.tenant_id AND s.id=e.id LEFT JOIN farm.revision fr ON fr.tenant_id=e.tenant_id AND fr.id=fs.field_revision_id JOIN LATERAL (SELECT * FROM farm.revision v WHERE v.tenant_id=e.tenant_id AND v.entity_id=e.id ${asOf===undefined?'AND v.id=e.current_revision_id':'AND v.effective_at<=$3'} ORDER BY v.effective_at DESC,v.revision DESC LIMIT 1) r ON true WHERE e.tenant_id=$1 AND e.id=$2`,asOf===undefined?[actor.tenantId,entityId]:[actor.tenantId,entityId,asOf]);
   if(!r.rowCount)throw Error('FARM_NOT_FOUND');return r.rows[0];
  }
  async history(actor:FarmActor,entityId:string):Promise<Record<string,unknown>[]>{actor=Object.freeze({...actor});await this.read(actor,entityId);return(await this.pool.query('SELECT * FROM farm.revision WHERE tenant_id=$1 AND entity_id=$2 ORDER BY revision',[actor.tenantId,entityId])).rows;}
