@@ -2,7 +2,7 @@
 
 Date: 2026-11-03 Europe/Moscow. Branch: codex/wp49-027-land; exact executable/PR head
 `717cbed58c5c337f589998cc2afec82bc9c8f9e1`.
-Status: **G0–G11 PASS; G12 pending final CR closure**. Implementation closeout is
+Status: **DONE — all applicable G0–G12 PASS**. Implementation closeout is
 recorded below; report-publication-only evidence is maintained in CR #69.
 Baseline live main: `92b6a5318a526d8ac7ba58dbac0305112dbc3fb8`.
 Scope CR: [CR-0027 #69](https://github.com/loktevila658-spec/agro-platform/issues/69).
@@ -82,7 +82,7 @@ Docker, CI/glob, fixed fixture or OpenAPI change required. All paths are CR addi
 | database/test/migrate.test.mjs | Contiguous13 and new schema/immutability contracts | CR-0027 additional | Migration unit |
 | database/test/database.integration.test.mjs | Clean/repeated/count/current13 and new schema checks | CR-0027 additional | Real PostGIS |
 | apps/api/test/land.unit.test.mjs | RED validation/registry/runtime/boundary tests | CR-0027 additional | Targeted unit |
-| apps/api/test/land.integration.test.mjs | RED real-PG land/cadastre/history/rights/GIS/import/tenant/permissions/concurrency/rollback/outbox scenario | CR-0027 additional | Hosted full Unit |
+| apps/api/test/land.integration.test.mjs | Real-PG land/cadastre/history/rights/GIS/import/tenant/permissions/concurrency/rollback/outbox scenario | CR-0027 additional | Hosted full Unit |
 | apps/api/test/permissions.test.mjs | Append exact Land actions and registry equality, preserve prior actions and negatives | CR-0027 additional | Permission regression |
 | apps/api/src/modules/events/events.types.ts | Explicit land source | CR-0027 additional | Typecheck |
 | apps/api/src/modules/events/outbox-dispatcher.service.ts | Discover/load land outbox through existing delivery/inbox semantics | CR-0027 additional | Integration retry/replay |
@@ -133,6 +133,7 @@ Typecheck/architecture, Unit, Contract/codegen, Migration, Runtime, Mobile/nativ
 Android and aggregate CI quality gates. No skipped API tests/acceptance relaxation.
 API151/151, contracts20/20, config17/17, connectors2/2, root15/15, migration units6/6.
 All7 new Land real-PostGIS subscenarios observed PASS in hosted Unit logs.
+Flutter34/34 and native emulator2/2 PASS; offline50k convergence has zero lost IDs.
 
 | Gate | Final decision |
 |---|---|
@@ -148,7 +149,7 @@ All7 new Land real-PostGIS subscenarios observed PASS in hosted Unit logs.
 | G9 | PASS — immutable metadata/rights/source/hash/original geometry refs and linked correction/audit chain |
 | G10 | PASS — deterministic real-PG create/import-link/correction/conflict/fault/delivery scenario |
 | G11 | PASS — applicable security/bounds/negative/unchanged NFR performance regressions; no new Land-specific SLA invented |
-| G12 | Final CR closure pending — complete28-path report, clear self-review findings/threads, exact required checks and ordinary merge/exact push verified |
+| G12 | PASS — complete28-path scope/report, clear self-review findings/threads, exact required checks, ordinary merge/exact push and completed CR69 |
 
 
 ## 6. Deterministic demo / evidence
@@ -186,10 +187,11 @@ Self-review only, no independent reviewer claimed; reviews/threads clear. Exact
 pre-PR41592109629, PR41593326308 and merge push41594731257 all8 SUCCESS.
 
 Complete report produced with observed gate/path/test/limit/merge evidence, then
-CR-0027 #69 closure is pending delegated owner closeout. Publication-only
+CR-0027 #69 closed completed under delegated owner authorization;
+[final closeout](https://github.com/loktevila658-spec/agro-platform/issues/69#issuecomment-6597900180). Publication-only
 reconciliation uses this already approved report path, ordinary PR/checks/merge/
 exact push, with its self-referential publication SHAs/runs in CR69 comments rather
 than an infinite report rewrite. Implementation and report-only CI remain distinct.
 
-**WP49-027 final governance closure pending.** Dependencies of WP028 may now be
+**WP49-027 DONE; all applicable G0–G12 PASS.** Dependencies of WP028 may now be
 assessed under its own G0; it is not started. Work stops after WP027 closeout.
