@@ -1,7 +1,9 @@
 # WP49-027 Completion Report — LandPlot
 
-Date: 2026-11-03 Europe/Moscow. Branch: codex/wp49-027-land.
-Status: IN PROGRESS — G12 pending exact hosted/head/merge/governance evidence.
+Date: 2026-11-03 Europe/Moscow. Branch: codex/wp49-027-land; exact executable/PR head
+`717cbed58c5c337f589998cc2afec82bc9c8f9e1`.
+Status: **DONE — all applicable G0–G12 PASS**. Implementation closeout is
+recorded below; report-publication-only evidence is maintained in CR #69.
 Baseline live main: `92b6a5318a526d8ac7ba58dbac0305112dbc3fb8`.
 Scope CR: [CR-0027 #69](https://github.com/loktevila658-spec/agro-platform/issues/69).
 [Delegated approval before implementation](https://github.com/loktevila658-spec/agro-platform/issues/69#issuecomment-6597195848).
@@ -12,15 +14,17 @@ G0 PASS. Live main matched expected baseline. Clean isolated checkout in
 /private/tmp/agro-wp49-027-land, branch codex/wp49-027-land; old dirty checkout
 untouched. No unfinished WP027 branch/PR/CR found (prior closeout mentions excluded).
 Both dependency merges ancestors; static NOT_STARTED is not completion evidence.
+
 - WP025 implementation PR63, ordinary merge73591bc241a4a64d76cbf62cd32dd87259ec2216;
   exact event=push [41355973494](https://github.com/loktevila658-spec/agro-platform/actions/runs/41355973494)
-  all8 jobs individually SUCCESS. CR62 CLOSED/completed and final governance
+  all 8 jobs individually SUCCESS. CR62 CLOSED/completed and final governance
   verified; DONE report merged, report-only PR64 merge0ba90c70cb2b88556c3c01165fb2ec14ba44b476.
 - WP026 PR66 + corrective67, final executable merge97574a4768085ec8e9c72bc96dd7372527f356f5;
   exact event=push [41516292979](https://github.com/loktevila658-spec/agro-platform/actions/runs/41516292979)
-  all8 individually SUCCESS, CR65 CLOSED/completed and final comments verified.
+  all 8 individually SUCCESS, CR65 CLOSED/completed and final comments verified.
   DONE report PR68 merge92b6a5318a526d8ac7ba58dbac0305112dbc3fb8, exact push41520797527 SUCCESS.
-Schema12/API/events compatible. MasterData owns Material/UOM and source policies,
+
+Schema 12/API/events compatible. MasterData owns Material/UOM and source policies,
 not LandPlot. GIS owns geometry versions/import evidence; no canonical owner change.
 
 ## 2. Scope implemented
@@ -58,7 +62,7 @@ HTTP route, transport/auth redesign, provider, Field/Season or UI feature.
 ## 3. Changed files / complete pre-code scope
 
 Literal frozen path is outside src-only compiler. One complete pre-code CR approved
-all28 exact paths below; no silent manifest normalization. Existing test glob,
+all 28 exact paths below; no silent manifest normalization. Existing test glob,
 Docker dist layout, schema assertions, strict event/action tests, four generated
 outputs and Completion Report path inspected before edits. No package, compiler,
 Docker, CI/glob, fixed fixture or OpenAPI change required. All paths are CR additions.
@@ -74,13 +78,13 @@ Docker, CI/glob, fixed fixture or OpenAPI change required. All paths are CR addi
 | apps/api/src/modules/gis/gis.service.ts | Narrow permission-checked transaction-bound immutable version/source query contract; no existing behavior change | CR-0027 additional | Owner boundary/tenant/import integration |
 | apps/api/src/app.module.ts | Register LandModule in actual runtime | CR-0027 additional | Build/runtime |
 | database/migrations/0013_land_plot.sql | Owned head/snapshot/cadastral-reference/audit/receipt/outbox, immutable history/composite tenant relationships; event source CHECK | CR-0027 additional | Real clean/repeated migration and negative constraints |
-| apps/api/src/schema-version.service.ts | Expected current schema13 | CR-0027 additional | Schema API |
+| apps/api/src/schema-version.service.ts | Expected current schema 13 | CR-0027 additional | Schema API |
 | apps/api/test/schema-version.test.mjs | Current13/ahead14, retain all malformed/behind negatives | CR-0027 additional | Unit |
 | apps/api/test/identity.integration.test.mjs | Current schema assertion12->13 only | CR-0027 additional | Regression |
 | database/test/migrate.test.mjs | Contiguous13 and new schema/immutability contracts | CR-0027 additional | Migration unit |
 | database/test/database.integration.test.mjs | Clean/repeated/count/current13 and new schema checks | CR-0027 additional | Real PostGIS |
 | apps/api/test/land.unit.test.mjs | RED validation/registry/runtime/boundary tests | CR-0027 additional | Targeted unit |
-| apps/api/test/land.integration.test.mjs | RED real-PG land/cadastre/history/rights/GIS/import/tenant/permissions/concurrency/rollback/outbox scenario | CR-0027 additional | Hosted full Unit |
+| apps/api/test/land.integration.test.mjs | Real-PG land/cadastre/history/rights/GIS/import/tenant/permissions/concurrency/rollback/outbox scenario | CR-0027 additional | Hosted full Unit |
 | apps/api/test/permissions.test.mjs | Append exact Land actions and registry equality, preserve prior actions and negatives | CR-0027 additional | Permission regression |
 | apps/api/src/modules/events/events.types.ts | Explicit land source | CR-0027 additional | Typecheck |
 | apps/api/src/modules/events/outbox-dispatcher.service.ts | Discover/load land outbox through existing delivery/inbox semantics | CR-0027 additional | Integration retry/replay |
@@ -96,12 +100,12 @@ Docker, CI/glob, fixed fixture or OpenAPI change required. All paths are CR addi
 
 ## 4. Database / contracts
 
-Additive migration0013_land_plot.sql, expected schema13. Owned head/snapshot/
+Additive migration `0013_land_plot.sql`, expected schema 13. Owned head/snapshot/
 reference/audit/idempotency/outbox. Composite tenant organization and current
 snapshot/revision pointer FKs; immutable histories/references and reasoned previous
 revision chain. No spatial SQL/data owned by Land; GIS remains authoritative.
 Commands LOCAL_PRIMARY/current server permission/strict validation/transaction/
-shared optimistic guard/idempotency/atomic audit/outbox. New land.plot.changed1.0.0
+shared optimistic guard/idempotency/atomic audit/outbox. New land.plot.changed@1.0.0
 metadata event uses existing dispatcher/inbox, no new production consumer. Three
 tenant actions land.read/create/correct, no grants. Codegen4 outputs regenerated
 from catalog; exact previous event/actions retained. OpenAPI unchanged.
@@ -109,36 +113,49 @@ from catalog; exact previous event/actions retained. OpenAPI unchanged.
 ## 5. Tests and quality gates
 
 RED Land unit test before runtime: missing compiled LandRegistry (module absent),
-not a domain-rule failure claim. Targeted local41/41 PASS after implementation:
+not a domain-rule failure claim. Targeted local 41/41 PASS after implementation:
 Land validation/default deny/boundary, all permission negatives, schema, migration
 units, root/package contract regressions. Initial development failures (catalog
 entry placement, new migration-test helper typo) fixed without relaxing assertions.
 Local Docker probe: Docker Desktop unable to start. No local PostGIS/runtime PASS
-claimed; exact hosted workflow_dispatch required before PR. Flutter/GDAL capability
-and project final gates recorded below as observed, never UNKNOWN->PASS.
+claimed; successful exact hosted workflow_dispatch supplied evidence before PR.
 Local targeted real-PG scenario attempt failed at Docker image build before DB
 startup. Flutter absent and /usr/bin/python3 lacks osgeo; no destructive reset,
-repeated Docker attempts, test skips or CI changes. Hosted evidence is required.
+repeated Docker attempts, test skips or CI changes. Hosted exact-head/post-merge evidence in this section resolves these local limits.
 
-| Gate | Current evidence |
+Hosted evidence: exact pre-PR workflow_dispatch
+[41592109629](https://github.com/loktevila658-spec/agro-platform/actions/runs/41592109629),
+exact pull_request
+[41593326308](https://github.com/loktevila658-spec/agro-platform/actions/runs/41593326308)
+on `717cbed58c5c337f589998cc2afec82bc9c8f9e1` and exact merge-SHA event=push
+[41594731257](https://github.com/loktevila658-spec/agro-platform/actions/runs/41594731257)
+on `5f08a7bed35484e6ad6ca7bb49edd06194936ac7` all 8 jobs individually SUCCESS. Lint capability (N/A no configured linter),
+Typecheck/architecture, Unit, Contract/codegen, Migration, Runtime, Mobile/native
+Android and aggregate CI quality gates. No skipped API tests/acceptance relaxation.
+API 151/151, contracts 20/20, config 17/17, connectors 2/2, root 15/15, migration units 6/6.
+All 7 new Land real-PostGIS subscenarios observed PASS in hosted Unit logs.
+Flutter 34/34 and native emulator 2/2 PASS; offline 50k convergence has zero lost IDs.
+
+| Gate | Final decision |
 |---|---|
-| G0 | PASS — dependency exact pushes/closed CRs/merged reports/compatibility |
-| G1 | PASS local typecheck/architecture11/11 and lint capability (lint N/A); hosted pending |
-| G2 | Pending real clean/repeated schema13 migration |
-| G3 | Targeted41/41 PASS; full hosted Unit pending |
-| G4 | Pending real PostGIS and runtime |
-| G5 | PASS local contract validation/codegen drift and targeted regressions; hosted pending |
-| G6 | Pending real atomic effects/dispatcher/inbox scenario |
-| G7 | Targeted default-deny/catalog negatives PASS; real tenant/replay pending |
-| G8 | Pending unchanged offline/mobile/native regressions; no new offline write |
-| G9 | Pending real immutable correction/provenance scenario |
-| G10 | Pending deterministic real-PG scenario |
-| G11 | Pending applicable hosted security/bounds/regression gates |
-| G12 | Pending exact approved diff, review, hosted checks, ordinary merge, exact push and CR closure |
+| G0 | PASS — compatible merged dependencies, exact push jobs, closed CRs and DONE reports |
+| G1 | PASS — full static typecheck/architecture 11/11, approved diff and lint capability |
+| G2 | PASS — real clean/repeated/current/count/checksum-guarded schema 13 migrations/API |
+| G3 | PASS — targeted41/41 and full hosted API 151/151, no skips |
+| G4 | PASS — real PostGIS land/GIS/core integration and actual Compose runtime |
+| G5 | PASS — canonical contracts/codegen 4 drift/backward compatibility; OpenAPI unchanged |
+| G6 | PASS — atomic snapshot/receipt/audit/outbox rollback and actual dispatcher/inbox retry/replay |
+| G7 | PASS — default deny, current/revoked-on-replay permission, tenant/org/GIS negatives |
+| G8 | PASS applicable unchanged offline/sync/mobile/native regressions; no new offline command |
+| G9 | PASS — immutable metadata/rights/source/hash/original geometry refs and linked correction/audit chain |
+| G10 | PASS — deterministic real-PG create/import-link/correction/conflict/fault/delivery scenario |
+| G11 | PASS — applicable security/bounds/negative/unchanged NFR performance regressions; no new Land-specific SLA invented |
+| G12 | PASS — complete28-path scope/report, clear self-review findings/threads, exact required checks, ordinary merge/exact push and completed CR #69 |
+
 
 ## 6. Deterministic demo / evidence
 
-Fixed fixture source timestamp2026-11-03T00:00:00Z; source labels/hashes/cadastral
+Fixed fixture source timestamp 2026-11-03T00:00:00Z; source labels/hashes/cadastral
 identifiers/rights explicitly test-only, UUIDs isolate runs and do not drive rules.
 Real PostGIS create/replay, org/tenant isolation, manual geometry link, GIS correction
 with retained old version, documentary rights correction, stale/concurrent conflict,
@@ -156,10 +173,26 @@ Only documented OWNERSHIP/LEASE metadata; no full rights/contracts/title process
 external/provider integration, scraping, seed data, production/WAN/physical-device
 certification. No Field/Season/allocation/UI/offline registration or WP028. Historical
 records retained; no purge/retention policy invented. Local Docker verification
-limit awaits hosted evidence. No frozen scope or future/rejected item promoted.
+limit is resolved by the observed exact-head/merge-SHA hosted evidence in §5. No frozen scope or future/rejected item promoted.
 
 ## 8. Unlock decision / exact closeout
 
-NOT DONE. G12 pending; no next WP started. Exact code/head/PR/CI/merge/CR closeout
-will be recorded after observation. Same approved report path covers reconciliation;
-report publication checks remain distinct from executable implementation evidence.
+[Implementation PR #70](https://github.com/loktevila658-spec/agro-platform/pull/70).
+Exact executable/PR head `717cbed58c5c337f589998cc2afec82bc9c8f9e1`. Ordinary
+merge `5f08a7bed35484e6ad6ca7bb49edd06194936ac7`, two parents: baseline main `92b6a5318a526d8ac7ba58dbac0305112dbc3fb8`
+and tested head `717cbed58c5c337f589998cc2afec82bc9c8f9e1`. Live main/parents/merge
+and tested-head tree equality verified. No auto-merge/admin/bypass; strict required
+aggregate/enforce-admins/conversation protection preserved. Public PR diff exactly
+matches reviewed local diff, all 28 approved paths, frozen manifest byte-identical.
+Self-review only, no independent reviewer claimed; reviews/threads clear. Exact
+pre-PR41592109629, PR41593326308 and merge push41594731257 all 8 SUCCESS.
+
+Complete report produced with observed gate/path/test/limit/merge evidence, then
+CR-0027 #69 closed completed under delegated owner authorization;
+[final closeout](https://github.com/loktevila658-spec/agro-platform/issues/69#issuecomment-6597900180). Publication-only
+reconciliation uses this already approved report path, ordinary PR/checks/merge/
+exact push, with its self-referential publication SHAs/runs in CR #69 comments rather
+than an infinite report rewrite. Implementation and report-only CI remain distinct.
+
+**WP49-027 DONE; all applicable G0–G12 PASS.** Dependencies of WP028 may now be
+assessed under its own G0; it is not started. Work stops after WP027 closeout.
