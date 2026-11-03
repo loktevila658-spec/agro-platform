@@ -1,3 +1,4 @@
+import { TASK_ACTIONS } from '../dist/modules/tasks/tasks.types.js';
 import { FARM_ACTIONS } from '../dist/modules/farm/farm.types.js';
 import { LAND_ACTIONS } from '../dist/modules/land/land.types.js';
 import assert from 'node:assert/strict';
@@ -60,6 +61,7 @@ test('OrgService action registry stays synchronized with the canonical permissio
   assert.deepEqual([...GIS_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('gis.')).map(({action})=>action).sort());
   assert.deepEqual([...FARM_ACTIONS].sort(),allPermissions.filter(({action})=>FARM_ACTIONS.has(action)).map(({action})=>action).sort());
   assert.deepEqual([...LAND_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('land.')).map(({action})=>action).sort());
+  assert.deepEqual([...TASK_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('task.')).map(({action})=>action).sort());
   const actionSet = orgSource.match(/const ACTIONS = new Set\(\[([\s\S]*?)\]\);/);
   assert.ok(actionSet, 'OrgService must keep an explicit action allowlist');
   const actions = [...actionSet[1].matchAll(/'([^']+)'/g)].map((match) => match[1]).sort();
@@ -107,6 +109,21 @@ test('allows configured catalog actions at their declared global or tenant scope
     {action:'land.read',effect:'allow',scope:'tenant'},
     {action:'land.create',effect:'allow',scope:'tenant'},
     {action:'land.correct',effect:'allow',scope:'tenant'},
+    {action:'task.read',effect:'allow',scope:'tenant'},
+    {action:'task.create',effect:'allow',scope:'tenant'},
+    {action:'task.plan',effect:'allow',scope:'tenant'},
+    {action:'task.assign',effect:'allow',scope:'tenant'},
+    {action:'task.accept',effect:'allow',scope:'tenant'},
+    {action:'task.start',effect:'allow',scope:'tenant'},
+    {action:'task.pause',effect:'allow',scope:'tenant'},
+    {action:'task.resume',effect:'allow',scope:'tenant'},
+    {action:'task.complete',effect:'allow',scope:'tenant'},
+    {action:'task.verify',effect:'allow',scope:'tenant'},
+    {action:'task.close',effect:'allow',scope:'tenant'},
+    {action:'task.return',effect:'allow',scope:'tenant'},
+    {action:'task.cancel',effect:'allow',scope:'tenant'},
+    {action:'task.abort',effect:'allow',scope:'tenant'},
+
 
   ]);
 

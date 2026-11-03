@@ -1,5 +1,6 @@
 schema_version: 0.1.0
 status: BOOTSTRAP
+
 sources:
 - DOC03
 - DOC19
@@ -110,3 +111,59 @@ permissions:
     effect: allow
     scope: tenant
     description: LandPlot correct through trusted tenant application commands
+  - action: task.read
+    description: Explicit tenant task.read owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.create
+    description: Explicit tenant task.create owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.plan
+    description: Explicit tenant task.plan owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.assign
+    description: Explicit tenant task.assign owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.accept
+    description: Explicit tenant task.accept owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.start
+    description: Explicit tenant task.start owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.pause
+    description: Explicit tenant task.pause owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.resume
+    description: Explicit tenant task.resume owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.complete
+    description: Explicit tenant task.complete owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.verify
+    description: Explicit tenant task.verify owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.close
+    description: Explicit tenant task.close owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.return
+    description: Explicit tenant task.return owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.cancel
+    description: Explicit tenant task.cancel owner command or query.
+    effect: allow
+    scope: tenant
+  - action: task.abort
+    description: Explicit tenant task.abort owner command or query.
+    effect: allow
+    scope: tenant

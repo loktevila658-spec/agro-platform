@@ -164,7 +164,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(first.stdout, /migration 11 applied/);
     assert.match(first.stdout, /migration 12 applied/);
     assert.match(first.stdout, /migration 13 applied/);
-    assert.match(first.stdout, /migration 14 applied/);
+    assert.match(first.stdout, /migration 15 applied/);
     for(const name of ['entity','field','agricultural_season','field_season','revision','allocation','lineage','audit','command_idempotency','outbox_event']){
       assert.equal(query(container, databaseUrl, `SELECT to_regclass('farm.${name}') IS NOT NULL;`),'t');
     }
@@ -189,7 +189,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(second.stdout, /migration 11 already applied/);
     assert.match(second.stdout, /migration 12 already applied/);
     assert.match(second.stdout, /migration 13 already applied/);
-    assert.match(second.stdout, /migration 14 already applied/);
+    assert.match(second.stdout, /migration 15 already applied/);
 
     assert.equal(
       query(
@@ -197,7 +197,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT current_version FROM platform_meta.schema_version;',
       ),
-      '14',
+      '15',
     );
     assert.equal(query(container,databaseUrl,"SELECT count(*) FROM information_schema.tables WHERE table_schema='master_data' AND table_name IN ('source_policy','unit_of_measure','material','revision','command_idempotency','outbox_event');"), '6');
     assert.match(
@@ -214,7 +214,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT COUNT(*) FROM platform_meta.schema_migrations;',
       ),
-      '14',
+      '15',
     );
 
     assert.equal(
@@ -282,8 +282,8 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body, {
-      schemaVersion: 14,
-      expectedSchemaVersion: 14,
+      schemaVersion: 15,
+      expectedSchemaVersion: 15,
       postgisVersion: body.postgisVersion,
       status: 'current',
     });

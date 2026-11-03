@@ -1062,6 +1062,110 @@ class SyncUploadResponse {
   final String state;
 }
 
+class TaskDefinition {
+  const TaskDefinition({
+    required this.operationTypeId,
+    this.plannedEnd,
+    this.plannedQty,
+    this.plannedStart,
+    required this.priority,
+    required this.targetId,
+    required this.targetType,
+    this.uom,
+  });
+
+  factory TaskDefinition.fromJson(Map<String, Object?> json) => TaskDefinition(
+        operationTypeId: json['operationTypeId'] as String,
+        plannedEnd: json['plannedEnd'] == null ? null : json['plannedEnd'] as String,
+        plannedQty: json['plannedQty'] == null ? null : json['plannedQty'] as String,
+        plannedStart: json['plannedStart'] == null ? null : json['plannedStart'] as String,
+        priority: (json['priority'] as num).toInt(),
+        targetId: json['targetId'] as String,
+        targetType: json['targetType'] as String,
+        uom: json['uom'] == null ? null : json['uom'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'operationTypeId': operationTypeId, if (plannedEnd != null) 'plannedEnd': plannedEnd, if (plannedQty != null) 'plannedQty': plannedQty, if (plannedStart != null) 'plannedStart': plannedStart, 'priority': priority, 'targetId': targetId, 'targetType': targetType, if (uom != null) 'uom': uom};
+
+  final String operationTypeId;
+  final String? plannedEnd;
+  final String? plannedQty;
+  final String? plannedStart;
+  final int priority;
+  final String targetId;
+  final String targetType;
+  final String? uom;
+}
+
+class TaskListResponse {
+  const TaskListResponse({
+    required this.tasks,
+  });
+
+  factory TaskListResponse.fromJson(Map<String, Object?> json) => TaskListResponse(
+        tasks: (json['tasks'] as List<Object?>).map((item) => TaskProjection.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'tasks': tasks};
+
+  final List<TaskProjection> tasks;
+}
+
+class TaskProjection {
+  const TaskProjection({
+    required this.assignment,
+    required this.definition,
+    required this.id,
+    this.lastObservedAt,
+    required this.organizationId,
+    this.startedAt,
+    required this.status,
+    required this.targetProvenance,
+    required this.version,
+  });
+
+  factory TaskProjection.fromJson(Map<String, Object?> json) => TaskProjection(
+        assignment: json['assignment'] as Map<String, Object?>,
+        definition: TaskDefinition.fromJson(Map<String, Object?>.from(json['definition'] as Map)),
+        id: json['id'] as String,
+        lastObservedAt: json['lastObservedAt'] == null ? null : json['lastObservedAt'] as String,
+        organizationId: json['organizationId'] as String,
+        startedAt: json['startedAt'] == null ? null : json['startedAt'] as String,
+        status: json['status'] as String,
+        targetProvenance: json['targetProvenance'] as Map<String, Object?>,
+        version: (json['version'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'assignment': assignment, 'definition': definition, 'id': id, if (lastObservedAt != null) 'lastObservedAt': lastObservedAt, 'organizationId': organizationId, if (startedAt != null) 'startedAt': startedAt, 'status': status, 'targetProvenance': targetProvenance, 'version': version};
+
+  final Map<String, Object?> assignment;
+  final TaskDefinition definition;
+  final String id;
+  final String? lastObservedAt;
+  final String organizationId;
+  final String? startedAt;
+  final String status;
+  final Map<String, Object?> targetProvenance;
+  final int version;
+}
+
+class TaskSubmitRequest {
+  const TaskSubmitRequest({
+    required this.command,
+    required this.scopeVersion,
+  });
+
+  factory TaskSubmitRequest.fromJson(Map<String, Object?> json) => TaskSubmitRequest(
+        command: SyncCommand.fromJson(Map<String, Object?>.from(json['command'] as Map)),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'command': command, 'scopeVersion': scopeVersion};
+
+  final SyncCommand command;
+  final int scopeVersion;
+}
+
 class TenantResponse {
   const TenantResponse({
     required this.code,
@@ -1218,6 +1322,13 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     name: 'farm.entity.changed',
     version: '1.0.0',
     producer: 'farm',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt', 'revision']},
+  ),
+  EventDefinition(
+    name: 'task.changed',
+    version: '1.0.0',
+    producer: 'tasks',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt', 'revision']},
   )
@@ -1428,6 +1539,34 @@ class AgroPlatformApiClient {
     final send = requestTransport;
     if (send == null) throw StateError('requestTransport is required for pushSync');
     final json = await send(baseUri.resolve('/v1/sync/push'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<TaskListResponse> taskList({String? after, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for taskList');
+    final json = await send(baseUri.resolve('/v1/tasks').replace(queryParameters: <String, String>{if (after != null) 'after': after!.toString()}), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return TaskListResponse.fromJson(json);
+  }
+
+  Future<SyncPushResponse> taskCreate({required String authorization, required TaskSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for taskCreate');
+    final json = await send(baseUri.resolve('/v1/tasks'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<TaskProjection> taskRead({required String taskId, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for taskRead');
+    final json = await send(baseUri.resolve('/v1/tasks/' + Uri.encodeComponent(taskId) + ''), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return TaskProjection.fromJson(json);
+  }
+
+  Future<SyncPushResponse> taskCommand({required String action, required String taskId, required String authorization, required TaskSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for taskCommand');
+    final json = await send(baseUri.resolve('/v1/tasks/' + Uri.encodeComponent(taskId) + '/commands/' + Uri.encodeComponent(action) + ''), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
     return SyncPushResponse.fromJson(json);
   }
 }

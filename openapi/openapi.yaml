@@ -699,6 +699,150 @@ paths:
           description: Tenant not found
         '503':
           description: PostgreSQL unavailable
+  "/v1/tasks":
+    "get":
+      "operationId": "taskList"
+      "summary": "Versioned task owner boundary"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "after"
+          "in": "query"
+          "required": false
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Task owner result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/TaskListResponse"
+        "400":
+          "description": "Invalid command"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Current permission denied"
+        "404":
+          "description": "Not available"
+        "409":
+          "description": "Explicit version or state conflict"
+    "post":
+      "operationId": "taskCreate"
+      "summary": "Versioned task owner boundary"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/TaskSubmitRequest"
+      "responses":
+        "200":
+          "description": "Task owner result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+        "400":
+          "description": "Invalid command"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Current permission denied"
+        "404":
+          "description": "Not available"
+        "409":
+          "description": "Explicit version or state conflict"
+  "/v1/tasks/{taskId}":
+    "get":
+      "operationId": "taskRead"
+      "summary": "Versioned task owner boundary"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "taskId"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Task owner result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/TaskProjection"
+        "400":
+          "description": "Invalid command"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Current permission denied"
+        "404":
+          "description": "Not available"
+        "409":
+          "description": "Explicit version or state conflict"
+  "/v1/tasks/{taskId}/commands/{action}":
+    "post":
+      "operationId": "taskCommand"
+      "summary": "Versioned task owner boundary"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "taskId"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "action"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+            "enum":
+              - "Plan"
+              - "Assign"
+              - "Accept"
+              - "Start"
+              - "Pause"
+              - "Resume"
+              - "Complete"
+              - "Verify"
+              - "Close"
+              - "Return"
+              - "Cancel"
+              - "Abort"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/TaskSubmitRequest"
+      "responses":
+        "200":
+          "description": "Task owner result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+        "400":
+          "description": "Invalid command"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Current permission denied"
+        "404":
+          "description": "Not available"
+        "409":
+          "description": "Explicit version or state conflict"
 components:
   parameters:
     BootstrapAuthorization:
@@ -1641,6 +1785,100 @@ components:
         sitesJson:
           type: string
           description: JSON-encoded array of sites.
+    "TaskDefinition":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "operationTypeId"
+        - "targetType"
+        - "targetId"
+        - "priority"
+      "properties":
+        "operationTypeId":
+          "type": "string"
+        "targetType":
+          "type": "string"
+          "enum":
+            - "FIELD"
+            - "FIELD_SEASON"
+        "targetId":
+          "type": "string"
+        "plannedStart":
+          "type": "string"
+        "plannedEnd":
+          "type": "string"
+        "plannedQty":
+          "type": "string"
+        "uom":
+          "type": "string"
+        "priority":
+          "type": "integer"
+    "TaskProjection":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "id"
+        - "version"
+        - "status"
+        - "organizationId"
+        - "definition"
+        - "assignment"
+        - "targetProvenance"
+      "properties":
+        "id":
+          "type": "string"
+        "version":
+          "type": "integer"
+        "status":
+          "type": "string"
+          "enum":
+            - "DRAFT"
+            - "PLANNED"
+            - "ASSIGNED"
+            - "ACCEPTED"
+            - "IN_PROGRESS"
+            - "PAUSED"
+            - "COMPLETED"
+            - "VERIFIED"
+            - "CLOSED"
+            - "RETURNED"
+            - "CANCELLED"
+            - "ABORTED"
+        "organizationId":
+          "type": "string"
+        "definition":
+          "$ref": "#/components/schemas/TaskDefinition"
+        "assignment":
+          "type": "object"
+          "additionalProperties": true
+        "targetProvenance":
+          "type": "object"
+          "additionalProperties": true
+        "startedAt":
+          "type": "string"
+        "lastObservedAt":
+          "type": "string"
+    "TaskListResponse":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "tasks"
+      "properties":
+        "tasks":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/TaskProjection"
+    "TaskSubmitRequest":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "scopeVersion"
+        - "command"
+      "properties":
+        "scopeVersion":
+          "type": "integer"
+        "command":
+          "$ref": "#/components/schemas/SyncCommand"
 x-status: BOOTSTRAP
 x-sources:
   - DOC28

@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -172,3 +172,5 @@ test('Farm migration separates identities and preserves immutable allocation/lin
  assert.match(sql,/DEFERRABLE INITIALLY DEFERRED/);assert.match(sql,/BEFORE UPDATE OR DELETE OR TRUNCATE ON farm\.lineage/);
  assert.doesNotMatch(sql,/(?:INSERT INTO|UPDATE|DELETE FROM)\s+(?:land|gis|org)\./i);
 });
+
+test('task schema retains execution/audit history and tenant ownership',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));assert.match(m[14].sql,/CREATE TABLE tasks.operation_fact/);assert.match(m[14].sql,/TASK_IMMUTABLE_HISTORY/);assert.match(m[14].sql,/UNIQUE\(tenant_id,task_id\)/);});

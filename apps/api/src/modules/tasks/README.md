@@ -1,0 +1,43 @@
+# Task/work order core
+
+WP49-031 owns WorkOrder lifecycle, assignment and manual execution, not a universal
+state machine for scouting/WMS/maintenance. WF02 transitions are explicit. Immutable
+completion fact, transition before/after audit and metadata outbox commit in the
+existing SyncService command transaction alongside receipt/feed. HTTP is only an
+authenticated wrapper of this same command path; no row PATCH or cloud failover.
+
+Deployments must install TasksRegistry policy through trusted composition. Default
+is deny. Current authorization receives tenant, actor and task organization, and is
+rechecked on every execution/replay/pull. Employee references resolve to authenticated
+users through that policy, never by assuming employee UUID equals login UUID.
+Operation type availability is also an owner policy. Optional assets cannot cause
+any foreign writes. No assignment seed, default grants or production fixtures.
+
+TaskDefinition and TaskProjection are generated canonical HTTP contracts, command
+version1 uses existing SyncCommand with Task.<Action>, aggregate Task/id, baseVersion,
+UUIDv7 command ID/idempotency, original observed time/provenance/attachment intents.
+Create has baseVersion0. Read/list and commands require current authority identity;
+command transport requires registered device/scope. List uses ID keyset (up to500
+candidates, existing sync page bound); read policies filter candidates. A restricted
+list can be empty before exhaustion; clients may query known assigned task IDs.
+
+Field/FieldSeason target references resolve through the Farm owner transaction-bound
+query; initial provenance is pinned. No geometry or parcel ownership is transferred.
+Other target families reject until an accepted owner port exists. Operation quantities
+use decimal strings, numeric(18,6), never floating-point money/quantity authority.
+Complete records manual quantity/unit and evidence. Material-consumption requests
+reject explicitly: there is no warehouse/material ledger implementation here.
+Verification/close preserve the execution fact; Return records explicit RETURNED
+without silently editing that fact or fabricating an agronomy correction workflow.
+
+Offline execution uses existing encrypted workspace/provisional queue and pinned
+signed grants. A deployment-configured O1 TTL is required (max7 days); no TTL is
+invented. Grant coverage permits a valid local Accept/Start/Pause/Resume/Complete
+chain while current server rules remain final. Rejected/conflict intent is retained;
+no automatic state rebase or last-write-wins. Native Android tests verify storage,
+reopen and wipe; real PostGIS verifies canonical execution and receipt/feed effects.
+iOS is N/A in the current Android support profile, not certified.
+
+The task projection boundary is reusable by WP49-029 after this package's acceptance.
+No offline GIS package is implemented here. No retention pruning, production provider,
+external HR/asset registry, accounting/payroll or later agronomy workflow is added.
