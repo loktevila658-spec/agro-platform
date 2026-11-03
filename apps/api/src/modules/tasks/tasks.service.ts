@@ -23,6 +23,7 @@ export class TasksService implements OnModuleDestroy {
  async apply(tx:PoolClient,actor:SyncActor,c:SyncCommand):Promise<{canonical:Record<string,unknown>;aggregateVersion:number;changes:SyncChange[]}>{
   if(process.env.AGRO_DEPLOYMENT_MODE!=='LOCAL_PRIMARY')throw new ForbiddenException('AUTHORITY_MODE_MISMATCH');
   const action=this.action(c);validateAction(action,c.payload);if(!iso(c.observedAt)||!object(c.provenance))throw new BadRequestException('TASK_INVALID_PROVENANCE');
+  const provenance={intent:c.provenance,commandPayload:c.payload,deviceId:actor.deviceId,sessionId:actor.sessionId,offlineAuthId:c.offlineAuthId,commandVersion:c.commandVersion};
   const before=await this.row(tx,actor,c.aggregate.id,true);if(!await this.can(actor,action,before))throw new ForbiddenException('TASK_FORBIDDEN');
   if((action==='Create'&&(before||c.baseVersion!==0))||(action!=='Create'&&(!before||Number(before.version)!==c.baseVersion)))throw new SyncConflict('VERSION_CONFLICT',before?projection(before) as unknown as Record<string,unknown>:{});
   let row:TaskRow;
@@ -46,10 +47,10 @@ export class TasksService implements OnModuleDestroy {
     assignment={employeeIds,assetIds:c.payload.assetIds??[],resolvedUserIds:executors};
    }
    row=(await tx.query<TaskRow>('UPDATE tasks.work_order SET version=version+1,status=$3,assignment=$4,executor_user_ids=$5,started_at=CASE WHEN $6 THEN $7::timestamptz ELSE started_at END,last_observed_at=$7 WHERE tenant_id=$1 AND id=$2 RETURNING *',[actor.tenantId,c.aggregate.id,status,assignment,executors,action==='Start',c.observedAt])).rows[0]!;
-   if(action==='Complete')await tx.query('INSERT INTO tasks.operation_fact(tenant_id,task_id,id,actual_qty,uom,started_at,completed_at,actor_id,evidence,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[actor.tenantId,row.id,c.localCommandId,c.payload.actualQty??null,c.payload.uom??null,row.started_at,c.observedAt,actor.userId,c.attachments,c.provenance]);
+   if(action==='Complete')await tx.query('INSERT INTO tasks.operation_fact(tenant_id,task_id,id,actual_qty,uom,started_at,completed_at,actor_id,evidence,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[actor.tenantId,row.id,c.localCommandId,c.payload.actualQty??null,c.payload.uom??null,row.started_at,c.observedAt,actor.userId,c.attachments,provenance]);
   }
   const after=projection(row),correlationId=typeof c.provenance.correlationId==='string'?c.provenance.correlationId:c.localCommandId;
-  await tx.query('INSERT INTO tasks.transition(tenant_id,task_id,version,command_id,action,actor_id,observed_at,before_value,after_value,provenance,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[actor.tenantId,row.id,row.version,c.localCommandId,action,actor.userId,c.observedAt,before?projection(before):null,after,c.provenance,correlationId,c.localCommandId]);
+  await tx.query('INSERT INTO tasks.transition(tenant_id,task_id,version,command_id,action,actor_id,observed_at,before_value,after_value,provenance,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[actor.tenantId,row.id,row.version,c.localCommandId,action,actor.userId,c.observedAt,before?projection(before):null,after,provenance,correlationId,c.localCommandId]);
   const eventId=randomUUID(),occurredAt=new Date().toISOString(),payload={eventId,entityId:row.id,entityType:'Task',tenantId:actor.tenantId,actorId:actor.userId,correlationId,causationId:c.localCommandId,occurredAt,revision:row.version};
   await tx.query("INSERT INTO tasks.outbox_event(id,tenant_id,event_name,event_version,producer,entity_id,actor_id,correlation_id,causation_id,occurred_at,payload) VALUES($1,$2,'task.changed','1.0.0','tasks',$3,$4,$5,$6,$7,$8)",[eventId,actor.tenantId,row.id,actor.userId,correlationId,c.localCommandId,occurredAt,payload]);
   // Current recipient scope is rechecked at every pull. Assignment adds its

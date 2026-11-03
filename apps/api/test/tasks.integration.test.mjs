@@ -106,6 +106,7 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
       await execute('Plan');await execute('Assign',{employeeIds:[employeeId]});
       assert.deepEqual((await service.read(actor,id)).assignment.employeeIds,[employeeId]);
       await execute('Accept');await execute('Start');await execute('Pause',{reason:'Weather'});await execute('Resume');
+      const pauseAudit=(await pool.query("SELECT provenance FROM tasks.transition WHERE tenant_id=$1 AND task_id=$2 AND action='Pause'",[tenantId,id])).rows[0].provenance;assert.equal(pauseAudit.commandPayload.reason,'Weather');assert.equal(pauseAudit.deviceId,deviceId);assert.equal(pauseAudit.intent.source,'manual');
       const c=intent('Complete',{actualQty:'9.500000',uom:'ha',comment:'Manual execution'}),first=await send(c);assert.equal(first.status,'ACCEPTED');version=first.aggregateVersion;
       assert.deepEqual(await send(c),first);acceptedReplay=c;
       await assert.rejects(send({...c,payload:{...c.payload,actualQty:'8'}}),/IDEMPOTENCY_PAYLOAD_MISMATCH/);
