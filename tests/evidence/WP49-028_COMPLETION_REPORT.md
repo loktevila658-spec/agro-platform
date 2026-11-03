@@ -1,6 +1,6 @@
 # WP49-028 Completion Report — Field & FieldSeason
 
-Status: implementation checks complete; final CR closure pending. Not yet DONE. Date: 2026-11-03 Europe/Moscow.
+Status: **DONE — all applicable G0–G12 PASS for implementation acceptance**. Publication-only verification is tracked in CR72 as described below. Date: 2026-11-03 Europe/Moscow.
 Baseline main: `1a09fd46437a886e22cb7cc01507ac08116f3692`.
 Branch: codex/wp49-028, separate initially clean worktree; original dirty checkout untouched.
 Scope CR: [#72](https://github.com/loktevila658-spec/agro-platform/issues/72).
@@ -91,7 +91,7 @@ separate seasonal identity, duplicate year, effective correction/concurrency,
 tenant/org/site/current policy/cloud denials, split+merge DAG, immutable history,
 fault-injected rollback and actual delivery retry/replay. No production seed data.
 
-| Gate | Current evidence |
+| Gate | Final implementation evidence |
 |---|---|
 | G0 | PASS — merged compatible dependency/exact CI and scope approval before code |
 | G1 | PASS — workspace static/architecture11/11, exact approved29-path diff; lint N/A no configured linter |
@@ -105,7 +105,7 @@ fault-injected rollback and actual delivery retry/replay. No production seed dat
 | G9 | PASS — immutable correction chain, before/after audit, pinned seasonal revisions, retained geometry/allocation source and lineage |
 | G10 | PASS — all7 deterministic PostGIS scenarios, including split/merge and failure/retry |
 | G11 | PASS — applicable validation/security/resource-bound/unchanged performance regressions; no new Field-specific SLA |
-| G12 | Required review/exact-head checks/ordinary merge/exact push/full report PASS; final CR closure PENDING |
+| G12 | PASS — exact approved scope/review/head checks/ordinary merge/exact push/full authorized report and completed CR72; report-only publication verification is tracked separately below |
 
 ## Limitations / unlock decision
 
@@ -159,16 +159,37 @@ Strict required aggregate/enforce-admins/conversation protection preserved;
 no auto-merge/admin/bypass. Exact merge-SHA event=push
 [41689928078](https://github.com/loktevila658-spec/agro-platform/actions/runs/41689928078)
 on `5a9afb7bb47ceaca678cf67028ff308df2547793` all8 jobs individually SUCCESS.
-Live main, parents and tree equality independently verified. Final CR closure pending.
+Live main, parents and tree equality independently verified. CR72 is CLOSED/completed. The owner explicitly authorized full-report publication after the earlier review rejections.
 
 
 ## Governance closeout / report publication
 
 The reduced PUBLIC CR remains unchanged. Its exact29-path approval by the owner was
 recorded before code. The completed implementation and full observed evidence in
-this report are produced in the already approved evidence path. Closing CR72 as
-completed will finish implementation G12. Subsequent publication-only reconciliation
+this report are produced in the already approved evidence path. CR72 was closed as completed under the original governance-closeout request.
+Implementation acceptance is complete. Final publication-only verification remains a required closeout step before the final user-facing DONE confirmation. Subsequent publication-only reconciliation
 uses this same path and ordinary required checks/merge/post-merge verification;
-its self-referential publication SHAs/runs are maintained in CR72 comments instead
-of rewriting the report indefinitely. Implementation and publication runs remain
+its publication SHAs/runs should be recorded only after authorization and observed
+checks, without an indefinite self-referential report rewrite. Implementation and publication runs remain
 separate; no unobserved publication result is claimed here. WP029 is not started.
+
+
+## Publication authorization and final verification
+
+Earlier automatic review rejected a detailed closeout comment and a minimal report
+link because full-report disclosure had not been separately authorized. Neither
+comment was posted; closure of CR72 was independently permitted. Publication stopped
+at that point. The owner subsequently explicitly authorized PUBLIC classification
+and publication of this full Completion Report, a report-only PR, and links/minimal
+CI/PR/merge closeout evidence in CR72.
+[Permission record](https://github.com/loktevila658-spec/agro-platform/issues/72#issuecomment-6612981493).
+The earlier rejection is historical, not an outstanding authorization block.
+
+This publication changes only the already-approved Completion Report path; source,
+tests, migration, contracts and frozen manifest are identical to the observed tested
+implementation. The report-only PR must retain all required checks and ordinary
+merge protection; its exact head, merge and post-merge run are recorded in CR72
+comments once observed. No unobserved publication success is asserted here, and no
+self-referential report rewrite is needed. The final user-facing DONE confirmation
+is withheld until that report-only merge and exact post-merge CI are verified.
+WP029 is not started; work stops after this closeout.
