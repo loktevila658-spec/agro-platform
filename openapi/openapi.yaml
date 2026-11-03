@@ -1817,6 +1817,7 @@ components:
       "type": "object"
       "additionalProperties": false
       "required":
+        - "requiresQuantity"
         - "id"
         - "version"
         - "status"
@@ -1825,6 +1826,8 @@ components:
         - "assignment"
         - "targetProvenance"
       "properties":
+        "requiresQuantity":
+          "type": "boolean"
         "id":
           "type": "string"
         "version":

@@ -1120,6 +1120,7 @@ class TaskProjection {
     required this.id,
     this.lastObservedAt,
     required this.organizationId,
+    required this.requiresQuantity,
     this.startedAt,
     required this.status,
     required this.targetProvenance,
@@ -1132,19 +1133,21 @@ class TaskProjection {
         id: json['id'] as String,
         lastObservedAt: json['lastObservedAt'] == null ? null : json['lastObservedAt'] as String,
         organizationId: json['organizationId'] as String,
+        requiresQuantity: json['requiresQuantity'] as bool,
         startedAt: json['startedAt'] == null ? null : json['startedAt'] as String,
         status: json['status'] as String,
         targetProvenance: json['targetProvenance'] as Map<String, Object?>,
         version: (json['version'] as num).toInt(),
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'assignment': assignment, 'definition': definition, 'id': id, if (lastObservedAt != null) 'lastObservedAt': lastObservedAt, 'organizationId': organizationId, if (startedAt != null) 'startedAt': startedAt, 'status': status, 'targetProvenance': targetProvenance, 'version': version};
+  Map<String, Object?> toJson() => <String, Object?>{'assignment': assignment, 'definition': definition, 'id': id, if (lastObservedAt != null) 'lastObservedAt': lastObservedAt, 'organizationId': organizationId, 'requiresQuantity': requiresQuantity, if (startedAt != null) 'startedAt': startedAt, 'status': status, 'targetProvenance': targetProvenance, 'version': version};
 
   final Map<String, Object?> assignment;
   final TaskDefinition definition;
   final String id;
   final String? lastObservedAt;
   final String organizationId;
+  final bool requiresQuantity;
   final String? startedAt;
   final String status;
   final Map<String, Object?> targetProvenance;

@@ -8,7 +8,7 @@ import { TASK_COMMANDS, type TaskAction, type TaskDefinition, type TaskProjectio
 import { V7, iso, nextState, object, validateAction } from './tasks.validation';
 export const TASKS_POOL=Symbol('TASKS_POOL');
 export const executorActions=new Set<TaskAction>(['Accept','Start','Pause','Resume','Complete']);
-export function projection(r:TaskRow):TaskProjection{return {id:r.id,version:Number(r.version),status:r.status,organizationId:r.organization_id,definition:r.definition,assignment:r.assignment,targetProvenance:r.target_provenance,...(r.started_at?{startedAt:new Date(r.started_at).toISOString()}:{}),...(r.last_observed_at?{lastObservedAt:new Date(r.last_observed_at).toISOString()}:{})};}
+export function projection(r:TaskRow):TaskProjection{return {id:r.id,version:Number(r.version),status:r.status,organizationId:r.organization_id,definition:r.definition,assignment:r.assignment,targetProvenance:r.target_provenance,requiresQuantity:r.quantity_required,...(r.started_at?{startedAt:new Date(r.started_at).toISOString()}:{}),...(r.last_observed_at?{lastObservedAt:new Date(r.last_observed_at).toISOString()}:{})};}
 @Injectable()
 export class TasksService implements OnModuleDestroy {
  constructor(@Inject(TASKS_POOL) readonly pool:Pool,readonly registry:TasksRegistry,private readonly farm:FarmService){}
@@ -30,24 +30,26 @@ export class TasksService implements OnModuleDestroy {
    const definition=c.payload as unknown as TaskDefinition;
    if(!await this.registry.operation(actor,definition.operationTypeId))throw new BadRequestException('TASK_OPERATION_TYPE_UNAVAILABLE');
    let ref:Record<string,unknown>;try{ref=await this.farm.taskReferenceInTransaction(tx,{tenantId:actor.tenantId,subjectId:actor.userId},definition.targetId,definition.targetType);}catch{throw new BadRequestException('TASK_TARGET_UNAVAILABLE');}
-   const candidate={tenant_id:actor.tenantId,id:c.aggregate.id,organization_id:ref.organization_id,version:'1',status:'DRAFT',definition,assignment:{},executor_user_ids:[],target_provenance:ref,started_at:null,last_observed_at:null} as TaskRow;
+   const required=await this.registry.quantityRequired(actor,definition.operationTypeId);if(required&&!definition.uom)throw new BadRequestException('TASK_QUANTITY_UNIT_REQUIRED');
+   const candidate={quantity_required:required,tenant_id:actor.tenantId,id:c.aggregate.id,organization_id:ref.organization_id,version:'1',status:'DRAFT',definition,assignment:{},executor_user_ids:[],target_provenance:ref,started_at:null,last_observed_at:null} as TaskRow;
    if(!await this.registry.can(actor,'task.create',candidate))throw new ForbiddenException('TASK_SCOPE_DENIED');
-   const inserted=await tx.query<TaskRow>("INSERT INTO tasks.work_order(tenant_id,id,organization_id,version,status,definition,target_provenance,last_observed_at) VALUES($1,$2,$3,1,'DRAFT',$4,$5,$6) RETURNING *",[actor.tenantId,c.aggregate.id,ref.organization_id,definition,ref,c.observedAt]);row=inserted.rows[0]!;
+   const inserted=await tx.query<TaskRow>("INSERT INTO tasks.work_order(tenant_id,id,organization_id,version,status,definition,target_provenance,last_observed_at,quantity_required) VALUES($1,$2,$3,1,'DRAFT',$4,$5,$6,$7) RETURNING *",[actor.tenantId,c.aggregate.id,ref.organization_id,definition,ref,c.observedAt,required]);row=inserted.rows[0]!;
   }else{
    const r=before!;let status;try{status=nextState(r.status,action);}catch{throw new SyncConflict('STATE_CONFLICT',projection(r) as unknown as Record<string,unknown>);}
    // Observed device time is evidence, not ordering authority. Start/completion
    // interval must still be valid; future clock values are retained, never rewritten.
-   if(action==='Complete'&&(c.payload.uom!==r.definition.uom||!r.started_at||Date.parse(c.observedAt)<new Date(r.started_at).getTime()))throw new BadRequestException('TASK_INVALID_COMPLETION_INTERVAL_OR_UNIT');
+   if(action==='Complete'&&((r.quantity_required&&c.payload.actualQty===undefined)||(c.payload.actualQty!==undefined&&c.payload.uom!==r.definition.uom)||!r.started_at||Date.parse(c.observedAt)<new Date(r.started_at).getTime()))throw new BadRequestException('TASK_INVALID_COMPLETION_INTERVAL_OR_UNIT');
    let assignment=r.assignment,executors=r.executor_user_ids;
    if(action==='Assign'){
-    const employeeIds=c.payload.employeeIds as string[];executors=await this.registry.employees(actor,employeeIds);
+    const employeeIds=c.payload.employeeIds as string[];if(!await this.registry.assets(actor,(c.payload.assetIds??[]) as string[]))throw new BadRequestException('TASK_ASSET_REFERENCE_UNAVAILABLE');
+    try{executors=await this.registry.employees(actor,employeeIds);}catch{throw new BadRequestException('TASK_EMPLOYEE_UNRESOLVED');}
     assignment={employeeIds,assetIds:c.payload.assetIds??[],resolvedUserIds:executors};
    }
    row=(await tx.query<TaskRow>('UPDATE tasks.work_order SET version=version+1,status=$3,assignment=$4,executor_user_ids=$5,started_at=CASE WHEN $6 THEN $7::timestamptz ELSE started_at END,last_observed_at=$7 WHERE tenant_id=$1 AND id=$2 RETURNING *',[actor.tenantId,c.aggregate.id,status,assignment,executors,action==='Start',c.observedAt])).rows[0]!;
-   if(action==='Complete')await tx.query('INSERT INTO tasks.operation_fact(tenant_id,task_id,id,actual_qty,uom,started_at,completed_at,actor_id,evidence,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[actor.tenantId,row.id,c.localCommandId,c.payload.actualQty,c.payload.uom,row.started_at,c.observedAt,actor.userId,c.attachments,c.provenance]);
+   if(action==='Complete')await tx.query('INSERT INTO tasks.operation_fact(tenant_id,task_id,id,actual_qty,uom,started_at,completed_at,actor_id,evidence,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[actor.tenantId,row.id,c.localCommandId,c.payload.actualQty??null,c.payload.uom??null,row.started_at,c.observedAt,actor.userId,c.attachments,c.provenance]);
   }
   const after=projection(row),correlationId=typeof c.provenance.correlationId==='string'?c.provenance.correlationId:c.localCommandId;
-  await tx.query('INSERT INTO tasks.transition(tenant_id,task_id,version,command_id,action,actor_id,observed_at,before_value,after_value,provenance,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$4::text)',[actor.tenantId,row.id,row.version,c.localCommandId,action,actor.userId,c.observedAt,before?projection(before):null,after,c.provenance,correlationId]);
+  await tx.query('INSERT INTO tasks.transition(tenant_id,task_id,version,command_id,action,actor_id,observed_at,before_value,after_value,provenance,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[actor.tenantId,row.id,row.version,c.localCommandId,action,actor.userId,c.observedAt,before?projection(before):null,after,c.provenance,correlationId,c.localCommandId]);
   const eventId=randomUUID(),occurredAt=new Date().toISOString(),payload={eventId,entityId:row.id,entityType:'Task',tenantId:actor.tenantId,actorId:actor.userId,correlationId,causationId:c.localCommandId,occurredAt,revision:row.version};
   await tx.query("INSERT INTO tasks.outbox_event(id,tenant_id,event_name,event_version,producer,entity_id,actor_id,correlation_id,causation_id,occurred_at,payload) VALUES($1,$2,'task.changed','1.0.0','tasks',$3,$4,$5,$6,$7,$8)",[eventId,actor.tenantId,row.id,actor.userId,correlationId,c.localCommandId,occurredAt,payload]);
   // Current recipient scope is rechecked at every pull. Assignment adds its

@@ -19,7 +19,7 @@ export function validateAction(action:TaskAction,p:Record<string,unknown>):void{
   if(!Array.isArray(p.employeeIds)||p.employeeIds.length===0||p.employeeIds.length>100||p.employeeIds.some(x=>typeof x!=='string'||!UUID.test(x))||new Set(p.employeeIds).size!==p.employeeIds.length||
   (p.assetIds!==undefined&&(!Array.isArray(p.assetIds)||p.assetIds.length>100||p.assetIds.some(x=>typeof x!=='string'||!UUID.test(x))||new Set(p.assetIds).size!==p.assetIds.length)))throw new BadRequestException('TASK_INVALID_ASSIGNMENT');
  }
- if(action==='Complete'&&(!decimal(p.actualQty)||typeof p.uom!=='string'||!p.uom.trim()||p.uom.length>16||(p.comment!==undefined&&(typeof p.comment!=='string'||p.comment.length>4000))))throw new BadRequestException('TASK_INVALID_COMPLETION');
+ if(action==='Complete'&&((p.actualQty!==undefined&&(!decimal(p.actualQty)||typeof p.uom!=='string'||!p.uom.trim()||p.uom.length>16))||(p.actualQty===undefined&&p.uom!==undefined)||(p.comment!==undefined&&(typeof p.comment!=='string'||p.comment.length>4000))))throw new BadRequestException('TASK_INVALID_COMPLETION');
  if(p.reason!==undefined&&(typeof p.reason!=='string'||!p.reason.trim()||p.reason.length>4000))throw new BadRequestException('TASK_INVALID_REASON');
  if(['Pause','Cancel','Abort','Return'].includes(action)&&!p.reason)throw new BadRequestException('TASK_INVALID_REASON');
 }

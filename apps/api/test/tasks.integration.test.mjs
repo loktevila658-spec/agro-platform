@@ -87,14 +87,14 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
     const farmRegistry=new FarmRegistry(),landRegistry=new LandRegistry(),gisRegistry=new GisRegistry();farmRegistry.installPolicy(async()=>true);landRegistry.installPolicy(async()=>true);gisRegistry.installPolicy(async()=>true);
     const farm=new FarmService(pool,farmRegistry,new LandService(pool,landRegistry,new GisService(pool,gisRegistry)),new GisService(pool,gisRegistry));
     const field=await farm.createField(farmActor,{organizationId,code:'TASK-FIELD',data:{name:'Manual field',nominalAreaHa:'10',status:'ACTIVE',allocations:[]},effectiveAt:'2026-11-04T00:00:00Z',reason:'Fixture'}, {idempotencyKey:randomUUID(),correlationId:'task-fixture',causationId:'task-fixture'});
-    let allowed=true,operationAllowed=true;
-    const registry=new TasksRegistry();registry.install({authorize:async(a,action,row)=>allowed&&a.tenantId===tenantId&&a.userId===subjectId&&(!row||row.organization_id===organizationId),resolveEmployee:async(a,id)=>id===employeeId?[subjectId]:[],operationType:async(a,id)=>operationAllowed&&id===operationTypeId,offlineTtlSeconds:3600});
+    let allowed=true,operationAllowed=true,quantityRequired=true;
+    const registry=new TasksRegistry();registry.install({authorize:async(a,action,row)=>allowed&&a.tenantId===tenantId&&a.userId===subjectId&&(!row||row.organization_id===organizationId),quantityRequired:async()=>quantityRequired,resolveEmployee:async(a,id)=>id===employeeId?[subjectId]:[],operationType:async(a,id)=>operationAllowed&&id===operationTypeId,offlineTtlSeconds:3600});
     const service=new TasksService(pool,registry,farm),syncRegistry=new SyncRegistry();new TasksSync(syncRegistry,service).onModuleInit();
     const oldKey=process.env.SYNC_CURSOR_KEY;process.env.SYNC_CURSOR_KEY='task_fixture_cursor_key_32_bytes_minimum';
     const identity={async authenticate(auth){if(auth!=='Bearer task-fixture')throw new UnauthorizedException();return {...actor};}};
     const sync=new SyncService(pool,syncRegistry,identity),auth='Bearer task-fixture';
     await sync.register(auth,{deviceId,installationId:randomUUID(),schemaVersion:1});
-    const id=uuid7(),at='2026-11-04T01:00:00Z';let seq=0,version=0;
+    const id=uuid7(),at='2026-11-04T01:00:00Z';let seq=0,version=0,acceptedReplay;
     function uuid7(){return randomUUID().slice(0,14)+'7'+randomUUID().slice(15);}
     function intent(action,payload={},taskId=id,baseVersion=version){const commandId=uuid7();return {localCommandId:commandId,idempotencyKey:commandId,deviceSeq:++seq,aggregate:{type:'Task',id:taskId},baseVersion,type:'Task.'+action,commandVersion:1,observedAt:at,offlineAuthId:'online-session',payload,provenance:{source:'manual',correlationId:'task-fixture'},attachments:[]};}
     async function send(c){return (await sync.push(auth,{deviceId,scopeVersion:1,schemaVersion:1,commands:[c]})).results[0];}
@@ -107,7 +107,8 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
       assert.deepEqual((await service.read(actor,id)).assignment.employeeIds,[employeeId]);
       await execute('Accept');await execute('Start');await execute('Pause',{reason:'Weather'});await execute('Resume');
       const c=intent('Complete',{actualQty:'9.500000',uom:'ha',comment:'Manual execution'}),first=await send(c);assert.equal(first.status,'ACCEPTED');version=first.aggregateVersion;
-      assert.deepEqual(await send(c),first);
+      assert.deepEqual(await send(c),first);acceptedReplay=c;
+      await assert.rejects(send({...c,payload:{...c.payload,actualQty:'8'}}),/IDEMPOTENCY_PAYLOAD_MISMATCH/);
       const actor2={...actor,deviceId:randomUUID()},otherSync=new SyncService(pool,syncRegistry,{async authenticate(){return actor2;}});await otherSync.register('fixture-second',{deviceId:actor2.deviceId,installationId:randomUUID(),schemaVersion:1});
       const second={...c,localCommandId:uuid7(),deviceSeq:1};second.idempotencyKey=second.localCommandId;const conflict=await otherSync.push('fixture-second',{deviceId:actor2.deviceId,scopeVersion:1,schemaVersion:1,commands:[second]});assert.equal(conflict.results[0].status,'CONFLICT');assert.equal(conflict.results[0].code,'VERSION_CONFLICT');
       assert.equal((await pool.query('SELECT count(*)::int n FROM tasks.operation_fact WHERE tenant_id=$1',[tenantId])).rows[0].n,1);
@@ -123,15 +124,25 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
       assert.equal((await service.read(actor,id)).version,version);
     });
     await t.test('current permission/replay denial, tenant isolation and cloud fail closed',async()=>{
-      allowed=false;const denied=await send(intent('Cancel',{reason:'denied'}));assert.equal(denied.status,'REJECTED');
+      allowed=false;await assert.rejects(send(acceptedReplay),/PERMISSION_CHANGED_OFFLINE/);const denied=await send(intent('Cancel',{reason:'denied'}));assert.equal(denied.status,'REJECTED');
       await assert.rejects(service.read(actor,id));allowed=true;
       await assert.rejects(service.read({...actor,tenantId:otherTenant},id));
       operationAllowed=false;const bad=await send(intent('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,plannedQty:'1',uom:'ha',priority:50},uuid7(),0));assert.equal(bad.status,'REJECTED');operationAllowed=true;
       process.env.AGRO_DEPLOYMENT_MODE='CLOUD_PRIMARY';await assert.rejects(send(intent('Plan')),/AUTHORITY_MODE_MISMATCH/);process.env.AGRO_DEPLOYMENT_MODE='LOCAL_PRIMARY';
     });
+    await t.test('unresolved resource refs reject and non-quantitative operation follows explicit owner policy',async()=>{
+      quantityRequired=false;const auxiliary=uuid7();let v=0;
+      async function aux(action,payload={}){const result=await send(intent(action,payload,auxiliary,v));if(result.status==='ACCEPTED')v=result.aggregateVersion;return result;}
+      assert.equal((await aux('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,priority:50})).status,'ACCEPTED');
+      assert.equal((await aux('Plan')).status,'ACCEPTED');
+      assert.equal((await aux('Assign',{employeeIds:[randomUUID()]})).status,'REJECTED');
+      assert.equal((await aux('Assign',{employeeIds:[employeeId],assetIds:[randomUUID()]})).status,'REJECTED');
+      for(const [action,payload] of [['Assign',{employeeIds:[employeeId]}],['Accept',{}],['Start',{}],['Complete',{}]])assert.equal((await aux(action,payload)).status,'ACCEPTED');
+      assert.equal((await pool.query('SELECT actual_qty FROM tasks.operation_fact WHERE tenant_id=$1 AND task_id=$2',[tenantId,auxiliary])).rows[0].actual_qty,null);quantityRequired=true;
+    });
     await t.test('feed convergence, revoked cache PURGE, actual HTTP owner route',async()=>{
       const bootstrap=await sync.bootstrap(auth,{deviceId,schemaVersion:1});let cursor=bootstrap.initialCursor;const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor,schemaVersion:1});
-      const tasks=page.changes.filter(c=>c.entityType==='Task');assert.ok(tasks.length>=10);assert.equal(tasks.at(-1).projection.status,'CLOSED');
+      const tasks=page.changes.filter(c=>c.entityType==='Task'&&c.entityId===id);assert.ok(tasks.length>=10);assert.equal(tasks.at(-1).projection.status,'CLOSED');
       allowed=false;const purged=await sync.pull(auth,{deviceId,scopeVersion:1,cursor,schemaVersion:1});assert.ok(purged.changes.every(c=>c.op==='PURGE'));allowed=true;
       class HttpTaskFixture{};Module({controllers:[TasksController],providers:[{provide:TasksService,useValue:{read:(...a)=>service.read(...a),list:(...a)=>service.list(...a)}},{provide:SyncService,useValue:{actor:(...a)=>sync.actor(...a),push:(...a)=>sync.push(...a)}}]})(HttpTaskFixture);
       app=await NestFactory.create(HttpTaskFixture,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();

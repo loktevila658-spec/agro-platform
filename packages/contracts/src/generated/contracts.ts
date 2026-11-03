@@ -352,6 +352,7 @@ export interface TaskProjection {
   readonly id: string;
   readonly lastObservedAt?: string;
   readonly organizationId: string;
+  readonly requiresQuantity: boolean;
   readonly startedAt?: string;
   readonly status: 'DRAFT' | 'PLANNED' | 'ASSIGNED' | 'ACCEPTED' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'VERIFIED' | 'CLOSED' | 'RETURNED' | 'CANCELLED' | 'ABORTED';
   readonly targetProvenance: Readonly<Record<string, unknown>>;

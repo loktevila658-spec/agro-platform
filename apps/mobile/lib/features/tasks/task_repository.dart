@@ -51,15 +51,18 @@ class TaskRepository {
           g.userId == workspace.identity.userId &&
           !now.isBefore(g.issuedAt) &&
           now.isBefore(g.expiresAt) &&
-          await verify(g))
+          await verify(g)) {
         return g;
+      }
     }
     return null;
   }
 
   Future<bool> validate(CommandDraft draft, OfflineGrant grant) async {
-    if (draft.aggregateType != 'Task' || !draft.commandType.startsWith('Task.'))
+    if (draft.aggregateType != 'Task' ||
+        !draft.commandType.startsWith('Task.')) {
       return false;
+    }
     final task = await current(draft.aggregateId);
     if (task == null || task.version != draft.expectedVersion) return false;
     final attention = await workspace.db.rows(
@@ -96,10 +99,11 @@ class TaskRepository {
         (q) => {'conflict', 'rejected', 'actionRequired'}.contains(q['status']),
       );
       final actions = <String>{};
-      if (!attention)
+      if (!attention) {
         for (final action in (taskTransitions[task.status] ?? {}).keys) {
           if (await grant(task.id, action) != null) actions.add(action);
         }
+      }
       result.add(TaskView(task, pending.length, attention, actions));
     }
     return result;
@@ -112,8 +116,9 @@ class TaskRepository {
   ) async {
     final task = await current(id);
     final permission = await grant(id, action);
-    if (task == null || permission == null)
+    if (task == null || permission == null) {
       throw StateError('OFFLINE_PERMISSION_DENIED');
+    }
     await queue.enqueue(taskDraft(task, action, payload), permission);
   }
 }

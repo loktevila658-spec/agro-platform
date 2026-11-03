@@ -18,7 +18,7 @@ test('documented WorkOrder transitions reject unsafe state changes and invalid c
 test('task policy is fail closed and cannot be replaced after installation',async()=>{
  const r=new TasksRegistry(),actor={tenantId:id,userId:id,deviceId:id,sessionId:id};
  assert.equal(await r.can(actor,'task.read'),false);
- r.install({authorize:async()=>true,resolveEmployee:async()=>[id],operationType:async()=>true});
+ r.install({authorize:async()=>true,quantityRequired:async()=>true,resolveEmployee:async()=>[id],operationType:async()=>true});
  assert.equal(await r.can(actor,'task.read'),true);
  assert.equal(await r.can(actor,'task.unknown'),false);
  assert.throws(()=>r.install({}),/IMMUTABLE/);

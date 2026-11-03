@@ -4,7 +4,7 @@ CREATE TABLE tasks.work_order (
  tenant_id uuid NOT NULL REFERENCES org.tenant(id),id uuid NOT NULL CHECK(substring(id::text,15,1)='7'),organization_id uuid NOT NULL,
  version bigint NOT NULL CHECK(version>0 AND version<=9007199254740991),status text NOT NULL CHECK(status IN ('DRAFT','PLANNED','ASSIGNED','ACCEPTED','IN_PROGRESS','PAUSED','COMPLETED','VERIFIED','CLOSED','RETURNED','CANCELLED','ABORTED')),
  definition jsonb NOT NULL CHECK(jsonb_typeof(definition)='object'),assignment jsonb NOT NULL DEFAULT '{}',executor_user_ids uuid[] NOT NULL DEFAULT '{}',target_provenance jsonb NOT NULL,
- started_at timestamptz,last_observed_at timestamptz,PRIMARY KEY(tenant_id,id),FOREIGN KEY(tenant_id,organization_id) REFERENCES org.organization(tenant_id,id)
+ quantity_required boolean NOT NULL,started_at timestamptz,last_observed_at timestamptz,PRIMARY KEY(tenant_id,id),FOREIGN KEY(tenant_id,organization_id) REFERENCES org.organization(tenant_id,id)
 );
 CREATE INDEX tasks_executor_scope ON tasks.work_order USING gin(executor_user_ids);
 CREATE TABLE tasks.transition (
@@ -13,9 +13,9 @@ CREATE TABLE tasks.transition (
  PRIMARY KEY(tenant_id,task_id,version),UNIQUE(tenant_id,command_id),FOREIGN KEY(tenant_id,task_id) REFERENCES tasks.work_order(tenant_id,id)
 );
 CREATE TABLE tasks.operation_fact (
- tenant_id uuid NOT NULL,task_id uuid NOT NULL,id uuid NOT NULL,actual_qty numeric(18,6) NOT NULL CHECK(actual_qty>=0),uom varchar(16) NOT NULL,
+ tenant_id uuid NOT NULL,task_id uuid NOT NULL,id uuid NOT NULL,actual_qty numeric(18,6) CHECK(actual_qty>=0),uom varchar(16),
  started_at timestamptz NOT NULL,completed_at timestamptz NOT NULL,actor_id uuid NOT NULL,evidence jsonb NOT NULL,provenance jsonb NOT NULL,
- PRIMARY KEY(tenant_id,id),UNIQUE(tenant_id,task_id),FOREIGN KEY(tenant_id,task_id) REFERENCES tasks.work_order(tenant_id,id),CHECK(completed_at>=started_at)
+ PRIMARY KEY(tenant_id,id),UNIQUE(tenant_id,task_id),FOREIGN KEY(tenant_id,task_id) REFERENCES tasks.work_order(tenant_id,id),CHECK(completed_at>=started_at),CHECK((actual_qty IS NULL)=(uom IS NULL))
 );
 CREATE TABLE tasks.outbox_event (
  id uuid PRIMARY KEY,tenant_id uuid NOT NULL,event_name text NOT NULL,event_version text NOT NULL,producer text NOT NULL,entity_id uuid NOT NULL,actor_id uuid NOT NULL,

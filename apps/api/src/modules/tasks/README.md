@@ -10,8 +10,8 @@ Deployments must install TasksRegistry policy through trusted composition. Defau
 is deny. Current authorization receives tenant, actor and task organization, and is
 rechecked on every execution/replay/pull. Employee references resolve to authenticated
 users through that policy, never by assuming employee UUID equals login UUID.
-Operation type availability is also an owner policy. Optional assets cannot cause
-any foreign writes. No assignment seed, default grants or production fixtures.
+Operation type availability is also an owner policy. Optional asset references require their trusted validation port; absent resolution
+rejects them. Assets cannot cause any foreign writes. No assignment seed, default grants or production fixtures.
 
 TaskDefinition and TaskProjection are generated canonical HTTP contracts, command
 version1 uses existing SyncCommand with Task.<Action>, aggregate Task/id, baseVersion,
@@ -25,7 +25,8 @@ Field/FieldSeason target references resolve through the Farm owner transaction-b
 query; initial provenance is pinned. No geometry or parcel ownership is transferred.
 Other target families reject until an accepted owner port exists. Operation quantities
 use decimal strings, numeric(18,6), never floating-point money/quantity authority.
-Complete records manual quantity/unit and evidence. Material-consumption requests
+Complete records manual quantity/unit when required by the explicit operation policy,
+or null quantity/unit for non-quantitative work, with retained evidence. Material-consumption requests
 reject explicitly: there is no warehouse/material ledger implementation here.
 Verification/close preserve the execution fact; Return records explicit RETURNED
 without silently editing that fact or fabricating an agronomy correction workflow.

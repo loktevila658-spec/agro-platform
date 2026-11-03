@@ -47,7 +47,8 @@ class _TasksPageState extends State<TasksPage> {
 
   Future<void> execute(TaskView view, String action) async {
     final payload = <String, Object?>{};
-    if (action == 'Pause' || action == 'Complete') {
+    if (action == 'Pause' ||
+        (action == 'Complete' && view.task.requiresQuantity)) {
       var input = '';
 
       final result = await showDialog<String>(
@@ -73,8 +74,9 @@ class _TasksPageState extends State<TasksPage> {
             ),
             FilledButton(
               onPressed: () {
-                if (input.trim().isNotEmpty)
+                if (input.trim().isNotEmpty) {
                   Navigator.pop(context, input.trim());
+                }
               },
               child: const Text('Сохранить'),
             ),
@@ -103,7 +105,7 @@ class _TasksPageState extends State<TasksPage> {
         refresh();
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -111,6 +113,7 @@ class _TasksPageState extends State<TasksPage> {
             ),
           ),
         );
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -131,22 +134,25 @@ class _TasksPageState extends State<TasksPage> {
     body: FutureBuilder<List<TaskView>>(
       future: tasks,
       builder: (context, snapshot) {
-        if (snapshot.hasError)
+        if (snapshot.hasError) {
           return const Center(
             child: Text(
               'Локальные данные недоступны. Откройте рабочее пространство заново.',
             ),
           );
-        if (!snapshot.hasData)
+        }
+        if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
+        }
         final rows = snapshot.data!;
-        if (rows.isEmpty)
+        if (rows.isEmpty) {
           return const Padding(
             padding: EdgeInsets.all(24),
             child: Text(
               'Нет загруженных заданий. Подключитесь к Local Server для синхронизации назначений.',
             ),
           );
+        }
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: rows.length,

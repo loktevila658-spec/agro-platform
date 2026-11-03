@@ -21,18 +21,26 @@ CommandDraft taskDraft(
   final allowed = action == 'Complete'
       ? {'actualQty', 'uom', 'comment'}
       : {'reason'};
-  if (payload.keys.any((k) => !allowed.contains(k)))
+  if (payload.keys.any((k) => !allowed.contains(k))) {
     throw StateError('TASK_INVALID_PAYLOAD');
+  }
   if (action == 'Pause' &&
       (payload['reason'] is! String ||
-          (payload['reason'] as String).trim().isEmpty))
+          (payload['reason'] as String).trim().isEmpty)) {
     throw StateError('TASK_REASON_REQUIRED');
-  if (action == 'Complete' &&
-      (payload['actualQty'] is! String ||
-          !RegExp(r'^(0|[1-9][0-9]{0,11})(\.[0-9]{1,6})?$')
-              .hasMatch(payload['actualQty'] as String) ||
-          payload['uom'] != task.definition.uom))
-    throw StateError('TASK_INVALID_COMPLETION');
+  }
+  if (action == 'Complete') {
+    final qty = payload['actualQty'];
+    if ((task.requiresQuantity && qty == null) ||
+        (qty != null &&
+            (qty is! String ||
+                !RegExp(r'^(0|[1-9][0-9]{0,11})(\.[0-9]{1,6})?$')
+                    .hasMatch(qty) ||
+                payload['uom'] != task.definition.uom)) ||
+        (qty == null && payload['uom'] != null)) {
+      throw StateError('TASK_INVALID_COMPLETION');
+    }
+  }
   final at = observedAt ?? DateTime.now().toUtc();
   final projection = task.toJson()
     ..['status'] = next

@@ -17,6 +17,7 @@ Map<String, Object?> taskFixture() => {
   'id': taskId,
   'version': 3,
   'status': 'ASSIGNED',
+  'requiresQuantity': true,
   'organizationId': 'org',
   'definition': {
     'operationTypeId': 'operation',
