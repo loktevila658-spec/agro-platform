@@ -42,9 +42,10 @@ export class FarmService implements OnModuleDestroy {
   const current=before?.row_version??'0',result={entityId,revisionId:uuidv7(),version:String(BigInt(current)+1n)};
   // Approval and immutable source capture are owned queries, never foreign SQL.
   const field=data as FieldData;
-  const geometry=kind==='FIELD'&&field.geometryVersionId?(before&&data.status==='ARCHIVED'?before.geometry_provenance:await this.gis.approvedVersionInTransaction(tx,actor,field.geometryVersionId,effectiveAt)):null;
+  const geometry=kind==='FIELD'&&field.geometryVersionId?(before&&field.geometryVersionId===before.metadata.geometryVersionId?before.geometry_provenance:await this.gis.approvedVersionInTransaction(tx,actor,field.geometryVersionId,effectiveAt)):null;
+  const retainAllocations=kind==='FIELD'&&before!==null&&fingerprint(field.allocations)===fingerprint(before.metadata.allocations);
   const allocations:{input:FieldData['allocations'][number];parcel:Record<string,unknown>;geometry:Record<string,unknown>|null}[]=[];
-  if(kind==='FIELD'&&data.status!=='ARCHIVED')for(const a of field.allocations){
+  if(kind==='FIELD'&&!retainAllocations)for(const a of field.allocations){
    const parcel=await this.land.referenceInTransaction(tx,actor,a.landPlotId);
    if(parcel.organization_id!==null&&parcel.organization_id!==organizationId)throw Error('FARM_PARCEL_ORGANIZATION');
    const allocationGeometry=a.geometryVersionId?await this.gis.approvedVersionInTransaction(tx,actor,a.geometryVersionId,a.validFrom):null;
@@ -55,7 +56,7 @@ export class FarmService implements OnModuleDestroy {
    else await tx.query('UPDATE farm.entity SET row_version=row_version+1,current_revision_id=$3 WHERE tenant_id=$1 AND id=$2',[actor.tenantId,entityId,result.revisionId]);
    await tx.query('INSERT INTO farm.revision(tenant_id,entity_id,id,revision,previous_revision_id,effective_at,metadata,geometry_provenance,actor_id,reason,correlation_id,causation_id,idempotency_key) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)',[actor.tenantId,entityId,result.revisionId,result.version,before?.current_revision_id??null,effectiveAt,data,geometry,actor.subjectId,reason,ctx.correlationId,ctx.causationId,ctx.idempotencyKey]);
    if(kind==='FIELD'&&field.siteId)await tx.query('INSERT INTO farm.field_site(tenant_id,revision_id,organization_id,site_id) VALUES($1,$2,$3,$4)',[actor.tenantId,result.revisionId,organizationId,field.siteId]);
-   if(kind==='FIELD'&&before&&data.status==='ARCHIVED')await tx.query('INSERT INTO farm.allocation(tenant_id,field_id,revision_id,land_plot_id,valid_from,valid_to,source,reason,area_ha,geometry_version_id,geometry_provenance,land_provenance) SELECT tenant_id,field_id,$3,land_plot_id,valid_from,valid_to,source,reason,area_ha,geometry_version_id,geometry_provenance,land_provenance FROM farm.allocation WHERE tenant_id=$1 AND revision_id=$2',[actor.tenantId,before.current_revision_id,result.revisionId]);
+   if(retainAllocations&&before)await tx.query('INSERT INTO farm.allocation(tenant_id,field_id,revision_id,land_plot_id,valid_from,valid_to,source,reason,area_ha,geometry_version_id,geometry_provenance,land_provenance) SELECT tenant_id,field_id,$3,land_plot_id,valid_from,valid_to,source,reason,area_ha,geometry_version_id,geometry_provenance,land_provenance FROM farm.allocation WHERE tenant_id=$1 AND revision_id=$2',[actor.tenantId,before.current_revision_id,result.revisionId]);
    else await this.allocations(tx,actor,entityId,result.revisionId,allocations);
    await tx.query('INSERT INTO farm.audit(id,tenant_id,entity_id,action,actor_id,before_value,after_value,reason,correlation_id,causation_id,idempotency_key) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',[randomUUID(),actor.tenantId,entityId,action,actor.subjectId,before?{revisionId:before.current_revision_id,metadata:before.metadata}:null,{...result,metadata:data},reason,ctx.correlationId,ctx.causationId,ctx.idempotencyKey]);
    const eventId=randomUUID(),occurredAt=new Date().toISOString();

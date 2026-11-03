@@ -39,6 +39,8 @@ operation or approval workflows. No crop/variety on Field; FieldCrop/crop catalo
 plans and operations are outside this WP.
 
 Corrections append immutable revisions and retain old geometry/allocation provenance.
+Unchanged references keep their captured provenance; a label-only correction does not
+rebind geometry or refresh parcel snapshots after owner records have advanced.
 History reads order revisions; read without asOf returns the latest recorded revision,
 while an explicit asOf selects by effective instant then revision, including archive
 history. A later GIS approval does not silently rebind any Field or FieldSeason.

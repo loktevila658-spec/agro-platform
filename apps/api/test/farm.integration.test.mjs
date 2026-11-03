@@ -115,8 +115,15 @@ test('Field/FieldSeason real PostGIS deterministic identity/allocation/lineage/a
       const invalid={...seasonInput,data:{...seasonInput.data,endDate:'2026-08-01'}};await assert.rejects(service.createSeason(actor,invalid,ctx()),/DATE/);
     });
     await t.test('corrections preserve geometry references and effective history; optimistic concurrency',async()=>{
+      const retainedData={...data(),geometryVersionId:proposal.versionId,allocations:[{landPlotId:parcels[0].landPlotId,validFrom:at,source:'Original fixture source',reason:'Original allocation'}]};
+      const retained=await service.createField(actor,field('retained-links',retainedData),ctx());
+      const originalAllocation=(await pool.query('SELECT land_provenance FROM farm.allocation WHERE tenant_id=$1 AND field_id=$2',[tenantId,retained.entityId])).rows[0].land_provenance;
+      await land.correct(actor,parcels[0].landPlotId,{expectedVersion:'1',snapshot:{source,cadastralNumber:'fixture:0',attributes:{corrected:true},rights:[]},reason:'Correct parcel documentary metadata'},ctx());
       const p=await gis.propose(actor,{geometryId:proposal.geometryId,expectedVersion:'2',geometry:shape,source:{type:'MANUAL',sourceCrs:'EPSG:4326',capturedAt:later},reason:'Fixture revised survey'},ctx());
       await gis.decide(actor,{geometryId:p.geometryId,versionId:p.versionId,expectedVersion:'3',decision:'APPROVED',effectiveAt:later,reason:'Reviewed revised survey'},ctx());
+      await service.correctField(actor,retained.entityId,{expectedVersion:'1',data:{...retainedData,name:'Corrected label only'},effectiveAt:later,reason:'Correct label without rebinding evidence'},ctx());
+      assert.equal((await service.read(actor,retained.entityId)).geometry_provenance.id,proposal.versionId);
+      const allocationHistory=(await pool.query('SELECT land_provenance FROM farm.allocation WHERE tenant_id=$1 AND field_id=$2',[tenantId,retained.entityId])).rows;assert.equal(allocationHistory.length,2);assert.ok(allocationHistory.every(a=>a.land_provenance.snapshot_id===originalAllocation.snapshot_id));
       await assert.rejects(service.createField(actor,field('superseded-boundary',{...data(),geometryVersionId:proposal.versionId},later),ctx()),/APPROVED/);
       const c={expectedVersion:'1',data:{...data(),geometryVersionId:p.versionId},effectiveAt:later,reason:'Correct boundary reference'};
       const r=await Promise.allSettled([service.correctField(actor,first.entityId,c,ctx()),service.correctField(actor,first.entityId,c,ctx())]);assert.equal(r.filter(x=>x.status==='fulfilled').length,1);
