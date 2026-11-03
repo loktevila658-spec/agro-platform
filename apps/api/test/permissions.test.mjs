@@ -1,3 +1,4 @@
+import { FARM_ACTIONS } from '../dist/modules/farm/farm.types.js';
 import { LAND_ACTIONS } from '../dist/modules/land/land.types.js';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -57,6 +58,7 @@ test('OrgService action registry stays synchronized with the canonical permissio
   const catalog = allPermissions.filter(({action})=>action.startsWith('org.'));
   assert.deepEqual([...MASTER_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('master-data.')).map(({action})=>action).sort());
   assert.deepEqual([...GIS_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('gis.')).map(({action})=>action).sort());
+  assert.deepEqual([...FARM_ACTIONS].sort(),allPermissions.filter(({action})=>FARM_ACTIONS.has(action)).map(({action})=>action).sort());
   assert.deepEqual([...LAND_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('land.')).map(({action})=>action).sort());
   const actionSet = orgSource.match(/const ACTIONS = new Set\(\[([\s\S]*?)\]\);/);
   assert.ok(actionSet, 'OrgService must keep an explicit action allowlist');
@@ -93,6 +95,15 @@ test('allows configured catalog actions at their declared global or tenant scope
     {action:'gis.approve',effect:'allow',scope:'tenant'},
     {action:'gis.reject',effect:'allow',scope:'tenant'},
     {action:'gis.import',effect:'allow',scope:'tenant'},
+    {action:'field.read',effect:'allow',scope:'tenant'},
+    {action:'field.create',effect:'allow',scope:'tenant'},
+    {action:'field.correct',effect:'allow',scope:'tenant'},
+    {action:'field.split',effect:'allow',scope:'tenant'},
+    {action:'field.merge',effect:'allow',scope:'tenant'},
+    {action:'season.create',effect:'allow',scope:'tenant'},
+    {action:'season.correct',effect:'allow',scope:'tenant'},
+    {action:'field-season.create',effect:'allow',scope:'tenant'},
+    {action:'field-season.correct',effect:'allow',scope:'tenant'},
     {action:'land.read',effect:'allow',scope:'tenant'},
     {action:'land.create',effect:'allow',scope:'tenant'},
     {action:'land.correct',effect:'allow',scope:'tenant'},

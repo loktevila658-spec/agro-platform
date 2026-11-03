@@ -62,6 +62,42 @@ permissions:
     description: Scan, stage, preview and commit GIS source candidates.
     effect: allow
     scope: tenant
+  - action: field.read
+    description: Explicit tenant field.read application command or query.
+    effect: allow
+    scope: tenant
+  - action: field.create
+    description: Explicit tenant field.create application command or query.
+    effect: allow
+    scope: tenant
+  - action: field.correct
+    description: Explicit tenant field.correct application command or query.
+    effect: allow
+    scope: tenant
+  - action: field.split
+    description: Explicit tenant field.split application command or query.
+    effect: allow
+    scope: tenant
+  - action: field.merge
+    description: Explicit tenant field.merge application command or query.
+    effect: allow
+    scope: tenant
+  - action: season.create
+    description: Explicit tenant season.create application command or query.
+    effect: allow
+    scope: tenant
+  - action: season.correct
+    description: Explicit tenant season.correct application command or query.
+    effect: allow
+    scope: tenant
+  - action: field-season.create
+    description: Explicit tenant field-season.create application command or query.
+    effect: allow
+    scope: tenant
+  - action: field-season.correct
+    description: Explicit tenant field-season.correct application command or query.
+    effect: allow
+    scope: tenant
   - action: land.read
     effect: allow
     scope: tenant

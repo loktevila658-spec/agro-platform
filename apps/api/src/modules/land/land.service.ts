@@ -59,6 +59,15 @@ export class LandService implements OnModuleDestroy {
    return result;
   });
  }
+ /** Permission-checked immutable parcel reference; caller must own an open transaction. */
+ async referenceInTransaction(tx:PoolClient,actor:LandActor,landPlotId:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'land.read');id(landPlotId);
+  await tx.query('SAVEPOINT land_reference_query');
+  try{
+   const r=await tx.query('SELECT p.id,p.organization_id,s.id AS snapshot_id,s.revision,s.metadata FROM land.land_plot p JOIN land.snapshot s ON s.tenant_id=p.tenant_id AND s.id=p.current_snapshot_id WHERE p.tenant_id=$1 AND p.id=$2',[actor.tenantId,landPlotId]);
+   if(!r.rowCount)throw Error('LAND_NOT_FOUND');await tx.query('RELEASE SAVEPOINT land_reference_query');return r.rows[0];
+  }catch(e){await tx.query('ROLLBACK TO SAVEPOINT land_reference_query').catch(()=>undefined);await tx.query('RELEASE SAVEPOINT land_reference_query').catch(()=>undefined);throw e;}
+ }
  async read(actor:LandActor,landPlotId:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'land.read');id(landPlotId);
   const result=await this.pool.query('SELECT p.id AS land_plot_id,p.organization_id,p.status,p.row_version,s.* FROM land.land_plot p JOIN land.snapshot s ON s.tenant_id=p.tenant_id AND s.id=p.current_snapshot_id WHERE p.tenant_id=$1 AND p.id=$2',[actor.tenantId,landPlotId]);

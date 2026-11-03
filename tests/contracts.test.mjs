@@ -137,5 +137,6 @@ test('event catalog preserves WP49-011 organization events and appends the DOC19
     { name: 'master_data.material.changed', version: '1.0.0', producer: 'master-data' },
     { name: 'gis.geometry.changed', version: '1.0.0', producer: 'gis' },
     { name: 'land.plot.changed', version: '1.0.0', producer: 'land' },
+    { name: 'farm.entity.changed', version: '1.0.0', producer: 'farm' },
   ]);
 });
