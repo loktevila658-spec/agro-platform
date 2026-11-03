@@ -17,6 +17,7 @@ test('Field is strict, has no seasonal attributes, and validates allocation prov
  assert.deepEqual(validateField(field()),field());
  const allocation={landPlotId:uid,validFrom:'2026-01-01T00:00:00Z',source:'Reviewed fixture',reason:'Explicit allocation',areaHa:'1.0000'};
  assert.deepEqual(validateField({...field(),allocations:[allocation]}).allocations,[allocation]);
+ assert.throws(()=>validateField({...field(),allocations:Array(1001).fill(allocation)}),/LIMIT/);
  for(const p of [{cropId:uid},{seasonYear:2027},{geometry:{}},{status:'INVENTED'},{status:'ARCHIVED'},{nominalAreaHa:'-1'},{nominalAreaHa:1},{nominalAreaHa:'1e3'},{name:'x'.repeat(256)},{allocations:[{...allocation,validTo:'2025-01-01T00:00:00Z'}]},{allocations:[{...allocation,source:''}]},{allocations:[allocation,allocation]}])assert.throws(()=>validateField({...field(),...p}));
 });
 test('Season uses supplied business year and calendar-valid dates; no fabricated defaults',()=>{

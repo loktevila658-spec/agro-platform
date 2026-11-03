@@ -53,7 +53,6 @@ CREATE TABLE farm.allocation (
  source text NOT NULL,reason text NOT NULL,area_ha numeric(14,4) CHECK(area_ha>=0),geometry_version_id uuid,geometry_provenance jsonb,land_provenance jsonb NOT NULL,
  PRIMARY KEY(tenant_id,revision_id,land_plot_id,valid_from),CHECK(valid_to IS NULL OR valid_to>=valid_from),
  FOREIGN KEY(tenant_id,field_id) REFERENCES farm.field(tenant_id,id) DEFERRABLE INITIALLY DEFERRED,FOREIGN KEY(tenant_id,field_id,revision_id) REFERENCES farm.revision(tenant_id,entity_id,id),
- FOREIGN KEY(tenant_id,land_plot_id) REFERENCES land.land_plot(tenant_id,id),
  CHECK((geometry_version_id IS NULL)=(geometry_provenance IS NULL)),CHECK(geometry_version_id::text IS NOT DISTINCT FROM (geometry_provenance->>'id'))
 );
 CREATE TABLE farm.lineage (

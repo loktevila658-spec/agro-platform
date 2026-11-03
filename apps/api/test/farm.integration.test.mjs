@@ -111,6 +111,7 @@ test('Field/FieldSeason real PostGIS deterministic identity/allocation/lineage/a
       await assert.rejects(service.createFieldSeason(actor,{...input,seasonId:sameYear.entityId},ctx()),/unique/i);
       await service.correctFieldSeason(actor,fs.entityId,{expectedVersion:'1',data:{...input.data,plannedAreaHa:'11'},effectiveAt:later,reason:'Correct fixture area'},ctx());
       assert.equal((await service.read(actor,first.entityId)).row_version,'1');assert.equal((await service.history(actor,fs.entityId)).length,2);
+      await assert.rejects(service.correctFieldSeason(actor,first.entityId,{expectedVersion:'1',data:input.data,effectiveAt:at,reason:'Wrong entity kind'},ctx()),/NOT_FOUND/);
       const invalid={...seasonInput,data:{...seasonInput.data,endDate:'2026-08-01'}};await assert.rejects(service.createSeason(actor,invalid,ctx()),/DATE/);
     });
     await t.test('corrections preserve geometry references and effective history; optimistic concurrency',async()=>{
@@ -120,7 +121,9 @@ test('Field/FieldSeason real PostGIS deterministic identity/allocation/lineage/a
       const c={expectedVersion:'1',data:{...data(),geometryVersionId:p.versionId},effectiveAt:later,reason:'Correct boundary reference'};
       const r=await Promise.allSettled([service.correctField(actor,first.entityId,c,ctx()),service.correctField(actor,first.entityId,c,ctx())]);assert.equal(r.filter(x=>x.status==='fulfilled').length,1);
       assert.equal((await service.read(actor,first.entityId,at)).geometry_provenance.id,proposal.versionId);assert.equal((await service.read(actor,first.entityId,later)).geometry_provenance.id,p.versionId);
-      assert.equal((await service.history(actor,first.entityId)).length,2);assert.equal((await service.read(actor,fs.entityId)).row_version,'2');assert.equal((await service.read(actor,fs.entityId)).field_geometry_provenance.id,proposal.versionId);
+      const history=await service.history(actor,first.entityId);assert.equal(history.length,2);assert.equal(history[1].previous_revision_id,history[0].id);
+      const audit=(await pool.query('SELECT * FROM farm.audit WHERE tenant_id=$1 AND entity_id=$2 ORDER BY recorded_at',[tenantId,first.entityId])).rows;
+      assert.equal(audit[0].before_value,null);assert.equal(audit[1].before_value.metadata.geometryVersionId,proposal.versionId);assert.equal(audit[1].after_value.metadata.geometryVersionId,p.versionId);assert.equal(audit[1].reason,c.reason);assert.equal((await service.read(actor,fs.entityId)).row_version,'2');assert.equal((await service.read(actor,fs.entityId)).field_geometry_provenance.id,proposal.versionId);
       await assert.rejects(service.correctField(actor,first.entityId,c,ctx()),/version conflict/i);
       await assert.rejects(pool.query('UPDATE farm.revision SET reason=$1 WHERE tenant_id=$2',['silent',tenantId]),/IMMUTABLE/);
     });
