@@ -87,18 +87,18 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
     const farmRegistry=new FarmRegistry(),landRegistry=new LandRegistry(),gisRegistry=new GisRegistry();farmRegistry.installPolicy(async()=>true);landRegistry.installPolicy(async()=>true);gisRegistry.installPolicy(async()=>true);
     const farm=new FarmService(pool,farmRegistry,new LandService(pool,landRegistry,new GisService(pool,gisRegistry)),new GisService(pool,gisRegistry));
     const field=await farm.createField(farmActor,{organizationId,code:'TASK-FIELD',data:{name:'Manual field',nominalAreaHa:'10',status:'ACTIVE',allocations:[]},effectiveAt:'2026-11-04T00:00:00Z',reason:'Fixture'}, {idempotencyKey:randomUUID(),correlationId:'task-fixture',causationId:'task-fixture'});
-    let allowed=true,operationAllowed=true,quantityRequired=true;
-    const registry=new TasksRegistry();registry.install({authorize:async(a,action,row)=>allowed&&a.tenantId===tenantId&&a.userId===subjectId&&(!row||row.organization_id===organizationId),quantityRequired:async()=>quantityRequired,resolveEmployee:async(a,id)=>id===employeeId?[subjectId]:[],operationType:async(a,id)=>operationAllowed&&id===operationTypeId,offlineTtlSeconds:3600});
+    let allowed=true,operationAllowed=true,quantityRequired=true,currentOrgAllowed=true;
+    const registry=new TasksRegistry();registry.install({authorize:async(a,action,row)=>allowed&&a.tenantId===tenantId&&a.userId===subjectId&&(!row||(currentOrgAllowed&&row.organization_id===organizationId)),quantityRequired:async()=>quantityRequired,resolveEmployee:async(a,id)=>id===employeeId?[subjectId]:[],operationType:async(a,id)=>operationAllowed&&id===operationTypeId,offlineTtlSeconds:3600});
     const service=new TasksService(pool,registry,farm),syncRegistry=new SyncRegistry();new TasksSync(syncRegistry,service).onModuleInit();
     const oldKey=process.env.SYNC_CURSOR_KEY;process.env.SYNC_CURSOR_KEY='task_fixture_cursor_key_32_bytes_minimum';
     const identity={async authenticate(auth){if(auth!=='Bearer task-fixture')throw new UnauthorizedException();return {...actor};}};
     const sync=new SyncService(pool,syncRegistry,identity),auth='Bearer task-fixture';
     await sync.register(auth,{deviceId,installationId:randomUUID(),schemaVersion:1});
-    const id=uuid7(),at='2026-11-04T01:00:00Z';let seq=0,version=0,acceptedReplay;
+    const id=uuid7(),at='2026-11-04T01:00:00Z';let seq=0,version=0,acceptedReplay,acceptedCreate;
     function uuid7(){return randomUUID().slice(0,14)+'7'+randomUUID().slice(15);}
     function intent(action,payload={},taskId=id,baseVersion=version){const commandId=uuid7();return {localCommandId:commandId,idempotencyKey:commandId,deviceSeq:++seq,aggregate:{type:'Task',id:taskId},baseVersion,type:'Task.'+action,commandVersion:1,observedAt:at,offlineAuthId:'online-session',payload,provenance:{source:'manual',correlationId:'task-fixture'},attachments:[]};}
     async function send(c){return (await sync.push(auth,{deviceId,scopeVersion:1,schemaVersion:1,commands:[c]})).results[0];}
-    async function execute(action,payload={}){const result=await send(intent(action,payload));assert.equal(result.status,'ACCEPTED',JSON.stringify(result));version=result.aggregateVersion;return result;}
+    async function execute(action,payload={}){const command=intent(action,payload);if(action==='Create')acceptedCreate=command;const result=await send(command);assert.equal(result.status,'ACCEPTED',JSON.stringify(result));version=result.aggregateVersion;return result;}
     let app;
     try{
     await t.test('real canonical lifecycle and immutable completion, one fact on lost-response replay',async()=>{
@@ -127,6 +127,7 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
     await t.test('current permission/replay denial, tenant isolation and cloud fail closed',async()=>{
       allowed=false;await assert.rejects(send(acceptedReplay),/PERMISSION_CHANGED_OFFLINE/);const denied=await send(intent('Cancel',{reason:'denied'}));assert.equal(denied.status,'REJECTED');
       await assert.rejects(service.read(actor,id));allowed=true;
+      currentOrgAllowed=false;await assert.rejects(send(acceptedCreate),/PERMISSION_CHANGED_OFFLINE/);currentOrgAllowed=true;
       await assert.rejects(service.read({...actor,tenantId:otherTenant},id));
       operationAllowed=false;const bad=await send(intent('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,plannedQty:'1',uom:'ha',priority:50},uuid7(),0));assert.equal(bad.status,'REJECTED');operationAllowed=true;
       process.env.AGRO_DEPLOYMENT_MODE='CLOUD_PRIMARY';await assert.rejects(send(intent('Plan')),/AUTHORITY_MODE_MISMATCH/);process.env.AGRO_DEPLOYMENT_MODE='LOCAL_PRIMARY';
