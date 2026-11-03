@@ -43,8 +43,9 @@ class TaskRepository {
         }
       }
     }
-    if (intents.any((q) => attentionStates.contains(q['status'])))
+    if (intents.any((q) => attentionStates.contains(q['status']))) {
       return result;
+    }
     for (final q in intents) {
       if ({'pending', 'sending', 'retryWait'}.contains(q['status']) &&
           q['projection_json'] != null) {
@@ -105,15 +106,18 @@ class TaskRepository {
   Future<OfflineGrant?> grant(String id, String action) async {
     for (final g in await activeGrants()) {
       if (g.allowedCommands.contains('Task.$action') &&
-          g.allowedOwners.contains('Task:$id'))
+          g.allowedOwners.contains('Task:$id')) {
         return g;
+      }
     }
     return null;
   }
 
   Future<bool> validate(CommandDraft draft, OfflineGrant grant) async {
-    if (draft.aggregateType != 'Task' || !draft.commandType.startsWith('Task.'))
+    if (draft.aggregateType != 'Task' ||
+        !draft.commandType.startsWith('Task.')) {
       return false;
+    }
     final task = await current(draft.aggregateId);
     if (task == null || task.version != draft.expectedVersion) return false;
     final attention = await workspace.db.rows(
@@ -165,8 +169,9 @@ class TaskRepository {
             (g) =>
                 g.allowedCommands.contains('Task.$action') &&
                 g.allowedOwners.contains('Task:${task.id}'),
-          ))
+          )) {
             actions.add(action);
+          }
         }
       }
       result.add(TaskView(task, pending.length, attention, actions));
@@ -181,8 +186,9 @@ class TaskRepository {
   ) async {
     final task = await current(id);
     final permission = await grant(id, action);
-    if (task == null || permission == null)
+    if (task == null || permission == null) {
       throw StateError('OFFLINE_PERMISSION_DENIED');
+    }
     await queue.enqueue(taskDraft(task, action, payload), permission);
   }
 }

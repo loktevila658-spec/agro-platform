@@ -157,7 +157,6 @@ void main() {
       expect(verifications, 1);
       expect(watch.elapsedMilliseconds, lessThanOrEqualTo(1000));
       // Engineering runner measurement, not physical reference-device certification.
-      print('Task 2k list: ${watch.elapsedMilliseconds} ms');
       await w.db.customStatement(
         'UPDATE local_workspace SET scope_version=2 WHERE id=1',
       );
