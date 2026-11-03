@@ -49,4 +49,44 @@ void main() {
       await root.delete(recursive: true);
     }
   });
+  test(
+    'accepted receipt bridges pull delay without resurrecting a purged task',
+    () async {
+      final root = await Directory.systemTemp.createTemp('task-receipt-');
+      final w = await Workspace.open(
+        fixtures.taskIdentity,
+        root: root,
+        secrets: MemorySecrets(),
+      );
+      try {
+        await fixtures.seedTask(w);
+        final r = TaskRepository(w, verify: (_) async => true);
+        await r.execute(fixtures.taskId, 'Accept', {});
+        final lease = (await r.queue.claim())!;
+        final canonical = fixtures.taskFixture()
+          ..['version'] = 4
+          ..['status'] = 'ACCEPTED';
+        await r.queue.recordServerResult(
+          lease.commandId,
+          lease.leaseToken!,
+          state: CommandState.confirmed,
+          result: {'canonical': canonical},
+          serverReceivedAt: DateTime.now().toUtc(),
+          canonicalVersion: 4,
+        );
+        expect((await r.current(fixtures.taskId))!.status, 'ACCEPTED');
+        await r.execute(fixtures.taskId, 'Start', {});
+        expect((await r.current(fixtures.taskId))!.version, 5);
+        await w.db.customStatement(
+          "DELETE FROM entity_cache WHERE entity_type='Task'",
+        );
+        expect(await r.current(fixtures.taskId), isNull);
+        expect(await r.list(), isEmpty);
+        expect(await r.queue.count(), 2);
+      } finally {
+        await w.close();
+        await root.delete(recursive: true);
+      }
+    },
+  );
 }

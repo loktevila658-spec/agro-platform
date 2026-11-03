@@ -123,4 +123,49 @@ void main() {
       await root.delete(recursive: true);
     }
   });
+  test('2k cached tasks use bounded reads and verify each signed grant once', () async {
+    final root = await Directory.systemTemp.createTemp('task-capacity-');
+    final w = await Workspace.open(
+      taskIdentity,
+      root: root,
+      secrets: MemorySecrets(),
+    );
+    try {
+      await seedTask(w);
+      await w.db.write(() async {
+        for (var i = 1; i < 2000; i++) {
+          final id =
+              '019a4d83-0000-7000-8000-${(i + 1).toRadixString(16).padLeft(12, '0')}';
+          final value = taskFixture()..['id'] = id;
+          await w.db.customStatement(
+            'INSERT INTO entity_cache VALUES(?,?,?,?)',
+            ['Task', id, jsonEncode(value), 3],
+          );
+        }
+      });
+      var verifications = 0;
+      final r = TaskRepository(
+        w,
+        verify: (_) async {
+          verifications++;
+          return true;
+        },
+      );
+      final watch = Stopwatch()..start();
+      expect((await r.list()).length, 2000);
+      watch.stop();
+      expect(verifications, 1);
+      expect(watch.elapsedMilliseconds, lessThanOrEqualTo(1000));
+      // Engineering runner measurement, not physical reference-device certification.
+      print('Task 2k list: ${watch.elapsedMilliseconds} ms');
+      await w.db.customStatement(
+        'UPDATE local_workspace SET scope_version=2 WHERE id=1',
+      );
+      expect((await r.list()).every((v) => v.actions.isEmpty), true);
+      expect(r.execute(taskId, 'Accept', {}), throwsStateError);
+    } finally {
+      await w.close();
+      await root.delete(recursive: true);
+    }
+  });
 }
