@@ -81,6 +81,16 @@ export class GisService implements OnModuleDestroy {
    await this.audit(tx,actor,input.geometryId,input.decision,{headVersion:head.row_version},{...result,effectiveAt:input.effectiveAt??null},input.reason,ctx);await this.changed(tx,actor,result,ctx);return result;
   }));
  }
+ /** Public owner query for immutable version links. Transaction-bound, tenant-checked, no mutation. */
+ async versionInTransaction(tx:PoolClient,actor:GisActor,versionId:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'gis.read');id(versionId);
+  await tx.query('SAVEPOINT gis_version_query');
+  try{
+   const r=await tx.query(`SELECT v.id,v.geometry_id,v.revision,v.source,v.area_ha,v.measurement_method FROM gis.geometry_version v WHERE v.tenant_id=$1 AND v.id=$2`,[actor.tenantId,versionId]);
+   if(!r.rowCount)throw Error('GIS_NOT_FOUND');
+   await tx.query('RELEASE SAVEPOINT gis_version_query');return r.rows[0];
+  }catch(e){await tx.query('ROLLBACK TO SAVEPOINT gis_version_query').catch(()=>undefined);await tx.query('RELEASE SAVEPOINT gis_version_query').catch(()=>undefined);throw e;}
+ }
  async history(actor:GisActor,geometryId:string):Promise<Record<string,unknown>[]>{actor=Object.freeze({...actor});await this.registry.authorize(actor,'gis.read');id(geometryId);return(await this.pool.query(`SELECT ${selection},h.row_version AS head_version FROM gis.geometry_version v JOIN gis.geometry_head h ON h.tenant_id=v.tenant_id AND h.id=v.geometry_id LEFT JOIN gis.geometry_decision d ON d.tenant_id=v.tenant_id AND d.version_id=v.id WHERE v.tenant_id=$1 AND v.geometry_id=$2 ORDER BY v.revision`,[actor.tenantId,geometryId])).rows;}
  async query(actor:GisActor,bounds:number[],asOf:string,limit=100):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});bounds=structuredClone(bounds);
