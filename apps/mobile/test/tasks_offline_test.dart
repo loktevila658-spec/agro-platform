@@ -38,7 +38,10 @@ void main() {
       );
       expect((await r.current(fixtures.taskId))!.status, 'ASSIGNED');
       expect((await r.list()).single.attention, true);
-      expect(r.execute(fixtures.taskId, 'Accept', {}), throwsStateError);
+      await expectLater(
+        r.execute(fixtures.taskId, 'Accept', {}),
+        throwsStateError,
+      );
       expect(await r.queue.count(), 1);
       expect(
         (await w.db.rows('SELECT * FROM provisional_projection')).length,

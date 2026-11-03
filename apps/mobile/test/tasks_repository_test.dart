@@ -111,9 +111,9 @@ void main() {
     try {
       await seedTask(w);
       final denied = TaskRepository(w, verify: (_) async => false);
-      expect(denied.execute(taskId, 'Accept', {}), throwsStateError);
+      await expectLater(denied.execute(taskId, 'Accept', {}), throwsStateError);
       final r = TaskRepository(w, verify: (_) async => true);
-      expect(
+      await expectLater(
         r.execute(taskId, 'Complete', {'actualQty': '2', 'uom': 'ha'}),
         throwsStateError,
       );
@@ -161,7 +161,7 @@ void main() {
         'UPDATE local_workspace SET scope_version=2 WHERE id=1',
       );
       expect((await r.list()).every((v) => v.actions.isEmpty), true);
-      expect(r.execute(taskId, 'Accept', {}), throwsStateError);
+      await expectLater(r.execute(taskId, 'Accept', {}), throwsStateError);
     } finally {
       await w.close();
       await root.delete(recursive: true);
