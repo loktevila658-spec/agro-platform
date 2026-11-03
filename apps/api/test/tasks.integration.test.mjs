@@ -148,6 +148,8 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
       app=await NestFactory.create(HttpTaskFixture,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();
       const response=await fetch(base+'/v1/tasks/'+id,{headers:{authorization:auth}});assert.equal(response.status,200);assert.equal((await response.json()).status,'CLOSED');
       assert.equal((await fetch(base+'/v1/tasks/'+id)).status,401);
+      const command=intent('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,uom:'ha',priority:50},uuid7(),0);const created=await fetch(base+'/v1/tasks',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command})});assert.equal(created.status,200);assert.equal((await created.json()).results[0].status,'ACCEPTED');
+      const malformed=await fetch(base+'/v1/tasks/'+id+'/commands/Start',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:{type:'Task.Start'}})});assert.equal(malformed.status,400);
     });
     await t.test('atomic rollback and actual outbox/inbox retry/replay',async()=>{
       const before=(await pool.query('SELECT count(*)::int n FROM tasks.work_order')).rows[0].n;
