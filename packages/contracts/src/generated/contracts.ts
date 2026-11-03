@@ -343,6 +343,7 @@ export interface TaskDefinition {
 }
 
 export interface TaskListResponse {
+  readonly nextAfter?: string;
   readonly tasks: readonly TaskProjection[];
 }
 

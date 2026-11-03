@@ -1101,15 +1101,18 @@ class TaskDefinition {
 
 class TaskListResponse {
   const TaskListResponse({
+    this.nextAfter,
     required this.tasks,
   });
 
   factory TaskListResponse.fromJson(Map<String, Object?> json) => TaskListResponse(
+        nextAfter: json['nextAfter'] == null ? null : json['nextAfter'] as String,
         tasks: (json['tasks'] as List<Object?>).map((item) => TaskProjection.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'tasks': tasks};
+  Map<String, Object?> toJson() => <String, Object?>{if (nextAfter != null) 'nextAfter': nextAfter, 'tasks': tasks};
 
+  final String? nextAfter;
   final List<TaskProjection> tasks;
 }
 

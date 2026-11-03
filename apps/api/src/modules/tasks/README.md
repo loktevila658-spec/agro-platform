@@ -19,7 +19,8 @@ UUIDv7 command ID/idempotency, original observed time/provenance/attachment inte
 Create has baseVersion0. Read/list and commands require current authority identity;
 command transport requires registered device/scope. List uses ID keyset (up to500
 candidates, existing sync page bound); read policies filter candidates. A restricted
-list can be empty before exhaustion; clients may query known assigned task IDs.
+list can be empty before exhaustion; nextAfter advances by the last scanned candidate,
+so permission filtering cannot hide subsequent authorized pages.
 
 Field/FieldSeason target references resolve through the Farm owner transaction-bound
 query; initial provenance is pinned. No geometry or parcel ownership is transferred.

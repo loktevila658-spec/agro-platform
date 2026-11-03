@@ -27,7 +27,7 @@ CREATE TRIGGER immutable_fact BEFORE UPDATE OR DELETE OR TRUNCATE ON tasks.opera
 CREATE TRIGGER immutable_outbox BEFORE UPDATE OR DELETE OR TRUNCATE ON tasks.outbox_event FOR EACH STATEMENT EXECUTE FUNCTION tasks.immutable();
 CREATE TRIGGER no_delete_order BEFORE DELETE OR TRUNCATE ON tasks.work_order FOR EACH STATEMENT EXECUTE FUNCTION tasks.immutable();
 CREATE FUNCTION tasks.guard_order() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
- IF NEW.tenant_id IS DISTINCT FROM OLD.tenant_id OR NEW.id IS DISTINCT FROM OLD.id OR NEW.organization_id IS DISTINCT FROM OLD.organization_id OR NEW.definition IS DISTINCT FROM OLD.definition OR NEW.target_provenance IS DISTINCT FROM OLD.target_provenance OR NEW.version<>OLD.version+1 THEN RAISE EXCEPTION 'TASK_IMMUTABLE_IDENTITY_OR_VERSION';END IF;RETURN NEW;END $$;
+ IF NEW.tenant_id IS DISTINCT FROM OLD.tenant_id OR NEW.id IS DISTINCT FROM OLD.id OR NEW.organization_id IS DISTINCT FROM OLD.organization_id OR NEW.definition IS DISTINCT FROM OLD.definition OR NEW.target_provenance IS DISTINCT FROM OLD.target_provenance OR NEW.quantity_required IS DISTINCT FROM OLD.quantity_required OR NEW.version<>OLD.version+1 THEN RAISE EXCEPTION 'TASK_IMMUTABLE_IDENTITY_OR_VERSION';END IF;RETURN NEW;END $$;
 CREATE TRIGGER guard_order BEFORE UPDATE ON tasks.work_order FOR EACH ROW EXECUTE FUNCTION tasks.guard_order();
 ALTER TABLE platform_events.outbox_delivery DROP CONSTRAINT outbox_delivery_source_check;
 ALTER TABLE platform_events.outbox_delivery ADD CONSTRAINT outbox_delivery_source_check CHECK(source IN ('org','identity','master-data','gis','land','farm','tasks'));

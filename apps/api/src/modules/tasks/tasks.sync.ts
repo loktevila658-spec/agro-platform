@@ -15,7 +15,7 @@ export class TasksSync implements OnModuleInit {
    execute:(tx,a,c)=>s.apply(tx,a,c),
    offlinePolicy:async actor=>{
     if(!executorActions.has(action))return undefined;const ttl=s.registry.ttl;if(!Number.isSafeInteger(ttl)||!ttl||ttl<=0||ttl>7*86400)return undefined;
-    const rows=await s.pool.query("SELECT * FROM tasks.work_order WHERE tenant_id=$1 AND $2=ANY(executor_user_ids) ORDER BY id LIMIT 500",[actor.tenantId,actor.userId]);
+    const rows=await s.pool.query("SELECT * FROM tasks.work_order WHERE tenant_id=$1 AND $2=ANY(executor_user_ids) ORDER BY id",[actor.tenantId,actor.userId]);
     const owners=[];for(const r of rows.rows){if(['ASSIGNED','ACCEPTED','IN_PROGRESS','PAUSED'].includes(r.status)&&await s.can(actor,action,r))owners.push(`Task:${r.id}`);}
     return owners.length?{owners,risk:'O1',ttlSeconds:ttl}:undefined;
    },

@@ -1867,6 +1867,8 @@ components:
       "required":
         - "tasks"
       "properties":
+        "nextAfter":
+          "type": "string"
         "tasks":
           "type": "array"
           "items":
