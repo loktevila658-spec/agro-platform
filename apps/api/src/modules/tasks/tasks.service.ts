@@ -28,13 +28,13 @@ export class TasksService implements OnModuleDestroy {
   if((action==='Create'&&(before||c.baseVersion!==0))||(action!=='Create'&&(!before||Number(before.version)!==c.baseVersion)))throw new SyncConflict('VERSION_CONFLICT',before?projection(before) as unknown as Record<string,unknown>:{});
   let row:TaskRow;
   if(action==='Create'){
-   const definition=c.payload as unknown as TaskDefinition;
-   if(!await this.registry.operation(actor,definition.operationTypeId))throw new BadRequestException('TASK_OPERATION_TYPE_UNAVAILABLE');
+   const definition={...c.payload,priority:c.payload.priority??50} as unknown as TaskDefinition;
+   if(!await this.registry.operation(actor,definition.operationTypeId,definition))throw new BadRequestException('TASK_OPERATION_TYPE_UNAVAILABLE');
    let ref:Record<string,unknown>;try{ref=await this.farm.taskReferenceInTransaction(tx,{tenantId:actor.tenantId,subjectId:actor.userId},definition.targetId,definition.targetType);}catch{throw new BadRequestException('TASK_TARGET_UNAVAILABLE');}
    const required=await this.registry.quantityRequired(actor,definition.operationTypeId);if(required&&!definition.uom)throw new BadRequestException('TASK_QUANTITY_UNIT_REQUIRED');
-   const candidate={quantity_required:required,tenant_id:actor.tenantId,id:c.aggregate.id,organization_id:ref.organization_id,version:'1',status:'DRAFT',definition,assignment:{},executor_user_ids:[],target_provenance:ref,started_at:null,last_observed_at:null} as TaskRow;
+   const candidate={quantity_required:required,tenant_id:actor.tenantId,id:c.aggregate.id,organization_id:ref.organization_id,version:'1',status:'DRAFT',definition,assignment:{},executor_user_ids:[],observer_user_ids:[actor.userId],target_provenance:ref,started_at:null,last_observed_at:null} as TaskRow;
    if(!await this.registry.can(actor,'task.create',candidate))throw new ForbiddenException('TASK_SCOPE_DENIED');
-   const inserted=await tx.query<TaskRow>("INSERT INTO tasks.work_order(tenant_id,id,organization_id,version,status,definition,target_provenance,last_observed_at,quantity_required) VALUES($1,$2,$3,1,'DRAFT',$4,$5,$6,$7) RETURNING *",[actor.tenantId,c.aggregate.id,ref.organization_id,definition,ref,c.observedAt,required]);row=inserted.rows[0]!;
+   const inserted=await tx.query<TaskRow>("INSERT INTO tasks.work_order(tenant_id,id,organization_id,version,status,definition,target_provenance,last_observed_at,quantity_required,observer_user_ids) VALUES($1,$2,$3,1,'DRAFT',$4,$5,$6,$7,$8) RETURNING *",[actor.tenantId,c.aggregate.id,ref.organization_id,definition,ref,c.observedAt,required,[actor.userId]]);row=inserted.rows[0]!;
   }else{
    const r=before!;let status;try{status=nextState(r.status,action);}catch{throw new SyncConflict('STATE_CONFLICT',projection(r) as unknown as Record<string,unknown>);}
    // Observed device time is evidence, not ordering authority. Start/completion
@@ -46,7 +46,7 @@ export class TasksService implements OnModuleDestroy {
     try{executors=await this.registry.employees(actor,employeeIds);}catch{throw new BadRequestException('TASK_EMPLOYEE_UNRESOLVED');}
     assignment={employeeIds,assetIds:c.payload.assetIds??[],resolvedUserIds:executors};
    }
-   row=(await tx.query<TaskRow>('UPDATE tasks.work_order SET version=version+1,status=$3,assignment=$4,executor_user_ids=$5,started_at=CASE WHEN $6 THEN $7::timestamptz ELSE started_at END,last_observed_at=$7 WHERE tenant_id=$1 AND id=$2 RETURNING *',[actor.tenantId,c.aggregate.id,status,assignment,executors,action==='Start',c.observedAt])).rows[0]!;
+   row=(await tx.query<TaskRow>('UPDATE tasks.work_order SET version=version+1,status=$3,assignment=$4,executor_user_ids=$5,started_at=CASE WHEN $6 THEN $7::timestamptz ELSE started_at END,last_observed_at=$7,observer_user_ids=$8 WHERE tenant_id=$1 AND id=$2 RETURNING *',[actor.tenantId,c.aggregate.id,status,assignment,executors,action==='Start',c.observedAt,[...new Set([...r.observer_user_ids,actor.userId,...executors])]])).rows[0]!;
    if(action==='Complete')await tx.query('INSERT INTO tasks.operation_fact(tenant_id,task_id,id,actual_qty,uom,started_at,completed_at,actor_id,evidence,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[actor.tenantId,row.id,c.localCommandId,c.payload.actualQty??null,c.payload.uom??null,row.started_at,c.observedAt,actor.userId,c.attachments,provenance]);
   }
   const after=projection(row),correlationId=typeof c.provenance.correlationId==='string'?c.provenance.correlationId:c.localCommandId;
@@ -55,7 +55,7 @@ export class TasksService implements OnModuleDestroy {
   await tx.query("INSERT INTO tasks.outbox_event(id,tenant_id,event_name,event_version,producer,entity_id,actor_id,correlation_id,causation_id,occurred_at,payload) VALUES($1,$2,'task.changed','1.0.0','tasks',$3,$4,$5,$6,$7,$8)",[eventId,actor.tenantId,row.id,actor.userId,correlationId,c.localCommandId,occurredAt,payload]);
   // Current recipient scope is rechecked at every pull. Assignment adds its
   // resolved users; manager visibility requires current explicit read policy.
-  const users=[...new Set([actor.userId,...row.executor_user_ids])];
+  const users=[...new Set([...row.observer_user_ids,actor.userId,...row.executor_user_ids])];
   return {canonical:after as unknown as Record<string,unknown>,aggregateVersion:after.version,changes:[{entityType:'Task',entityId:row.id,entityVersion:after.version,op:'UPSERT',projection:after as unknown as Record<string,unknown>,visibleUserIds:users}]};
  }
 }

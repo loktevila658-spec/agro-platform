@@ -80,7 +80,7 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
 
 
 
-    const tenantId=randomUUID(),otherTenant=randomUUID(),subjectId=randomUUID(),organizationId=randomUUID(),deviceId=randomUUID(),employeeId=randomUUID(),operationTypeId=randomUUID();
+    const tenantId=randomUUID(),otherTenant=randomUUID(),subjectId=randomUUID(),organizationId=randomUUID(),deviceId=randomUUID(),employeeId=randomUUID(),observerExecutor=randomUUID(),observerEmployee=randomUUID(),operationTypeId=randomUUID();
     const actor={tenantId,userId:subjectId,deviceId,sessionId:randomUUID()},farmActor={tenantId,subjectId};
     await pool.query("INSERT INTO org.tenant(id,code,name,timezone,created_by) VALUES($1,'TASK-A','Task fixture','UTC',$3),($2,'TASK-B','Other fixture','UTC',$3)",[tenantId,otherTenant,subjectId]);
     await pool.query("INSERT INTO org.organization(id,tenant_id,code,name,organization_type,created_by) VALUES($1,$2,'TASK-ORG','Task org','FARM',$3)",[organizationId,tenantId,subjectId]);
@@ -88,7 +88,7 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
     const farm=new FarmService(pool,farmRegistry,new LandService(pool,landRegistry,new GisService(pool,gisRegistry)),new GisService(pool,gisRegistry));
     const field=await farm.createField(farmActor,{organizationId,code:'TASK-FIELD',data:{name:'Manual field',nominalAreaHa:'10',status:'ACTIVE',allocations:[]},effectiveAt:'2026-11-04T00:00:00Z',reason:'Fixture'}, {idempotencyKey:randomUUID(),correlationId:'task-fixture',causationId:'task-fixture'});
     let allowed=true,operationAllowed=true,quantityRequired=true,currentOrgAllowed=true;
-    const registry=new TasksRegistry();registry.install({authorize:async(a,action,row)=>allowed&&a.tenantId===tenantId&&a.userId===subjectId&&(!row||(currentOrgAllowed&&row.organization_id===organizationId)),quantityRequired:async()=>quantityRequired,resolveEmployee:async(a,id)=>id===employeeId?[subjectId]:[],operationType:async(a,id)=>operationAllowed&&id===operationTypeId,offlineTtlSeconds:3600});
+    const registry=new TasksRegistry();registry.install({authorize:async(a,action,row)=>allowed&&a.tenantId===tenantId&&[subjectId,observerExecutor].includes(a.userId)&&(!row||(currentOrgAllowed&&row.organization_id===organizationId)),quantityRequired:async()=>quantityRequired,resolveEmployee:async(a,id)=>id===employeeId?[subjectId]:id===observerEmployee?[observerExecutor]:[],operationType:async(a,id,d)=>operationAllowed&&id===operationTypeId&&(d.uom===undefined||d.uom==='ha'),offlineTtlSeconds:3600});
     const service=new TasksService(pool,registry,farm),syncRegistry=new SyncRegistry();new TasksSync(syncRegistry,service).onModuleInit();
     const oldKey=process.env.SYNC_CURSOR_KEY;process.env.SYNC_CURSOR_KEY='task_fixture_cursor_key_32_bytes_minimum';
     const identity={async authenticate(auth){if(auth!=='Bearer task-fixture')throw new UnauthorizedException();return {...actor};}};
@@ -103,6 +103,7 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
     try{
     await t.test('real canonical lifecycle and immutable completion, one fact on lost-response replay',async()=>{
       await execute('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,plannedQty:'10',uom:'ha',priority:50});
+      assert.deepEqual(Object.keys((await service.read(actor,id)).targetProvenance).sort(),['id','kind','organization_id','revisionId']);
       await execute('Plan');await execute('Assign',{employeeIds:[employeeId]});
       assert.deepEqual((await service.read(actor,id)).assignment.employeeIds,[employeeId]);
       await execute('Accept');await execute('Start');await execute('Pause',{reason:'Weather'});await execute('Resume');
@@ -142,6 +143,14 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
       for(const [action,payload] of [['Assign',{employeeIds:[employeeId]}],['Accept',{}],['Start',{}],['Complete',{}]])assert.equal((await aux(action,payload)).status,'ACCEPTED');
       assert.equal((await pool.query('SELECT actual_qty FROM tasks.operation_fact WHERE tenant_id=$1 AND task_id=$2',[tenantId,auxiliary])).rows[0].actual_qty,null);quantityRequired=true;
     });
+    await t.test('creator keeps current sync view after a different assigned executor acts',async()=>{
+      const watched=uuid7();let v=0;
+      for(const [action,payload] of [['Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,uom:'ha',priority:50}],['Plan',{}],['Assign',{employeeIds:[observerEmployee]}]]){const result=await send(intent(action,payload,watched,v));assert.equal(result.status,'ACCEPTED');v=result.aggregateVersion;}
+      const initial=await sync.bootstrap(auth,{deviceId,schemaVersion:1});const seen=await sync.pull(auth,{deviceId,scopeVersion:1,schemaVersion:1,cursor:initial.initialCursor});
+      const opActor={...actor,userId:observerExecutor,deviceId:randomUUID()},opSync=new SyncService(pool,syncRegistry,{async authenticate(){return opActor;}});await opSync.register('operator-fixture',{deviceId:opActor.deviceId,installationId:randomUUID(),schemaVersion:1});let opSeq=0;
+      for(const [action,payload] of [['Accept',{}],['Start',{}],['Complete',{actualQty:'1',uom:'ha'}]]){const command=intent(action,payload,watched,v);command.deviceSeq=++opSeq;const result=(await opSync.push('operator-fixture',{deviceId:opActor.deviceId,scopeVersion:1,schemaVersion:1,commands:[command]})).results[0];assert.equal(result.status,'ACCEPTED');v=result.aggregateVersion;}
+      const updated=await sync.pull(auth,{deviceId,scopeVersion:1,schemaVersion:1,cursor:seen.nextCursor});const changes=updated.changes.filter(c=>c.entityId===watched);assert.equal(changes.length,3);assert.equal(changes.at(-1).projection.status,'COMPLETED');
+    });
     await t.test('feed convergence, revoked cache PURGE, actual HTTP owner route',async()=>{
       const bootstrap=await sync.bootstrap(auth,{deviceId,schemaVersion:1});let cursor=bootstrap.initialCursor;const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor,schemaVersion:1});
       const tasks=page.changes.filter(c=>c.entityType==='Task'&&c.entityId===id);assert.ok(tasks.length>=10);assert.equal(tasks.at(-1).projection.status,'CLOSED');
@@ -150,8 +159,9 @@ test('Task owner real PostGIS lifecycle, actual sync and immutable execution',{t
       app=await NestFactory.create(HttpTaskFixture,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();
       const response=await fetch(base+'/v1/tasks/'+id,{headers:{authorization:auth}});assert.equal(response.status,200);assert.equal((await response.json()).status,'CLOSED');
       assert.equal((await fetch(base+'/v1/tasks/'+id)).status,401);
-      const command=intent('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,uom:'ha',priority:50},uuid7(),0);const created=await fetch(base+'/v1/tasks',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command})});assert.equal(created.status,200);assert.equal((await created.json()).results[0].status,'ACCEPTED');
-      const malformed=await fetch(base+'/v1/tasks/'+id+'/commands/Start',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:{type:'Task.Start'}})});assert.equal(malformed.status,400);
+      const command=intent('Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,uom:'ha'},uuid7(),0);const created=await fetch(base+'/v1/tasks',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command})});assert.equal(created.status,200);const createdResult=(await created.json()).results[0];assert.equal(createdResult.status,'ACCEPTED');assert.equal(createdResult.canonical.definition.priority,50);
+      const planCommand=intent('Plan',{},command.aggregate.id,1);const planned=await fetch(base+'/v1/tasks/'+command.aggregate.id+'/commands/plan',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:planCommand})});assert.equal(planned.status,200);assert.equal((await planned.json()).results[0].canonical.status,'PLANNED');
+      const malformed=await fetch(base+'/v1/tasks/'+id+'/commands/start',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:{type:'Task.Start'}})});assert.equal(malformed.status,400);
     });
     await t.test('atomic rollback and actual outbox/inbox retry/replay',async()=>{
       const before=(await pool.query('SELECT count(*)::int n FROM tasks.work_order')).rows[0].n;

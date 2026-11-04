@@ -10,7 +10,7 @@ Deployments must install TasksRegistry policy through trusted composition. Defau
 is deny. Current authorization receives tenant, actor and task organization, and is
 rechecked on every execution/replay/pull. Employee references resolve to authenticated
 users through that policy, never by assuming employee UUID equals login UUID.
-Operation type availability is also an owner policy. Optional asset references require their trusted validation port; absent resolution
+Operation type and supplied definition/unit validation are also an owner policy. Optional asset references require their trusted validation port; absent resolution
 rejects them. Assets cannot cause any foreign writes. No assignment seed, default grants or production fixtures.
 
 TaskDefinition and TaskProjection are generated canonical HTTP contracts, command
@@ -23,7 +23,7 @@ list can be empty before exhaustion; nextAfter advances by the last scanned cand
 so permission filtering cannot hide subsequent authorized pages.
 
 Field/FieldSeason target references resolve through the Farm owner transaction-bound
-query; initial provenance is pinned. No geometry or parcel ownership is transferred.
+query; initial reference provenance is pinned without copying foreign field/geometry payloads. No geometry or parcel ownership is transferred.
 Other target families reject until an accepted owner port exists. Operation quantities
 use decimal strings, numeric(18,6), never floating-point money/quantity authority.
 Complete records manual quantity/unit when required by the explicit operation policy,
@@ -43,3 +43,9 @@ iOS is N/A in the current Android support profile, not certified.
 The task projection boundary is reusable by WP49-029 after this package's acceptance.
 No offline GIS package is implemented here. No retention pruning, production provider,
 external HR/asset registry, accounting/payroll or later agronomy workflow is added.
+
+Task delivery retains command participants and resolved assignees as read-model
+recipients, so a creator receives subsequent executor updates. Every pull still
+checks current read policy; retained audience membership never grants access.
+Permission/scope changes must advance device scope through the existing platform
+sync contract; the task owner does not write foreign identity/sync policy tables.

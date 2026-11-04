@@ -808,18 +808,18 @@ paths:
           "schema":
             "type": "string"
             "enum":
-              - "Plan"
-              - "Assign"
-              - "Accept"
-              - "Start"
-              - "Pause"
-              - "Resume"
-              - "Complete"
-              - "Verify"
-              - "Close"
-              - "Return"
-              - "Cancel"
-              - "Abort"
+              - "plan"
+              - "assign"
+              - "accept"
+              - "start"
+              - "pause"
+              - "resume"
+              - "complete"
+              - "verify"
+              - "close"
+              - "return"
+              - "cancel"
+              - "abort"
       "requestBody":
         "required": true
         "content":

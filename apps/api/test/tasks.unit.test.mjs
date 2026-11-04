@@ -4,6 +4,7 @@ import { nextState, validateDefinition, validateAction } from '../dist/modules/t
 import { TasksRegistry } from '../dist/modules/tasks/tasks.registry.js';
 const id='019a4d83-0000-7000-8000-000000000001';
 test('documented WorkOrder transitions reject unsafe state changes and invalid completion',()=>{
+ assert.doesNotThrow(()=>validateDefinition({operationTypeId:id,targetType:'FIELD',targetId:id}));
  assert.equal(nextState('ASSIGNED','Accept'),'ACCEPTED');
  assert.equal(nextState('ACCEPTED','Start'),'IN_PROGRESS');
  assert.equal(nextState('IN_PROGRESS','Pause'),'PAUSED');

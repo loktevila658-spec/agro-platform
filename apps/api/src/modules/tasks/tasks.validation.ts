@@ -8,7 +8,7 @@ export function object(x:unknown):x is Record<string,unknown>{return !!x&&typeof
 export function keys(x:unknown,allowed:string[]):asserts x is Record<string,unknown>{if(!object(x)||Object.keys(x).some(k=>!allowed.includes(k)))throw new BadRequestException('TASK_INVALID_PAYLOAD');}
 export function validateDefinition(x:TaskDefinition):void{
  keys(x,['operationTypeId','targetType','targetId','plannedStart','plannedEnd','plannedQty','uom','priority']);
- if(!UUID.test(x.operationTypeId)||!UUID.test(x.targetId)||!['FIELD','FIELD_SEASON'].includes(x.targetType)||!Number.isInteger(x.priority)||x.priority<0||x.priority>100||
+ if(!UUID.test(x.operationTypeId)||!UUID.test(x.targetId)||!['FIELD','FIELD_SEASON'].includes(x.targetType)||(x.priority!==undefined&&(!Number.isInteger(x.priority)||x.priority<0||x.priority>100))||
  (x.plannedStart!==undefined&&!iso(x.plannedStart))||(x.plannedEnd!==undefined&&!iso(x.plannedEnd))||(x.plannedStart&&x.plannedEnd&&Date.parse(x.plannedEnd)<Date.parse(x.plannedStart))||
  (x.plannedQty!==undefined&&!decimal(x.plannedQty))||(x.uom!==undefined&&(typeof x.uom!=='string'||!x.uom.trim()||x.uom.length>16))||(x.plannedQty!==undefined&&!x.uom))throw new BadRequestException('TASK_INVALID_DEFINITION');
 }

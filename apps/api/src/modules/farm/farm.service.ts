@@ -125,8 +125,8 @@ export class FarmService implements OnModuleDestroy {
  async taskReferenceInTransaction(tx:PoolClient,actor:FarmActor,entityId:string,kind:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);
   if(!['FIELD','FIELD_SEASON'].includes(kind))throw Error('FARM_INVALID_TASK_TARGET');
-  const r=await tx.query("SELECT e.id,e.organization_id,e.current_revision_id,r.metadata,r.geometry_provenance FROM farm.entity e JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id WHERE e.tenant_id=$1 AND e.id=$2 AND e.kind=$3 FOR SHARE OF e",[actor.tenantId,entityId,kind]);
-  if(!r.rowCount||r.rows[0].metadata.status==='ARCHIVED')throw Error('FARM_TASK_TARGET_UNAVAILABLE');return r.rows[0];
+  const r=await tx.query("SELECT e.id,e.organization_id,e.current_revision_id,r.metadata->>'status' AS target_status FROM farm.entity e JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id WHERE e.tenant_id=$1 AND e.id=$2 AND e.kind=$3 FOR SHARE OF e",[actor.tenantId,entityId,kind]);
+  if(!r.rowCount||r.rows[0].target_status==='ARCHIVED')throw Error('FARM_TASK_TARGET_UNAVAILABLE');const row=r.rows[0];return {id:row.id,organization_id:row.organization_id,revisionId:row.current_revision_id,kind};
  }
  async read(actor:FarmActor,entityId:string,asOf?:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);if(asOf!==undefined&&!timestamp(asOf))throw Error('FARM_INVALID_AS_OF');

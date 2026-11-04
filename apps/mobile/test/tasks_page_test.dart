@@ -10,12 +10,38 @@ import 'package:agroplatform_mobile/features/tasks/tasks_page.dart';
 import 'tasks_repository_test.dart' as fixtures;
 import 'support.dart';
 
-// Observe actual encrypted-store reads; no replacement domain or persistence.
-class ObservedTaskRepository extends TaskRepository {
-  ObservedTaskRepository(super.workspace) : super(verify: (_) async => true);
-  late Future<List<TaskView>> lastRead;
+// Run actual Drift I/O in tester.runAsync, while widget frames use fake time.
+// Only scheduling is controlled: all domain validation/queue/cache code is real.
+class ScheduledTaskRepository extends TaskRepository {
+  ScheduledTaskRepository(super.workspace) : super(verify: (_) async => true);
+  List<TaskView> cached = [];
+  Future<void> Function()? work;
+  Future<void> load() async {
+    cached = await super.list();
+  }
+
   @override
-  Future<List<TaskView>> list() => lastRead = super.list();
+  Future<List<TaskView>> list() async => cached;
+  @override
+  Future<void> execute(String id, String action, Map<String, Object?> payload) {
+    final completion = Completer<void>();
+    work = () async {
+      try {
+        await super.execute(id, action, payload);
+        await load();
+        completion.complete();
+      } catch (error, stack) {
+        completion.completeError(error, stack);
+      }
+    };
+    return completion.future;
+  }
+
+  Future<void> flush() async {
+    final operation = work!;
+    work = null;
+    await operation();
+  }
 }
 
 void main() {
@@ -24,6 +50,7 @@ void main() {
   ) async {
     late Directory root;
     late Workspace w;
+    late ScheduledTaskRepository repository;
     await tester.runAsync(() async {
       root = await Directory.systemTemp.createTemp('task-widget-');
       w = await Workspace.open(
@@ -32,25 +59,17 @@ void main() {
         secrets: MemorySecrets(),
       );
       await fixtures.seedTask(w);
+      repository = ScheduledTaskRepository(w);
+      await repository.load();
     });
-    final repository = ObservedTaskRepository(w);
-    final queued = Completer<void>();
     try {
       await tester.pumpWidget(
-        MaterialApp(
-          home: TasksPage(repository: repository, onQueued: queued.complete),
-        ),
+        MaterialApp(home: TasksPage(repository: repository)),
       );
-      await tester.runAsync(() async {
-        await repository.lastRead;
-      });
       await tester.pumpAndSettle();
       expect(find.text('Назначено'), findsOneWidget);
       await tester.tap(find.text('Принять'));
-      await tester.runAsync(() async {
-        await queued.future;
-        await repository.lastRead;
-      });
+      await tester.runAsync(repository.flush);
       await tester.pumpAndSettle();
       expect(find.text('Принято'), findsOneWidget);
       expect(find.text('Ожидают отправки: 1'), findsOneWidget);

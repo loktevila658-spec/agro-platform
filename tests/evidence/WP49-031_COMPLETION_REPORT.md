@@ -69,3 +69,87 @@ correction workflow. No production/WAN/physical-device certification is claimed.
 
 The full final changed-path table and observed PR/CI/merge evidence will be reconciled
 in this already approved report path before final acceptance/closeout.
+
+
+## Complete approved changed-path inventory
+
+| Path | Purpose | Owner | Verification |
+|---|---|---|---|
+| apps/api/src/app.module.ts | Register task module | Application composition | Build/runtime |
+| apps/api/src/modules/events/events.types.ts | Explicit tasks event source | Platform events | Typecheck |
+| apps/api/src/modules/events/outbox-dispatcher.service.ts | Task outbox discovery/loading through existing delivery protocol | Platform events | Actual inbox retry/replay |
+| apps/api/src/modules/farm/farm.service.ts | Narrow transaction-bound authorized task-target reference query | Farm | Tenant/owner reference negatives |
+| apps/api/src/modules/tasks/README.md | Contract ownership and integration limitations | Tasks | Review |
+| apps/api/src/modules/tasks/tasks.controller.ts | Authenticated versioned task HTTP boundary | Tasks | Real HTTP contract |
+| apps/api/src/modules/tasks/tasks.module.ts | Task application composition and pool lifecycle | Tasks | Runtime/build |
+| apps/api/src/modules/tasks/tasks.registry.ts | Current task permission/scope policy | Tasks | Deny/revoke/tenant |
+| apps/api/src/modules/tasks/tasks.service.ts | Owned lifecycle/assignment/execution transaction and immutable facts | Tasks | Real PostGIS/rollback/replay |
+| apps/api/src/modules/tasks/tasks.sync.ts | Existing sync handler/projection/grant/file policy bindings | Tasks | Retry/conflict/convergence |
+| apps/api/src/modules/tasks/tasks.types.ts | Versioned task application contracts | Tasks | Contract/unit |
+| apps/api/src/modules/tasks/tasks.validation.ts | Task input and transition validation | Tasks | Negative unit |
+| apps/api/src/schema-version.service.ts | Expected current schema15 | Schema contract | Schema unit/runtime |
+| apps/api/test/identity.integration.test.mjs | Current schema assertion14 to15 only | API tests | Integration regression |
+| apps/api/test/permissions.test.mjs | Add exact task actions retaining all prior assertions | Permission tests | Negative regression |
+| apps/api/test/schema-version.test.mjs | Current/ahead version assertions preserving negatives | API tests | Unit |
+| apps/api/test/tasks.integration.test.mjs | Real owner/HTTP/lifecycle/offline replay/conflict/delivery deterministic scenario | Tasks tests | Existing test/*.test.mjs |
+| apps/api/test/tasks.unit.test.mjs | Domain/transition/validation/policy fixtures | Tasks tests | Existing test/*.test.mjs |
+| apps/mobile/integration_test/tasks_test.dart | Native encrypted workspace and queue execution/reopen | Mobile native tests | Existing Android integration_test glob |
+| apps/mobile/lib/features/tasks/task_commands.dart | Owner-defined command drafts/local validation; no parallel queue | Mobile tasks | Grant/state/intent tests |
+| apps/mobile/lib/features/tasks/task_repository.dart | Typed cached task reads and existing command queue binding | Mobile tasks | Unit/offline |
+| apps/mobile/lib/features/tasks/tasks_page.dart | Task list/details and permitted execution/conflict state | Mobile tasks | Widget |
+| apps/mobile/lib/generated/contracts.dart | Existing generator output identical to shared Dart | Contracts generation | Codegen drift/analyzer |
+| apps/mobile/lib/main.dart | Authenticated route/workspace/worker integration | Mobile shell | Widget/native |
+| apps/mobile/test/tasks_offline_test.dart | Durable restart/retry/revoke/conflict/receipt behavior | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/tasks_page_test.dart | Task lifecycle UI and conflict/error visibility | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/tasks_repository_test.dart | Cache/intent/isolation/grant tests | Mobile tests | Existing flutter test glob |
+| database/migrations/0015_task_work_order.sql | Task-owned storage, immutable execution/audit/receipts/outbox and event-source compatibility | Tasks/platform events | Clean/repeated migration |
+| database/test/database.integration.test.mjs | Clean/repeated schema15 and task constraints | Database tests | Real PostGIS |
+| database/test/migrate.test.mjs | Contiguous schema and task migration assertions | Database tests | Migration unit |
+| events/catalog/index.yaml | Versioned task event metadata | Contracts | Catalog validation |
+| openapi/openapi.yaml | Canonical task payload/projection/command HTTP schemas | API contracts | OpenAPI/codegen compatibility |
+| packages/contracts/generated/dart/contracts.dart | Existing generator output | Contracts generation | Drift |
+| packages/contracts/generated/manifest.json | Generator hashes | Contracts generation | Drift |
+| packages/contracts/src/generated/contracts.ts | Existing generator output | Contracts generation | Drift |
+| packages/contracts/test/contracts.test.mjs | Add task operation/event expectations without weakening old checks | Contract tests | Regression |
+| permissions/catalog.yaml | Explicit task action registration; no default grants | Permissions | Deny-by-default regression |
+| tests/contracts.test.mjs | Add exact canonical expectations retaining old checks | Root tests | Regression |
+| tests/evidence/WP49-031_COMPLETION_REPORT.md | G0–G12 evidence, full paths, actual CI/merge/closeout | Evidence | G12 |
+
+
+## Acceptance findings and execution history
+
+Initial run41727130117 on076a973 FAILED: ambiguous UUID/text placeholder in task
+transition insert and Flutter lint findings. No threshold/assertion was weakened.
+Later source revisions corrected conditional quantity policy, resource validation,
+canonical receipt/pull ordering, conflict visibility, event recipients, HTTP status
+and URI conventions, read pagination, immutable command/device provenance and
+current organization-scope rechecks on Create replay. Domain-provided quantity/unit
+policy is explicit; omitted priority uses the documented50 default.
+
+Runs41727695087/41728137383/41728332040/41728536223/41728638943/41728971421/
+41729387158 were superseded/cancelled after actual changes and are not full PASS
+acceptance. Partial Unit173/173 success is not substitute for an aggregate result.
+Run41729922835 on7afee3d FAILED only Mobile:39 successful Flutter tests, new widget
+test deadlocked on real Drift I/O in the fake-async zone and timed out at unchanged
+10 minutes. All6 other jobs succeeded, including real task PostGIS/HTTP/receipt/feed
+API173/173; no full-run PASS is claimed.
+The test now controls only I/O scheduling, calls the actual repository/queue/cache,
+keeps its assertions and adds a durable queue-count assertion. No production domain
+or persistence implementation is replaced with a fake adapter.
+
+Local Flutter3.47.8/Dart3.13.7 was subsequently acquired from its official tag/engine.
+Analyzer fatal-infos PASS. Initial local test attempts hit full disk; a single-widget
+attempt then failed the unchanged encrypted-SQLite guard on the Mac host. No plaintext
+fallback, crypto/check waiver or local Flutter test PASS is claimed. Temporary SDK
+cache/configuration is outside the repository. Linux/Android hosted gates remain the
+acceptance environment; no iOS/Mac shipping support is claimed. Frozen lockfile package
+versions/hashes are unchanged; automatic quote-only pub serialization was restored.
+
+Task reference provenance is limited to owner IDs, kind, organization and immutable
+revision; foreign field/geometry payloads are not copied into Task projections.
+Task event delivery retains command participants and assignees, with current read
+policy checked on pull. Scope changes use the existing platform scope-reset contract.
+All39 changed paths remain within frozen mobile scope or CR76's exact additional list.
+No independent reviewer is claimed; no open local blocking finding remains after
+this correction batch. Final exact-head hosted acceptance and ordinary PR/merge/
+post-merge/publication closeout remain required before DONE.

@@ -2,7 +2,7 @@
   "generator": "@agroplatform/contracts",
   "formatVersion": 1,
   "sources": {
-    "openapi/openapi.yaml": "b83aad5e54cfb3d68e994123d37a816ae80af0ba919a83f34c20b06f4c599247",
+    "openapi/openapi.yaml": "2f9403e460433aedb90c3626b1ae9a2e6c311ab8c5f3a26c7a03b4f7f0645583",
     "events/catalog/index.yaml": "48188b8a8bdcec9f53d79fa200f70f811bb4621b3f3da2099b688911d559e561",
     "events/schemas/event-catalog.schema.json": "f4e69757d5f24135c4578b3ef4b292895456a46b779178f071b763d01876957c"
   },
