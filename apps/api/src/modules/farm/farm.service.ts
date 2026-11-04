@@ -122,6 +122,12 @@ export class FarmService implements OnModuleDestroy {
    return {sources,targets};
   });
  }
+ async taskReferenceInTransaction(tx:PoolClient,actor:FarmActor,entityId:string,kind:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);
+  if(!['FIELD','FIELD_SEASON'].includes(kind))throw Error('FARM_INVALID_TASK_TARGET');
+  const r=await tx.query("SELECT e.id,e.organization_id,e.current_revision_id,r.metadata->>'status' AS target_status FROM farm.entity e JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id WHERE e.tenant_id=$1 AND e.id=$2 AND e.kind=$3 FOR SHARE OF e",[actor.tenantId,entityId,kind]);
+  if(!r.rowCount||r.rows[0].target_status==='ARCHIVED')throw Error('FARM_TASK_TARGET_UNAVAILABLE');const row=r.rows[0];return {id:row.id,organization_id:row.organization_id,revisionId:row.current_revision_id,kind};
+ }
  async read(actor:FarmActor,entityId:string,asOf?:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);if(asOf!==undefined&&!timestamp(asOf))throw Error('FARM_INVALID_AS_OF');
   const r=await this.pool.query(`SELECT e.*,f.code,fs.field_id,fs.season_id,fs.field_revision_id,fs.season_revision_id,fr.geometry_provenance AS field_geometry_provenance,COALESCE(fs.business_year,s.business_year) AS business_year,r.id AS revision_id,r.revision,r.metadata,r.geometry_provenance,r.effective_at FROM farm.entity e LEFT JOIN farm.field f ON f.tenant_id=e.tenant_id AND f.id=e.id LEFT JOIN farm.field_season fs ON fs.tenant_id=e.tenant_id AND fs.id=e.id LEFT JOIN farm.agricultural_season s ON s.tenant_id=e.tenant_id AND s.id=e.id LEFT JOIN farm.revision fr ON fr.tenant_id=e.tenant_id AND fr.id=fs.field_revision_id JOIN LATERAL (SELECT * FROM farm.revision v WHERE v.tenant_id=e.tenant_id AND v.entity_id=e.id ${asOf===undefined?'AND v.id=e.current_revision_id':'AND v.effective_at<=$3'} ORDER BY v.effective_at DESC,v.revision DESC LIMIT 1) r ON true WHERE e.tenant_id=$1 AND e.id=$2`,asOf===undefined?[actor.tenantId,entityId]:[actor.tenantId,entityId,asOf]);

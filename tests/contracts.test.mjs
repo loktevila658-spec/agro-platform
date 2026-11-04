@@ -38,6 +38,9 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     '/v1/sync/health',
     '/v1/sync/pull',
     '/v1/sync/push',
+    '/v1/tasks',
+    '/v1/tasks/{taskId}',
+    '/v1/tasks/{taskId}/commands/{action}',
   ]);
   assert.deepEqual(operations.map(({ method, operationId, path }) => ({ method, operationId, path })), [
     { method: 'GET', operationId: 'getLiveness', path: '/health/live' },
@@ -64,6 +67,10 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     { method: 'GET', operationId: 'syncHealth', path: '/v1/sync/health' },
     { method: 'POST', operationId: 'pullSync', path: '/v1/sync/pull' },
     { method: 'POST', operationId: 'pushSync', path: '/v1/sync/push' },
+    {"method":"GET","operationId":"taskList","path":"/v1/tasks"},
+    {"method":"POST","operationId":"taskCreate","path":"/v1/tasks"},
+    {"method":"GET","operationId":"taskRead","path":"/v1/tasks/{taskId}"},
+    {"method":"POST","operationId":"taskCommand","path":"/v1/tasks/{taskId}/commands/{action}"},
   ]);
 
   const compatibilityOperations = [
@@ -138,5 +145,6 @@ test('event catalog preserves WP49-011 organization events and appends the DOC19
     { name: 'gis.geometry.changed', version: '1.0.0', producer: 'gis' },
     { name: 'land.plot.changed', version: '1.0.0', producer: 'land' },
     { name: 'farm.entity.changed', version: '1.0.0', producer: 'farm' },
+    { name: 'task.changed', version: '1.0.0', producer: 'tasks' },
   ]);
 });

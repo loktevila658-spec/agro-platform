@@ -331,6 +331,40 @@ export interface SyncUploadResponse {
   readonly state: string;
 }
 
+export interface TaskDefinition {
+  readonly operationTypeId: string;
+  readonly plannedEnd?: string;
+  readonly plannedQty?: string;
+  readonly plannedStart?: string;
+  readonly priority: number;
+  readonly targetId: string;
+  readonly targetType: 'FIELD' | 'FIELD_SEASON';
+  readonly uom?: string;
+}
+
+export interface TaskListResponse {
+  readonly nextAfter?: string;
+  readonly tasks: readonly TaskProjection[];
+}
+
+export interface TaskProjection {
+  readonly assignment: Readonly<Record<string, unknown>>;
+  readonly definition: TaskDefinition;
+  readonly id: string;
+  readonly lastObservedAt?: string;
+  readonly organizationId: string;
+  readonly requiresQuantity: boolean;
+  readonly startedAt?: string;
+  readonly status: 'DRAFT' | 'PLANNED' | 'ASSIGNED' | 'ACCEPTED' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'VERIFIED' | 'CLOSED' | 'RETURNED' | 'CANCELLED' | 'ABORTED';
+  readonly targetProvenance: Readonly<Record<string, unknown>>;
+  readonly version: number;
+}
+
+export interface TaskSubmitRequest {
+  readonly command: SyncCommand;
+  readonly scopeVersion: number;
+}
+
 export interface TenantResponse {
   readonly code: string;
   readonly commandId?: string;
@@ -969,6 +1003,56 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "revision"
       ]
     }
+  },
+  {
+    "name": "task.changed",
+    "version": "1.0.0",
+    "producer": "tasks",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "entityType",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt",
+        "revision"
+      ]
+    }
   }
 ];
 
@@ -1256,6 +1340,47 @@ export class AgroPlatformApiClient {
     const requestBody = JSON.stringify(body);
     const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
     if (!response.ok) throw new Error(`pushSync failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async taskList(authorization: string, after?: string): Promise<TaskListResponse> {
+    const url = new URL(`${this.baseUrl}/v1/tasks`);
+    if (after !== undefined) url.searchParams.set("after", String(after));
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`taskList failed with HTTP ${response.status}`);
+    return await response.json() as TaskListResponse;
+  }
+
+  async taskCreate(authorization: string, body: TaskSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/tasks`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`taskCreate failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async taskRead(taskId: string, authorization: string): Promise<TaskProjection> {
+    const url = new URL(`${this.baseUrl}/v1/tasks/${encodeURIComponent(String(taskId))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`taskRead failed with HTTP ${response.status}`);
+    return await response.json() as TaskProjection;
+  }
+
+  async taskCommand(action: string, taskId: string, authorization: string, body: TaskSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/tasks/${encodeURIComponent(String(taskId))}/commands/${encodeURIComponent(String(action))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`taskCommand failed with HTTP ${response.status}`);
     return await response.json() as SyncPushResponse;
   }
 }

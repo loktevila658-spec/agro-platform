@@ -1,3 +1,6 @@
+import 'features/tasks/task_repository.dart';
+import 'features/tasks/tasks_page.dart';
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -71,6 +74,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
   final code = TextEditingController();
   String? deviceId;
   Workspace? workspace;
+  TaskRepository? taskRepository;
   WorkspaceIdentity? workspaceIdentity;
   AuthorityHttpTransport? syncTransport;
   SyncEngine? syncEngine;
@@ -142,6 +146,10 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     final verifier = publicKey.isEmpty
         ? null
         : AuthorityGrantVerifier(base64.decode(publicKey), deviceId!);
+    taskRepository = TaskRepository(
+      opened,
+      verify: verifier?.verify ?? (_) async => false,
+    );
     syncEngine = SyncEngine(
       opened,
       opened.commands(verify: verifier?.verify ?? (_) async => false),
@@ -352,6 +360,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       } else {
         await workspace?.close();
       }
+      taskRepository = null;
       workspace = null;
       workspaceIdentity = null;
       queueCounts = const QueueCounts(0, 0, 0, 0);
@@ -396,6 +405,20 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
                         child: const Text('Карта'),
                       ),
                     ),
+                    if (taskRepository != null)
+                      Builder(
+                        builder: (context) => TextButton(
+                          onPressed: () => Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) => TasksPage(
+                                repository: taskRepository!,
+                                onQueued: startSync,
+                              ),
+                            ),
+                          ),
+                          child: const Text('Задания'),
+                        ),
+                      ),
                     if (workspace != null) QueueStatus(counts: queueCounts),
                     Row(
                       children: [

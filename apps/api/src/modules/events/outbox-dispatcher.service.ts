@@ -86,6 +86,8 @@ export class OutboxDispatcherService implements OnModuleInit, OnModuleDestroy {
       SELECT 'land', id FROM land.outbox_event
       UNION ALL
       SELECT 'farm', id FROM farm.outbox_event
+      UNION ALL
+      SELECT 'tasks', id FROM tasks.outbox_event
       ON CONFLICT (source, event_id) DO NOTHING
     `);
   }
@@ -114,7 +116,7 @@ export class OutboxDispatcherService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async loadEvent(source: EventSource, eventId: string): Promise<DomainEvent | undefined> {
-    const table = source === 'org' ? 'org.outbox_event' : source === 'identity' ? 'identity.outbox_event' : source === 'master-data' ? 'master_data.outbox_event' : source === 'gis' ? 'gis.outbox_event' : source === 'land' ? 'land.outbox_event' : 'farm.outbox_event';
+    const table = source === 'org' ? 'org.outbox_event' : source === 'identity' ? 'identity.outbox_event' : source === 'master-data' ? 'master_data.outbox_event' : source === 'gis' ? 'gis.outbox_event' : source === 'land' ? 'land.outbox_event' : source === 'farm' ? 'farm.outbox_event' : 'tasks.outbox_event';
     const actorColumn = source === 'org' ? "payload->>'actorId'" : 'actor_id';
     const result = await this.pool.query<{
       id: string;

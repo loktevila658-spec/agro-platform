@@ -62,6 +62,10 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     { method: 'GET', operationId: 'syncHealth', path: '/v1/sync/health', responseSchemaName: 'SyncHealthResponse' },
     { method: 'POST', operationId: 'pullSync', path: '/v1/sync/pull', responseSchemaName: 'SyncPullResponse' },
     { method: 'POST', operationId: 'pushSync', path: '/v1/sync/push', responseSchemaName: 'SyncPushResponse' },
+    {"method":"GET","operationId":"taskList","path":"/v1/tasks","responseSchemaName":"TaskListResponse"},
+    {"method":"POST","operationId":"taskCreate","path":"/v1/tasks","responseSchemaName":"SyncPushResponse"},
+    {"method":"GET","operationId":"taskRead","path":"/v1/tasks/{taskId}","responseSchemaName":"TaskProjection"},
+    {"method":"POST","operationId":"taskCommand","path":"/v1/tasks/{taskId}/commands/{action}","responseSchemaName":"SyncPushResponse"},
   ]);
   const tenant = openapi.operations.find(({ operationId }) => operationId === 'createOrgTenant');
   assert.deepEqual(tenant.inputs, {
@@ -113,6 +117,7 @@ test('canonical event schema and single YAML catalog validate', async () => {
     { name: 'gis.geometry.changed', version: '1.0.0', producer: 'gis' },
     { name: 'land.plot.changed', version: '1.0.0', producer: 'land' },
     { name: 'farm.entity.changed', version: '1.0.0', producer: 'farm' },
+    { name: 'task.changed', version: '1.0.0', producer: 'tasks' },
   ]);
   assert.deepEqual(Object.keys(contracts.sources).sort(), [
     'events/catalog/index.yaml',
