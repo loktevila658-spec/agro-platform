@@ -122,6 +122,25 @@ export class FarmService implements OnModuleDestroy {
    return {sources,targets};
   });
  }
+ /** Owned read boundary; scope is supplied by trusted server composition only. */
+ async offlineFieldsInTransaction(tx:PoolClient,actor:FarmActor,scope:{organizationIds:string[];siteIds?:string[];fieldIds?:string[]},targets?:{id:string;kind:string}[],after?:string):Promise<Record<string,unknown>[]>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');if(after!==undefined)id(after);
+  for(const values of [scope.organizationIds,scope.siteIds,scope.fieldIds,targets?.map(t=>t.id)])if(values)for(const v of values)id(v);
+  const result=await tx.query(`SELECT e.id,e.kind,e.organization_id,e.row_version,r.id AS revision_id,r.metadata,r.effective_at,
+   COALESCE(fs.field_id,e.id) AS field_id,COALESCE(fs.field_revision_id,r.id) AS field_revision_id,
+   COALESCE(fr.metadata,r.metadata)->>'name' AS name,cr.metadata->>'siteId' AS site_id,
+   COALESCE(fr.geometry_provenance,r.geometry_provenance) AS geometry_provenance
+   FROM farm.entity e JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id
+   LEFT JOIN farm.field_season fs ON fs.tenant_id=e.tenant_id AND fs.id=e.id
+   LEFT JOIN farm.revision fr ON fr.tenant_id=fs.tenant_id AND fr.id=fs.field_revision_id
+   JOIN farm.entity cf ON cf.tenant_id=e.tenant_id AND cf.id=COALESCE(fs.field_id,e.id)
+   JOIN farm.revision cr ON cr.tenant_id=cf.tenant_id AND cr.id=cf.current_revision_id
+   WHERE e.tenant_id=$1 AND e.kind IN ('FIELD','FIELD_SEASON') AND e.organization_id=ANY($2::uuid[])
+   AND ($3::uuid[] IS NULL OR (cr.metadata->>'siteId')::uuid=ANY($3::uuid[]))
+   AND ($4::uuid[] IS NULL OR cf.id=ANY($4::uuid[])) AND ($5::uuid[] IS NULL OR e.id=ANY($5::uuid[]))
+   AND ($6::uuid IS NULL OR e.id>$6::uuid) ORDER BY e.id LIMIT 1000`,[actor.tenantId,scope.organizationIds,scope.siteIds??null,scope.fieldIds??null,targets?.map(t=>t.id)??null,after??null]);
+  return result.rows.filter(r=>!targets||targets.some(t=>t.id===r.id&&t.kind===r.kind));
+ }
  async taskReferenceInTransaction(tx:PoolClient,actor:FarmActor,entityId:string,kind:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);
   if(!['FIELD','FIELD_SEASON'].includes(kind))throw Error('FARM_INVALID_TASK_TARGET');

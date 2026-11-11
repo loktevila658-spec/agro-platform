@@ -7,7 +7,7 @@ import 'package:agroplatform_mobile/persistence.dart';
 import 'support.dart';
 
 void main() {
-  test('real encrypted v1 snapshot upgrades to v2 preserving pending intent, IDs, audit and attachments', () async {
+  test('real encrypted v1 snapshot upgrades to current schema preserving pending intent, IDs, audit and attachments', () async {
     final root = await Directory.systemTemp.createTemp('sync-migration');
     final secrets = MemorySecrets();
     const identity = WorkspaceIdentity('tenant', 'user', 'migration');
@@ -20,6 +20,8 @@ void main() {
     await ws.close();
     final raw = sqlite3.open('$path/workspace.db');
     raw.execute("PRAGMA key='${secrets.values.values.single}'");
+    raw.execute('DROP TABLE offline_package_state');
+    raw.execute('DROP TABLE offline_package_field');
     raw.execute('DROP TABLE sync_cursor');
     raw.execute('DROP TABLE entity_cache');
     raw.execute('DROP TABLE entity_sync_meta');
@@ -28,7 +30,7 @@ void main() {
     raw.execute('PRAGMA user_version=1');
     raw.close();
     ws = await Workspace.open(identity, root: root, secrets: secrets);
-    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 2);
+    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 3);
     final pending = (await ws
         .commands(verify: (_) async => false)
         .get(draft.commandId))!;

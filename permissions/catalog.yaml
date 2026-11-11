@@ -167,3 +167,15 @@ permissions:
     description: Explicit tenant task.abort owner command or query.
     effect: allow
     scope: tenant
+  - action: offline-gis.package.read
+    description: Authorized derived offline GIS package read.
+    effect: allow
+    scope: tenant
+  - action: offline-gis.package.select
+    description: Authorized derived offline GIS package select.
+    effect: allow
+    scope: tenant
+  - action: offline-gis.package.refresh
+    description: Authorized derived offline GIS package refresh.
+    effect: allow
+    scope: tenant

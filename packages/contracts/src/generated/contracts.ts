@@ -86,6 +86,93 @@ export interface MfaVerifyRequest {
   readonly code: string;
 }
 
+export interface OfflineGisCandidate {
+  readonly fieldId: string;
+  readonly id: string;
+  readonly kind: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly revisionId: string;
+}
+
+export interface OfflineGisCandidates {
+  readonly items: readonly OfflineGisCandidate[];
+  readonly nextAfter?: string;
+}
+
+export interface OfflineGisField {
+  readonly bounds?: readonly number[];
+  readonly bundleVersion: number;
+  readonly center?: readonly number[];
+  readonly fieldId: string;
+  readonly fieldRevisionId: string;
+  readonly geometry?: Readonly<Record<string, unknown>>;
+  readonly geometryVersionId?: string;
+  readonly id: string;
+  readonly kind: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly ownerRevisionId: string;
+  readonly ownerVersion: string;
+  readonly packageId: string;
+  readonly provenance: Readonly<Record<string, unknown>>;
+  readonly siteId?: string;
+  readonly sourceChanged: boolean;
+  readonly targetId: string;
+}
+
+export interface OfflineGisManifest {
+  readonly contentHash: string;
+  readonly createdAt: string;
+  readonly deviceId: string;
+  readonly entries: readonly string[];
+  readonly id: string;
+  readonly lastValidatedAt: string;
+  readonly renderProfile: Readonly<Record<string, unknown>>;
+  readonly selection: OfflineGisSelection;
+  readonly source?: OfflineGisSource;
+  readonly sourceChanged: boolean;
+  readonly tenantId: string;
+  readonly userId: string;
+  readonly version: number;
+}
+
+export interface OfflineGisSelection {
+  readonly bounds: readonly number[];
+  readonly maxZoom: number;
+  readonly minZoom: number;
+  readonly sourceId?: string;
+  readonly targets: readonly OfflineGisTarget[];
+}
+
+export interface OfflineGisSource {
+  readonly attribution: string;
+  readonly id: string;
+  readonly label: string;
+  readonly maxZoom: number;
+  readonly minZoom: number;
+  readonly offlineAllowed: boolean;
+  readonly publicBasemap: boolean;
+  readonly sourceVersion: string;
+  readonly styleUrl: string;
+  readonly styleVersion: string;
+  readonly termsRef: string;
+}
+
+export interface OfflineGisSources {
+  readonly sources: readonly OfflineGisSource[];
+}
+
+export interface OfflineGisSubmitRequest {
+  readonly command: SyncCommand;
+  readonly scopeVersion: number;
+}
+
+export interface OfflineGisTarget {
+  readonly id: string;
+  readonly kind: 'FIELD' | 'FIELD_SEASON';
+}
+
 export interface OrganizationResponse {
   readonly code: string;
   readonly commandId?: string;
@@ -1277,6 +1364,49 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'POST', headers });
     if (!response.ok) throw new Error(`revokeMySession failed with HTTP ${response.status}`);
     return await response.json() as RevocationResponse;
+  }
+
+  async offlineGisFields(authorization: string, after?: string, xCorrelationId?: string): Promise<OfflineGisCandidates> {
+    const url = new URL(`${this.baseUrl}/v1/offline-gis/fields`);
+    if (after !== undefined) url.searchParams.set("after", String(after));
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`offlineGisFields failed with HTTP ${response.status}`);
+    return await response.json() as OfflineGisCandidates;
+  }
+
+  async offlineGisRead(packageId: string, authorization: string, xCorrelationId?: string): Promise<OfflineGisManifest> {
+    const url = new URL(`${this.baseUrl}/v1/offline-gis/packages/${encodeURIComponent(String(packageId))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`offlineGisRead failed with HTTP ${response.status}`);
+    return await response.json() as OfflineGisManifest;
+  }
+
+  async offlineGisCommand(action: string, packageId: string, authorization: string, body: OfflineGisSubmitRequest, xCorrelationId?: string): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/offline-gis/packages/${encodeURIComponent(String(packageId))}/commands/${encodeURIComponent(String(action))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`offlineGisCommand failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async offlineGisSources(authorization: string, xCorrelationId?: string): Promise<OfflineGisSources> {
+    const url = new URL(`${this.baseUrl}/v1/offline-gis/sources`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (xCorrelationId !== undefined) headers["X-Correlation-Id"] = String(xCorrelationId);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`offlineGisSources failed with HTTP ${response.status}`);
+    return await response.json() as OfflineGisSources;
   }
 
   async ackSync(authorization: string, body: SyncAckRequest): Promise<SyncAckResponse> {

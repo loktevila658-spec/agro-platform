@@ -1,3 +1,7 @@
+import 'features/map/offline_package_controller.dart';
+import 'features/map/offline_map_page.dart';
+import 'features/map/maplibre_offline_regions.dart';
+import 'features/map/map_source.dart';
 import 'features/tasks/task_repository.dart';
 import 'features/tasks/tasks_page.dart';
 
@@ -11,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'persistence.dart';
 import 'sync.dart';
 import 'widgets/queue_status.dart';
-import 'widgets/gis_map.dart';
 
 const apiBase = String.fromEnvironment(
   'API_BASE_URL',
@@ -75,6 +78,8 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
   String? deviceId;
   Workspace? workspace;
   TaskRepository? taskRepository;
+  OfflinePackageController? mapController;
+  final mapRegions = MapLibreOfflineRegions();
   WorkspaceIdentity? workspaceIdentity;
   AuthorityHttpTransport? syncTransport;
   SyncEngine? syncEngine;
@@ -150,6 +155,14 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       opened,
       verify: verifier?.verify ?? (_) async => false,
     );
+    mapController = OfflinePackageController(
+      opened,
+      verify: verifier?.verify ?? (_) async => false,
+      regions: mapRegions,
+      tasks: taskRepository,
+      onQueued: startSync,
+      gateway: MapGateway((path) => apiRequest(path, accessToken: accessToken)),
+    );
     syncEngine = SyncEngine(
       opened,
       opened.commands(verify: verifier?.verify ?? (_) async => false),
@@ -187,6 +200,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
             /* queue remains durable; authentication/authority is never bypassed */
           }
           if (!identical(syncEngine, engine)) return;
+          await mapController?.reconcile();
           final counts = await opened
               .commands(verify: (_) async => false)
               .counts();
@@ -237,7 +251,11 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     password.dispose();
     code.dispose();
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(stopSync().then((_) => workspace?.close()));
+    unawaited(() async {
+      await stopSync();
+      await mapController?.close();
+      await workspace?.close();
+    }());
     super.dispose();
   }
 
@@ -344,6 +362,13 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
 
   Future<void> logout() async {
     await stopSync();
+    try {
+      await mapController?.close();
+    } catch (_) {
+      if (mounted)
+        setState(() => error = 'Workspace cleanup failed; sign-in blocked');
+      return;
+    }
     final token = accessToken;
     if (token != null) {
       try {
@@ -353,13 +378,24 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     try {
       if (const bool.fromEnvironment('SHARED_DEVICE', defaultValue: true)) {
         if (workspace != null) {
-          await workspace!.wipeShared();
+          await workspace!.wipeShared(externalCleanup: mapRegions.reset);
         } else if (workspaceIdentity != null) {
-          await Workspace.wipeSharedIdentity(workspaceIdentity!);
+          await Workspace.wipeSharedIdentity(
+            workspaceIdentity!,
+            externalCleanup: mapRegions.reset,
+          );
         }
       } else {
+        if (workspace != null &&
+            await File('${workspace!.directory.path}/external-assets')
+                .exists()) {
+          await mapRegions.reset();
+          await mapController?.store.clearNative();
+        }
         await workspace?.close();
       }
+      mapController?.dispose();
+      mapController = null;
       taskRepository = null;
       workspace = null;
       workspaceIdentity = null;
@@ -397,11 +433,15 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
                     const Text('Signed in'),
                     Builder(
                       builder: (context) => TextButton(
-                        onPressed: () => Navigator.of(context).push<void>(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const GisMapPage(),
-                          ),
-                        ),
+                        onPressed: mapController == null
+                            ? null
+                            : () => Navigator.of(context).push<void>(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => OfflineMapPage(
+                                    controller: mapController!,
+                                  ),
+                                ),
+                              ),
                         child: const Text('Карта'),
                       ),
                     ),

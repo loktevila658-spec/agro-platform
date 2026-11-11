@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID as id} from 'node:crypto';
+import {OfflineGisRegistry} from '../dist/modules/offline-gis/offline-gis.registry.js';
+import {selection,source} from '../dist/modules/offline-gis/offline-gis.validation.js';
+const actor={tenantId:id(),userId:id(),deviceId:id(),sessionId:id()};
+const sample={id:'fixture',label:'Test only',styleUrl:'https://fixture.invalid/style.json',styleVersion:'v1',sourceVersion:'v1',attribution:'Fixture',termsRef:'fixture-license',offlineAllowed:true,publicBasemap:true,minZoom:0,maxZoom:12};
+const input=()=>({targets:[{id:id(),kind:'FIELD'}],bounds:[30,50,31,51],minZoom:0,maxZoom:2,sourceId:'fixture'});
+test('default deny, current action policy, immutable installation',async()=>{const r=new OfflineGisRegistry();await assert.rejects(r.scope(actor));let allowed=true;r.install({scope:async(a,action)=>allowed&&action==='offline-gis.package.read'?{organizationIds:[id()],renderProfile:{version:'fixture-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined,sources:async()=>[sample]});assert.equal((await r.scope(actor)).renderProfile.version,'fixture-v1');await assert.rejects(r.scope(actor,'offline-gis.package.select'));allowed=false;await assert.rejects(r.scope(actor));assert.throws(()=>r.install({}),/IMMUTABLE/);});
+test('selection preserves valid refs and rejects invalid/duplicate/unsupported intent',()=>{assert.deepEqual(selection(input()).bounds,[30,50,31,51]);for(const bad of [{...input(),targets:[]},{...input(),bounds:[0,0,0,1]},{...input(),bounds:[0,0,100,80]},{...input(),minZoom:3,maxZoom:1},{...input(),token:'secret'},{...input(),targets:[{id:id(),kind:'FAKE_TASK'}]}])assert.throws(()=>selection(bad));const v=input();v.targets.push(v.targets[0]);assert.throws(()=>selection(v));});
+test('only explicitly licensed PUBLIC offline sources without credentials',()=>{source(sample);for(const bad of [{...sample,offlineAllowed:false},{...sample,publicBasemap:false},{...sample,termsRef:''},{...sample,styleUrl:'https://user:password@fixture.invalid/style'},{...sample,styleUrl:'https://fixture.invalid/style?token=secret'},{...sample,styleUrl:'http://fixture.invalid/style'}])assert.throws(()=>source(bad));});
