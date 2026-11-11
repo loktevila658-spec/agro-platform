@@ -92,7 +92,7 @@ void main() {
         await store.reconcile();
         await w.markExternalAssets();
         final m = (await store.snapshot()).manifest!;
-        final id = await regions.create(m);
+        var id = await regions.create(m);
         for (var attempt = 0; attempt < 200 && tileRequests == 0; attempt++) {
           await Future<void>.delayed(const Duration(milliseconds: 30));
         }
@@ -113,6 +113,10 @@ void main() {
         expect((await store.snapshot()).regionId, id);
         expect((await store.snapshot()).paused, isTrue);
         expect((await ml.getListOfRegions()).any((r) => r.id == id), isTrue);
+        await regions.resume(id);
+        await regions.pause(id);
+        // Exercise the actual supported persisted-definition reconstruction too.
+        id = await regions.create(m);
         tileGate.complete();
         await regions.resume(id);
         RegionProgress progress = await regions.status(id);

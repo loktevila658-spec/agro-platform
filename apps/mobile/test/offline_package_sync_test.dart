@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
 import 'package:agroplatform_mobile/persistence.dart';
 import 'package:agroplatform_mobile/sync.dart';
 import 'package:agroplatform_mobile/features/tasks/task_repository.dart';
@@ -36,6 +37,12 @@ class TestRegions implements OfflineRegions {
   Future<void> delete(int id) async {}
   @override
   Future<void> reset() async {}
+}
+
+class RestartRegions extends TestRegions {
+  @override
+  Future<void> resume(int id) async =>
+      throw PlatformException(code: 'ResumeRegionError');
 }
 
 void main() {
@@ -163,6 +170,46 @@ void main() {
       await f.seedMapGrant(w);
       await expectLater(c.select(f.selected()), throwsStateError);
       expect(await w.db.rows('SELECT * FROM sync_outbox'), isEmpty);
+    } finally {
+      await c.close();
+      c.dispose();
+      await w.close();
+      await root.delete(recursive: true);
+    }
+  });
+  test('pinned native observer loss safely rebuilds a partial region definition without touching vectors', () async {
+    final root = await Directory.systemTemp.createTemp('map-native-restart');
+    final w = await Workspace.open(
+      f.mapIdentity,
+      root: root,
+      secrets: MemorySecrets(),
+      authenticatedDeviceId: f.mapDevice,
+    );
+    final regions = RestartRegions();
+    var c = OfflinePackageController(
+      w,
+      verify: (_) async => true,
+      regions: regions,
+    );
+    try {
+      await f.seedMap(w, source: f.publicSource());
+      await c.reconcile();
+      await c.download();
+      await c.pause();
+      await c.close();
+      c.dispose();
+      c = OfflinePackageController(
+        w,
+        verify: (_) async => true,
+        regions: regions,
+      );
+      await c.reconcile();
+      await c.download();
+      await c.pause();
+      expect(regions.creates, 2);
+      expect(c.view.fields.single.ownerRevisionId, 'test-revision-1');
+      expect(c.notice, isNotNull);
+      expect(c.view.basemapReady, isFalse);
     } finally {
       await c.close();
       c.dispose();

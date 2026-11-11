@@ -150,6 +150,7 @@ class _OfflineMapPageState extends State<OfflineMapPage> {
                         error ?? c.choiceError ?? 'Подложка не завершена. Повторите загрузку при подключении.',
                       ),
                     ),
+                  if (c.notice != null) Text(c.notice!),
                   if (c.commandState != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),

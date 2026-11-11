@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import '../../persistence.dart';
 import '../tasks/task_repository.dart';
@@ -33,11 +34,12 @@ class OfflinePackageController extends ChangeNotifier {
   List<OfflineGisCandidate> candidates = [];
   List<OfflineGisSource> sources = [];
   List<TaskView> mapTasks = [];
-  String? choiceError, commandState, nextAfter;
+  String? choiceError, commandState, nextAfter, notice;
   bool busy = false, _closed = false;
   Timer? _timer;
   Future<void> _serial = Future<void>.value();
   String? _nativeError;
+  int _downloadEpoch = 0;
   Future<void> _run(Future<void> Function() action) {
     final result = _serial.then((_) async {
       if (!_closed) await action();
@@ -221,6 +223,17 @@ class OfflinePackageController extends ChangeNotifier {
     _changed();
   }
 
+  Future<int> _create(OfflineGisManifest manifest) {
+    final epoch = ++_downloadEpoch;
+    _nativeError = null;
+    return regions.create(
+      manifest,
+      onError: (error) {
+        if (!_closed && epoch == _downloadEpoch) _nativeError = error;
+      },
+    );
+  }
+
   Future<void> download() => _run(() async {
     final m = view.manifest;
     if (m == null || !view.visible) throw StateError('MAP_SYNC_INCOMPLETE');
@@ -235,10 +248,23 @@ class OfflinePackageController extends ChangeNotifier {
       int id;
       if (view.regionId != null && view.signature == signature) {
         id = view.regionId!;
-        await regions.resume(id);
+        final current = await regions.status(id);
+        if (!current.complete) {
+          try {
+            await regions.resume(id);
+          } on PlatformException catch (error) {
+            if (error.code != 'ResumeRegionError') rethrow;
+            // Pinned Android0.27.1 cannot reattach a native observer after
+            // process restart. Its supported restart preserves the definition;
+            // a partial public basemap may need resources downloaded again.
+            notice =
+                'После перезапуска часть подложки может загрузиться повторно.';
+            id = await _create(m);
+          }
+        }
       } else {
         await regions.reset();
-        id = await regions.create(m, onError: (error) => _nativeError = error);
+        id = await _create(m);
       }
       await store.nativeProgress(
         signature: signature,

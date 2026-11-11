@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -178,4 +179,28 @@ void main() {
       PackageState.ready,
     );
   });
+  test(
+    'release stays strict; only explicit debug loopback has cleartext access',
+    () async {
+      final main = await File('android/app/src/main/AndroidManifest.xml')
+          .readAsString();
+      final debug = await File('android/app/src/debug/AndroidManifest.xml')
+          .readAsString();
+      final config = await File(
+        'android/app/src/debug/res/xml/offline_gis_test_network_security.xml',
+      ).readAsString();
+      expect(main, contains('android:usesCleartextTraffic="false"'));
+      expect(main, isNot(contains('offline_gis_test_network_security')));
+      expect(debug, contains('@xml/offline_gis_test_network_security'));
+      expect(
+        config,
+        contains('<base-config cleartextTrafficPermitted="false">'),
+      );
+      final domains = RegExp(
+        r'<domain includeSubdomains="false">([^<]+)</domain>',
+      ).allMatches(config).map((m) => m.group(1)).toSet();
+      expect(domains, {'127.0.0.1', 'localhost'});
+      expect(config, isNot(contains('src="user"')));
+    },
+  );
 }

@@ -291,6 +291,16 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     });
     assert.match(body.postgisVersion, /^3\./);
 
+    // Also validate the new owned delivery schema through its actual owner
+    // commands/feed on this already provisioned PostGIS runner. The complete
+    // Unit profile remains required separately; no assertion/job is skipped.
+    const offlineVertical = spawnSync(process.execPath, ['--test', 'apps/api/test/offline-gis.integration.test.mjs'], {
+      cwd: repositoryRoot, encoding: 'utf8', env: { ...process.env, POSTGIS_TEST_IMAGE: image },
+    });
+    assert.equal(offlineVertical.status, 0, processFailure('Offline GIS owned-schema acceptance', offlineVertical));
+    console.log(offlineVertical.stdout);
+
+
     query(
       container,
       databaseUrl,
