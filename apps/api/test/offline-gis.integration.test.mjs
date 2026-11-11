@@ -183,6 +183,26 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         visibleOrganization=organizationId;gisAllowed=false;await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);gisAllowed=true;licensed=false;await assert.rejects(service.read(actor,deviceId));licensed=true;
         await assert.rejects(service.read({...actor,tenantId:randomUUID()},deviceId));await assert.rejects(service.read({...actor,deviceId:randomUUID()},deviceId));
       });
+      await t.test('cached geometry removal cannot bypass current GIS permission before owner event delivery',async()=>{
+        const stale=(await pool.query('SELECT id,projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,deviceId])).rows[0];
+        assert.ok(stale.projection.geometryVersionId);
+        const withoutGeometry={...fieldData,name:'Geometry withdrawn'};delete withoutGeometry.geometryVersionId;
+        await farm.correctField(owner,field.entityId,{expectedVersion:'4',data:withoutGeometry,effectiveAt:'2026-11-04T05:00:00Z',reason:'Remove geometry before delayed delivery'},context());
+        gisAllowed=false;
+        try{
+          assert.equal(await service.canRead(actor,'OfflineGisField',stale.id),false,'old cached geometry must require current GIS permission even after the owner removed its reference');
+          assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);
+          await assert.rejects(service.read(actor,deviceId),/OFFLINE_GIS_OWNER_FORBIDDEN/);
+          const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});
+          assert.ok(page.changes.some(c=>c.entityType==='OfflineGisField'&&c.entityId===stale.id&&c.op==='PURGE'));
+          assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
+          await new OutboxDispatcherService(pool,[consumer],new InboxService(pool)).dispatchAvailable(1000);
+          const fresh=(await pool.query('SELECT projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND id=$2',[tenantId,stale.id])).rows[0].projection;
+          assert.equal(fresh.geometryVersionId,undefined);assert.equal(fresh.geometry,undefined);
+          assert.equal(await service.canRead(actor,'OfflineGisField',stale.id),true,'authorized non-GIS field metadata becomes readable after actual owner delivery removes cached geometry');
+          version=(await service.read(actor,deviceId)).version;
+        }finally{gisAllowed=true;}
+      });
       await t.test('actual Task owner execution shares protocol and exactly-one immutable result',async()=>{
         const taskId=uuid7();let v=0,completed;
         for(const [action,payload] of [['Create',{operationTypeId,targetType:'FIELD',targetId:field.entityId,uom:'ha'}],['Plan',{}],['Assign',{employeeIds:[employeeId]}],['Accept',{}],['Start',{}],['Complete',{actualQty:'1',uom:'ha'}]]){const c=intent(action,payload,'Task',taskId,v);const result=await send(c);assert.equal(result.status,'ACCEPTED',JSON.stringify(result));v=result.aggregateVersion;if(action==='Complete')completed=c;}

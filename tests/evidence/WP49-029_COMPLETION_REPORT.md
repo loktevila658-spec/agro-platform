@@ -1,6 +1,6 @@
-# WP49-029 Completion Report
+# WP49-029 Completion Report — corrective validation in progress
 
-Date:2026-11-11 Europe/Moscow. Status: **implementation G0–G11 accepted; DONE activates only after G12 publication conditions below are fulfilled**. No unobserved report-publication CI or CR closure is asserted.
+Date:2026-11-11 Europe/Moscow. Status: **NOT DONE; post-acceptance G7 regression found before CR closure; corrective validation required**. No unobserved report-publication CI or CR closure is asserted.
 
 Baseline main `1432b7bc81292d5fae7dbc3e4b07bb412a418c3e`.
 Exact tested implementation/PR head `e12beaa8cc8a86bf47fc733d52e398c0bd946f7a`.
@@ -46,7 +46,7 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 | G4 Integration | PASS: actual PostGIS9/9 owner scenarios plus retained real API/infrastructure/runtime suites; no fake owner substitute. |
 | G5 API Contract | PASS: additive canonical OpenAPI/codegen/backward checks, generated copies current, old and new exact operation assertions retained. |
 | G6 Event Contract | PASS: actual dispatcher/inbox/failure/retry/derived-feed transactionality and command replay; no new domain event schema. |
-| G7 Permissions | PASS: actual default-deny/current scope/org/tenant/GIS/source/replay negatives and fail-closed cache/PURGE. |
+| G7 Permissions | PENDING corrective validation: cached geometry must require current GIS permission even after its owner reference is removed. Prior targeted PASS is superseded for this case. Earlier checks: actual default-deny/current scope/org/tenant/GIS/source/replay negatives and fail-closed cache/PURGE. |
 | G8 Offline | PASS: encrypted cache, command identity/receipts, partial bundles/PURGE, conflict/retry, real Task commands, actual native tiles/pixels/pause/persist/restart/resume. |
 | G9 Audit/Provenance | PASS: actual immutable audit, original command/receipt/provenance, exact geometry pins, transactional fault rollback. |
 | G10 Demo/E2E | PASS: deterministic actual owner/Task lifecycle/retry/fact and native server-shutdown raster/vector/cleanup scenarios. |
@@ -150,3 +150,7 @@ Implementation merge has exactly two parents: baseline1432b7bc81292d5fae7dbc3e4b
 This final report path is already CR75-approved. Its publication must pass normal exact PR-head checks, ordinary merge and exact report-merge-SHA push CI, with live protection/reviews/threads verified. After observing those results, record the report PR/head/merge/run and completed closure in CR75. That activation makes G12 PASS and WP49-029 DONE without an infinite self-referential report rewrite. No unobserved report-publication PASS is asserted here.
 
 Unlock decision: implementation PASS; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED is intentionally unchanged as approved. WP030 is not started and must not be started by this closeout.
+
+## Post-acceptance permission correction (not yet accepted)
+
+Final review found that current owner geometry references alone were insufficient while an owner-removal event was pending: the old derived projection could retain geometry. A private diagnostic reproduced canRead=true with zero GIS policy calls after owner reference removal and GIS permission denial; this is not PostGIS acceptance evidence. The correction checks geometry actually retained in owned projections as well as current owner rows on read/pull. It writes no foreign data and adds no permission grants. A new actual Farm correction/current GIS denial/pull PURGE/delayed dispatcher/non-GIS metadata convergence scenario is mandatory in the hosted owner suite. All4 affected paths are already approved. Earlier source/report merges and successful CI remain historical facts but do not activate G12; CR75 stays OPEN until new full acceptance and corrected final publication.
