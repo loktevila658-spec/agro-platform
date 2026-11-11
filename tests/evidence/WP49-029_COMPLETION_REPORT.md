@@ -1,6 +1,13 @@
-# WP49-029 Completion Report — implementation validated, G12 pending
+# WP49-029 Completion Report
 
-Date:2026-11-11 Europe/Moscow. Source implementation G0–G11 validated on exact `ce20d46d62831a833587b4ee89f061678f4979d1`, [full pre-PR run43086770346](https://github.com/loktevila658-spec/agro-platform/actions/runs/43086770346), all8 SUCCESS. [Implementation PR79](https://github.com/loktevila658-spec/agro-platform/pull/79) is OPEN. This report update must pass exact PR-head CI before ordinary merge. **NOT DONE** until G12: exact merge push, final report publication and CR75 closeout. No unobserved merge/publication result is asserted.
+Date:2026-11-11 Europe/Moscow. Status: **implementation G0–G11 accepted; DONE activates only after G12 publication conditions below are fulfilled**. No unobserved report-publication CI or CR closure is asserted.
+
+Baseline main `1432b7bc81292d5fae7dbc3e4b07bb412a418c3e`.
+Exact tested implementation/PR head `e12beaa8cc8a86bf47fc733d52e398c0bd946f7a`.
+[Implementation PR79](https://github.com/loktevila658-spec/agro-platform/pull/79), ordinary merge `5f0d596296911888da20d4bbfbf97eb08efcf696`.
+[Pre-PR run43086770346](https://github.com/loktevila658-spec/agro-platform/actions/runs/43086770346) on ce20d46 and [exact PR-head run43088733764](https://github.com/loktevila658-spec/agro-platform/actions/runs/43088733764) all8 SUCCESS. [Exact merge push43090335620](https://github.com/loktevila658-spec/agro-platform/actions/runs/43090335620) on5f0d596 all8 SUCCESS. Implementation branch `codex/wp49-029`; report-publication branch `codex/wp49-029-closeout`.
+
+PUBLIC scope/source/tests/generated artifacts/PR/report/closeout publication is explicitly authorized in CR75. Original dirty checkout remains untouched.
 
 ## Baseline and authority
 
@@ -44,7 +51,7 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 | G9 Audit/Provenance | PASS: actual immutable audit, original command/receipt/provenance, exact geometry pins, transactional fault rollback. |
 | G10 Demo/E2E | PASS: deterministic actual owner/Task lifecycle/retry/fact and native server-shutdown raster/vector/cleanup scenarios. |
 | G11 NFR/Security | PASS applicable engineering/security profile: retained capacity/convergence, bounded viewport, native cipher/keystore, licensed public cache/private-data isolation/wipe. iOS N/A; physical-device certification unclaimed. |
-| G12 Evidence/Merge | PENDING: exact final PR-head checks/reviews, ordinary merge, exact push, final authorized report publication and CR75 closeout. |
+| G12 Evidence/Merge | PASS only at activation: exact PR-head/ordinary implementation merge and exact push, complete authorized report publication with its own normal checks/merge/push and completed CR75. Conditions below remain mandatory. |
 
 ## Observed checks
 
@@ -57,6 +64,8 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 |a45d70834aa61bcd538a100f025e4e48ca826337|43059399296|Actual owner9/9 zero skipped including first-subscription race; static/contracts/runtime/migration PASS; analyzer clean, Flutter52/APK PASS; native3/4, GIS zero tiles FAIL. Unit same setup stall, canceled on superseding dispatch.|
 |69ac8fc0b05149cdba9c83a9541b450e24e663b9|43061289158|Typecheck/Lint/Contract/Migration/Runtime SUCCESS; Mobile analyzer clean, Flutter52/APK and all4 actual Android native scenarios SUCCESS. Unit20-minute timeout during dependency DNS failures; no full acceptance.|
 |ce20d46d62831a833587b4ee89f061678f4979d1|43086770346|Pre-PR full CI all8 SUCCESS: API188/188, Flutter52/52, owner9/9 zero skipped, Android native4/4, contracts/static/migration/runtime. Source accepted; G12 publication/merge pending.|
+|e12beaa8cc8a86bf47fc733d52e398c0bd946f7a|43088733764|Exact final PR79 head all8 SUCCESS; reviews/threads clear immediately before ordinary merge.|
+|5f0d596296911888da20d4bbfbf97eb08efcf696|43090335620|Exact ordinary implementation merge push all8 SUCCESS, including full Unit and Android native; merge tree equals tested-head tree.|
 
 Native diagnosis on a45d708: direct Dart style precheck200 and native style request succeeded, SDK complete fraction1.0, tile requests0. Exact pinned native13.5.0 [zoom calculation](https://github.com/maplibre/maplibre-native/blob/android-v13.5.0/src/mbgl/util/tile_cover.cpp#L149) maps256px tile at map zoom0 to source zoom1; [offline cover](https://github.com/maplibre/maplibre-native/blob/android-v13.5.0/platform/default/src/mbgl/storage/offline_download.cpp#L38) intersected that with fixture maxzoom0, yielding empty coverage. Fixture PNG and declared tileSize corrected consistently to512. All tile/pause/resume/offline pixel/vector/privacy/wipe assertions and wait bounds retained.
 
@@ -66,13 +75,13 @@ Local Docker daemon unavailable: probed once, no repeated Compose launch or loca
 
 Pinned maplibre_gl0.27.1 Android resume loses observer after process restart and returns ResumeRegionError. Production fallback restarts the same persisted partial region definition through supported plugin API; public resources may download again, explicitly disclosed in UI. Complete cached regions avoid restart. Native test covers pause, encrypted workspace reopen, persisted definition and restart; no process-kill/byte-range, physical-device/battery/ANR or iOS certification claimed.
 
-Implementation PR79 is open; no merge/closeout exists yet. WP030 remains unstarted. Final report must record actual tested PR head and merge/push evidence before G12 activation.
+Implementation PR79 merged normally at5f0d596. WP030 remains unstarted. G12 publication activation conditions below remain mandatory.
 
 ## Deterministic scenario and review
 
 Owner fixture uses explicit manual field/operation/reference data, fixed effective/observed timestamps2026-11-04T00:00:00Z through04:00:00Z and fixed correlation. Random UUIDs/ephemeral ports isolate runs; they do not select business behavior. Actual Field correction, GIS approval with old pin retained, event failure/retry/replay, concurrent selection and first subscription, current permission withdrawal, HTTP guards, Task Create/Plan/Assign/Accept/Start/Complete and lost-response retry converge with one execution fact. Native fixture supplies a fixed512px RGB232/64/48 raster; it gates actual HTTP tile responses, pauses/reopens/restarts/resumes, stops the real server, checks cached pixels and rendered private vector, verifies native-cache isolation and wipes shared assets. Test policies/identity are explicit trusted fixtures; existing actual identity/session regressions also passed.
 
-Self-review only; no independent reviewer claimed. Fixed findings: route/status/cursor validation, current scope/replay, feed-clock/head ordering and first-subscription convergence, atomic partial bundles/PURGE, migration preservation, persisted native observer recovery, fixture cleartext/zoom coverage and recursive node:test skipping. No acceptance assertion or timeout was relaxed. GitHub reviews/threads and live strict protection will be checked before normal merge; no auto-merge/bypass.
+Self-review only; no independent reviewer claimed. Fixed findings: route/status/cursor validation, current scope/replay, feed-clock/head ordering and first-subscription convergence, atomic partial bundles/PURGE, migration preservation, persisted native observer recovery, fixture cleartext/zoom coverage and recursive node:test skipping. No acceptance assertion or timeout was relaxed. GitHub reviews/threads were empty immediately before merge; required aggregate strict=true, enforce_admins=true, conversation resolution=true, force pushes/deletions disabled. Main remained baseline1432b7b, PR head e12beaa was mergeable and exact PR-head run43088733764 all8 SUCCESS. Normal merge API enforced expected head; no auto-merge/bypass. Self-review recorded in PR79 comment6805491935.
 
 ## Complete approved changed-file inventory
 
@@ -132,5 +141,12 @@ Every row below is explicitly authorized by CR75, including the separate two deb
 | tests/evidence/WP49-029_COMPLETION_REPORT.md | Actual separate G0-G12 results/full files/SHA/CR/PR/run/limitations and activation evidence | Evidence | G12 |
 | apps/mobile/android/app/src/debug/AndroidManifest.xml | Reference loopback-only debug security config | Android debug test profile | Native actual tile fixture; release unchanged |
 | apps/mobile/android/app/src/debug/res/xml/offline_gis_test_network_security.xml | Deny base cleartext; allow only exact loopback fixture domains | Android debug test profile | Source security assertion and actual native download |
-
 | `.github/workflows/ci-quality-gates.yml` | Unit runner selector only, ubuntu-latest -> ubuntu-24.04 | platform CI | approved CR75 amendment6805162849, exact SHA256e55eb812da8dd81c33c7a9eaf82d496ca447515705e559f3f596626cd53a824f; owner approval before edit |
+
+## G12 publication activation and unlock decision
+
+Implementation merge has exactly two parents: baseline1432b7bc81292d5fae7dbc3e4b07bb412a418c3e and tested heade12beaa8cc8a86bf47fc733d52e398c0bd946f7a. Merge tree `9bd6b1d5d769a98ac59d908186943770c8bf8c59` equals tested-head tree. Source/tests acceptance and report-only publication are separate records.
+
+This final report path is already CR75-approved. Its publication must pass normal exact PR-head checks, ordinary merge and exact report-merge-SHA push CI, with live protection/reviews/threads verified. After observing those results, record the report PR/head/merge/run and completed closure in CR75. That activation makes G12 PASS and WP49-029 DONE without an infinite self-referential report rewrite. No unobserved report-publication PASS is asserted here.
+
+Unlock decision: implementation PASS; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED is intentionally unchanged as approved. WP030 is not started and must not be started by this closeout.
