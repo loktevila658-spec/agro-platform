@@ -294,10 +294,15 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     // Also validate the new owned delivery schema through its actual owner
     // commands/feed on this already provisioned PostGIS runner. The complete
     // Unit profile remains required separately; no assertion/job is skipped.
-    const offlineVertical = spawnSync(process.execPath, ['--test', 'apps/api/test/offline-gis.integration.test.mjs'], {
-      cwd: repositoryRoot, encoding: 'utf8', env: { ...process.env, POSTGIS_TEST_IMAGE: image },
+    const verticalEnvironment = { ...process.env, POSTGIS_TEST_IMAGE: image };
+    delete verticalEnvironment.NODE_TEST_CONTEXT; // independent runner, not a recursive node:test skip
+    const offlineVertical = spawnSync(process.execPath, ['--test', '--test-reporter=tap', 'apps/api/test/offline-gis.integration.test.mjs'], {
+      cwd: repositoryRoot, encoding: 'utf8', env: verticalEnvironment,
     });
     assert.equal(offlineVertical.status, 0, processFailure('Offline GIS owned-schema acceptance', offlineVertical));
+    for (const scenario of ['registered current scope','real owner correction','new approved geometry','concurrent selection','current organization/source/tenant','actual Task owner','real HTTP']) assert.ok(offlineVertical.stdout.includes(scenario), `Missing actual owned-schema scenario: ${scenario}\n${offlineVertical.stdout}\n${offlineVertical.stderr}`);
+    assert.match(offlineVertical.stdout, /# skipped 0/);
+    assert.match(offlineVertical.stdout, /# fail 0/);
     console.log(offlineVertical.stdout);
 
 
