@@ -28,13 +28,14 @@ class _OfflineMapPageState extends State<OfflineMapPage> {
   void initState() {
     super.initState();
     widget.controller.addListener(changed);
-    if (widget.initialize)
+    if (widget.initialize) {
       unawaited(
         run(() async {
           await widget.controller.reconcile();
           await widget.controller.loadChoices();
         }),
       );
+    }
   }
 
   @override
@@ -52,10 +53,11 @@ class _OfflineMapPageState extends State<OfflineMapPage> {
       await action();
       if (mounted) setState(() => error = null);
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => error = 'Действие не выполнено. Проверьте разрешения, связь и свободное место; исходная команда сохранена в очереди.',
         );
+      }
     }
   }
 
@@ -101,7 +103,13 @@ class _OfflineMapPageState extends State<OfflineMapPage> {
             child:
                 widget.mapBuilder?.call(s, viewport) ??
                 GisMapCanvas(
-                  key: ValueKey(s.basemapReady ? m?.contentHash : 'vectors'),
+                  key: ValueKey(
+                    !s.visible
+                        ? 'unavailable'
+                        : s.basemapReady
+                        ? m?.contentHash
+                        : 'vectors',
+                  ),
                   style: s.basemapReady && m?.source != null
                       ? m!.source!.styleUrl
                       : gisBaseStyle,
@@ -185,7 +193,9 @@ class _OfflineMapPageState extends State<OfflineMapPage> {
                             ),
                           ),
                           icon: const Icon(Icons.assignment_outlined),
-                          label: Text('Задания: ${c.mapTasks.length}'),
+                          label: Text(
+                            'Все задания · в области ${c.mapTasks.length}',
+                          ),
                         ),
                     ],
                   ),
@@ -223,8 +233,9 @@ class _RegionSelectionState extends State<_RegionSelection> {
       (i) =>
           TextEditingController(text: s == null ? '' : s.bounds[i].toString()),
     );
-    if (s != null)
+    if (s != null) {
       zoom = RangeValues(s.minZoom.toDouble(), s.maxZoom.toDouble());
+    }
     unawaited(
       widget.controller.loadChoices().then((_) {
         if (mounted) setState(() {});
@@ -260,11 +271,12 @@ class _RegionSelectionState extends State<_RegionSelection> {
       await c.select(selection);
       if (mounted) Navigator.of(context).pop();
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => error =
               'Проверьте область, масштаб и разрешение на офлайн-работу.',
         );
+      }
     } finally {
       if (mounted) setState(() => saving = false);
     }
@@ -345,10 +357,31 @@ class _RegionSelectionState extends State<_RegionSelection> {
                 }
               }),
             ),
+          if (c.nextAfter != null)
+            TextButton(
+              onPressed: () async {
+                await c.moreChoices();
+                if (mounted) setState(() {});
+              },
+              child: const Text('Ещё поля'),
+            ),
+          if (selected.any((id) => !c.candidates.any((f) => f.id == id)))
+            const Text(
+              'Часть выбранных полей отсутствует на текущей странице. Загрузите следующие поля или снимите выбор.',
+            ),
+          TextButton(
+            onPressed: selected.isEmpty ? null : () => setState(selected.clear),
+            child: const Text('Снять выбор'),
+          ),
           if (error != null) Text(error!),
           const SizedBox(height: 12),
           FilledButton(
-            onPressed: saving || selected.isEmpty ? null : save,
+            onPressed:
+                saving ||
+                    selected.isEmpty ||
+                    selected.any((id) => !c.candidates.any((f) => f.id == id))
+                ? null
+                : save,
             child: Text(saving ? 'Сохранение…' : 'Сохранить область'),
           ),
         ],

@@ -99,7 +99,7 @@ Future<void> seedMap(
       version,
     ],
   );
-  if (complete)
+  if (complete) {
     await w.db.customStatement(
       'INSERT OR REPLACE INTO entity_cache VALUES(?,?,?,?)',
       [
@@ -109,6 +109,7 @@ Future<void> seedMap(
         version,
       ],
     );
+  }
 }
 
 OfflineGrant mapGrant(Workspace w) => OfflineGrant(

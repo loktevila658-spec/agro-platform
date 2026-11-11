@@ -55,6 +55,7 @@ class PackageSnapshot {
   final double progress;
   PackageState get state {
     if (!visible || manifest == null) return PackageState.unavailable;
+    if (error == 'MAP_UPDATE_INCOMPLETE') return PackageState.stale;
     if (error != null) return PackageState.error;
     if (paused) return PackageState.paused;
     if (manifest!.sourceChanged) return PackageState.stale;
@@ -70,8 +71,9 @@ void validatePackage(OfflineGisManifest m) {
       m.entries.toSet().length != m.entries.length ||
       m.entries.length > 1000 ||
       DateTime.tryParse(m.createdAt) == null ||
-      DateTime.tryParse(m.lastValidatedAt) == null)
+      DateTime.tryParse(m.lastValidatedAt) == null) {
     throw StateError('INVALID_OFFLINE_PACKAGE');
+  }
   validateSelection(m.selection);
 }
 
@@ -91,8 +93,9 @@ void validateSelection(OfflineGisSelection s) {
       s.targets.any((t) => !{'FIELD', 'FIELD_SEASON'}.contains(t.kind)) ||
       s.minZoom < 0 ||
       s.maxZoom > 24 ||
-      s.minZoom > s.maxZoom)
+      s.minZoom > s.maxZoom) {
     throw ArgumentError('INVALID_MAP_SELECTION');
+  }
   final width = b[2] > b[0] ? b[2] - b[0] : 360 - b[0] + b[2];
   if (width * (b[3] - b[1]) > 3600) throw ArgumentError('MAP_REGION_TOO_LARGE');
 }

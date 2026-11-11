@@ -21,8 +21,9 @@ class MapSourceAccess {
         source.sourceVersion.isEmpty ||
         source.minZoom < 0 ||
         source.maxZoom > 24 ||
-        source.minZoom > source.maxZoom)
+        source.minZoom > source.maxZoom) {
       throw StateError('MAP_SOURCE_NOT_AUTHORIZED');
+    }
   }
 }
 

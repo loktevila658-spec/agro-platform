@@ -33,7 +33,7 @@ class OfflinePackageController extends ChangeNotifier {
   List<OfflineGisCandidate> candidates = [];
   List<OfflineGisSource> sources = [];
   List<TaskView> mapTasks = [];
-  String? choiceError, commandState;
+  String? choiceError, commandState, nextAfter;
   bool busy = false, _closed = false;
   Timer? _timer;
   Future<void> _serial = Future<void>.value();
@@ -53,8 +53,9 @@ class OfflinePackageController extends ChangeNotifier {
   Future<void> reconcile({List<double>? bounds}) => _run(() async {
     if (bounds == null) await store.reconcile();
     view = await store.snapshot(bounds: bounds);
-    if (view.manifest?.source != null)
+    if (view.manifest?.source != null) {
       sourceAccess.validate(view.manifest!.source!);
+    }
     final states = await workspace.db.rows(
       "SELECT status FROM sync_outbox WHERE aggregate_type='OfflineGisPackage' AND status<>'confirmed' ORDER BY device_seq DESC LIMIT 1",
     );
@@ -73,11 +74,33 @@ class OfflinePackageController extends ChangeNotifier {
       for (final s in sources) {
         sourceAccess.validate(s);
       }
-      candidates = (await g.fields()).items;
+      final page = await g.fields();
+      candidates = page.items;
+      nextAfter = page.nextAfter;
       choiceError = null;
     } catch (_) {
       choiceError =
           'Не удалось получить разрешённые области. Повторите при подключении.';
+    }
+    _changed();
+  }
+
+  Future<void> moreChoices() async {
+    final g = gateway, after = nextAfter;
+    if (g == null || after == null) return;
+    try {
+      final page = await g.fields(after: after);
+      final byId = {
+        for (final f in candidates) f.id: f,
+        for (final f in page.items) f.id: f,
+      };
+      candidates = byId.values.toList();
+      if (page.nextAfter == after) throw StateError('INVALID_FIELD_PAGE');
+      nextAfter = page.nextAfter;
+      choiceError = null;
+    } catch (_) {
+      choiceError =
+          'Не удалось получить следующую страницу. Повторите при подключении.';
     }
     _changed();
   }
@@ -100,8 +123,9 @@ class OfflinePackageController extends ChangeNotifier {
           now.isBefore(g.expiresAt) &&
           g.allowedCommands.contains('OfflineGis.$action') &&
           g.allowedOwners.contains('OfflineGisPackage:$id') &&
-          await verify(g))
+          await verify(g)) {
         return g;
+      }
     }
     return null;
   }
@@ -112,8 +136,9 @@ class OfflinePackageController extends ChangeNotifier {
         !{
           'OfflineGis.Select',
           'OfflineGis.Refresh',
-        }.contains(draft.commandType))
+        }.contains(draft.commandType)) {
       return false;
+    }
     final pending = await workspace.db.rows(
       "SELECT 1 FROM sync_outbox WHERE aggregate_type='OfflineGisPackage' AND status IN ('pending','sending','retryWait') LIMIT 1",
     );
@@ -132,8 +157,9 @@ class OfflinePackageController extends ChangeNotifier {
             'maxZoom',
             'sourceId',
           }.contains(k),
-        ))
+        )) {
           return false;
+        }
       } else if (payload.isNotEmpty) {
         return false;
       }
@@ -159,8 +185,9 @@ class OfflinePackageController extends ChangeNotifier {
       final canonical = result['canonical'];
       if (canonical is Map &&
           canonical['version'] is int &&
-          (canonical['version'] as int) > version)
+          (canonical['version'] as int) > version) {
         version = canonical['version'] as int;
+      }
     }
     return version;
   }
@@ -282,11 +309,20 @@ class OfflinePackageController extends ChangeNotifier {
     _changed();
   });
   Future<void> close() async {
+    if (_closed) return;
     _closed = true;
     _timer?.cancel();
     await _serial;
     final id = view.regionId;
-    if (id != null && !view.basemapReady) await regions.pause(id);
+    try {
+      if (id != null && !view.basemapReady) await regions.pause(id);
+    } finally {
+      view = const PackageSnapshot();
+      mapTasks = [];
+      candidates = [];
+      sources = [];
+      notifyListeners();
+    }
   }
 
   @override

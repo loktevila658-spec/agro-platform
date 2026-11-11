@@ -6,7 +6,6 @@ import 'package:agroplatform_mobile/sync.dart';
 import 'package:agroplatform_mobile/features/tasks/task_repository.dart';
 import 'package:agroplatform_mobile/features/map/offline_package_controller.dart';
 import 'package:agroplatform_mobile/features/map/maplibre_offline_regions.dart';
-import 'package:agroplatform_mobile/features/map/offline_package.dart';
 
 import 'support.dart';
 import 'offline_package_test.dart' as f;

@@ -249,8 +249,9 @@ class Workspace {
     Future<void> Function()? externalCleanup,
   ) async {
     if (await File(p.join(directory.path, 'external-assets')).exists()) {
-      if (externalCleanup == null)
+      if (externalCleanup == null) {
         throw StateError('EXTERNAL_ASSET_CLEANUP_REQUIRED');
+      }
       await externalCleanup();
     }
     await secrets.delete(keyName);

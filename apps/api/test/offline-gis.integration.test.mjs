@@ -99,9 +99,9 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
     const approved=await gis.decide(owner,{geometryId:pin.geometryId,versionId:pin.versionId,expectedVersion:pin.headVersion,decision:'APPROVED',effectiveAt:'2026-11-04T00:00:00Z',reason:'Test approved'},context());
     const fieldData={name:'Pinned field',nominalAreaHa:'10',status:'ACTIVE',geometryVersionId:pin.versionId,allocations:[]};
     const field=await farm.createField(owner,{organizationId,code:'MAP-FIELD',data:fieldData,effectiveAt:'2026-11-04T01:00:00Z',reason:'Fixture'},context());
-    let allowed=true,visibleOrganization=organizationId,licensed=true;
+    let allowed=true,visibleOrganization=organizationId,licensed=true,pauseRead=false,enteredRead,releaseRead;let readGate=Promise.resolve();
     const source={id:'test-public',label:'Test licensed only',styleUrl:'https://fixture.invalid/style.json',styleVersion:'style1',sourceVersion:'source1',attribution:'Test fixture',termsRef:'test-license',offlineAllowed:true,publicBasemap:true,minZoom:0,maxZoom:12};
-    const registry=new OfflineGisRegistry();registry.install({scope:async()=>allowed?{organizationIds:[visibleOrganization],renderProfile:{version:'test-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined,sources:async()=>licensed?[source]:[]});
+    const registry=new OfflineGisRegistry();registry.install({scope:async(a,action)=>{if(pauseRead&&action==='offline-gis.package.read'){pauseRead=false;enteredRead();await readGate;}return allowed?{organizationIds:[visibleOrganization],renderProfile:{version:'test-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined;},sources:async()=>licensed?[source]:[]});
     const syncRegistry=new SyncRegistry();const auth='Bearer map-fixture';
     const identity={async authenticate(value){if(value!==auth)throw new UnauthorizedException();return {...actor};}};
     const sync=new SyncService(pool,syncRegistry,identity),service=new OfflineGisService(pool,registry,farm,gis,sync),consumer=new OfflineGisEvents(service);
@@ -143,6 +143,18 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         const projection=(await pool.query('SELECT projection FROM offline_gis.field_projection WHERE tenant_id=$1',[tenantId])).rows[0].projection;
         assert.equal(projection.geometryVersionId,pin.versionId);assert.equal(projection.sourceChanged,true);assert.equal((await service.read(actor,deviceId)).sourceChanged,true);version=(await service.read(actor,deviceId)).version;
       });
+      await t.test('concurrent selection cannot be overwritten by an older event read',async()=>{
+        await farm.correctField(owner,field.entityId,{expectedVersion:'2',data:{...fieldData,name:'Concurrent correction'},effectiveAt:'2026-11-04T03:00:00Z',reason:'Race fixture'},context());
+        const entered=new Promise(resolve=>enteredRead=resolve);readGate=new Promise(resolve=>releaseRead=resolve);pauseRead=true;
+        const dispatcher=new OutboxDispatcherService(pool,[consumer],new InboxService(pool));const delivery=dispatcher.dispatchAvailable(1000);
+        await entered;
+        const changed={...chosen,bounds:[30,50,30.15,50.15]};
+        try{const accepted=await send(intent('Select',changed));assert.equal(accepted.status,'ACCEPTED');version=accepted.aggregateVersion;}finally{releaseRead();}
+        await delivery;assert.deepEqual((await service.read(actor,deviceId)).selection.bounds,changed.bounds);
+        await pool.query('UPDATE platform_events.outbox_delivery SET next_attempt_at=clock_timestamp()');await dispatcher.dispatchAvailable(1000);
+        assert.deepEqual((await service.read(actor,deviceId)).selection.bounds,changed.bounds);
+        assert.equal((await service.read(actor,deviceId)).version,version);
+      });
       await t.test('current organization/source/tenant scope is rechecked on replay and pull',async()=>{
         visibleOrganization=randomUUID();await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
         visibleOrganization=organizationId;gisAllowed=false;await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);gisAllowed=true;licensed=false;await assert.rejects(service.read(actor,deviceId));licensed=true;
@@ -155,7 +167,7 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         assert.equal((await send(intent('Start',{},'Task',taskId,1))).status,'CONFLICT');
       });
       await t.test('real HTTP registration/route check and immutable audit; rollback preserves package/feed',async()=>{
-        class HttpFixture{};Module({controllers:[OfflineGisController],providers:[{provide:OfflineGisService,useValue:service},{provide:SyncService,useValue:sync}]})(HttpFixture);app=await NestFactory.create(HttpFixture,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();
+        class HttpFixture{};Module({controllers:[OfflineGisController],providers:[{provide:OfflineGisService,useValue:{registry,read:(...a)=>service.read(...a),candidates:(...a)=>service.candidates(...a)}},{provide:SyncService,useValue:{registeredActor:(...a)=>sync.registeredActor(...a),push:(...a)=>sync.push(...a)}}]})(HttpFixture);app=await NestFactory.create(HttpFixture,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();
         assert.equal((await fetch(base+'/v1/offline-gis/sources')).status,401);assert.equal((await fetch(base+'/v1/offline-gis/packages/'+deviceId,{headers:{authorization:auth}})).status,200);
         const bad=await fetch(base+'/v1/offline-gis/packages/'+deviceId+'/commands/select',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:{type:'Task.Start'}})});assert.equal(bad.status,400);
         await assert.rejects(pool.query("UPDATE offline_gis.audit SET action='overwrite'"),/IMMUTABLE/);

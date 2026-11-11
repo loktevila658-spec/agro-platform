@@ -55,16 +55,37 @@ class OfflinePackageStore {
       validatePackage(m);
       if (m.tenantId != workspace.identity.tenantId ||
           m.userId != workspace.identity.userId ||
-          m.deviceId != id)
+          m.deviceId != id) {
         throw StateError('MAP_WORKSPACE_MISMATCH');
+      }
       final count = (await db.rows(
         "SELECT count(*) n FROM entity_cache WHERE entity_type='OfflineGisField' AND entity_id IN (SELECT value FROM json_each(?)) AND json_extract(projection_json,'\$.packageId')=? AND json_extract(projection_json,'\$.bundleVersion')=?",
         [jsonEncode(m.entries), id, m.version],
       )).single['n'];
       if (count != m.entries.length) {
+        final prior = (await db.rows(
+          'SELECT * FROM offline_package_state WHERE id=?',
+          [id],
+        )).single;
+        var usable = false;
+        if (prior['scope_version'] == scope && prior['manifest_json'] != null) {
+          final active = OfflineGisManifest.fromJson(
+            jsonDecode(prior['manifest_json'] as String)
+                as Map<String, Object?>,
+          );
+          final retained = (await db.rows(
+            "SELECT count(*) n FROM entity_cache WHERE entity_type='OfflineGisField' AND entity_id IN (SELECT value FROM json_each(?))",
+            [jsonEncode(active.entries)],
+          )).single['n'];
+          usable = retained == active.entries.length;
+        }
         await db.customStatement(
-          'UPDATE offline_package_state SET visible=0,error=? WHERE id=?',
-          ['MAP_SYNC_INCOMPLETE', id],
+          'UPDATE offline_package_state SET visible=?,error=? WHERE id=?',
+          [
+            usable ? 1 : 0,
+            usable ? 'MAP_UPDATE_INCOMPLETE' : 'MAP_SYNC_INCOMPLETE',
+            id,
+          ],
         );
         return;
       }
@@ -73,7 +94,7 @@ class OfflinePackageStore {
         [id, m.version, jsonEncode(m.entries)],
       );
       await db.customStatement(
-        'UPDATE offline_package_state SET scope_version=?,manifest_json=?,active_version=?,visible=1,error=CASE WHEN error=\'MAP_SYNC_INCOMPLETE\' THEN NULL ELSE error END WHERE id=?',
+        'UPDATE offline_package_state SET scope_version=?,manifest_json=?,active_version=?,visible=1,error=CASE WHEN error IN (\'MAP_SYNC_INCOMPLETE\',\'MAP_UPDATE_INCOMPLETE\') THEN NULL ELSE error END WHERE id=?',
         [scope, jsonEncode(m.toJson()), m.version, id],
       );
       await db.customStatement(
@@ -94,8 +115,9 @@ class OfflinePackageStore {
     final p = rows.single;
     if (p['visible'] != 1 ||
         p['scope_version'] != p['current_scope'] ||
-        p['manifest_json'] == null)
+        p['manifest_json'] == null) {
       return const PackageSnapshot();
+    }
     // A scope reset or PURGE cannot resurrect the pinned snapshot.
     final cached = await db.rows(
       "SELECT entity_id FROM entity_cache WHERE entity_type='OfflineGisPackage' AND entity_id=?",

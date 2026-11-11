@@ -31,3 +31,7 @@ Implementation: derived versioned package/field delivery through existing sync, 
 Native fixture issue: main manifest denies cleartext; the preflight missed that it blocks the test-owned loopback HTTP server. Proposed amendment is limited to debug manifest plus debug network-security XML allowing localhost/127.0.0.1 only. Release/main configuration and production MapSource HTTPS validation remain strict. No out-of-allowlist file has been edited while that decision is pending.
 
 Full final SHA/file/CI inventory and limitations will replace this in-progress record after observed acceptance. CR75 remains OPEN; WP030 is not started.
+
+## First hosted checkpoint
+
+Run43048967448, workflow_dispatch, exact head e937d5f217b5b221ba8b35d35d258dd6cc905698: Typecheck/Contract/Lint/Runtime SUCCESS; Mobile FAILED at analyzer (num/double boundaries and strict brace/import rules); Migration FAILED at remaining old expectedSchemaVersion15 assertion against actual16. Unit was still installing native GIS dependencies when corrective work was prepared. No full PASS. Corrected types/blocks/import and schema expectation without disabling checks. Additional review preserves actual foundation style-loaded smoke semantics, keeps old consistent bundle during a partial update with PURGE/scope fail-closed guards, and tests concurrent selection/event rollback plus encrypted attachment/receipt migration preservation. New exact-head CI remains required.

@@ -365,8 +365,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     try {
       await mapController?.close();
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() => error = 'Workspace cleanup failed; sign-in blocked');
+      }
       return;
     }
     final token = accessToken;

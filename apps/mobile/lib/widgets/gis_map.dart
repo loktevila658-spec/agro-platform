@@ -47,12 +47,14 @@ class GisMapCanvas extends StatefulWidget {
     this.centers = const [],
     this.bounds,
     this.onViewport,
+    this.onLoaded,
   });
   final String style;
   final List<OfflineGisField> fields;
   final List<FieldCenter> centers;
-  final List<double>? bounds;
+  final List<num>? bounds;
   final ValueChanged<List<double>>? onViewport;
+  final VoidCallback? onLoaded;
   @override
   State<GisMapCanvas> createState() => _GisMapCanvasState();
 }
@@ -78,11 +80,12 @@ class _GisMapCanvasState extends State<GisMapCanvas> {
         fieldCenters(widget.centers),
       );
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => error =
               'Не удалось показать сохранённые поля. Откройте карту повторно.',
         );
+      }
     }
   }
 
@@ -145,24 +148,29 @@ class _GisMapCanvasState extends State<GisMapCanvas> {
                   circleStrokeWidth: 2,
                 ),
               );
-              if (mounted) setState(() => loaded = true);
+              if (mounted) {
+                setState(() => loaded = true);
+                widget.onLoaded?.call();
+              }
             } catch (_) {
-              if (mounted)
+              if (mounted) {
                 setState(
                   () => error = 'Карта недоступна. Сохранённые задания остаются в списке.',
                 );
+              }
             }
           },
           onCameraIdle: () async {
             try {
               final b = await controller?.getVisibleRegion();
-              if (mounted && b != null)
+              if (mounted && b != null) {
                 widget.onViewport?.call([
                   b.southwest.longitude,
                   b.southwest.latitude,
                   b.northeast.longitude,
                   b.northeast.latitude,
                 ]);
+              }
             } catch (_) {}
           },
         ),
@@ -183,22 +191,36 @@ class _GisMapCanvasState extends State<GisMapCanvas> {
   }
 }
 
-class GisMapPage extends StatelessWidget {
+class GisMapPage extends StatefulWidget {
   const GisMapPage({super.key});
+  @override
+  State<GisMapPage> createState() => _GisMapPageState();
+}
+
+class _GisMapPageState extends State<GisMapPage> {
+  bool loaded = false;
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Карта')),
-    body: const Stack(
+    body: Stack(
       children: [
-        GisMapCanvas(),
+        GisMapCanvas(
+          onLoaded: () {
+            if (mounted) setState(() => loaded = true);
+          },
+        ),
         Positioned(
           left: 16,
           right: 16,
           bottom: 32,
           child: Material(
             child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Text('Нет подключённых слоёв. Подложка не подключена.'),
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                loaded
+                    ? 'Нет подключённых слоёв. Подложка не подключена.'
+                    : 'Загрузка карты…',
+              ),
             ),
           ),
         ),

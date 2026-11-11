@@ -38,8 +38,8 @@ class MapLibreOfflineRegions implements OfflineRegions {
     final region = await ml.downloadOfflineRegion(
       ml.OfflineRegionDefinition(
         bounds: ml.LatLngBounds(
-          southwest: ml.LatLng(b[1], b[0]),
-          northeast: ml.LatLng(b[3], b[2]),
+          southwest: ml.LatLng(b[1].toDouble(), b[0].toDouble()),
+          northeast: ml.LatLng(b[3].toDouble(), b[2].toDouble()),
         ),
         mapStyleUrl: source.styleUrl,
         minZoom: m.selection.minZoom.toDouble(),

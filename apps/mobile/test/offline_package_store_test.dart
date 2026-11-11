@@ -31,7 +31,9 @@ void main() {
       );
       await f.seedMap(w, version: 2, complete: false);
       await s.reconcile();
-      expect((await s.snapshot()).visible, isFalse);
+      expect((await s.snapshot()).visible, isTrue);
+      expect((await s.snapshot()).manifest!.version, 1);
+      expect((await s.snapshot()).fields.single.bundleVersion, 1);
       await f.seedMap(w, version: 2);
       await s.reconcile();
       expect((await s.snapshot()).fields.single.bundleVersion, 2);

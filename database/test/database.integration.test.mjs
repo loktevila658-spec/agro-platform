@@ -285,7 +285,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     const body = await response.json();
     assert.deepEqual(body, {
       schemaVersion: 16,
-      expectedSchemaVersion: 15,
+      expectedSchemaVersion: 16,
       postgisVersion: body.postgisVersion,
       status: 'current',
     });

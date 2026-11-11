@@ -20,6 +20,33 @@ void main() {
     await w.db.customStatement(
       "INSERT INTO sync_cursor VALUES('main','preserved',42,1)",
     );
+    final source = await File('${root.path}/fixture.pdf')
+        .writeAsString('%PDF-test-migration-data');
+    final attachment = await w.attachments.stage(
+      source,
+      ownerRef: 'Fixture:entity',
+      evidenceType: 'photo',
+      mime: 'application/pdf',
+    );
+    final lease = (await w.commands(verify: (_) async => true).claim())!;
+    await w
+        .commands(verify: (_) async => true)
+        .recordServerResult(
+          lease.commandId,
+          lease.leaseToken!,
+          state: CommandState.confirmed,
+          result: {
+            'status': 'ACCEPTED',
+            'canonical': {'version': 8},
+          },
+          serverReceivedAt: DateTime.now().toUtc(),
+        );
+    final pending = fixtureDraft(value: 'still-pending');
+    await w
+        .commands(verify: (_) async => true, validate: (_, _) async => true)
+        .enqueue(pending, testGrant(identity));
+    final attachments = await w.db.rows('SELECT * FROM local_attachment');
+    final receipts = await w.db.rows('SELECT * FROM sync_command_result');
     final before = await w.db.rows('SELECT * FROM sync_outbox');
     final directory = w.directory.path;
     await w.close();
@@ -34,6 +61,12 @@ void main() {
     try {
       expect((await w.db.rows('PRAGMA user_version')).single.values.single, 3);
       expect(await w.db.rows('SELECT * FROM sync_outbox'), before);
+      expect(await w.db.rows('SELECT * FROM local_attachment'), attachments);
+      expect(await w.db.rows('SELECT * FROM sync_command_result'), receipts);
+      expect(
+        await w.attachments.readPart(attachment, 1, isWifi: true),
+        isNotEmpty,
+      );
       expect(
         (await w.db.rows('SELECT cursor FROM sync_cursor')).single['cursor'],
         'preserved',
