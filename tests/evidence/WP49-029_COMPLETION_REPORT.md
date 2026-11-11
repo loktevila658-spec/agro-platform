@@ -1,6 +1,6 @@
-# WP49-029 Completion Report — IN PROGRESS
+# WP49-029 Completion Report — implementation validated, G12 pending
 
-WP49-029 is **NOT DONE**. No implementation PR or merge has occurred. Final exact-head CI and native acceptance are outstanding. This report replaces earlier draft checkpoints; unknown gates are not PASS.
+Date:2026-11-11 Europe/Moscow. Source implementation G0–G11 validated on exact `ce20d46d62831a833587b4ee89f061678f4979d1`, [full pre-PR run43086770346](https://github.com/loktevila658-spec/agro-platform/actions/runs/43086770346), all8 SUCCESS. [Implementation PR79](https://github.com/loktevila658-spec/agro-platform/pull/79) is OPEN. This report update must pass exact PR-head CI before ordinary merge. **NOT DONE** until G12: exact merge push, final report publication and CR75 closeout. No unobserved merge/publication result is asserted.
 
 ## Baseline and authority
 
@@ -33,18 +33,18 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 | Gate | Current result and evidence |
 |---|---|
 | G0 Prerequisites | PASS: accepted declared dependencies, separately accepted Task owner, pre-code scope approvals, unchanged manifest. |
-| G1 Static | PARTIAL: hosted typecheck/lint/architecture/contracts pass; prior exacta45d708 mobile format/analyzer zero issues; final-head mobile gate pending. |
-| G2 Migration | PARTIAL: hosted PostGIS schema16/rollback/compatibility and owner tests pass; mobile1/2->3 preservation passed in52-test suite on a45d708; final exact CI pending. |
-| G3 Unit | PENDING full required Unit: runner cannot finish system GDAL dependency installation; local targeted45/45 and architecture11/11 PASS, hosted Flutter52/52 PASS on a45d708. These do not substitute full Unit. |
-| G4 Integration | PARTIAL: actual PostGIS9/9 owner scenarios, zero skipped, verified a45d708 run43059399296; existing full-suite integration still requires Unit completion. |
-| G5 API Contract | PASS targeted hosted additive OpenAPI/codegen/backward checks; final exact PR-head/full CI still required. |
-| G6 Event Contract | PASS targeted actual dispatcher/inbox/failure/retry/derived-feed tests, no new domain event schema; final full CI remains required. |
-| G7 Permissions | PASS targeted actual default-deny/current scope/org/tenant/GIS/source/replay negatives; final full CI remains required. |
-| G8 Offline | PARTIAL: encrypted cache, queue identity, receipts, partial bundles, PURGE, conflict/retry and actual Task commands verified; real native tiles/pixels/resume PASS on69ac8fc; final new-head/full CI pending. |
-| G9 Audit/Provenance | PASS targeted actual audit, command replay, immutable owner pins and transaction fault rollback; final full CI remains required. |
-| G10 Demo/E2E | PARTIAL: actual deterministic owner/Task lifecycle/retry/fact scenario passes; native fixture PASS on69ac8fc; final new-head/full CI pending. |
-| G11 NFR/Security | PARTIAL: inherited capacity/convergence and native cipher/keystore tests pass; viewport bound/security negatives pass. Native map scenario PASS on69ac8fc; final new-head/full CI pending; iOS N/A. |
-| G12 Evidence/Merge | PENDING: final inventory/report, reviewed successful source head, PR checks/reviews, normal merge, exact push checks and CR closeout. |
+| G1 Static | PASS: exact approved53 paths, hosted typecheck/architecture/lint capability, enforced Flutter format/analyzer/lockfile, codegen current. |
+| G2 Migration | PASS: real clean/repeated/current PostGIS schema16, old migration immutability, owned constraints and mobile1/2->3 preservation. |
+| G3 Unit | PASS: full required Unit, API188/188 and Flutter52/52, zero skipped acceptance; local targeted45/45 and architecture11/11. |
+| G4 Integration | PASS: actual PostGIS9/9 owner scenarios plus retained real API/infrastructure/runtime suites; no fake owner substitute. |
+| G5 API Contract | PASS: additive canonical OpenAPI/codegen/backward checks, generated copies current, old and new exact operation assertions retained. |
+| G6 Event Contract | PASS: actual dispatcher/inbox/failure/retry/derived-feed transactionality and command replay; no new domain event schema. |
+| G7 Permissions | PASS: actual default-deny/current scope/org/tenant/GIS/source/replay negatives and fail-closed cache/PURGE. |
+| G8 Offline | PASS: encrypted cache, command identity/receipts, partial bundles/PURGE, conflict/retry, real Task commands, actual native tiles/pixels/pause/persist/restart/resume. |
+| G9 Audit/Provenance | PASS: actual immutable audit, original command/receipt/provenance, exact geometry pins, transactional fault rollback. |
+| G10 Demo/E2E | PASS: deterministic actual owner/Task lifecycle/retry/fact and native server-shutdown raster/vector/cleanup scenarios. |
+| G11 NFR/Security | PASS applicable engineering/security profile: retained capacity/convergence, bounded viewport, native cipher/keystore, licensed public cache/private-data isolation/wipe. iOS N/A; physical-device certification unclaimed. |
+| G12 Evidence/Merge | PENDING: exact final PR-head checks/reviews, ordinary merge, exact push, final authorized report publication and CR75 closeout. |
 
 ## Observed checks
 
@@ -55,7 +55,8 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 |172b40abce7e1c81460b22e6a83a3160d9ce5be7|43054617048|Superseded. Nested node:test inherited runner context and skipped child; **no domain acceptance** attributed.|
 |542e99fc273fd5d444df95712a0ace93f75c4d09|43055664929|Actual owner8/8 zero skipped verified after removing recursive runner context and asserting named scenarios. Static/contracts/runtime/migration PASS; Flutter52/APK PASS; native3/4, GIS zero tiles FAIL. Unit20-minute dependency DNS timeout.|
 |a45d70834aa61bcd538a100f025e4e48ca826337|43059399296|Actual owner9/9 zero skipped including first-subscription race; static/contracts/runtime/migration PASS; analyzer clean, Flutter52/APK PASS; native3/4, GIS zero tiles FAIL. Unit same setup stall, canceled on superseding dispatch.|
-|69ac8fc0b05149cdba9c83a9541b450e24e663b9|43061289158|Typecheck/Lint/Contract/Migration/Runtime SUCCESS; Mobile analyzer clean, Flutter52/APK and all4 actual Android native scenarios SUCCESS. Unit still stalls in system dependency setup; no full acceptance.|
+|69ac8fc0b05149cdba9c83a9541b450e24e663b9|43061289158|Typecheck/Lint/Contract/Migration/Runtime SUCCESS; Mobile analyzer clean, Flutter52/APK and all4 actual Android native scenarios SUCCESS. Unit20-minute timeout during dependency DNS failures; no full acceptance.|
+|ce20d46d62831a833587b4ee89f061678f4979d1|43086770346|Pre-PR full CI all8 SUCCESS: API188/188, Flutter52/52, owner9/9 zero skipped, Android native4/4, contracts/static/migration/runtime. Source accepted; G12 publication/merge pending.|
 
 Native diagnosis on a45d708: direct Dart style precheck200 and native style request succeeded, SDK complete fraction1.0, tile requests0. Exact pinned native13.5.0 [zoom calculation](https://github.com/maplibre/maplibre-native/blob/android-v13.5.0/src/mbgl/util/tile_cover.cpp#L149) maps256px tile at map zoom0 to source zoom1; [offline cover](https://github.com/maplibre/maplibre-native/blob/android-v13.5.0/platform/default/src/mbgl/storage/offline_download.cpp#L38) intersected that with fixture maxzoom0, yielding empty coverage. Fixture PNG and declared tileSize corrected consistently to512. All tile/pause/resume/offline pixel/vector/privacy/wipe assertions and wait bounds retained.
 
@@ -65,63 +66,71 @@ Local Docker daemon unavailable: probed once, no repeated Compose launch or loca
 
 Pinned maplibre_gl0.27.1 Android resume loses observer after process restart and returns ResumeRegionError. Production fallback restarts the same persisted partial region definition through supported plugin API; public resources may download again, explicitly disclosed in UI. Complete cached regions avoid restart. Native test covers pause, encrypted workspace reopen, persisted definition and restart; no process-kill/byte-range, physical-device/battery/ANR or iOS certification claimed.
 
-No implementation PR/merge/closeout exists yet. WP030 remains unstarted. Final report must record actual PR heads, reviews and exact post-merge checks before DONE.
+Implementation PR79 is open; no merge/closeout exists yet. WP030 remains unstarted. Final report must record actual tested PR head and merge/push evidence before G12 activation.
+
+## Deterministic scenario and review
+
+Owner fixture uses explicit manual field/operation/reference data, fixed effective/observed timestamps2026-11-04T00:00:00Z through04:00:00Z and fixed correlation. Random UUIDs/ephemeral ports isolate runs; they do not select business behavior. Actual Field correction, GIS approval with old pin retained, event failure/retry/replay, concurrent selection and first subscription, current permission withdrawal, HTTP guards, Task Create/Plan/Assign/Accept/Start/Complete and lost-response retry converge with one execution fact. Native fixture supplies a fixed512px RGB232/64/48 raster; it gates actual HTTP tile responses, pauses/reopens/restarts/resumes, stops the real server, checks cached pixels and rendered private vector, verifies native-cache isolation and wipes shared assets. Test policies/identity are explicit trusted fixtures; existing actual identity/session regressions also passed.
+
+Self-review only; no independent reviewer claimed. Fixed findings: route/status/cursor validation, current scope/replay, feed-clock/head ordering and first-subscription convergence, atomic partial bundles/PURGE, migration preservation, persisted native observer recovery, fixture cleartext/zoom coverage and recursive node:test skipping. No acceptance assertion or timeout was relaxed. GitHub reviews/threads and live strict protection will be checked before normal merge; no auto-merge/bypass.
 
 ## Complete approved changed-file inventory
 
-- `apps/mobile/lib/features/map/offline_package.dart`
-- `apps/mobile/lib/features/map/offline_package_store.dart`
-- `apps/mobile/lib/features/map/offline_package_controller.dart`
-- `apps/mobile/lib/features/map/map_source.dart`
-- `apps/mobile/lib/features/map/maplibre_offline_regions.dart`
-- `apps/mobile/lib/features/map/offline_map_page.dart`
-- `apps/mobile/lib/widgets/gis_map.dart`
-- `apps/mobile/lib/main.dart`
-- `apps/mobile/lib/persistence/database.dart`
-- `apps/mobile/lib/persistence/workspace.dart`
-- `apps/mobile/test/offline_package_test.dart`
-- `apps/mobile/test/offline_package_store_test.dart`
-- `apps/mobile/test/offline_package_sync_test.dart`
-- `apps/mobile/test/offline_map_page_test.dart`
-- `apps/mobile/test/offline_package_migration_test.dart`
-- `apps/mobile/test/gis_map_test.dart`
-- `apps/mobile/test/sync_migration_test.dart`
-- `apps/mobile/test/workspace_test.dart`
-- `apps/mobile/integration_test/offline_gis_test.dart`
-- `apps/api/src/modules/offline-gis/offline-gis.module.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.types.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.validation.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.registry.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.service.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.controller.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.sync.ts`
-- `apps/api/src/modules/offline-gis/offline-gis.events.ts`
-- `apps/api/src/modules/offline-gis/README.md`
-- `apps/api/src/modules/farm/farm.service.ts`
-- `apps/api/src/modules/gis/gis.service.ts`
-- `apps/api/src/modules/events/events.module.ts`
-- `apps/api/src/app.module.ts`
-- `database/migrations/0016_offline_gis.sql`
-- `apps/api/src/schema-version.service.ts`
-- `apps/api/test/schema-version.test.mjs`
-- `apps/api/test/identity.integration.test.mjs`
-- `database/test/database.integration.test.mjs`
-- `database/test/migrate.test.mjs`
-- `apps/api/test/offline-gis.unit.test.mjs`
-- `apps/api/test/offline-gis.integration.test.mjs`
-- `apps/api/test/permissions.test.mjs`
-- `openapi/openapi.yaml`
-- `packages/contracts/src/generated/contracts.ts`
-- `packages/contracts/generated/dart/contracts.dart`
-- `packages/contracts/generated/manifest.json`
-- `apps/mobile/lib/generated/contracts.dart`
-- `packages/contracts/test/contracts.test.mjs`
-- `tests/contracts.test.mjs`
-- `permissions/catalog.yaml`
-- `tests/evidence/WP49-029_COMPLETION_REPORT.md`
-- `apps/mobile/android/app/src/debug/AndroidManifest.xml`
-- `apps/mobile/android/app/src/debug/res/xml/offline_gis_test_network_security.xml`
+Every row below is explicitly authorized by CR75, including the separate two debug paths and one Unit-runner amendment. Frozen literal path is preserved rather than reinterpreted.
 
-- `.github/workflows/ci-quality-gates.yml`
+| Exact path | Purpose | Owner | Verification |
+|---|---|---|---|
+| apps/mobile/lib/features/map/offline_package.dart | Typed versioned package manifest/state/provenance | Mobile map | Contract/unit |
+| apps/mobile/lib/features/map/offline_package_store.dart | Encrypted metadata, crash-safe staging/activation, cache projection reads | Mobile map | Migration/reopen/purge |
+| apps/mobile/lib/features/map/offline_package_controller.dart | Selection/download/update/pause/resume and canonical TaskRepository binding | Mobile map | Offline/retry/convergence |
+| apps/mobile/lib/features/map/map_source.dart | Trusted provider-neutral licensed PUBLIC basemap configuration; deny missing/unlicensed sources | Mobile map | Source/URL/version/security negatives |
+| apps/mobile/lib/features/map/maplibre_offline_regions.dart | Pinned native API download/status/resume and region/ambient cleanup | Mobile map | Actual Android download/restart/no-network |
+| apps/mobile/lib/features/map/offline_map_page.dart | Region selection, package metadata/progress/stale/error, fields and existing TasksPage navigation | Mobile map | Widget/E2E |
+| apps/mobile/lib/widgets/gis_map.dart | Render selected offline basemap and authorized encrypted-cache field vectors; bounded geometry batches | Mobile renderer | Widget/native rendering |
+| apps/mobile/lib/main.dart | Authenticated map route, sync completion refresh and fail-closed logout/native cleanup | Mobile shell | Workspace/logout/reconnect |
+| apps/mobile/lib/persistence/database.dart | Add schema3 package metadata; support upgrades1/2 preserving all queues/cursors | Mobile persistence | Fresh/1->3/2->3/crash compatibility |
+| apps/mobile/lib/persistence/workspace.dart | Use current schema metadata and map asset cleanup before workspace switch | Mobile persistence | Shared wipe/failure/tenant isolation |
+| apps/mobile/test/offline_package_test.dart | Selection/state/version/source validation | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/offline_package_store_test.dart | Atomic staging/activation/reopen/storage failure/isolation | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/offline_package_sync_test.dart | Real pull-store/TaskRepository/queue conflict/retry/purge/convergence | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/offline_map_page_test.dart | Selection/progress/stale/no-source/storage/action UI | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/offline_package_migration_test.dart | Upgrade keeps commands/attachments/receipts/cursors | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/gis_map_test.dart | Retain renderer baseline assertions and add field rendering | Mobile tests | Existing flutter test glob |
+| apps/mobile/test/sync_migration_test.dart | Retain prior1->current queue/cursor migration assertions at schema3 | Mobile persistence tests | Existing flutter test glob |
+| apps/mobile/test/workspace_test.dart | Retain workspace encryption/wipe assertions and add map cleanup | Mobile tests | Existing flutter test glob |
+| apps/mobile/integration_test/offline_gis_test.dart | Actual test-owned HTTP tile fixture, MapLibre download/pause/reopen/resume/offline render/shared cleanup; real encrypted workspace | Mobile native tests | Existing Android integration_test glob; no mocked native acceptance |
+| apps/api/src/modules/offline-gis/offline-gis.module.ts | Compose owner queries/SyncModule without EventsModule import cycle | Offline GIS delivery | Build/runtime |
+| apps/api/src/modules/offline-gis/offline-gis.types.ts | Versioned package/field/source/query command contracts | Offline GIS delivery | Unit/contracts |
+| apps/api/src/modules/offline-gis/offline-gis.validation.ts | Strict region/selection/zoom/compatibility input validation | Offline GIS delivery | Negative unit |
+| apps/api/src/modules/offline-gis/offline-gis.registry.ts | Install-once default-deny trusted current organization/site/field and source/license policy | Offline GIS delivery | Permission/revoke/tenant |
+| apps/api/src/modules/offline-gis/offline-gis.service.ts | Owned derived subscription/manifests/audit; transaction-bound owner queries; revalidate each request | Offline GIS delivery | Real PostGIS/rollback/pagination |
+| apps/api/src/modules/offline-gis/offline-gis.controller.ts | Authenticated package/source selection and refresh endpoints wrapping existing registered-device/sync command path | Offline GIS delivery | Real HTTP/contracts |
+| apps/api/src/modules/offline-gis/offline-gis.sync.ts | Register only GIS package/field projections and versioned selection/refresh delivery handlers in existing sync registry | Offline GIS delivery | Receipt/feed/replay/conflict |
+| apps/api/src/modules/offline-gis/offline-gis.events.ts | Farm/GIS/Land consumer refreshes affected derived subscriptions via owner APIs; inbox/feed in supplied transaction | Offline GIS delivery | Actual dispatcher duplicate/failure/retry/out-of-order |
+| apps/api/src/modules/offline-gis/README.md | Ownership/configuration/compatibility/recovery/security limitations | Offline GIS delivery | Review |
+| apps/api/src/modules/farm/farm.service.ts | Narrow transaction-bound paginated authorized Field/FieldSeason delivery query with organization/site/revision filters; no writes | Farm | Owner-query/current permission/tenant/as-of negatives |
+| apps/api/src/modules/gis/gis.service.ts | Narrow authorized immutable-version geometry payload query by exact pinned version; never silently choose latest | GIS | Pinned approved/rejected/version/provenance negatives |
+| apps/api/src/modules/events/events.module.ts | Register offline GIS consumer retaining notifications/replication and existing dispatcher protocol | Platform events composition | Actual inbox/outbox retry regression |
+| apps/api/src/app.module.ts | Register delivery composition | Application composition | Build/runtime |
+| database/migrations/0016_offline_gis.sql | Owned derived package selection/subscription, monotonic delivery versions, immutable request audit; no foreign business-table writes | Offline GIS/schema | Clean/repeated migration/constraints |
+| apps/api/src/schema-version.service.ts | Expected current schema16 | Schema contract | Readiness/current/ahead |
+| apps/api/test/schema-version.test.mjs | Preserve current/ahead negatives at schema16 | Schema tests | Existing test/*.test.mjs glob |
+| apps/api/test/identity.integration.test.mjs | Schema expectation15->16 only; retain identity security assertions | Identity tests | Existing test/*.test.mjs glob |
+| database/test/database.integration.test.mjs | Fresh/repeated schema16 and owned constraints; retain prior owner checks | Database tests | Existing test/*.test.mjs glob |
+| database/test/migrate.test.mjs | Contiguous immutable migration checks; retain prior assertions | Migration tests | Existing test/*.test.mjs glob |
+| apps/api/test/offline-gis.unit.test.mjs | Selection/source/version/default-deny validation | Offline GIS tests | Existing test/*.test.mjs glob |
+| apps/api/test/offline-gis.integration.test.mjs | Real owner mutations/event delivery/pull/HTTP + Task owner execution/reconnect/retry/revoke/convergence | Offline GIS tests | Existing test/*.test.mjs glob |
+| apps/api/test/permissions.test.mjs | Register exact GIS-delivery action names without granting roles; retain old negatives | Permissions tests | Existing test/*.test.mjs glob |
+| openapi/openapi.yaml | Additive canonical package/field/source/selection schemas and endpoints; Task contracts unchanged | API contracts | Compatibility/codegen |
+| packages/contracts/src/generated/contracts.ts | Unchanged canonical generator output for additive GIS delivery contract | Contracts generation | Codegen drift/Dart analyzer |
+| packages/contracts/generated/dart/contracts.dart | Unchanged canonical generator output for additive GIS delivery contract | Contracts generation | Codegen drift/Dart analyzer |
+| packages/contracts/generated/manifest.json | Unchanged canonical generator output for additive GIS delivery contract | Contracts generation | Codegen drift/Dart analyzer |
+| apps/mobile/lib/generated/contracts.dart | Unchanged canonical generator output for additive GIS delivery contract | Contracts generation | Codegen drift/Dart analyzer |
+| packages/contracts/test/contracts.test.mjs | Add exact additive operation expectations retaining all existing checks | Contract tests | Contract regression |
+| tests/contracts.test.mjs | Add exact additive operation expectations retaining all existing checks | Contract tests | Contract regression |
+| permissions/catalog.yaml | Explicit GIS package read/select/refresh actions; no default grants | Permissions | Deny/current scope negatives |
+| tests/evidence/WP49-029_COMPLETION_REPORT.md | Actual separate G0-G12 results/full files/SHA/CR/PR/run/limitations and activation evidence | Evidence | G12 |
+| apps/mobile/android/app/src/debug/AndroidManifest.xml | Reference loopback-only debug security config | Android debug test profile | Native actual tile fixture; release unchanged |
+| apps/mobile/android/app/src/debug/res/xml/offline_gis_test_network_security.xml | Deny base cleartext; allow only exact loopback fixture domains | Android debug test profile | Source security assertion and actual native download |
 
-Native acceptance: run43061289158/job130664459026 succeeded with actual tile download gated/pause/persisted definition/restart/resume, complete native status/bytes, actual fixture server shutdown, cached raster pixel assertion, runtime private vector render query, private name absent from native DB, empty region metadata and native/shared workspace wipe. This is genuine native acceptance on69ac8fc, not a source-only/mocked substitute. New runner/report head and subsequent PR/merge exact checks remain required.
+| `.github/workflows/ci-quality-gates.yml` | Unit runner selector only, ubuntu-latest -> ubuntu-24.04 | platform CI | approved CR75 amendment6805162849, exact SHA256e55eb812da8dd81c33c7a9eaf82d496ca447515705e559f3f596626cd53a824f; owner approval before edit |
