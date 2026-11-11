@@ -1,5 +1,7 @@
 -- Derived delivery only. Field/GIS/Task business authority remains with owners.
 CREATE SCHEMA offline_gis;
+-- Owned ordering row serializes subscription snapshots with in-flight selection.
+CREATE TABLE offline_gis.tenant_gate (tenant_id uuid PRIMARY KEY REFERENCES org.tenant(id));
 CREATE TABLE offline_gis.package (
  tenant_id uuid NOT NULL REFERENCES org.tenant(id),id uuid NOT NULL,user_id uuid NOT NULL,device_id uuid NOT NULL,session_id uuid NOT NULL,
  version bigint NOT NULL CHECK(version>0 AND version<=9007199254740991),selection jsonb NOT NULL,manifest jsonb NOT NULL,content_hash text NOT NULL,

@@ -191,7 +191,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(second.stdout, /migration 13 already applied/);
     assert.match(second.stdout, /migration 15 already applied/);
     assert.match(second.stdout, /migration 16 already applied/);
-    assert.equal(query(container,databaseUrl,"SELECT count(*) FROM information_schema.tables WHERE table_schema='offline_gis'"),'3');
+    assert.equal(query(container,databaseUrl,"SELECT count(*) FROM information_schema.tables WHERE table_schema='offline_gis'"),'4');
 
     assert.equal(
       query(
@@ -300,7 +300,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
       cwd: repositoryRoot, encoding: 'utf8', env: verticalEnvironment,
     });
     assert.equal(offlineVertical.status, 0, processFailure('Offline GIS owned-schema acceptance', offlineVertical));
-    for (const scenario of ['registered current scope','real owner correction','new approved geometry','concurrent selection','current organization/source/tenant','actual Task owner','real HTTP']) assert.ok(offlineVertical.stdout.includes(scenario), `Missing actual owned-schema scenario: ${scenario}\n${offlineVertical.stdout}\n${offlineVertical.stderr}`);
+    for (const scenario of ['registered current scope','real owner correction','new approved geometry','concurrent selection','initial subscription','current organization/source/tenant','actual Task owner','real HTTP']) assert.ok(offlineVertical.stdout.includes(scenario), `Missing actual owned-schema scenario: ${scenario}\n${offlineVertical.stdout}\n${offlineVertical.stderr}`);
     assert.match(offlineVertical.stdout, /# skipped 0/);
     assert.match(offlineVertical.stdout, /# fail 0/);
     console.log(offlineVertical.stdout);

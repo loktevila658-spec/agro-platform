@@ -91,7 +91,7 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
     await pool.query("INSERT INTO org.tenant(id,code,name,timezone,created_by) VALUES($1,'MAP','Map fixture','UTC',$2)",[tenantId,userId]);
     await pool.query("INSERT INTO org.organization(id,tenant_id,code,name,organization_type,created_by) VALUES($1,$2,'MAP-ORG','Map fixture','FARM',$3)",[organizationId,tenantId,userId]);
     const farmRegistry=new FarmRegistry(),landRegistry=new LandRegistry(),gisRegistry=new GisRegistry();
-    let gisAllowed=true;farmRegistry.installPolicy(async()=>true);landRegistry.installPolicy(async()=>true);gisRegistry.installPolicy(async()=>gisAllowed);
+    let gisAllowed=true,pauseGisAt=0,enteredGis,releaseGis,gisGate=Promise.resolve();farmRegistry.installPolicy(async()=>true);landRegistry.installPolicy(async()=>true);gisRegistry.installPolicy(async(a,action)=>{if(pauseGisAt>0&&action==='gis.read'&&--pauseGisAt===0){enteredGis();await gisGate;}return gisAllowed;});
     const gis=new GisService(pool,gisRegistry),farm=new FarmService(pool,farmRegistry,new LandService(pool,landRegistry,gis),gis);
     const context=()=>({idempotencyKey:randomUUID(),correlationId:'wp029-fixed-scenario',causationId:'manual-fixture'});
     const geometry={type:'Polygon',coordinates:[[[30,50],[30.1,50],[30.1,50.1],[30,50.1],[30,50]]]};
@@ -155,6 +155,29 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         assert.deepEqual((await service.read(actor,deviceId)).selection.bounds,changed.bounds);
         assert.equal((await service.read(actor,deviceId)).version,version);
       });
+      await t.test('initial subscription cannot miss an owner change committed during its first snapshot',async()=>{
+        const second={...actor,deviceId:randomUUID(),sessionId:randomUUID()};
+        const otherSync=new SyncService(pool,syncRegistry,{async authenticate(){return second;}});
+        await otherSync.register('first-subscription-fixture',{deviceId:second.deviceId,installationId:randomUUID(),schemaVersion:1});
+        const entered=new Promise(resolve=>enteredGis=resolve);gisGate=new Promise(resolve=>releaseGis=resolve);pauseGisAt=2;
+        const command=intent('Select',chosen,'OfflineGisPackage',second.deviceId,0);command.deviceSeq=1;
+        const selecting=otherSync.push('first-subscription-fixture',{deviceId:second.deviceId,scopeVersion:1,schemaVersion:1,commands:[command]});
+        await entered;
+        let delivery;
+        try{
+          await farm.correctField(owner,field.entityId,{expectedVersion:'3',data:{...fieldData,name:'After initial subscription copy'},effectiveAt:'2026-11-04T04:00:00Z',reason:'Initial subscription race'},context());
+          let enteredEvent;const consuming=new Promise(resolve=>enteredEvent=resolve);
+          const dispatcher=new OutboxDispatcherService(pool,[{name:consumer.name,async handle(tx,event){enteredEvent();return consumer.handle(tx,event);}}],new InboxService(pool));
+          delivery=dispatcher.dispatchAvailable(1000);await consuming;
+          let blocked=false;
+          for(let i=0;i<100&&!blocked;i++){blocked=(await pool.query("SELECT count(*)::int n FROM pg_stat_activity WHERE wait_event_type='Lock' AND query LIKE '%offline_gis.tenant_gate%'")).rows[0].n>0;if(!blocked)await new Promise(resolve=>setTimeout(resolve,10));}
+          assert.equal(blocked,true,'source delivery must wait for the in-flight first selection');
+        }finally{releaseGis();}
+        assert.equal((await selecting).results[0].status,'ACCEPTED');await delivery;
+        const projected=(await pool.query('SELECT projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,second.deviceId])).rows[0].projection;
+        assert.equal(projected.name,'After initial subscription copy');
+        version=(await service.read(actor,deviceId)).version;
+      });
       await t.test('current organization/source/tenant scope is rechecked on replay and pull',async()=>{
         visibleOrganization=randomUUID();await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
         visibleOrganization=organizationId;gisAllowed=false;await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);gisAllowed=true;licensed=false;await assert.rejects(service.read(actor,deviceId));licensed=true;
@@ -170,6 +193,9 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         class HttpFixture{};Module({controllers:[OfflineGisController],providers:[{provide:OfflineGisService,useValue:{registry,read:(...a)=>service.read(...a),candidates:(...a)=>service.candidates(...a)}},{provide:SyncService,useValue:{registeredActor:(...a)=>sync.registeredActor(...a),push:(...a)=>sync.push(...a)}}]})(HttpFixture);app=await NestFactory.create(HttpFixture,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();
         assert.equal((await fetch(base+'/v1/offline-gis/sources')).status,401);assert.equal((await fetch(base+'/v1/offline-gis/fields?after=invalid',{headers:{authorization:auth}})).status,400);assert.equal((await fetch(base+'/v1/offline-gis/packages/'+deviceId,{headers:{authorization:auth}})).status,200);
         const bad=await fetch(base+'/v1/offline-gis/packages/'+deviceId+'/commands/select',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:{type:'Task.Start'}})});assert.equal(bad.status,400);
+        const refreshCommand=intent('Refresh',{},'OfflineGisPackage',deviceId,(await service.read(actor,deviceId)).version);
+        const accepted=await fetch(base+'/v1/offline-gis/packages/'+deviceId+'/commands/refresh',{method:'POST',headers:{authorization:auth,'content-type':'application/json'},body:JSON.stringify({scopeVersion:1,command:refreshCommand})});
+        assert.equal(accepted.status,200);assert.equal((await accepted.json()).results[0].status,'ACCEPTED');
         await assert.rejects(pool.query("UPDATE offline_gis.audit SET action='overwrite'"),/IMMUTABLE/);
         const before=(await service.read(actor,deviceId)).version;await pool.query("CREATE FUNCTION offline_gis.fixture_fail() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'offline-fault';END $$;CREATE TRIGGER fixture_fail BEFORE INSERT ON offline_gis.audit FOR EACH STATEMENT EXECUTE FUNCTION offline_gis.fixture_fail()");
         await assert.rejects(send(intent('Refresh',{},'OfflineGisPackage',deviceId,before)),/offline-fault/);await pool.query('DROP TRIGGER fixture_fail ON offline_gis.audit');assert.equal((await service.read(actor,deviceId)).version,before);

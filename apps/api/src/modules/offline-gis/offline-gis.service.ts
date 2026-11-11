@@ -30,7 +30,11 @@ export class OfflineGisService {
  async authorize(tx:PoolClient,actor:SyncActor,c:SyncCommand):Promise<boolean>{try{if(c.aggregate.type!=='OfflineGisPackage'||c.aggregate.id!==actor.deviceId)return false;const action=c.type==='OfflineGis.Select'?'select':c.type==='OfflineGis.Refresh'?'refresh':undefined;if(!action)return false;const scope=await this.registry.scope(actor,`offline-gis.package.${action}`);const row=await this.row(tx,actor,c.aggregate.id);const chosen=action==='select'?selection(c.payload):row?.selection;if(!chosen)return false;if(action==='refresh')keys(c.payload,[]);await this.configuredSource(actor,chosen);const rows=await this.fields(tx,actor,scope,chosen);await this.geometryPermission(actor,rows);return rows.length===chosen.targets.length;}catch(e){if(e instanceof ForbiddenException||/^(FARM_FORBIDDEN|GIS_FORBIDDEN)$/.test(String((e as Error).message)))return false;throw e;}}
  async current(tx:PoolClient,actor:SyncActor,c:SyncCommand):Promise<Record<string,unknown>>{const row=await this.row(tx,actor,c.aggregate.id);return row?{id:row.id,version:Number(row.version)}:{};}
  async assertVersion(tx:PoolClient,actor:SyncActor,c:SyncCommand):Promise<boolean>{const row=await this.row(tx,actor,c.aggregate.id,true);return Number(row?.version??0)===c.baseVersion;}
- async apply(tx:PoolClient,actor:SyncActor,c:SyncCommand){this.local();const old=await this.row(tx,actor,c.aggregate.id,true);const chosen=c.type==='OfflineGis.Select'?selection(c.payload):old!.selection;const scope=await this.registry.scope(actor,`offline-gis.package.${c.type==='OfflineGis.Select'?'select':'refresh'}`);return this.build(tx,actor,old,chosen,scope,c);}
+ private async subscriptionGate(tx:PoolClient,tenantId:string):Promise<void>{
+  await tx.query('INSERT INTO offline_gis.tenant_gate(tenant_id) VALUES($1) ON CONFLICT DO NOTHING',[tenantId]);
+  await tx.query('SELECT tenant_id FROM offline_gis.tenant_gate WHERE tenant_id=$1 FOR UPDATE',[tenantId]);
+ }
+ async apply(tx:PoolClient,actor:SyncActor,c:SyncCommand){this.local();await this.subscriptionGate(tx,actor.tenantId);const old=await this.row(tx,actor,c.aggregate.id,true);const chosen=c.type==='OfflineGis.Select'?selection(c.payload):old!.selection;const scope=await this.registry.scope(actor,`offline-gis.package.${c.type==='OfflineGis.Select'?'select':'refresh'}`);return this.build(tx,actor,old,chosen,scope,c);}
  private async build(tx:PoolClient,actor:SyncActor,old:PackageRow|undefined,chosen:Selection,scope:Scope,command?:SyncCommand,event?:DomainEvent){
   const version=Number(old?.version??0)+1,source=await this.configuredSource(actor,chosen),rows=await this.fields(tx,actor,scope,chosen);
   if(command&&rows.length!==chosen.targets.length)throw new ForbiddenException('OFFLINE_GIS_FIELD_FORBIDDEN');
@@ -40,7 +44,7 @@ export class OfflineGisService {
    payloads.push({id:previous.find(p=>p.target_id===r.id)?.id??randomUUID(),packageId:actor.deviceId,targetId:r.id,kind:r.kind,fieldId:r.field_id,name:r.name,organizationId:r.organization_id,ownerRevisionId:r.revision_id,fieldRevisionId:r.field_revision_id,ownerVersion:String(r.row_version),...(r.site_id?{siteId:r.site_id}:{}),...(g?{geometryVersionId:g.id,geometry:g.geometry,bounds:g.bounds,center:(g.center as {coordinates:number[]}).coordinates}:{}),sourceChanged:g?.newer_approved===true,provenance:{owner:'Farm',effectiveAt:r.effective_at,geometry:pin,renderProfile:scope.renderProfile}});
   }
   const contentHash=hash({chosen,source:source??null,renderProfile:scope.renderProfile,payloads});
-  if(event&&old?.content_hash===contentHash)return {canonical:old.manifest,aggregateVersion:Number(old.version),changes:[] as SyncChange[]};
+  if(event&&old?.content_hash===contentHash){const locked=await this.row(tx,actor,actor.deviceId,true);if(locked?.version!==old.version)throw Error('OFFLINE_GIS_RETRY_CONCURRENT_SELECTION');return {canonical:old.manifest,aggregateVersion:Number(old.version),changes:[] as SyncChange[]};}
   const now=new Date().toISOString();const manifest={id:actor.deviceId,version,tenantId:actor.tenantId,userId:actor.userId,deviceId:actor.deviceId,selection:chosen,createdAt:old?.manifest.createdAt??now,lastValidatedAt:now,entries:payloads.map(p=>p.id),renderProfile:scope.renderProfile,...(source?{source}:{}),sourceChanged:payloads.some(p=>p.sourceChanged),contentHash};
   const changes:SyncChange[]=[...previous.filter(p=>!payloads.some(v=>v.id===p.id)).map(p=>({entityType:'OfflineGisField',entityId:p.id,op:'PURGE' as const,projection:{},visibleUserIds:[actor.userId]})),...payloads.map(p=>({entityType:'OfflineGisField',entityId:String(p.id),entityVersion:version,op:'UPSERT' as const,projection:{...p,bundleVersion:version},visibleUserIds:[actor.userId]})),{entityType:'OfflineGisPackage',entityId:actor.deviceId,entityVersion:version,op:'UPSERT',projection:manifest,visibleUserIds:[actor.userId]}];
   if(event){
@@ -67,7 +71,15 @@ export class OfflineGisService {
   await tx.query("UPDATE offline_gis.package SET version=$3,manifest=$4,content_hash='WITHDRAWN' WHERE tenant_id=$1 AND id=$2",[p.tenant_id,p.id,version,manifest]);
   await tx.query('INSERT INTO offline_gis.audit(tenant_id,package_id,version,actor_id,action,source_event_id,observed_at,before_value,after_value,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[p.tenant_id,p.id,version,event.actorId,'WITHDRAW',event.id,event.occurredAt,p.manifest,manifest,{sourceEvent:event}]);
  }
- async consume(tx:PoolClient,event:DomainEvent):Promise<void>{if(!['farm','gis','land'].includes(event.source)||!event.tenantId)return;this.local();const packages=(await tx.query<PackageRow>('SELECT * FROM offline_gis.package WHERE tenant_id=$1 ORDER BY id',[event.tenantId])).rows;
+ async consume(tx:PoolClient,event:DomainEvent):Promise<void>{if(!['farm','gis','land'].includes(event.source)||!event.tenantId)return;this.local();
+  // Wait for a first/in-flight selection before taking the subscription snapshot.
+  // Release this owned read-phase lock BEFORE the public sync port acquires its
+  // feed clock; this preserves clock->head ordering and avoids an inverse lock.
+  await tx.query('SAVEPOINT offline_subscription_read');
+  await this.subscriptionGate(tx,event.tenantId);
+  const packages=(await tx.query<PackageRow>('SELECT * FROM offline_gis.package WHERE tenant_id=$1 ORDER BY id',[event.tenantId])).rows;
+  await tx.query('ROLLBACK TO SAVEPOINT offline_subscription_read');
+  await tx.query('RELEASE SAVEPOINT offline_subscription_read');
   for(const p of packages){const actor={tenantId:p.tenant_id,userId:p.user_id,deviceId:p.device_id,sessionId:p.session_id};try{const scope=await this.registry.scope(actor);await this.build(tx,actor,p,p.selection,scope,undefined,event);}catch(e){if(!(e instanceof ForbiddenException)&&!/^FARM_FORBIDDEN|^GIS_FORBIDDEN|^OFFLINE_GIS_UNLICENSED_SOURCE/.test(String((e as Error).message)))throw e;await this.withdraw(tx,p,event);}}
  }
 }

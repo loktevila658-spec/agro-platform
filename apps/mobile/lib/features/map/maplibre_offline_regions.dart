@@ -25,11 +25,13 @@ abstract interface class OfflineRegions {
 class MapLibreOfflineRegions implements OfflineRegions {
   MapLibreOfflineRegions({this.access = const MapSourceAccess()});
   final MapSourceAccess access;
+  Object? lastError;
   @override
   Future<int> create(
     OfflineGisManifest m, {
     void Function(String)? onError,
   }) async {
+    lastError = null;
     final source = m.source;
     if (source == null) throw StateError('BASEMAP_UNAVAILABLE');
     access.validate(source);
@@ -47,7 +49,10 @@ class MapLibreOfflineRegions implements OfflineRegions {
       ),
       metadata: const {},
       onEvent: (event) {
-        if (event is ml.Error) onError?.call('MAP_DOWNLOAD_FAILED');
+        if (event is ml.Error) {
+          lastError = event.cause;
+          onError?.call('MAP_DOWNLOAD_FAILED');
+        }
       },
     );
     return region.id;

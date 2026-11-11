@@ -87,6 +87,19 @@ void main() {
       );
       try {
         final source = f.publicSource(url: '$url/style.json');
+        final client = HttpClient();
+        try {
+          final response = await (await client.getUrl(
+            Uri.parse('$url/style.json'),
+          )).close();
+          expect(response.statusCode, 200);
+          final style =
+              jsonDecode(await response.transform(utf8.decoder).join()) as Map;
+          expect(style['version'], 8);
+        } finally {
+          client.close(force: true);
+        }
+
         await f.seedMap(w, source: source);
         var store = OfflinePackageStore(w);
         await store.reconcile();
@@ -96,7 +109,12 @@ void main() {
         for (var attempt = 0; attempt < 200 && tileRequests == 0; attempt++) {
           await Future<void>.delayed(const Duration(milliseconds: 30));
         }
-        expect(tileRequests, greaterThan(0));
+        expect(
+          tileRequests,
+          greaterThan(0),
+          reason:
+              'Native error: ${regions.lastError}; total fixture requests=$requests; native status=${(await regions.status(id)).fraction}',
+        );
         await regions.pause(id);
         expect((await regions.status(id)).complete, isFalse);
         await store.nativeProgress(
