@@ -1,11 +1,10 @@
-# WP49-029 Completion Report
+# WP49-029 Completion Report — concurrent retirement validation pending
 
-Date:2026-11-11 Europe/Moscow. Status: **implementation G0–G11 accepted; DONE activates only after G12 publication conditions below are fulfilled**. No unobserved report-publication CI or CR closure is asserted.
+Date:2026-11-12 Europe/Moscow. Status: **sequential correction validated; concurrent-retirement G7 extension pending; NOT DONE**.
 
-Baseline main `1432b7bc81292d5fae7dbc3e4b07bb412a418c3e`.
-Exact tested implementation/PR head `e12beaa8cc8a86bf47fc733d52e398c0bd946f7a`.
-[Implementation PR79](https://github.com/loktevila658-spec/agro-platform/pull/79), ordinary merge `5f0d596296911888da20d4bbfbf97eb08efcf696`.
-[Pre-PR run43086770346](https://github.com/loktevila658-spec/agro-platform/actions/runs/43086770346) on ce20d46 and [exact PR-head run43088733764](https://github.com/loktevila658-spec/agro-platform/actions/runs/43088733764) all8 SUCCESS. [Exact merge push43090335620](https://github.com/loktevila658-spec/agro-platform/actions/runs/43090335620) on5f0d596 all8 SUCCESS. Implementation branch `codex/wp49-029`; report-publication branch `codex/wp49-029-closeout`.
+Corrective baseline main `acfdd0e3a19d391bc06127b1aad03e82e4d755d7`. Exact tested corrected source `81d6587bf5b293bfb7e8a5d668a65db563ccf17b`, [full pre-PR run43101550541](https://github.com/loktevila658-spec/agro-platform/actions/runs/43101550541) all8 SUCCESS. [Corrective PR81](https://github.com/loktevila658-spec/agro-platform/pull/81) is OPEN; its final report-head checks, normal merge/exact push and corrected final report publication remain PENDING. No unobserved merge/publication or CR closure is asserted.
+
+Initial implementation [PR79](https://github.com/loktevila658-spec/agro-platform/pull/79) tested heade12beaa8cc8a86bf47fc733d52e398c0bd946f7a, ordinary merge5f0d596296911888da20d4bbfbf97eb08efcf696, pre-PR43086770346 / PR43088733764 / exact push43090335620 all8 SUCCESS. Initial report [PR80](https://github.com/loktevila658-spec/agro-platform/pull/80) head2b42f8f9cc69ac50e1ca5dac9c9900b77478157b, ordinary mergeacfdd0e3a19d391bc06127b1aad03e82e4d755d7, PR43092034411 all8 SUCCESS. Those are historical observations. G12/DONE never activated: final review found the G7 cache/feed issue before completed CR75 closure. This corrected candidate supersedes the initial publication activation instruction.
 
 PUBLIC scope/source/tests/generated artifacts/PR/report/closeout publication is explicitly authorized in CR75. Original dirty checkout remains untouched.
 
@@ -42,16 +41,16 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 | G0 Prerequisites | PASS: accepted declared dependencies, separately accepted Task owner, pre-code scope approvals, unchanged manifest. |
 | G1 Static | PASS: exact approved53 paths, hosted typecheck/architecture/lint capability, enforced Flutter format/analyzer/lockfile, codegen current. |
 | G2 Migration | PASS: real clean/repeated/current PostGIS schema16, old migration immutability, owned constraints and mobile1/2->3 preservation. |
-| G3 Unit | PASS: full required Unit, API188/188 and Flutter52/52, zero skipped acceptance; local targeted45/45 and architecture11/11. |
-| G4 Integration | PASS: actual PostGIS9/9 owner scenarios plus retained real API/infrastructure/runtime suites; no fake owner substitute. |
+| G3 Unit | PASS: full required Unit, API189/189 and Flutter52/52, zero skipped acceptance; local targeted45/45 and architecture11/11. |
+| G4 Integration | PASS: actual PostGIS10/10 owner tests plus retained real API/infrastructure/runtime suites; no fake owner substitute. |
 | G5 API Contract | PASS: additive canonical OpenAPI/codegen/backward checks, generated copies current, old and new exact operation assertions retained. |
 | G6 Event Contract | PASS: actual dispatcher/inbox/failure/retry/derived-feed transactionality and command replay; no new domain event schema. |
-| G7 Permissions | PASS: actual default-deny/current scope/org/tenant/GIS/source/replay negatives and fail-closed cache/PURGE. |
+| G7 Permissions | PENDING concurrent-retirement extension. Current default/scope/GIS checks and sequential complete retained replay pass on81d6587; the identity's geometric read class must also stay captured across concurrent retirement during asynchronous policy validation. |
 | G8 Offline | PASS: encrypted cache, command identity/receipts, partial bundles/PURGE, conflict/retry, real Task commands, actual native tiles/pixels/pause/persist/restart/resume. |
 | G9 Audit/Provenance | PASS: actual immutable audit, original command/receipt/provenance, exact geometry pins, transactional fault rollback. |
 | G10 Demo/E2E | PASS: deterministic actual owner/Task lifecycle/retry/fact and native server-shutdown raster/vector/cleanup scenarios. |
 | G11 NFR/Security | PASS applicable engineering/security profile: retained capacity/convergence, bounded viewport, native cipher/keystore, licensed public cache/private-data isolation/wipe. iOS N/A; physical-device certification unclaimed. |
-| G12 Evidence/Merge | PASS only at activation: exact PR-head/ordinary implementation merge and exact push, complete authorized report publication with its own normal checks/merge/push and completed CR75. Conditions below remain mandatory. |
+| G12 Evidence/Merge | PENDING: exact final PR81-head checks/reviews, ordinary corrective merge/exact push, corrected report publication with its own exact checks/merge/push and completed CR75 closure. |
 
 ## Observed checks
 
@@ -66,6 +65,9 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 |ce20d46d62831a833587b4ee89f061678f4979d1|43086770346|Pre-PR full CI all8 SUCCESS: API188/188, Flutter52/52, owner9/9 zero skipped, Android native4/4, contracts/static/migration/runtime. Source accepted; G12 publication/merge pending.|
 |e12beaa8cc8a86bf47fc733d52e398c0bd946f7a|43088733764|Exact final PR79 head all8 SUCCESS; reviews/threads clear immediately before ordinary merge.|
 |5f0d596296911888da20d4bbfbf97eb08efcf696|43090335620|Exact ordinary implementation merge push all8 SUCCESS, including full Unit and Android native; merge tree equals tested-head tree.|
+|75b9682afc1ca9a2f666396b92d3896f2747d206|43095541980|Startup failure before jobs: public GitHub annotation reports unexpected internal error, request68a420f2-de0f-11f1-8c91-7f719ca9d52a. One normal rerun created no jobs. No test acceptance.|
+|75b9682afc1ca9a2f666396b92d3896f2747d206|43099331953|Fresh identical-code dispatch ran normally: owner10/API189 PASS for cached pre-delivery case; superseded by retained-feed extension, not final acceptance.|
+|81d6587bf5b293bfb7e8a5d668a65db563ccf17b|43101550541|Corrected full pre-PR all8 SUCCESS: API189/189, owner10/10 zero skipped including complete retained replay, Flutter52/52 and Android native4/4. PR81 publication/merge still pending.|
 
 Native diagnosis on a45d708: direct Dart style precheck200 and native style request succeeded, SDK complete fraction1.0, tile requests0. Exact pinned native13.5.0 [zoom calculation](https://github.com/maplibre/maplibre-native/blob/android-v13.5.0/src/mbgl/util/tile_cover.cpp#L149) maps256px tile at map zoom0 to source zoom1; [offline cover](https://github.com/maplibre/maplibre-native/blob/android-v13.5.0/platform/default/src/mbgl/storage/offline_download.cpp#L38) intersected that with fixture maxzoom0, yielding empty coverage. Fixture PNG and declared tileSize corrected consistently to512. All tile/pause/resume/offline pixel/vector/privacy/wipe assertions and wait bounds retained.
 
@@ -75,13 +77,13 @@ Local Docker daemon unavailable: probed once, no repeated Compose launch or loca
 
 Pinned maplibre_gl0.27.1 Android resume loses observer after process restart and returns ResumeRegionError. Production fallback restarts the same persisted partial region definition through supported plugin API; public resources may download again, explicitly disclosed in UI. Complete cached regions avoid restart. Native test covers pause, encrypted workspace reopen, persisted definition and restart; no process-kill/byte-range, physical-device/battery/ANR or iOS certification claimed.
 
-Implementation PR79 merged normally at5f0d596. WP030 remains unstarted. G12 publication activation conditions below remain mandatory.
+Initial PR79/80 merged; corrective PR81 remains open. WP030 remains unstarted. Current G12 conditions below remain mandatory.
 
 ## Deterministic scenario and review
 
-Owner fixture uses explicit manual field/operation/reference data, fixed effective/observed timestamps2026-11-04T00:00:00Z through04:00:00Z and fixed correlation. Random UUIDs/ephemeral ports isolate runs; they do not select business behavior. Actual Field correction, GIS approval with old pin retained, event failure/retry/replay, concurrent selection and first subscription, current permission withdrawal, HTTP guards, Task Create/Plan/Assign/Accept/Start/Complete and lost-response retry converge with one execution fact. Native fixture supplies a fixed512px RGB232/64/48 raster; it gates actual HTTP tile responses, pauses/reopens/restarts/resumes, stops the real server, checks cached pixels and rendered private vector, verifies native-cache isolation and wipes shared assets. Test policies/identity are explicit trusted fixtures; existing actual identity/session regressions also passed.
+Owner fixture uses explicit manual field/operation/reference data, fixed effective/observed timestamps2026-11-04T00:00:00Z through05:00:00Z and fixed correlation. Random UUIDs/ephemeral ports isolate runs; they do not select business behavior. Actual Field correction, GIS approval with old pin retained, event failure/retry/replay, concurrent selection and first subscription, current permission withdrawal, HTTP guards, Task Create/Plan/Assign/Accept/Start/Complete and lost-response retry converge with one execution fact. Native fixture supplies a fixed512px RGB232/64/48 raster; it gates actual HTTP tile responses, pauses/reopens/restarts/resumes, stops the real server, checks cached pixels and rendered private vector, verifies native-cache isolation and wipes shared assets. Test policies/identity are explicit trusted fixtures; existing actual identity/session regressions also passed.
 
-Self-review only; no independent reviewer claimed. Fixed findings: route/status/cursor validation, current scope/replay, feed-clock/head ordering and first-subscription convergence, atomic partial bundles/PURGE, migration preservation, persisted native observer recovery, fixture cleartext/zoom coverage and recursive node:test skipping. No acceptance assertion or timeout was relaxed. GitHub reviews/threads were empty immediately before merge; required aggregate strict=true, enforce_admins=true, conversation resolution=true, force pushes/deletions disabled. Main remained baseline1432b7b, PR head e12beaa was mergeable and exact PR-head run43088733764 all8 SUCCESS. Normal merge API enforced expected head; no auto-merge/bypass. Self-review recorded in PR79 comment6805491935.
+Self-review only; no independent reviewer claimed. Correction review checks owned-cache geometry authorization plus stable read-permission class per retained projection identity; canonical Field/Task IDs and shared sync are unchanged. Fixed findings: route/status/cursor validation, current scope/replay, feed-clock/head ordering and first-subscription convergence, atomic partial bundles/PURGE, migration preservation, persisted native observer recovery, fixture cleartext/zoom coverage and recursive node:test skipping. No acceptance assertion or timeout was relaxed. GitHub reviews/threads were empty immediately before merge; required aggregate strict=true, enforce_admins=true, conversation resolution=true, force pushes/deletions disabled. Main remained baseline1432b7b, PR head e12beaa was mergeable and exact PR-head run43088733764 all8 SUCCESS. Normal merge API enforced expected head; no auto-merge/bypass. Self-review recorded in PR79 comment6805491935.
 
 ## Complete approved changed-file inventory
 
@@ -145,8 +147,16 @@ Every row below is explicitly authorized by CR75, including the separate two deb
 
 ## G12 publication activation and unlock decision
 
-Implementation merge has exactly two parents: baseline1432b7bc81292d5fae7dbc3e4b07bb412a418c3e and tested heade12beaa8cc8a86bf47fc733d52e398c0bd946f7a. Merge tree `9bd6b1d5d769a98ac59d908186943770c8bf8c59` equals tested-head tree. Source/tests acceptance and report-only publication are separate records.
+Initial implementation merge tree9bd6b1d5d769a98ac59d908186943770c8bf8c59 equaled its tested head; initial report merge treec1d73f7960573d7ae461c1af3486afe2657aa6e8 equaled its tested report head. These historical candidates did not activate DONE because the G7 defect was found before CR closure.
 
-This final report path is already CR75-approved. Its publication must pass normal exact PR-head checks, ordinary merge and exact report-merge-SHA push CI, with live protection/reviews/threads verified. After observing those results, record the report PR/head/merge/run and completed closure in CR75. That activation makes G12 PASS and WP49-029 DONE without an infinite self-referential report rewrite. No unobserved report-publication PASS is asserted here.
+Current corrective PR81 must pass exact final head checks, ordinary expected-head merge and exact merge-SHA push CI. After observing that evidence, publish the corrected final report through its own normal exact PR-head checks/merge/exact push. Record all actual corrective/report heads, merges, runs and completed CR75 closure in its activation comment. That makes G12 PASS / WP49-029 DONE without an infinite self-referential report rewrite. No unobserved corrective merge/push or corrected report-publication PASS is asserted.
 
-Unlock decision: implementation PASS; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED is intentionally unchanged as approved. WP030 is not started and must not be started by this closeout.
+Unlock decision: corrected source G0–G11 PASS; G12/DONE pending those conditions. Frozen manifest/static NOT_STARTED intentionally unchanged. WP030 must remain unstarted.
+
+## Post-acceptance permission correction — corrected source validated
+
+Final review found that current owner geometry references alone were insufficient while an owner-removal event was pending: the old derived projection could retain geometry. A private diagnostic reproduced canRead=true with zero GIS policy calls after owner reference removal and GIS permission denial; this is not PostGIS acceptance evidence. The correction checks geometry actually retained in owned projections as well as current owner rows on read/pull. It writes no foreign data and adds no permission grants. A new actual Farm correction/current GIS denial/pull PURGE/delayed dispatcher/non-GIS metadata convergence scenario is mandatory in the hosted owner suite. All4 affected paths are already approved. Corrected source81d6587 passed full run43101550541. Earlier source/report merges remain historical and did not activate G12; CR75 stays OPEN until exact corrective PR/merge and corrected final publication.
+
+Retained-feed extension: SyncService replays historical payloads but authorizes by current entity identity. After the cache drops geometry, reusing that identity would authorize old geometric feed rows as non-GIS metadata. The correction therefore retires a derived field projection identity whenever geometry presence changes. Existing PURGE/UPSERT and manifest completeness handle replacement; canonical Field/Task IDs and shared sync are unchanged. The actual regression now replays from bootstrap after real owner delivery and requires old IDs to PURGE, fresh metadata to UPSERT and all returned field projections to omit geometry/version/bounds/center under GIS denial. Earlier75b9682 owner10/API189 PASS covers the pre-delivery case only; the complete retained-replay extension is verified on81d6587 by full run43101550541 all8 SUCCESS; final PR-head/merge/publication checks remain mandatory.
+
+Concurrent-retirement review extension: a read could find the old geometric ID, pause in source-policy validation, then inspect only the newly installed metadata-only cache. The field-ID lookup now captures its geometric class atomically with row existence; it cannot be replaced by the new identity's class. The actual PostGIS case pauses the read at that boundary, commits real owner event delivery/identity retirement and requires the paused old-ID read to remain denied before asserting full replay and permitted fresh metadata. Existing source81d6587/pre43101550541 sequential results stay historical; new exact PR-head full checks are mandatory for this extension. Same approved paths and shared sync/canonical IDs unchanged.

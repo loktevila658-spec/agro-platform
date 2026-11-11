@@ -99,9 +99,9 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
     const approved=await gis.decide(owner,{geometryId:pin.geometryId,versionId:pin.versionId,expectedVersion:pin.headVersion,decision:'APPROVED',effectiveAt:'2026-11-04T00:00:00Z',reason:'Test approved'},context());
     const fieldData={name:'Pinned field',nominalAreaHa:'10',status:'ACTIVE',geometryVersionId:pin.versionId,allocations:[]};
     const field=await farm.createField(owner,{organizationId,code:'MAP-FIELD',data:fieldData,effectiveAt:'2026-11-04T01:00:00Z',reason:'Fixture'},context());
-    let allowed=true,visibleOrganization=organizationId,licensed=true,pauseRead=false,enteredRead,releaseRead;let readGate=Promise.resolve();
+    let allowed=true,visibleOrganization=organizationId,licensed=true,pauseRead=false,enteredRead,releaseRead;let readGate=Promise.resolve();let geometryReadAt=0,enteredGeometryRead,releaseGeometryRead;let geometryReadGate=Promise.resolve();
     const source={id:'test-public',label:'Test licensed only',styleUrl:'https://fixture.invalid/style.json',styleVersion:'style1',sourceVersion:'source1',attribution:'Test fixture',termsRef:'test-license',offlineAllowed:true,publicBasemap:true,minZoom:0,maxZoom:12};
-    const registry=new OfflineGisRegistry();registry.install({scope:async(a,action)=>{if(pauseRead&&action==='offline-gis.package.read'){pauseRead=false;enteredRead();await readGate;}return allowed?{organizationIds:[visibleOrganization],renderProfile:{version:'test-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined;},sources:async()=>licensed?[source]:[]});
+    const registry=new OfflineGisRegistry();registry.install({scope:async(a,action)=>{if(geometryReadAt>0&&action==='offline-gis.package.read'&&--geometryReadAt===0){enteredGeometryRead();await geometryReadGate;}if(pauseRead&&action==='offline-gis.package.read'){pauseRead=false;enteredRead();await readGate;}return allowed?{organizationIds:[visibleOrganization],renderProfile:{version:'test-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined;},sources:async()=>licensed?[source]:[]});
     const syncRegistry=new SyncRegistry();const auth='Bearer map-fixture';
     const identity={async authenticate(value){if(value!==auth)throw new UnauthorizedException();return {...actor};}};
     const sync=new SyncService(pool,syncRegistry,identity),service=new OfflineGisService(pool,registry,farm,gis,sync),consumer=new OfflineGisEvents(service);
@@ -182,6 +182,39 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         visibleOrganization=randomUUID();await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
         visibleOrganization=organizationId;gisAllowed=false;await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);gisAllowed=true;licensed=false;await assert.rejects(service.read(actor,deviceId));licensed=true;
         await assert.rejects(service.read({...actor,tenantId:randomUUID()},deviceId));await assert.rejects(service.read({...actor,deviceId:randomUUID()},deviceId));
+      });
+      await t.test('cached geometry removal preserves current GIS permission before/after owner delivery and retained replay',async()=>{
+        const stale=(await pool.query('SELECT id,projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,deviceId])).rows[0];
+        assert.ok(stale.projection.geometryVersionId);
+        const withoutGeometry={...fieldData,name:'Geometry withdrawn'};delete withoutGeometry.geometryVersionId;
+        await farm.correctField(owner,field.entityId,{expectedVersion:'4',data:withoutGeometry,effectiveAt:'2026-11-04T05:00:00Z',reason:'Remove geometry before delayed delivery'},context());
+        gisAllowed=false;
+        try{
+          assert.equal(await service.canRead(actor,'OfflineGisField',stale.id),false,'old cached geometry must require current GIS permission even after the owner removed its reference');
+          assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);
+          await assert.rejects(service.read(actor,deviceId),/OFFLINE_GIS_OWNER_FORBIDDEN/);
+          const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});
+          assert.ok(page.changes.some(c=>c.entityType==='OfflineGisField'&&c.entityId===stale.id&&c.op==='PURGE'));
+          assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
+          const captured=new Promise(resolve=>enteredGeometryRead=resolve);geometryReadGate=new Promise(resolve=>releaseGeometryRead=resolve);geometryReadAt=2;
+          const racingRead=service.canRead(actor,'OfflineGisField',stale.id);await captured;
+          try{await new OutboxDispatcherService(pool,[consumer],new InboxService(pool)).dispatchAvailable(1000);}finally{releaseGeometryRead();}
+          assert.equal(await racingRead,false,'captured geometric identity must remain denied if retirement happens during async source policy validation');
+          const fresh=(await pool.query('SELECT id,projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,deviceId])).rows[0];
+          assert.notEqual(fresh.id,stale.id,'retire the identity whose retained feed contains protected geometry');
+          assert.equal(fresh.projection.geometryVersionId,undefined);assert.equal(fresh.projection.geometry,undefined);
+          assert.equal(await service.canRead(actor,'OfflineGisField',stale.id),false);
+          assert.equal(await service.canRead(actor,'OfflineGisField',fresh.id),true,'authorized non-GIS metadata becomes readable under a fresh identity');
+          const replay=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});
+          const fields=replay.changes.filter(c=>c.entityType==='OfflineGisField');
+          assert.ok(fields.some(c=>c.entityId===stale.id&&c.op==='PURGE'));
+          assert.ok(fields.some(c=>c.entityId===fresh.id&&c.op==='UPSERT'));
+          for(const change of fields){
+            if(change.op==='PURGE')assert.deepEqual(change.projection,{});
+            else for(const key of ['geometryVersionId','geometry','bounds','center'])assert.equal(key in change.projection,false,'full retained replay must never return old geometry after GIS denial');
+          }
+          version=(await service.read(actor,deviceId)).version;
+        }finally{gisAllowed=true;}
       });
       await t.test('actual Task owner execution shares protocol and exactly-one immutable result',async()=>{
         const taskId=uuid7();let v=0,completed;
