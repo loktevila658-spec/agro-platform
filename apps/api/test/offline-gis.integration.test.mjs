@@ -183,7 +183,7 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
         visibleOrganization=organizationId;gisAllowed=false;await assert.rejects(send(selected),/PERMISSION_CHANGED_OFFLINE/);assert.equal(await service.canRead(actor,'OfflineGisPackage',deviceId),false);gisAllowed=true;licensed=false;await assert.rejects(service.read(actor,deviceId));licensed=true;
         await assert.rejects(service.read({...actor,tenantId:randomUUID()},deviceId));await assert.rejects(service.read({...actor,deviceId:randomUUID()},deviceId));
       });
-      await t.test('cached geometry removal cannot bypass current GIS permission before owner event delivery',async()=>{
+      await t.test('cached geometry removal preserves current GIS permission before/after owner delivery and retained replay',async()=>{
         const stale=(await pool.query('SELECT id,projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,deviceId])).rows[0];
         assert.ok(stale.projection.geometryVersionId);
         const withoutGeometry={...fieldData,name:'Geometry withdrawn'};delete withoutGeometry.geometryVersionId;
@@ -197,9 +197,19 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
           assert.ok(page.changes.some(c=>c.entityType==='OfflineGisField'&&c.entityId===stale.id&&c.op==='PURGE'));
           assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
           await new OutboxDispatcherService(pool,[consumer],new InboxService(pool)).dispatchAvailable(1000);
-          const fresh=(await pool.query('SELECT projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND id=$2',[tenantId,stale.id])).rows[0].projection;
-          assert.equal(fresh.geometryVersionId,undefined);assert.equal(fresh.geometry,undefined);
-          assert.equal(await service.canRead(actor,'OfflineGisField',stale.id),true,'authorized non-GIS field metadata becomes readable after actual owner delivery removes cached geometry');
+          const fresh=(await pool.query('SELECT id,projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,deviceId])).rows[0];
+          assert.notEqual(fresh.id,stale.id,'retire the identity whose retained feed contains protected geometry');
+          assert.equal(fresh.projection.geometryVersionId,undefined);assert.equal(fresh.projection.geometry,undefined);
+          assert.equal(await service.canRead(actor,'OfflineGisField',stale.id),false);
+          assert.equal(await service.canRead(actor,'OfflineGisField',fresh.id),true,'authorized non-GIS metadata becomes readable under a fresh identity');
+          const replay=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});
+          const fields=replay.changes.filter(c=>c.entityType==='OfflineGisField');
+          assert.ok(fields.some(c=>c.entityId===stale.id&&c.op==='PURGE'));
+          assert.ok(fields.some(c=>c.entityId===fresh.id&&c.op==='UPSERT'));
+          for(const change of fields){
+            if(change.op==='PURGE')assert.deepEqual(change.projection,{});
+            else for(const key of ['geometryVersionId','geometry','bounds','center'])assert.equal(key in change.projection,false,'full retained replay must never return old geometry after GIS denial');
+          }
           version=(await service.read(actor,deviceId)).version;
         }finally{gisAllowed=true;}
       });

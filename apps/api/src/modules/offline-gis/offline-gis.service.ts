@@ -42,7 +42,12 @@ export class OfflineGisService {
   const previous=(await tx.query('SELECT * FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[actor.tenantId,actor.deviceId])).rows;
   const payloads:Record<string,unknown>[]=[];
   for(const r of rows){const pin=r.geometry_provenance as Record<string,unknown>|null;const g=pin?await this.gis.offlineVersionInTransaction(tx,{tenantId:actor.tenantId,subjectId:actor.userId},String(pin.id),scope.renderProfile.toleranceDegrees):undefined;
-   payloads.push({id:previous.find(p=>p.target_id===r.id)?.id??randomUUID(),packageId:actor.deviceId,targetId:r.id,kind:r.kind,fieldId:r.field_id,name:r.name,organizationId:r.organization_id,ownerRevisionId:r.revision_id,fieldRevisionId:r.field_revision_id,ownerVersion:String(r.row_version),...(r.site_id?{siteId:r.site_id}:{}),...(g?{geometryVersionId:g.id,geometry:g.geometry,bounds:g.bounds,center:(g.center as {coordinates:number[]}).coordinates}:{}),sourceChanged:g?.newer_approved===true,provenance:{owner:'Farm',effectiveAt:r.effective_at,geometry:pin,renderProfile:scope.renderProfile}});
+   // A projection ID has one read-permission class for its entire retained feed.
+   // Retire it when geometry appears/disappears so replay cannot expose old GIS
+   // payloads through a now-authorized metadata-only identity.
+   const retained=previous.find(p=>p.target_id===r.id),hadGeometry=retained!==undefined&&('geometryVersionId' in retained.projection||'geometry' in retained.projection);
+   const projectionId=retained&&hadGeometry===Boolean(g)?retained.id:randomUUID();
+   payloads.push({id:projectionId,packageId:actor.deviceId,targetId:r.id,kind:r.kind,fieldId:r.field_id,name:r.name,organizationId:r.organization_id,ownerRevisionId:r.revision_id,fieldRevisionId:r.field_revision_id,ownerVersion:String(r.row_version),...(r.site_id?{siteId:r.site_id}:{}),...(g?{geometryVersionId:g.id,geometry:g.geometry,bounds:g.bounds,center:(g.center as {coordinates:number[]}).coordinates}:{}),sourceChanged:g?.newer_approved===true,provenance:{owner:'Farm',effectiveAt:r.effective_at,geometry:pin,renderProfile:scope.renderProfile}});
   }
   const contentHash=hash({chosen,source:source??null,renderProfile:scope.renderProfile,payloads});
   if(event&&old?.content_hash===contentHash){const locked=await this.row(tx,actor,actor.deviceId,true);if(locked?.version!==old.version)throw Error('OFFLINE_GIS_RETRY_CONCURRENT_SELECTION');return {canonical:old.manifest,aggregateVersion:Number(old.version),changes:[] as SyncChange[]};}
