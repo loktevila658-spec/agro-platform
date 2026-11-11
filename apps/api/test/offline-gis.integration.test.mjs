@@ -99,9 +99,9 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
     const approved=await gis.decide(owner,{geometryId:pin.geometryId,versionId:pin.versionId,expectedVersion:pin.headVersion,decision:'APPROVED',effectiveAt:'2026-11-04T00:00:00Z',reason:'Test approved'},context());
     const fieldData={name:'Pinned field',nominalAreaHa:'10',status:'ACTIVE',geometryVersionId:pin.versionId,allocations:[]};
     const field=await farm.createField(owner,{organizationId,code:'MAP-FIELD',data:fieldData,effectiveAt:'2026-11-04T01:00:00Z',reason:'Fixture'},context());
-    let allowed=true,visibleOrganization=organizationId,licensed=true,pauseRead=false,enteredRead,releaseRead;let readGate=Promise.resolve();
+    let allowed=true,visibleOrganization=organizationId,licensed=true,pauseRead=false,enteredRead,releaseRead;let readGate=Promise.resolve();let geometryReadAt=0,enteredGeometryRead,releaseGeometryRead;let geometryReadGate=Promise.resolve();
     const source={id:'test-public',label:'Test licensed only',styleUrl:'https://fixture.invalid/style.json',styleVersion:'style1',sourceVersion:'source1',attribution:'Test fixture',termsRef:'test-license',offlineAllowed:true,publicBasemap:true,minZoom:0,maxZoom:12};
-    const registry=new OfflineGisRegistry();registry.install({scope:async(a,action)=>{if(pauseRead&&action==='offline-gis.package.read'){pauseRead=false;enteredRead();await readGate;}return allowed?{organizationIds:[visibleOrganization],renderProfile:{version:'test-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined;},sources:async()=>licensed?[source]:[]});
+    const registry=new OfflineGisRegistry();registry.install({scope:async(a,action)=>{if(geometryReadAt>0&&action==='offline-gis.package.read'&&--geometryReadAt===0){enteredGeometryRead();await geometryReadGate;}if(pauseRead&&action==='offline-gis.package.read'){pauseRead=false;enteredRead();await readGate;}return allowed?{organizationIds:[visibleOrganization],renderProfile:{version:'test-v1',toleranceDegrees:0.00001},offlineTtlSeconds:3600}:undefined;},sources:async()=>licensed?[source]:[]});
     const syncRegistry=new SyncRegistry();const auth='Bearer map-fixture';
     const identity={async authenticate(value){if(value!==auth)throw new UnauthorizedException();return {...actor};}};
     const sync=new SyncService(pool,syncRegistry,identity),service=new OfflineGisService(pool,registry,farm,gis,sync),consumer=new OfflineGisEvents(service);
@@ -196,7 +196,10 @@ test('Offline GIS actual owners, incremental feed, native-independent delivery a
           const page=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:(await sync.bootstrap(auth,{deviceId,schemaVersion:1})).initialCursor});
           assert.ok(page.changes.some(c=>c.entityType==='OfflineGisField'&&c.entityId===stale.id&&c.op==='PURGE'));
           assert.ok(page.changes.filter(c=>c.entityType.startsWith('OfflineGis')).every(c=>c.op==='PURGE'));
-          await new OutboxDispatcherService(pool,[consumer],new InboxService(pool)).dispatchAvailable(1000);
+          const captured=new Promise(resolve=>enteredGeometryRead=resolve);geometryReadGate=new Promise(resolve=>releaseGeometryRead=resolve);geometryReadAt=2;
+          const racingRead=service.canRead(actor,'OfflineGisField',stale.id);await captured;
+          try{await new OutboxDispatcherService(pool,[consumer],new InboxService(pool)).dispatchAvailable(1000);}finally{releaseGeometryRead();}
+          assert.equal(await racingRead,false,'captured geometric identity must remain denied if retirement happens during async source policy validation');
           const fresh=(await pool.query('SELECT id,projection FROM offline_gis.field_projection WHERE tenant_id=$1 AND package_id=$2',[tenantId,deviceId])).rows[0];
           assert.notEqual(fresh.id,stale.id,'retire the identity whose retained feed contains protected geometry');
           assert.equal(fresh.projection.geometryVersionId,undefined);assert.equal(fresh.projection.geometry,undefined);
