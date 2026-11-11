@@ -24,10 +24,10 @@ void main() {
       final recorder = ui.PictureRecorder();
       final canvas = ui.Canvas(recorder);
       canvas.drawRect(
-        const ui.Rect.fromLTWH(0, 0, 256, 256),
+        const ui.Rect.fromLTWH(0, 0, 512, 512),
         ui.Paint()..color = const ui.Color(0xffe84030),
       );
-      final image = await recorder.endRecording().toImage(256, 256);
+      final image = await recorder.endRecording().toImage(512, 512);
       final png = (await image.toByteData(format: ui.ImageByteFormat.png))!
           .buffer
           .asUint8List();
@@ -48,7 +48,9 @@ void main() {
                   'test-raster': {
                     'type': 'raster',
                     'tiles': ['$url/tile/{z}/{x}/{y}.png'],
-                    'tileSize': 256,
+                    // Native uses a 512px world at map zoom0; 256px would
+                    // request source zoom1, outside this fixture's maxzoom0.
+                    'tileSize': 512,
                     'minzoom': 0,
                     'maxzoom': 0,
                   },
