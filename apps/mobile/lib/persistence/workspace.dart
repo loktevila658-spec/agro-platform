@@ -133,7 +133,7 @@ class Workspace {
             ],
           );
           await db.customStatement(
-            'UPDATE local_workspace SET schema_version=2 WHERE id=1',
+            'UPDATE local_workspace SET schema_version=3 WHERE id=1',
           );
           final stored = (await db.rows('SELECT * FROM local_workspace'))
               .single;
@@ -202,6 +202,12 @@ class Workspace {
     if (_closed) throw StateError('WORKSPACE_LOCKED');
   }
 
+  Future<void> markExternalAssets() async {
+    ensureOpen();
+    await File(p.join(directory.path, 'external-assets'))
+        .writeAsString('1', flush: true);
+  }
+
   Future<void> close() async {
     if (!_closed) {
       _closed = true;
@@ -211,9 +217,9 @@ class Workspace {
 
   /// Call only for an explicit SHARED logout/purge policy. Failure must prevent
   /// opening a different user's workspace. PERSONAL logout just closes the DB.
-  Future<void> wipeShared() async {
+  Future<void> wipeShared({Future<void> Function()? externalCleanup}) async {
     await close();
-    await _wipeDirectory(directory, _secrets, _keyName);
+    await _wipeDirectory(directory, _secrets, _keyName, externalCleanup);
   }
 
   /// Allows SHARED logout to clean a workspace which failed to open (for
@@ -222,6 +228,7 @@ class Workspace {
     WorkspaceIdentity identity, {
     Directory? root,
     SecretStore secrets = const OsSecretStore(),
+    Future<void> Function()? externalCleanup,
   }) async {
     root ??= Directory(
       p.join((await getApplicationSupportDirectory()).path, 'workspaces'),
@@ -231,6 +238,7 @@ class Workspace {
       Directory(p.join(root.path, name)),
       secrets,
       'agro.workspace.$name',
+      externalCleanup,
     );
   }
 
@@ -238,7 +246,14 @@ class Workspace {
     Directory directory,
     SecretStore secrets,
     String keyName,
+    Future<void> Function()? externalCleanup,
   ) async {
+    if (await File(p.join(directory.path, 'external-assets')).exists()) {
+      if (externalCleanup == null) {
+        throw StateError('EXTERNAL_ASSET_CLEANUP_REQUIRED');
+      }
+      await externalCleanup();
+    }
     await secrets.delete(keyName);
     if (await secrets.read(keyName) != null) {
       throw StateError('WORKSPACE_WIPE_FAILED');

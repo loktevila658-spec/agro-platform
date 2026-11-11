@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,

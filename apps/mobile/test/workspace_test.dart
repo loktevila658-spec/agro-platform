@@ -183,7 +183,7 @@ void main() {
     await ws
         .commands(verify: (_) async => true, validate: (_, _) async => true)
         .enqueue(draft, testGrant(identity));
-    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 2);
+    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 3);
     final before = await ws.db.rows('SELECT * FROM sync_outbox');
     final device = await ws.db.rows('SELECT * FROM local_device');
     await ws.close();
@@ -193,7 +193,7 @@ void main() {
     expect(await ws.db.rows('SELECT * FROM sync_outbox'), before);
     expect(await ws.db.rows('SELECT * FROM local_device'), device);
     expect((await ws.db.rows('PRAGMA foreign_key_check')), isEmpty);
-    await ws.db.customStatement('PRAGMA user_version=3');
+    await ws.db.customStatement('PRAGMA user_version=4');
     await ws.close();
     await expectLater(
       Workspace.open(identity, root: root, secrets: secrets),
@@ -209,6 +209,32 @@ void main() {
       throwsArgumentError,
     );
   });
+  test(
+    'external map assets require successful cleanup before cryptographic wipe',
+    () async {
+      final w = await Workspace.open(identity, root: root, secrets: secrets);
+      await w.markExternalAssets();
+      await expectLater(w.wipeShared(), throwsStateError);
+      expect(await w.directory.exists(), isTrue);
+      expect(secrets.values, isNotEmpty);
+      await expectLater(
+        w.wipeShared(
+          externalCleanup: () async => throw StateError('test-native-fault'),
+        ),
+        throwsStateError,
+      );
+      expect(secrets.values, isNotEmpty);
+      var cleared = false;
+      await w.wipeShared(
+        externalCleanup: () async {
+          cleared = true;
+        },
+      );
+      expect(cleared, isTrue);
+      expect(await w.directory.exists(), isFalse);
+      expect(secrets.values, isEmpty);
+    },
+  );
 }
 
 class RefusingDeleteSecrets extends MemorySecrets {

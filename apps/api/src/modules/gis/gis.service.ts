@@ -99,6 +99,19 @@ export class GisService implements OnModuleDestroy {
   const r=await tx.query(`SELECT d.effective_at FROM gis.geometry_decision d JOIN gis.geometry_version v ON v.tenant_id=d.tenant_id AND v.id=d.version_id WHERE d.tenant_id=$1 AND d.version_id=$2 AND d.status='APPROVED' AND d.effective_at<=$3 AND NOT EXISTS(SELECT 1 FROM gis.geometry_decision newer JOIN gis.geometry_version nv ON nv.tenant_id=newer.tenant_id AND nv.id=newer.version_id WHERE newer.tenant_id=d.tenant_id AND newer.geometry_id=d.geometry_id AND newer.status='APPROVED' AND newer.effective_at<=$3 AND (newer.effective_at,nv.revision)>(d.effective_at,v.revision))`,[actor.tenantId,versionId,asOf]);
   if(!r.rowCount)throw Error('GIS_APPROVED_EFFECTIVE_VERSION_REQUIRED');return {...v,effectiveAt:r.rows[0].effective_at};
  }
+ /** Exact pinned approved geometry; derived rendering never changes canonical precision. */
+ async offlineVersionInTransaction(tx:PoolClient,actor:GisActor,versionId:string,toleranceDegrees:number):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'gis.read');id(versionId);
+  if(!Number.isFinite(toleranceDegrees)||toleranceDegrees<0||toleranceDegrees>=180)throw Error('GIS_INVALID_RENDER_TOLERANCE');
+  const result=await tx.query(`SELECT v.id,v.geometry_id,v.revision,v.source,v.area_ha,v.measurement_method,d.effective_at,
+   ST_AsGeoJSON(ST_ForcePolygonCCW(ST_SimplifyPreserveTopology(v.geometry,$3)),17,0)::json AS geometry,
+   ARRAY[ST_XMin(v.geometry),ST_YMin(v.geometry),ST_XMax(v.geometry),ST_YMax(v.geometry)] AS bounds,
+   ST_AsGeoJSON(ST_PointOnSurface(v.geometry),17,0)::json AS center,
+   EXISTS(SELECT 1 FROM gis.geometry_decision nd JOIN gis.geometry_version nv ON nv.tenant_id=nd.tenant_id AND nv.id=nd.version_id WHERE nd.tenant_id=v.tenant_id AND nd.geometry_id=v.geometry_id AND nd.status='APPROVED' AND (nd.effective_at,nv.revision)>(d.effective_at,v.revision)) AS newer_approved
+   FROM gis.geometry_version v JOIN gis.geometry_decision d ON d.tenant_id=v.tenant_id AND d.version_id=v.id
+   WHERE v.tenant_id=$1 AND v.id=$2 AND d.status='APPROVED'`,[actor.tenantId,versionId,toleranceDegrees]);
+  if(!result.rowCount)throw Error('GIS_APPROVED_PIN_REQUIRED');return result.rows[0];
+ }
  async history(actor:GisActor,geometryId:string):Promise<Record<string,unknown>[]>{actor=Object.freeze({...actor});await this.registry.authorize(actor,'gis.read');id(geometryId);return(await this.pool.query(`SELECT ${selection},h.row_version AS head_version FROM gis.geometry_version v JOIN gis.geometry_head h ON h.tenant_id=v.tenant_id AND h.id=v.geometry_id LEFT JOIN gis.geometry_decision d ON d.tenant_id=v.tenant_id AND d.version_id=v.id WHERE v.tenant_id=$1 AND v.geometry_id=$2 ORDER BY v.revision`,[actor.tenantId,geometryId])).rows;}
  async query(actor:GisActor,bounds:number[],asOf:string,limit=100):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});bounds=structuredClone(bounds);

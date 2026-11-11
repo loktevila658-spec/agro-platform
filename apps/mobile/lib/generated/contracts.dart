@@ -267,6 +267,285 @@ class MfaVerifyRequest {
   final String code;
 }
 
+class OfflineGisCandidate {
+  const OfflineGisCandidate({
+    required this.fieldId,
+    required this.id,
+    required this.kind,
+    required this.name,
+    required this.organizationId,
+    required this.revisionId,
+  });
+
+  factory OfflineGisCandidate.fromJson(Map<String, Object?> json) => OfflineGisCandidate(
+        fieldId: json['fieldId'] as String,
+        id: json['id'] as String,
+        kind: json['kind'] as String,
+        name: json['name'] as String,
+        organizationId: json['organizationId'] as String,
+        revisionId: json['revisionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'fieldId': fieldId, 'id': id, 'kind': kind, 'name': name, 'organizationId': organizationId, 'revisionId': revisionId};
+
+  final String fieldId;
+  final String id;
+  final String kind;
+  final String name;
+  final String organizationId;
+  final String revisionId;
+}
+
+class OfflineGisCandidates {
+  const OfflineGisCandidates({
+    required this.items,
+    this.nextAfter,
+  });
+
+  factory OfflineGisCandidates.fromJson(Map<String, Object?> json) => OfflineGisCandidates(
+        items: (json['items'] as List<Object?>).map((item) => OfflineGisCandidate.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        nextAfter: json['nextAfter'] == null ? null : json['nextAfter'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'items': items, if (nextAfter != null) 'nextAfter': nextAfter};
+
+  final List<OfflineGisCandidate> items;
+  final String? nextAfter;
+}
+
+class OfflineGisField {
+  const OfflineGisField({
+    this.bounds,
+    required this.bundleVersion,
+    this.center,
+    required this.fieldId,
+    required this.fieldRevisionId,
+    this.geometry,
+    this.geometryVersionId,
+    required this.id,
+    required this.kind,
+    required this.name,
+    required this.organizationId,
+    required this.ownerRevisionId,
+    required this.ownerVersion,
+    required this.packageId,
+    required this.provenance,
+    this.siteId,
+    required this.sourceChanged,
+    required this.targetId,
+  });
+
+  factory OfflineGisField.fromJson(Map<String, Object?> json) => OfflineGisField(
+        bounds: json['bounds'] == null ? null : (json['bounds'] as List<Object?>).map((item) => item as num).toList(growable: false),
+        bundleVersion: (json['bundleVersion'] as num).toInt(),
+        center: json['center'] == null ? null : (json['center'] as List<Object?>).map((item) => item as num).toList(growable: false),
+        fieldId: json['fieldId'] as String,
+        fieldRevisionId: json['fieldRevisionId'] as String,
+        geometry: json['geometry'] == null ? null : json['geometry'] as Map<String, Object?>,
+        geometryVersionId: json['geometryVersionId'] == null ? null : json['geometryVersionId'] as String,
+        id: json['id'] as String,
+        kind: json['kind'] as String,
+        name: json['name'] as String,
+        organizationId: json['organizationId'] as String,
+        ownerRevisionId: json['ownerRevisionId'] as String,
+        ownerVersion: json['ownerVersion'] as String,
+        packageId: json['packageId'] as String,
+        provenance: json['provenance'] as Map<String, Object?>,
+        siteId: json['siteId'] == null ? null : json['siteId'] as String,
+        sourceChanged: json['sourceChanged'] as bool,
+        targetId: json['targetId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (bounds != null) 'bounds': bounds, 'bundleVersion': bundleVersion, if (center != null) 'center': center, 'fieldId': fieldId, 'fieldRevisionId': fieldRevisionId, if (geometry != null) 'geometry': geometry, if (geometryVersionId != null) 'geometryVersionId': geometryVersionId, 'id': id, 'kind': kind, 'name': name, 'organizationId': organizationId, 'ownerRevisionId': ownerRevisionId, 'ownerVersion': ownerVersion, 'packageId': packageId, 'provenance': provenance, if (siteId != null) 'siteId': siteId, 'sourceChanged': sourceChanged, 'targetId': targetId};
+
+  final List<num>? bounds;
+  final int bundleVersion;
+  final List<num>? center;
+  final String fieldId;
+  final String fieldRevisionId;
+  final Map<String, Object?>? geometry;
+  final String? geometryVersionId;
+  final String id;
+  final String kind;
+  final String name;
+  final String organizationId;
+  final String ownerRevisionId;
+  final String ownerVersion;
+  final String packageId;
+  final Map<String, Object?> provenance;
+  final String? siteId;
+  final bool sourceChanged;
+  final String targetId;
+}
+
+class OfflineGisManifest {
+  const OfflineGisManifest({
+    required this.contentHash,
+    required this.createdAt,
+    required this.deviceId,
+    required this.entries,
+    required this.id,
+    required this.lastValidatedAt,
+    required this.renderProfile,
+    required this.selection,
+    this.source,
+    required this.sourceChanged,
+    required this.tenantId,
+    required this.userId,
+    required this.version,
+  });
+
+  factory OfflineGisManifest.fromJson(Map<String, Object?> json) => OfflineGisManifest(
+        contentHash: json['contentHash'] as String,
+        createdAt: json['createdAt'] as String,
+        deviceId: json['deviceId'] as String,
+        entries: (json['entries'] as List<Object?>).map((item) => item as String).toList(growable: false),
+        id: json['id'] as String,
+        lastValidatedAt: json['lastValidatedAt'] as String,
+        renderProfile: json['renderProfile'] as Map<String, Object?>,
+        selection: OfflineGisSelection.fromJson(Map<String, Object?>.from(json['selection'] as Map)),
+        source: json['source'] == null ? null : OfflineGisSource.fromJson(Map<String, Object?>.from(json['source'] as Map)),
+        sourceChanged: json['sourceChanged'] as bool,
+        tenantId: json['tenantId'] as String,
+        userId: json['userId'] as String,
+        version: (json['version'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'contentHash': contentHash, 'createdAt': createdAt, 'deviceId': deviceId, 'entries': entries, 'id': id, 'lastValidatedAt': lastValidatedAt, 'renderProfile': renderProfile, 'selection': selection, if (source != null) 'source': source, 'sourceChanged': sourceChanged, 'tenantId': tenantId, 'userId': userId, 'version': version};
+
+  final String contentHash;
+  final String createdAt;
+  final String deviceId;
+  final List<String> entries;
+  final String id;
+  final String lastValidatedAt;
+  final Map<String, Object?> renderProfile;
+  final OfflineGisSelection selection;
+  final OfflineGisSource? source;
+  final bool sourceChanged;
+  final String tenantId;
+  final String userId;
+  final int version;
+}
+
+class OfflineGisSelection {
+  const OfflineGisSelection({
+    required this.bounds,
+    required this.maxZoom,
+    required this.minZoom,
+    this.sourceId,
+    required this.targets,
+  });
+
+  factory OfflineGisSelection.fromJson(Map<String, Object?> json) => OfflineGisSelection(
+        bounds: (json['bounds'] as List<Object?>).map((item) => item as num).toList(growable: false),
+        maxZoom: (json['maxZoom'] as num).toInt(),
+        minZoom: (json['minZoom'] as num).toInt(),
+        sourceId: json['sourceId'] == null ? null : json['sourceId'] as String,
+        targets: (json['targets'] as List<Object?>).map((item) => OfflineGisTarget.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'bounds': bounds, 'maxZoom': maxZoom, 'minZoom': minZoom, if (sourceId != null) 'sourceId': sourceId, 'targets': targets};
+
+  final List<num> bounds;
+  final int maxZoom;
+  final int minZoom;
+  final String? sourceId;
+  final List<OfflineGisTarget> targets;
+}
+
+class OfflineGisSource {
+  const OfflineGisSource({
+    required this.attribution,
+    required this.id,
+    required this.label,
+    required this.maxZoom,
+    required this.minZoom,
+    required this.offlineAllowed,
+    required this.publicBasemap,
+    required this.sourceVersion,
+    required this.styleUrl,
+    required this.styleVersion,
+    required this.termsRef,
+  });
+
+  factory OfflineGisSource.fromJson(Map<String, Object?> json) => OfflineGisSource(
+        attribution: json['attribution'] as String,
+        id: json['id'] as String,
+        label: json['label'] as String,
+        maxZoom: (json['maxZoom'] as num).toInt(),
+        minZoom: (json['minZoom'] as num).toInt(),
+        offlineAllowed: json['offlineAllowed'] as bool,
+        publicBasemap: json['publicBasemap'] as bool,
+        sourceVersion: json['sourceVersion'] as String,
+        styleUrl: json['styleUrl'] as String,
+        styleVersion: json['styleVersion'] as String,
+        termsRef: json['termsRef'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'attribution': attribution, 'id': id, 'label': label, 'maxZoom': maxZoom, 'minZoom': minZoom, 'offlineAllowed': offlineAllowed, 'publicBasemap': publicBasemap, 'sourceVersion': sourceVersion, 'styleUrl': styleUrl, 'styleVersion': styleVersion, 'termsRef': termsRef};
+
+  final String attribution;
+  final String id;
+  final String label;
+  final int maxZoom;
+  final int minZoom;
+  final bool offlineAllowed;
+  final bool publicBasemap;
+  final String sourceVersion;
+  final String styleUrl;
+  final String styleVersion;
+  final String termsRef;
+}
+
+class OfflineGisSources {
+  const OfflineGisSources({
+    required this.sources,
+  });
+
+  factory OfflineGisSources.fromJson(Map<String, Object?> json) => OfflineGisSources(
+        sources: (json['sources'] as List<Object?>).map((item) => OfflineGisSource.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'sources': sources};
+
+  final List<OfflineGisSource> sources;
+}
+
+class OfflineGisSubmitRequest {
+  const OfflineGisSubmitRequest({
+    required this.command,
+    required this.scopeVersion,
+  });
+
+  factory OfflineGisSubmitRequest.fromJson(Map<String, Object?> json) => OfflineGisSubmitRequest(
+        command: SyncCommand.fromJson(Map<String, Object?>.from(json['command'] as Map)),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'command': command, 'scopeVersion': scopeVersion};
+
+  final SyncCommand command;
+  final int scopeVersion;
+}
+
+class OfflineGisTarget {
+  const OfflineGisTarget({
+    required this.id,
+    required this.kind,
+  });
+
+  factory OfflineGisTarget.fromJson(Map<String, Object?> json) => OfflineGisTarget(
+        id: json['id'] as String,
+        kind: json['kind'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'id': id, 'kind': kind};
+
+  final String id;
+  final String kind;
+}
+
 class OrganizationResponse {
   const OrganizationResponse({
     required this.code,
@@ -1506,6 +1785,34 @@ class AgroPlatformApiClient {
     if (send == null) throw StateError('requestTransport is required for revokeMySession');
     final json = await send(baseUri.resolve('/v1/me/sessions/' + Uri.encodeComponent(id) + '/commands/revoke'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
     return RevocationResponse.fromJson(json);
+  }
+
+  Future<OfflineGisCandidates> offlineGisFields({String? after, required String authorization, String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for offlineGisFields');
+    final json = await send(baseUri.resolve('/v1/offline-gis/fields').replace(queryParameters: <String, String>{if (after != null) 'after': after!.toString()}), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    return OfflineGisCandidates.fromJson(json);
+  }
+
+  Future<OfflineGisManifest> offlineGisRead({required String packageId, required String authorization, String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for offlineGisRead');
+    final json = await send(baseUri.resolve('/v1/offline-gis/packages/' + Uri.encodeComponent(packageId) + ''), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    return OfflineGisManifest.fromJson(json);
+  }
+
+  Future<SyncPushResponse> offlineGisCommand({required String action, required String packageId, required String authorization, String? xCorrelationId, required OfflineGisSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for offlineGisCommand');
+    final json = await send(baseUri.resolve('/v1/offline-gis/packages/' + Uri.encodeComponent(packageId) + '/commands/' + Uri.encodeComponent(action) + ''), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<OfflineGisSources> offlineGisSources({required String authorization, String? xCorrelationId}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for offlineGisSources');
+    final json = await send(baseUri.resolve('/v1/offline-gis/sources'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
+    return OfflineGisSources.fromJson(json);
   }
 
   Future<SyncAckResponse> ackSync({required String authorization, required SyncAckRequest body}) async {

@@ -1,3 +1,4 @@
+import {OFFLINE_GIS_ACTIONS} from '../dist/modules/offline-gis/offline-gis.types.js';
 import { TASK_ACTIONS } from '../dist/modules/tasks/tasks.types.js';
 import { FARM_ACTIONS } from '../dist/modules/farm/farm.types.js';
 import { LAND_ACTIONS } from '../dist/modules/land/land.types.js';
@@ -123,6 +124,9 @@ test('allows configured catalog actions at their declared global or tenant scope
     {action:'task.return',effect:'allow',scope:'tenant'},
     {action:'task.cancel',effect:'allow',scope:'tenant'},
     {action:'task.abort',effect:'allow',scope:'tenant'},
+    {action:'offline-gis.package.read',effect:'allow',scope:'tenant'},
+    {action:'offline-gis.package.select',effect:'allow',scope:'tenant'},
+    {action:'offline-gis.package.refresh',effect:'allow',scope:'tenant'},
 
 
   ]);
@@ -164,3 +168,5 @@ test('read-only permission does not authorize a create action', () => {
     configuredTenantScopes: [tenantId],
   }), false);
 });
+
+test("GIS delivery actions remain explicit/default deny",()=>{for(const action of OFFLINE_GIS_ACTIONS)assert.ok(catalogActions.has(action));});

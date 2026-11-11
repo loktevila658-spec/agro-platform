@@ -843,6 +843,99 @@ paths:
           "description": "Not available"
         "409":
           "description": "Explicit version or state conflict"
+  "/v1/offline-gis/sources":
+    "get":
+      "operationId": "offlineGisSources"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "$ref": "#/components/parameters/CorrelationId"
+      "responses":
+        "200":
+          "description": "Authorized derived delivery result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OfflineGisSources"
+  "/v1/offline-gis/fields":
+    "get":
+      "operationId": "offlineGisFields"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "$ref": "#/components/parameters/CorrelationId"
+        -
+          "name": "after"
+          "in": "query"
+          "required": false
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized derived delivery result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OfflineGisCandidates"
+  "/v1/offline-gis/packages/{packageId}":
+    "get":
+      "operationId": "offlineGisRead"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "$ref": "#/components/parameters/CorrelationId"
+        -
+          "name": "packageId"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized derived delivery result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OfflineGisManifest"
+  "/v1/offline-gis/packages/{packageId}/commands/{action}":
+    "post":
+      "operationId": "offlineGisCommand"
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "$ref": "#/components/parameters/CorrelationId"
+        -
+          "name": "packageId"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "action"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+            "enum":
+              - "select"
+              - "refresh"
+      "responses":
+        "200":
+          "description": "Authorized derived delivery result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/OfflineGisSubmitRequest"
 components:
   parameters:
     BootstrapAuthorization:
@@ -1874,6 +1967,243 @@ components:
           "items":
             "$ref": "#/components/schemas/TaskProjection"
     "TaskSubmitRequest":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "scopeVersion"
+        - "command"
+      "properties":
+        "scopeVersion":
+          "type": "integer"
+        "command":
+          "$ref": "#/components/schemas/SyncCommand"
+    "OfflineGisTarget":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "id"
+        - "kind"
+      "properties":
+        "id":
+          "type": "string"
+        "kind":
+          "type": "string"
+          "enum":
+            - "FIELD"
+            - "FIELD_SEASON"
+    "OfflineGisSelection":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "targets"
+        - "bounds"
+        - "minZoom"
+        - "maxZoom"
+      "properties":
+        "targets":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/OfflineGisTarget"
+        "bounds":
+          "type": "array"
+          "items":
+            "type": "number"
+        "minZoom":
+          "type": "integer"
+        "maxZoom":
+          "type": "integer"
+        "sourceId":
+          "type": "string"
+    "OfflineGisSource":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "id"
+        - "label"
+        - "styleUrl"
+        - "styleVersion"
+        - "sourceVersion"
+        - "attribution"
+        - "termsRef"
+        - "offlineAllowed"
+        - "publicBasemap"
+        - "minZoom"
+        - "maxZoom"
+      "properties":
+        "id":
+          "type": "string"
+        "label":
+          "type": "string"
+        "styleUrl":
+          "type": "string"
+        "styleVersion":
+          "type": "string"
+        "sourceVersion":
+          "type": "string"
+        "attribution":
+          "type": "string"
+        "termsRef":
+          "type": "string"
+        "offlineAllowed":
+          "type": "boolean"
+        "publicBasemap":
+          "type": "boolean"
+        "minZoom":
+          "type": "integer"
+        "maxZoom":
+          "type": "integer"
+    "OfflineGisSources":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "sources"
+      "properties":
+        "sources":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/OfflineGisSource"
+    "OfflineGisCandidate":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "id"
+        - "kind"
+        - "fieldId"
+        - "name"
+        - "organizationId"
+        - "revisionId"
+      "properties":
+        "id":
+          "type": "string"
+        "kind":
+          "type": "string"
+        "fieldId":
+          "type": "string"
+        "name":
+          "type": "string"
+        "organizationId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+    "OfflineGisCandidates":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "items"
+      "properties":
+        "items":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/OfflineGisCandidate"
+        "nextAfter":
+          "type": "string"
+    "OfflineGisManifest":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "id"
+        - "version"
+        - "tenantId"
+        - "userId"
+        - "deviceId"
+        - "selection"
+        - "createdAt"
+        - "lastValidatedAt"
+        - "entries"
+        - "renderProfile"
+        - "sourceChanged"
+        - "contentHash"
+      "properties":
+        "id":
+          "type": "string"
+        "version":
+          "type": "integer"
+        "tenantId":
+          "type": "string"
+        "userId":
+          "type": "string"
+        "deviceId":
+          "type": "string"
+        "selection":
+          "$ref": "#/components/schemas/OfflineGisSelection"
+        "createdAt":
+          "type": "string"
+        "lastValidatedAt":
+          "type": "string"
+        "entries":
+          "type": "array"
+          "items":
+            "type": "string"
+        "renderProfile":
+          "type": "object"
+          "additionalProperties": true
+        "source":
+          "$ref": "#/components/schemas/OfflineGisSource"
+        "sourceChanged":
+          "type": "boolean"
+        "contentHash":
+          "type": "string"
+    "OfflineGisField":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "id"
+        - "packageId"
+        - "targetId"
+        - "kind"
+        - "fieldId"
+        - "name"
+        - "organizationId"
+        - "ownerRevisionId"
+        - "fieldRevisionId"
+        - "ownerVersion"
+        - "bundleVersion"
+        - "sourceChanged"
+        - "provenance"
+      "properties":
+        "id":
+          "type": "string"
+        "packageId":
+          "type": "string"
+        "targetId":
+          "type": "string"
+        "kind":
+          "type": "string"
+        "fieldId":
+          "type": "string"
+        "name":
+          "type": "string"
+        "organizationId":
+          "type": "string"
+        "ownerRevisionId":
+          "type": "string"
+        "fieldRevisionId":
+          "type": "string"
+        "ownerVersion":
+          "type": "string"
+        "siteId":
+          "type": "string"
+        "geometryVersionId":
+          "type": "string"
+        "bundleVersion":
+          "type": "integer"
+        "geometry":
+          "type": "object"
+          "additionalProperties": true
+        "bounds":
+          "type": "array"
+          "items":
+            "type": "number"
+        "center":
+          "type": "array"
+          "items":
+            "type": "number"
+        "sourceChanged":
+          "type": "boolean"
+        "provenance":
+          "type": "object"
+          "additionalProperties": true
+    "OfflineGisSubmitRequest":
       "type": "object"
       "additionalProperties": false
       "required":
