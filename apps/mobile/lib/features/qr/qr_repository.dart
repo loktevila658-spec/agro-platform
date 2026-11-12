@@ -58,7 +58,11 @@ class QrRepository {
     final denied = (await workspace.db.rows(
       "SELECT entity_id FROM qr_unresolved WHERE state='DENIED' LIMIT 1",
     )).isNotEmpty;
-    if (!refresh && !denied) {
+    final unavailable = (await workspace.db.rows(
+      "SELECT entity_id FROM qr_unresolved WHERE entity_id=? AND state='UNAVAILABLE'",
+      [ref.entityId],
+    )).isNotEmpty;
+    if (!refresh && !denied && !unavailable) {
       final cached = await workspace.db.rows(
         'SELECT projection_json FROM qr_cache WHERE entity_id=? AND scope_version=?',
         [ref.entityId, scope],
@@ -101,7 +105,7 @@ class QrRepository {
         throw StateError('QR_SCOPE_CHANGED');
       }
       await workspace.db.customStatement(
-        "INSERT INTO qr_unresolved(entity_id,payload,state) VALUES(?,?,'PENDING') ON CONFLICT(entity_id) DO UPDATE SET state=CASE WHEN qr_unresolved.state='DENIED' THEN 'DENIED' ELSE 'PENDING' END",
+        "INSERT INTO qr_unresolved(entity_id,payload,state) VALUES(?,?,'PENDING') ON CONFLICT(entity_id) DO UPDATE SET state=CASE WHEN qr_unresolved.state IN ('DENIED','UNAVAILABLE') THEN qr_unresolved.state ELSE 'PENDING' END",
         [ref.entityId, ref.payload],
       );
     });
@@ -170,7 +174,14 @@ class QrRepository {
       if (error.status != null && error.status! < 500 && error.status != 429) {
         rethrow;
       }
-      return QrView(ref, denied ? 'DENIED' : 'PENDING');
+      return QrView(
+        ref,
+        denied
+            ? 'DENIED'
+            : unavailable
+            ? 'UNAVAILABLE'
+            : 'PENDING',
+      );
     }
   }
 
@@ -213,7 +224,7 @@ class QrRepository {
     _retrying = true;
     try {
       final rows = await workspace.db.rows(
-        "SELECT payload FROM qr_unresolved WHERE state='PENDING' ORDER BY entity_id LIMIT 50",
+        "SELECT payload FROM qr_unresolved WHERE state IN ('PENDING','UNAVAILABLE') ORDER BY entity_id LIMIT 50",
       );
       for (final row in rows) {
         if (_closed) {

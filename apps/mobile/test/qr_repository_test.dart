@@ -92,6 +92,48 @@ void main() {
         throwsFormatException,
       );
       expect(QrIdentity.decode(payload).entityId, id);
+      await workspace.db.customStatement(
+        "INSERT INTO entity_cache VALUES('Material',?,?,1)",
+        [id, '{"active":true,"name":"Old synced","code":"OLD"}'],
+      );
+      expect(
+        (await repository.resolve(payload)).status,
+        'DENIED',
+        reason: 'known denial must not fall back to stale sync data',
+      );
+      var available = false;
+      final arriving = QrRepository(
+        workspace,
+        (path, body, headers) async => available
+            ? {
+                'version': 1,
+                'entityType': 'Material',
+                'entityId': id,
+                'status': 'RESOLVED',
+                'active': true,
+                'name': 'Arrived',
+                'code': 'NEW',
+              }
+            : {
+                'version': 1,
+                'entityType': 'Material',
+                'entityId': id,
+                'status': 'UNAVAILABLE',
+              },
+      );
+      expect(
+        (await arriving.resolve(payload, refresh: true)).status,
+        'UNAVAILABLE',
+      );
+      expect(
+        (await arriving.resolve(payload)).status,
+        'UNAVAILABLE',
+        reason: 'known unavailable cannot display old sync projection',
+      );
+      available = true;
+      await arriving.retry();
+      expect((await arriving.resolve(payload)).name, 'Arrived');
+      arriving.close();
       final gate = Completer<void>(), entered = Completer<void>();
       final racing = QrRepository(workspace, (path, body, headers) async {
         entered.complete();

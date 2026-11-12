@@ -103,8 +103,8 @@ test('QR: authorized Material identity, durable issuance and immutable provenanc
     const context=()=>({idempotencyKey:randomUUID(),correlationId:'qr-fixed-scenario',causationId:'manual-fixture'});
     const unit=await master.createUnit(actor,{code:'EA',name:'Count',dimension:'COUNT',precision:0},context());
     const material=await master.createMaterial(actor,{code:'QR-M1',name:'QR fixture material',itemType:'FINISHED',baseUom:'EA'},context());
-    const tagsRegistry=new IdentityTagsRegistry();let allowed=true;
-    tagsRegistry.installPolicy(async()=>allowed);
+    const tagsRegistry=new IdentityTagsRegistry();let allowed=true,policyCalls=0,denyAt=-1;
+    tagsRegistry.installPolicy(async()=>allowed&&++policyCalls!==denyAt);
     const tags=new IdentityTagsService(pool,tagsRegistry,master);
     const payload=encodePayload('Material',material.id);
     const key={idempotencyKey:'issue-fixture-1',correlationId:'qr-deterministic-1'};
@@ -138,6 +138,11 @@ test('QR: authorized Material identity, durable issuance and immutable provenanc
     await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:material.id},key),/QR_FORBIDDEN/);ownerAllowed=true;
     allowed=false;assert.equal((await post('/v1/qr/resolve',{payload})).status,403);allowed=true;
     await assert.rejects(tags.issue({...actor,subjectId:randomUUID()},{entityType:'Material',entityId:material.id},key),/QR_IDEMPOTENCY_CONFLICT/);
+    const beforeDenied=(await pool.query('SELECT count(*) FROM identity_tags.tag')).rows[0].count;
+    denyAt=policyCalls+2;
+    await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:material.id},{...key,idempotencyKey:'permission-race'}),/QR_FORBIDDEN/);
+    denyAt=-1;
+    assert.equal((await pool.query('SELECT count(*) FROM identity_tags.tag')).rows[0].count,beforeDenied,'mid-flight permission loss must roll back all issuance');
     const otherMaterial=await master.createMaterial(actor,{code:'QR-M2',name:'Other',itemType:'RAW',baseUom:'EA'},context());
     await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:otherMaterial.id},key),/QR_IDEMPOTENCY_CONFLICT/);
     // A database failure after tag insert rolls back issuance, audit and event.
