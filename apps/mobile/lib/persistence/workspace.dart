@@ -133,7 +133,7 @@ class Workspace {
             ],
           );
           await db.customStatement(
-            'UPDATE local_workspace SET schema_version=3 WHERE id=1',
+            'UPDATE local_workspace SET schema_version=4 WHERE id=1',
           );
           final stored = (await db.rows('SELECT * FROM local_workspace'))
               .single;

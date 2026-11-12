@@ -18,6 +18,7 @@ class PullStore {
       // Cache reset never deletes outbox, provisional projections, receipts,
       // attachment bytes/ACKs, evidence or immutable permission snapshots.
       await db.customStatement('DELETE FROM entity_cache');
+      await db.customStatement('DELETE FROM qr_cache');
       await db.customStatement('DELETE FROM entity_sync_meta');
       await db.customStatement('DELETE FROM sync_cursor');
       await db.customStatement("INSERT INTO sync_cursor VALUES('main',?,0,?)", [
@@ -55,6 +56,11 @@ class PullStore {
           throw StateError('INVALID_PULL_PAGE');
         }
         last = seq;
+        if (c.op == 'PURGE' || c.entityType == 'Material') {
+          await db.customStatement('DELETE FROM qr_cache WHERE entity_id=?', [
+            c.entityId,
+          ]);
+        }
         if (c.op == 'PURGE') {
           await db.customStatement(
             'DELETE FROM entity_cache WHERE entity_type=? AND entity_id=?',

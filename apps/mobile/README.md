@@ -200,3 +200,32 @@ or certify physical Android battery/ANR performance. The existing required Mobil
 CI job runs all tests, debug APK and Android OS-keystore/cipher/pull recovery fixture.
 No new CI path/job is needed: API `test/*.test.mjs` and all Flutter tests are already
 mandatory in the required aggregate.
+
+## QR identity foundation — WP49-030
+
+Authenticated workspace → QR opens optional on-device camera scanning and manual
+input. The real bundled Android MLKit scanner needs no WAN for decode. Preview
+precedes any business action. Material is the only current registered QR type;
+no field/parcel/batch/equipment domain is inferred from a scanned value.
+
+DOC18 v1 URI: `agro://v1/Material/<uuidv7>?c=<sha256>`. Checksum input is UTF-8
+`v1/Material/<uuidv7>` without newline; this is corruption detection, never an
+access token. Compact four-field JSON v/t/id/c is accepted; unsafe extras,
+unknown types/versions and malformed checksums fail. The QR contains no tenant
+secret, credential or business data. `QrRepository.encodeLocal` supports an
+already assigned offline UUIDv7 without an authoritative write.
+
+Local schema4 migrates1/2/3 transactionally, preserves pending commands/media,
+and durably retains unresolved identities. Workspace scope reset and known
+entity updates/PURGE invalidate previews; auth denial clears QR previews.
+Cached copies are historical and explicitly labelled. Later domain mutations
+still require their ordinary server or signed offline command authorization.
+Server issuance is an authenticated idempotent operation, never entity creation.
+No preview scan audit spam or invented generic business scan event.
+
+Native gate uses Android encrypted storage/OS keys, actual QR raster generation
+and real MLKit image decoding. Camera denial/unavailable states retain manual
+input. Emulator image decode does not certify physical optics, battery, iOS or
+production provisioning. No iOS host/support profile is introduced by this WP.
+Package APIs: https://pub.dev/packages/mobile_scanner/versions/7.5.0 and
+https://pub.dev/packages/qr_flutter/versions/4.1.0 .

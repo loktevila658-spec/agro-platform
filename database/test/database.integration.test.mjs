@@ -190,7 +190,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.match(second.stdout, /migration 12 already applied/);
     assert.match(second.stdout, /migration 13 already applied/);
     assert.match(second.stdout, /migration 15 already applied/);
-    assert.match(second.stdout, /migration 16 already applied/);
+    assert.match(second.stdout, /migration 17 already applied/);
     assert.equal(query(container,databaseUrl,"SELECT count(*) FROM information_schema.tables WHERE table_schema='offline_gis'"),'4');
 
     assert.equal(
@@ -199,7 +199,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT current_version FROM platform_meta.schema_version;',
       ),
-      '16',
+      '17',
     );
     assert.equal(query(container,databaseUrl,"SELECT count(*) FROM information_schema.tables WHERE table_schema='master_data' AND table_name IN ('source_policy','unit_of_measure','material','revision','command_idempotency','outbox_event');"), '6');
     assert.match(
@@ -216,7 +216,7 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
         databaseUrl,
         'SELECT COUNT(*) FROM platform_meta.schema_migrations;',
       ),
-      '16',
+      '17',
     );
 
     assert.equal(
@@ -284,8 +284,8 @@ test('clean, repeated, PostGIS, API, and invalid-state migration behavior', asyn
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body, {
-      schemaVersion: 16,
-      expectedSchemaVersion: 16,
+      schemaVersion: 17,
+      expectedSchemaVersion: 17,
       postgisVersion: body.postgisVersion,
       status: 'current',
     });

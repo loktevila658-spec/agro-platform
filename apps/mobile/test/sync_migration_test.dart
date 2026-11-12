@@ -27,10 +27,13 @@ void main() {
     raw.execute('DROP TABLE entity_sync_meta');
     raw.execute('DROP INDEX outbox_delivery_order');
     raw.execute('UPDATE local_workspace SET schema_version=1');
+    raw.execute('DROP TABLE qr_unresolved');
+    raw.execute('DROP TABLE qr_cache');
+    raw.execute('DROP TABLE qr_issue');
     raw.execute('PRAGMA user_version=1');
     raw.close();
     ws = await Workspace.open(identity, root: root, secrets: secrets);
-    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 3);
+    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 4);
     final pending = (await ws
         .commands(verify: (_) async => false)
         .get(draft.commandId))!;

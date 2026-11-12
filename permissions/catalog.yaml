@@ -179,3 +179,11 @@ permissions:
     description: Authorized derived offline GIS package refresh.
     effect: allow
     scope: tenant
+  - action: identity-tags.resolve
+    description: QR resolve requires current owner access in the authenticated tenant.
+    effect: allow
+    scope: tenant
+  - action: identity-tags.issue
+    description: QR issue requires current owner access in the authenticated tenant.
+    effect: allow
+    scope: tenant

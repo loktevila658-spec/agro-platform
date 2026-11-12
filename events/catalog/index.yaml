@@ -485,6 +485,46 @@ events:
         - "occurredAt"
         - "revision"
 
+  - name: qr_code.created
+    version: 1.0.0
+    producer: identity-tags
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        qrCodeId:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        version:
+          type: integer
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - qrCodeId
+        - entityType
+        - entityId
+        - version
+        - tenantId
+        - actorId
+        - correlationId
+        - causationId
+        - occurredAt
+
 sources:
   - DOC02
   - DOC10

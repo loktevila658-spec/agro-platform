@@ -36,6 +36,8 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     '/v1/offline-gis/packages/{packageId}',
     '/v1/offline-gis/packages/{packageId}/commands/{action}',
     '/v1/offline-gis/sources',
+    '/v1/qr-codes',
+    '/v1/qr/resolve',
     '/v1/sync/ack',
     '/v1/sync/bootstrap',
     '/v1/sync/devices/register',
@@ -69,6 +71,8 @@ test('OpenAPI contains the exact bootstrap and WP49-011 operation set', () => {
     {"method": "GET", "operationId": "offlineGisRead", "path": "/v1/offline-gis/packages/{packageId}"},
     {"method": "POST", "operationId": "offlineGisCommand", "path": "/v1/offline-gis/packages/{packageId}/commands/{action}"},
     {"method": "GET", "operationId": "offlineGisSources", "path": "/v1/offline-gis/sources"},
+    {method:'POST',operationId:'qrCodeCreate',path:'/v1/qr-codes'},
+    {method:'POST',operationId:'qrResolve',path:'/v1/qr/resolve'},
     { method: 'POST', operationId: 'ackSync', path: '/v1/sync/ack' },
     { method: 'POST', operationId: 'bootstrapSync', path: '/v1/sync/bootstrap' },
     { method: 'POST', operationId: 'registerSyncDevice', path: '/v1/sync/devices/register' },
@@ -154,5 +158,6 @@ test('event catalog preserves WP49-011 organization events and appends the DOC19
     { name: 'land.plot.changed', version: '1.0.0', producer: 'land' },
     { name: 'farm.entity.changed', version: '1.0.0', producer: 'farm' },
     { name: 'task.changed', version: '1.0.0', producer: 'tasks' },
+    {name:'qr_code.created',version:'1.0.0',producer:'identity-tags'},
   ]);
 });
