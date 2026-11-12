@@ -25,7 +25,9 @@ class _QrPageState extends State<QrPage> {
   }
 
   Future<void> run(Future<void> Function() action) async {
-    if (busy) return;
+    if (busy) {
+      return;
+    }
     setState(() {
       busy = true;
       error = null;
@@ -35,18 +37,23 @@ class _QrPageState extends State<QrPage> {
     try {
       await action();
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => error = 'Не удалось прочитать или разрешить код. Проверьте формат, подключение и доступ.',
         );
+      }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted) {
+        setState(() => busy = false);
+      }
     }
   }
 
   Future<void> resolve(String value, {bool refresh = false}) => run(() async {
     final view = await widget.repository.resolve(value, refresh: refresh);
-    if (mounted) setState(() => result = view);
+    if (mounted) {
+      setState(() => result = view);
+    }
   });
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -167,7 +174,9 @@ class _QrPageState extends State<QrPage> {
               ? null
               : () => run(() async {
                   final value = await widget.repository.create(materialId.text);
-                  if (mounted) setState(() => payload = value);
+                  if (mounted) {
+                    setState(() => payload = value);
+                  }
                 }),
           child: const Text('Создать QR'),
         ),

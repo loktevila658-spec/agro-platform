@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -91,6 +92,44 @@ void main() {
         throwsFormatException,
       );
       expect(QrIdentity.decode(payload).entityId, id);
+      final gate = Completer<void>(), entered = Completer<void>();
+      final racing = QrRepository(workspace, (path, body, headers) async {
+        entered.complete();
+        await gate.future;
+        return {
+          'version': 1,
+          'entityType': 'Material',
+          'entityId': id,
+          'status': 'RESOLVED',
+          'active': true,
+          'name': 'Stale',
+          'code': 'STALE',
+        };
+      });
+      final pending = racing.resolve(payload, refresh: true);
+      await entered.future;
+      await PullStore(workspace.db).bootstrap(
+        const SyncBootstrapResponse(
+          authorityMode: 'LOCAL_PRIMARY',
+          schemaVersion: 1,
+          scopeVersion: 3,
+          initialCursor: 'reset3',
+          grants: [],
+        ),
+      );
+      gate.complete();
+      await expectLater(pending, throwsStateError);
+      expect(await workspace.db.rows('SELECT * FROM qr_cache'), isEmpty);
+      racing.close();
+      final keys = <String>[];
+      final issuance = QrRepository(workspace, (path, body, headers) async {
+        keys.add(headers['Idempotency-Key']!);
+        return {'version': 1, 'payload': payload};
+      });
+      await issuance.create(id);
+      await issuance.create(id);
+      expect(keys.toSet(), hasLength(1));
+      issuance.close();
     } finally {
       repository.close();
       await workspace.close();

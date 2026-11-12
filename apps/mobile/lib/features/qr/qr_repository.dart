@@ -37,21 +37,33 @@ class QrRepository {
   }
 
   Future<int> _scope() async {
-    if (_closed) throw StateError('QR_WORKSPACE_CLOSED');
+    if (_closed) {
+      throw StateError('QR_WORKSPACE_CLOSED');
+    }
     return (await workspace.db.rows(
           'SELECT scope_version FROM local_workspace WHERE id=1',
         )).single['scope_version']
         as int;
   }
 
+  Future<String> _stamp() async => jsonEncode([
+    await _scope(),
+    await workspace.db.rows(
+      'SELECT cursor,last_seq,scope_version FROM sync_cursor ORDER BY stream',
+    ),
+  ]);
   Future<QrView> resolve(String raw, {bool refresh = false}) async {
     final ref = QrIdentity.decode(raw), scope = await _scope();
-    if (!refresh) {
+    final stamp = await _stamp();
+    final denied = (await workspace.db.rows(
+      "SELECT entity_id FROM qr_unresolved WHERE state='DENIED' LIMIT 1",
+    )).isNotEmpty;
+    if (!refresh && !denied) {
       final cached = await workspace.db.rows(
         'SELECT projection_json FROM qr_cache WHERE entity_id=? AND scope_version=?',
         [ref.entityId, scope],
       );
-      if (cached.isNotEmpty) {
+      if (cached.isNotEmpty && await _stamp() == stamp) {
         final projection = jsonDecode(
           cached.single['projection_json'] as String,
         ) as Map<String, dynamic>;
@@ -67,13 +79,13 @@ class QrRepository {
         "SELECT projection_json FROM entity_cache WHERE entity_type='Material' AND entity_id=?",
         [ref.entityId],
       );
-      if (synced.isNotEmpty) {
+      if (synced.isNotEmpty && await _stamp() == stamp) {
         final projection = jsonDecode(
           synced.single['projection_json'] as String,
         ) as Map<String, dynamic>;
         if (projection['active'] == true &&
             projection['name'] is String &&
-            projection['code'] is String)
+            projection['code'] is String) {
           return QrView(
             ref,
             'RESOLVED',
@@ -81,12 +93,15 @@ class QrRepository {
             code: projection['code'] as String,
             cached: true,
           );
+        }
       }
     }
     await workspace.db.write(() async {
-      if (await _scope() != scope) throw StateError('QR_SCOPE_CHANGED');
+      if (await _scope() != scope || await _stamp() != stamp) {
+        throw StateError('QR_SCOPE_CHANGED');
+      }
       await workspace.db.customStatement(
-        "INSERT INTO qr_unresolved(entity_id,payload,state) VALUES(?,?,'PENDING') ON CONFLICT(entity_id) DO UPDATE SET state='PENDING'",
+        "INSERT INTO qr_unresolved(entity_id,payload,state) VALUES(?,?,'PENDING') ON CONFLICT(entity_id) DO UPDATE SET state=CASE WHEN qr_unresolved.state='DENIED' THEN 'DENIED' ELSE 'PENDING' END",
         [ref.entityId, ref.payload],
       );
     });
@@ -101,10 +116,13 @@ class QrRepository {
           (result['status'] == 'RESOLVED' &&
               (result['active'] != true ||
                   result['name'] is! String ||
-                  result['code'] is! String)))
+                  result['code'] is! String))) {
         throw StateError('QR_INVALID_RESPONSE');
+      }
       await workspace.db.write(() async {
-        if (await _scope() != scope) throw StateError('QR_SCOPE_CHANGED');
+        if (await _scope() != scope || await _stamp() != stamp) {
+          throw StateError('QR_SCOPE_CHANGED');
+        }
         await workspace.db.customStatement(
           'DELETE FROM qr_cache WHERE entity_id=?',
           [ref.entityId],
@@ -136,7 +154,9 @@ class QrRepository {
         code: result['code'] as String?,
       );
     } on SyncFailure catch (error) {
-      if (_closed) rethrow;
+      if (_closed) {
+        rethrow;
+      }
       if (error.status == 401 || error.status == 403) {
         await workspace.db.write(() async {
           await workspace.db.customStatement('DELETE FROM qr_cache');
@@ -147,24 +167,38 @@ class QrRepository {
         });
         return QrView(ref, 'DENIED');
       }
-      if (error.status != null && error.status! < 500 && error.status != 429)
+      if (error.status != null && error.status! < 500 && error.status != 429) {
         rethrow;
-      return QrView(ref, 'PENDING');
+      }
+      return QrView(ref, denied ? 'DENIED' : 'PENDING');
     }
   }
 
   Future<String> create(String id) async {
     final ref = QrIdentity(id);
     await _scope();
+    final key = await workspace.db.write(() async {
+      await _scope();
+      await workspace.db.customStatement(
+        'INSERT OR IGNORE INTO qr_issue VALUES(?,?)',
+        [id, const Uuid().v7()],
+      );
+      return (await workspace.db.rows(
+            'SELECT request_key FROM qr_issue WHERE entity_id=?',
+            [id],
+          )).single['request_key']
+          as String;
+    });
     final result = await request(
       '/v1/qr-codes',
       {'entityType': 'Material', 'entityId': id},
-      {'Idempotency-Key': const Uuid().v7()},
+      {'Idempotency-Key': key},
     );
     if (result['version'] != 1 ||
         result['payload'] is! String ||
-        QrIdentity.decode(result['payload'] as String).entityId != id)
+        QrIdentity.decode(result['payload'] as String).entityId != id) {
       throw StateError('QR_INVALID_RESPONSE');
+    }
     await _scope();
     return ref.payload;
   }
@@ -173,14 +207,18 @@ class QrRepository {
   // a label, never a canonical entity or a claim of server-issued evidence.
   String encodeLocal(String id) => QrIdentity(id).payload;
   Future<void> retry() async {
-    if (_closed || _retrying) return;
+    if (_closed || _retrying) {
+      return;
+    }
     _retrying = true;
     try {
       final rows = await workspace.db.rows(
         "SELECT payload FROM qr_unresolved WHERE state='PENDING' ORDER BY entity_id LIMIT 50",
       );
       for (final row in rows) {
-        if (_closed) return;
+        if (_closed) {
+          return;
+        }
         await resolve(row['payload'] as String, refresh: true);
       }
     } finally {

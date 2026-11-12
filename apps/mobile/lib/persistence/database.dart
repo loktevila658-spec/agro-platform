@@ -98,6 +98,7 @@ class LocalDatabase extends GeneratedDatabase {
   });
 
   static const schemaV4 = [
+    'CREATE TABLE qr_issue(entity_id TEXT PRIMARY KEY,request_key TEXT NOT NULL UNIQUE)',
     'CREATE TABLE qr_unresolved(entity_id TEXT PRIMARY KEY,payload TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN (\'PENDING\',\'UNAVAILABLE\',\'DENIED\')))',
     'CREATE TABLE qr_cache(entity_id TEXT PRIMARY KEY,scope_version INTEGER NOT NULL,projection_json TEXT NOT NULL)',
   ];

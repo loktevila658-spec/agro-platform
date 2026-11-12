@@ -107,15 +107,21 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
         id = deviceUuid();
         await storage.write('agro.installation.device', id);
       }
-      if (mounted) setState(() => deviceId = id);
+      if (mounted) {
+        setState(() => deviceId = id);
+      }
     } catch (_) {
-      if (mounted) setState(() => error = 'Secure device storage unavailable');
+      if (mounted) {
+        setState(() => error = 'Secure device storage unavailable');
+      }
     }
   }
 
   Future<void> openAuthenticatedWorkspace() async {
     final token = accessToken;
-    if (token == null) return;
+    if (token == null) {
+      return;
+    }
     // Identity hints come only from the current successful authority login.
     // They select an isolated encrypted cache; they grant no offline permission.
     final claims = jsonDecode(
@@ -150,13 +156,15 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     syncTransport = transport;
     qrRepository = QrRepository(opened, (path, body, headers) async {
       final auth = accessToken;
-      if (auth == null)
+      if (auth == null) {
         throw const SyncFailure('AUTHENTICATION_REQUIRED', status: 401);
-      if (path == '/v1/qr/resolve')
+      }
+      if (path == '/v1/qr/resolve') {
         return (await transport.api.qrResolve(
           authorization: 'Bearer $auth',
           body: QrResolveRequest(payload: body['payload'] as String),
         )).toJson();
+      }
       return (await transport.api.qrCodeCreate(
         authorization: 'Bearer $auth',
         idempotencyKey: headers['Idempotency-Key']!,
@@ -193,7 +201,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     mediaWorker = AttachmentWorker(opened.attachments, transport);
     startSync(connectivityRestored: true);
     final counts = await opened.commands(verify: (_) async => false).counts();
-    if (mounted) setState(() => queueCounts = counts);
+    if (mounted) {
+      setState(() => queueCounts = counts);
+    }
   }
 
   @override
@@ -208,7 +218,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
 
   void startSync({bool connectivityRestored = false}) {
     final engine = syncEngine, opened = workspace;
-    if (engine == null || opened == null || syncTask != null) return;
+    if (engine == null || opened == null || syncTask != null) {
+      return;
+    }
     syncTimer?.cancel();
     syncTask =
         (() async {
@@ -220,7 +232,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
           } catch (_) {
             /* queue remains durable; authentication/authority is never bypassed */
           }
-          if (!identical(syncEngine, engine)) return;
+          if (!identical(syncEngine, engine)) {
+            return;
+          }
           await mapController?.reconcile();
           try {
             await qrRepository?.retry();
@@ -230,7 +244,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
           final counts = await opened
               .commands(verify: (_) async => false)
               .counts();
-          if (mounted) setState(() => queueCounts = counts);
+          if (mounted) {
+            setState(() => queueCounts = counts);
+          }
         })().catchError((Object _) {}).whenComplete(() {
           syncTask = null;
           if (mounted && syncForeground && identical(syncEngine, engine)) {
@@ -288,7 +304,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
   }
 
   Future<void> signIn() async {
-    if (deviceId == null || workspace != null) return;
+    if (deviceId == null || workspace != null) {
+      return;
+    }
     setState(() {
       busy = true;
       error = null;
@@ -322,7 +340,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       );
       password.clear();
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted) {
+        setState(() => busy = false);
+      }
     }
   }
 
@@ -353,13 +373,17 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       );
       code.clear();
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted) {
+        setState(() => busy = false);
+      }
     }
   }
 
   Future<void> loadSessions() async {
     final token = accessToken;
-    if (token == null) return;
+    if (token == null) {
+      return;
+    }
     try {
       final result = await apiRequest('/v1/me/sessions', accessToken: token);
       final values = result['sessions'];
@@ -375,7 +399,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
 
   Future<void> revokeSession(String sessionId) async {
     final token = accessToken;
-    if (token == null) return;
+    if (token == null) {
+      return;
+    }
     try {
       await apiRequest(
         '/v1/me/sessions/$sessionId/commands/revoke',
@@ -435,7 +461,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       }
       return;
     }
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     setState(() {
       accessToken = null;
       refreshToken = null;

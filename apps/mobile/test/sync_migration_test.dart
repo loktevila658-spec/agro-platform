@@ -29,6 +29,7 @@ void main() {
     raw.execute('UPDATE local_workspace SET schema_version=1');
     raw.execute('DROP TABLE qr_unresolved');
     raw.execute('DROP TABLE qr_cache');
+    raw.execute('DROP TABLE qr_issue');
     raw.execute('PRAGMA user_version=1');
     raw.close();
     ws = await Workspace.open(identity, root: root, secrets: secrets);

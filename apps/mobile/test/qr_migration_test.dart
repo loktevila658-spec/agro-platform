@@ -34,6 +34,7 @@ void main() {
         final raw = sqlite3.open('$directory/workspace.db');
         raw.execute("PRAGMA key='${secrets.values.values.single}'");
         raw.execute('DROP TABLE qr_cache');
+        raw.execute('DROP TABLE qr_issue');
         raw.execute('DROP TABLE qr_unresolved');
         if (from < 3) {
           raw.execute('DROP TABLE offline_package_state');

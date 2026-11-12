@@ -97,7 +97,7 @@ test('QR: authorized Material identity, durable issuance and immutable provenanc
     process.env.AUTH_AUDIT_HMAC_KEY=Buffer.alloc(32,12).toString('base64');
     await pool.query("INSERT INTO org.tenant(id,code,name,timezone,created_by) VALUES($1,'QR-A','Fixture A','UTC',$3),($2,'QR-B','Fixture B','UTC',$3)",[tenantId,otherTenant,subjectId]);
     const masterRegistry=new MasterDataRegistry();let ownerAllowed=true;
-    masterRegistry.installPolicy(async(a)=>ownerAllowed&&a.tenantId===tenantId);
+    masterRegistry.installPolicy(async(a)=>ownerAllowed&&[tenantId,otherTenant].includes(a.tenantId));
     masterRegistry.registerSourcePolicy({tenantId,version:1,dataOwnerId:subjectId,stewardId:subjectId,fields:{}});
     const master=new MasterDataService(pool,masterRegistry,new IntegrationsService(pool,new IntegrationsRegistry()));
     const context=()=>({idempotencyKey:randomUUID(),correlationId:'qr-fixed-scenario',causationId:'manual-fixture'});
