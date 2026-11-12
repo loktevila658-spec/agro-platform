@@ -1,6 +1,6 @@
 # WP49-029 Completion Report
 
-Date:2026-11-12 Europe/Moscow. Status: **corrected implementation G0–G11 accepted; DONE activates only after G12 publication conditions below are fulfilled**. No unobserved corrected report-publication or CR closure is asserted.
+Date:2026-11-12 Europe/Moscow. Status: **application implementation accepted; latest publication blocked by test-image ABI; new fixture candidate requires full revalidation. DONE activates only after G12 publication conditions below are fulfilled**. No unobserved corrected report-publication or CR closure is asserted.
 
 Original baseline main `1432b7bc81292d5fae7dbc3e4b07bb412a418c3e`; corrective baseline `acfdd0e3a19d391bc06127b1aad03e82e4d755d7`.
 Exact tested corrective implementation/PR head `9a1a3fc4702f70443be34738d76f8e72c54d925c`.
@@ -9,7 +9,7 @@ Pre-opening [source81d6587/run43101550541](https://github.com/loktevila658-spec/
 
 Initial [PR79](https://github.com/loktevila658-spec/agro-platform/pull/79), tested heade12beaa8cc8a86bf47fc733d52e398c0bd946f7a, ordinary merge5f0d596296911888da20d4bbfbf97eb08efcf696 and its pre/PR/exact push checks passed. Initial [report PR80](https://github.com/loktevila658-spec/agro-platform/pull/80), head2b42f8f9cc69ac50e1ca5dac9c9900b77478157b, ordinary mergeacfdd0e3a19d391bc06127b1aad03e82e4d755d7 and PR checks passed; its merge push43094171359 FAILED and no G12/DONE activated. A G7 cache/feed issue was also found before completed CR75 closure. Those candidates remain historical and are superseded by the corrected candidate above; no failed/unknown result is promoted to PASS.
 
-PUBLIC scope/source/tests/generated artifacts/PR/report/closeout publication is explicitly authorized in CR75. Original dirty checkout remains untouched. Corrected report-publication branch: `codex/wp49-029-final-closeout`.
+PUBLIC scope/source/tests/generated artifacts/PR/report/closeout publication is explicitly authorized in CR75. Original dirty checkout remains untouched. Previous corrected report-publication branch: `codex/wp49-029-final-closeout`; current test-image correction branch: `codex/wp49-029-postgis-abi`.
 
 ## Baseline and authority
 
@@ -29,7 +29,15 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 
 ## Approved change control
 
-[CR75](https://github.com/loktevila658-spec/agro-platform/issues/75) remains OPEN. Original exact50-path amendment6628468931, SHA256 `0c715515133975c05ec927d96c068626a4f092476639add2045c108ceadad8e6`; explicit owner scope/PUBLIC approval6628473856 before code; G0 continuation6628786715. Native fixture debug2-path amendment6800678986, SHA256 `ce31a9b744707af9b51a633b3b4fe366b0e8d8ec2ce404c2840d613a2954ac71`; explicit owner scope/PUBLIC approval6800692436 before edits. Total53 exact paths below. No private specification extracts or raw audit published. Unit-runner amendment6805162849, exact draft SHA256 `e55eb812da8dd81c33c7a9eaf82d496ca447515705e559f3f596626cd53a824f`, explicitly approved with PUBLIC publication before edit. Only Unit runner selector is pinned to ubuntu-24.04; no test/timeout/gate/dependency changes.
+[CR75](https://github.com/loktevila658-spec/agro-platform/issues/75) remains OPEN. Original exact50-path amendment6628468931, SHA256 `0c715515133975c05ec927d96c068626a4f092476639add2045c108ceadad8e6`; explicit owner scope/PUBLIC approval6628473856 before code; G0 continuation6628786715. Native fixture debug2-path amendment6800678986, SHA256 `ce31a9b744707af9b51a633b3b4fe366b0e8d8ec2ce404c2840d613a2954ac71`; explicit owner scope/PUBLIC approval6800692436 before edits. Total54 exact paths below. No private specification extracts or raw audit published. Unit-runner amendment6805162849, exact draft SHA256 `e55eb812da8dd81c33c7a9eaf82d496ca447515705e559f3f596626cd53a824f`, explicitly approved with PUBLIC publication before edit. Only Unit runner selector is pinned to ubuntu-24.04; no test/timeout/gate/dependency changes.
+
+## Test-image ABI amendment and pending revalidation
+
+[Report PR82](https://github.com/loktevila658-spec/agro-platform/pull/82), exact head `f49390bcd861e3dd84bd3739dba5530c978ca4b7`, passed all8 checks in [43109642528](https://github.com/loktevila658-spec/agro-platform/actions/runs/43109642528). Ordinary merge `37e57d054f5f5a83173d4cffad04e3f890703cf1` had the same tested tree. Its exact push [43251783414](https://github.com/loktevila658-spec/agro-platform/actions/runs/43251783414) FAILED: Unit and Migration could not load PostGIS in baseline0001 (`undefined symbol: heap_datum_check`), before WP29 acceptance scenarios; Mobile and the other four individual gates passed. This publication never activated DONE; CR75 remained OPEN.
+
+PostgreSQL16.16 released2026-11-12 introduces C-extension ABI changes ([official release notes](https://www.postgresql.org/docs/release/16.16/), [upstream ABI explanation](https://github.com/postgres/postgres/commit/0c8ffa1ad2f44be4b058a3ec96d9cb0c71f2593f)). The test image installed current PostGIS alone over an older base-image server. The owner explicitly approved a 54th exact path and PUBLIC publication before edit in [CR75 comment6828865947](https://github.com/loktevila658-spec/agro-platform/issues/75#issuecomment-6828865947), draft SHA256 `9930cfeda3eef953345148af8bf80a3dfa04877364971a0fc848ccd4df9a4412`.
+
+Only `database/test/Dockerfile.postgis` changes: explicitly install/update `postgresql-16` together with `postgresql-16-postgis-3` in the same APT transaction. Major16/Bookworm, production deployment, migrations, assertions, timeouts, workflow gates and all application source/tests remain unchanged. No unsafe compatibility toggle or skipped test. Real image/extension/migration and full exact candidate/PR/merge/report checks remain mandatory; previous green runs do not replace them. Current revalidation is pending and not asserted PASS.
 
 ## Implementation and boundaries
 
@@ -48,10 +56,12 @@ Additive canonical OpenAPI operations: GET sources, paginated GET fields, GET pa
 
 ## G0–G12
 
+Application acceptance below records the accepted corrected source. The newer test-image candidate must repeat the full suite before final G12 activation; failed run43251783414 is not acceptance.
+
 | Gate | Current result and evidence |
 |---|---|
 | G0 Prerequisites | PASS: accepted declared dependencies, separately accepted Task owner, pre-code scope approvals, unchanged manifest. |
-| G1 Static | PASS: exact approved53 paths, hosted typecheck/architecture/lint capability, enforced Flutter format/analyzer/lockfile, codegen current. |
+| G1 Static | PASS: exact approved54 paths, hosted typecheck/architecture/lint capability, enforced Flutter format/analyzer/lockfile, codegen current. |
 | G2 Migration | PASS: real clean/repeated/current PostGIS schema16, old migration immutability, owned constraints and mobile1/2->3 preservation. |
 | G3 Unit | PASS: full required Unit, API189/189 and Flutter52/52, zero skipped acceptance; initial local targeted45/45 and architecture11/11; corrective build/syntax/targeted10/10 PASS. |
 | G4 Integration | PASS: actual PostGIS10/10 owner tests plus retained real API/infrastructure/runtime suites; no fake owner substitute. |
@@ -162,6 +172,8 @@ Every row below is explicitly authorized by CR75, including the separate two deb
 | apps/mobile/android/app/src/debug/res/xml/offline_gis_test_network_security.xml | Deny base cleartext; allow only exact loopback fixture domains | Android debug test profile | Source security assertion and actual native download |
 | `.github/workflows/ci-quality-gates.yml` | Unit runner selector only, ubuntu-latest -> ubuntu-24.04 | platform CI | approved CR75 amendment6805162849, exact SHA256e55eb812da8dd81c33c7a9eaf82d496ca447515705e559f3f596626cd53a824f; owner approval before edit |
 
+| database/test/Dockerfile.postgis | Install/update core PostgreSQL16 together with PostGIS in the test image | Test infrastructure | Actual extension load, full migration/owner/API and CI; CR75 approval6828865947 |
+
 ## Permission correction and deterministic concurrency proof
 
 Current owner geometry references alone were insufficient when old cached delivery retained geometry. After an owner-removal event, current cache shape alone was also insufficient because SyncService authorizes retained feed by entity identity. The corrected module therefore checks retained geometry, retires a derived field ID on geometry presence changes and captures the ID's geometric class atomically with its existence. It preserves the canonical Field/FieldSeason/Task identities and existing feed protocol; only owned derived rows/manifest/audit change.
@@ -176,4 +188,4 @@ Corrective merge597352f has exactly two parents: baselineacfdd0e3a19d391bc06127b
 
 This final report path is already CR75-approved. Its publication must pass normal exact report PR-head checks, ordinary expected-head merge and exact report-merge-SHA push CI, with live main/protection/reviews/threads verified. After observing those results, record the corrected report PR/head/merge/run and completed CR75 closure in its activation comment. That activates G12 PASS / WP49-029 DONE without an infinite self-referential report rewrite. No unobserved corrected report-publication PASS is asserted here.
 
-Unlock decision: corrected implementation PASS; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED intentionally unchanged as approved. WP030 remains UNSTARTED and must not be started by this closeout.
+Unlock decision: corrected application implementation PASS; latest test-image candidate pending full revalidation; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED intentionally unchanged as approved. WP030 remains UNSTARTED and must not be started by this closeout.
