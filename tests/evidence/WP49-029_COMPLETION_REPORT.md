@@ -1,6 +1,6 @@
 # WP49-029 Completion Report
 
-Date:2026-11-12 Europe/Moscow. Status: **application implementation accepted; latest publication blocked by test-image ABI; new fixture candidate requires full revalidation. DONE activates only after G12 publication conditions below are fulfilled**. No unobserved corrected report-publication or CR closure is asserted.
+Date:2026-11-12 Europe/Moscow. Status: **corrected application and test-image candidate G0–G11 accepted; DONE activates only after G12 exact PR/merge/publication conditions below are fulfilled**. No unobserved corrected report-publication or CR closure is asserted.
 
 Original baseline main `1432b7bc81292d5fae7dbc3e4b07bb412a418c3e`; corrective baseline `acfdd0e3a19d391bc06127b1aad03e82e4d755d7`.
 Exact tested corrective implementation/PR head `9a1a3fc4702f70443be34738d76f8e72c54d925c`.
@@ -37,7 +37,7 @@ Task owner was accepted separately under approved scheduling: WP031 implementati
 
 PostgreSQL16.16 released2026-11-12 introduces C-extension ABI changes ([official release notes](https://www.postgresql.org/docs/release/16.16/), [upstream ABI explanation](https://github.com/postgres/postgres/commit/0c8ffa1ad2f44be4b058a3ec96d9cb0c71f2593f)). The test image installed current PostGIS alone over an older base-image server. The owner explicitly approved a 54th exact path and PUBLIC publication before edit in [CR75 comment6828865947](https://github.com/loktevila658-spec/agro-platform/issues/75#issuecomment-6828865947), draft SHA256 `9930cfeda3eef953345148af8bf80a3dfa04877364971a0fc848ccd4df9a4412`.
 
-Only `database/test/Dockerfile.postgis` changes: explicitly install/update `postgresql-16` together with `postgresql-16-postgis-3` in the same APT transaction. Major16/Bookworm, production deployment, migrations, assertions, timeouts, workflow gates and all application source/tests remain unchanged. No unsafe compatibility toggle or skipped test. Real image/extension/migration and full exact candidate/PR/merge/report checks remain mandatory; previous green runs do not replace them. Current revalidation is pending and not asserted PASS.
+Only `database/test/Dockerfile.postgis` changes: explicitly install/update `postgresql-16` together with `postgresql-16-postgis-3` in the same APT transaction. Major16/Bookworm, production deployment, migrations, assertions, timeouts, workflow gates and all application source/tests remain unchanged. No unsafe compatibility toggle or skipped test. Real image/extension/migration and full exact candidate/PR/merge/report checks remain mandatory; previous green runs do not replace them. Candidate `a22afc05dd37c294688f46aace453e7805f081c0` passed full pre-PR [run43255301937](https://github.com/loktevila658-spec/agro-platform/actions/runs/43255301937): all8 SUCCESS, API189/189, actual owner10/10 fail0/skipped0, Flutter52/52 and Android native4/4. Real PostGIS extension loading, clean/repeated schema16 migration and geometry operations passed. This report update changes evidence only; the exact final PR head and ordinary merge push still require all gates. Their observed SHA/run and final CR closure are recorded in the G12 activation comment below; no extra report-only rewrite is required.
 
 ## Implementation and boundaries
 
@@ -56,7 +56,7 @@ Additive canonical OpenAPI operations: GET sources, paginated GET fields, GET pa
 
 ## G0–G12
 
-Application acceptance below records the accepted corrected source. The newer test-image candidate must repeat the full suite before final G12 activation; failed run43251783414 is not acceptance.
+Acceptance below records corrected source plus full test-image candidate run43255301937. Exact final PR-head and merge checks remain mandatory for G12 activation; failed run43251783414 is not acceptance.
 
 | Gate | Current result and evidence |
 |---|---|
@@ -114,7 +114,7 @@ Self-review only; no independent reviewer claimed. Correction review checks owne
 
 ## Complete approved changed-file inventory
 
-Every row below is explicitly authorized by CR75, including the separate two debug paths and one Unit-runner amendment. Frozen literal path is preserved rather than reinterpreted.
+Every row below is explicitly authorized by CR75, including the separate two debug paths, one Unit-runner amendment and one test-image ABI amendment. Frozen literal path is preserved rather than reinterpreted.
 
 | Exact path | Purpose | Owner | Verification |
 |---|---|---|---|
@@ -171,7 +171,6 @@ Every row below is explicitly authorized by CR75, including the separate two deb
 | apps/mobile/android/app/src/debug/AndroidManifest.xml | Reference loopback-only debug security config | Android debug test profile | Native actual tile fixture; release unchanged |
 | apps/mobile/android/app/src/debug/res/xml/offline_gis_test_network_security.xml | Deny base cleartext; allow only exact loopback fixture domains | Android debug test profile | Source security assertion and actual native download |
 | `.github/workflows/ci-quality-gates.yml` | Unit runner selector only, ubuntu-latest -> ubuntu-24.04 | platform CI | approved CR75 amendment6805162849, exact SHA256e55eb812da8dd81c33c7a9eaf82d496ca447515705e559f3f596626cd53a824f; owner approval before edit |
-
 | database/test/Dockerfile.postgis | Install/update core PostgreSQL16 together with PostGIS in the test image | Test infrastructure | Actual extension load, full migration/owner/API and CI; CR75 approval6828865947 |
 
 ## Permission correction and deterministic concurrency proof
@@ -186,6 +185,6 @@ The earlier private diagnostic was used only to locate the missing GIS check, no
 
 Corrective merge597352f has exactly two parents: baselineacfdd0e3a19d391bc06127b1aad03e82e4d755d7 and tested head9a1a3fc4702f70443be34738d76f8e72c54d925c. Merge tree `655ceef465419eac2090b92ada88413a863f05d9` equals tested-head tree. Original implementation tree9bd6b1d5d769a98ac59d908186943770c8bf8c59 and initial report treec1d73f7960573d7ae461c1af3486afe2657aa6e8 likewise matched their tested heads; their publication did not activate DONE. Source/tests acceptance and corrected final report publication are separate records.
 
-This final report path is already CR75-approved. Its publication must pass normal exact report PR-head checks, ordinary expected-head merge and exact report-merge-SHA push CI, with live main/protection/reviews/threads verified. After observing those results, record the corrected report PR/head/merge/run and completed CR75 closure in its activation comment. That activates G12 PASS / WP49-029 DONE without an infinite self-referential report rewrite. No unobserved corrected report-publication PASS is asserted here.
+This final report path is already CR75-approved. The final test-image/report PR publishes both the one-line approved fixture correction and this consolidated Completion Report. Its publication must pass normal exact report PR-head checks, ordinary expected-head merge and exact report-merge-SHA push CI, with live main/protection/reviews/threads verified. After observing those results, record the corrected report PR/head/merge/run and completed CR75 closure in its activation comment. That activates G12 PASS / WP49-029 DONE without an infinite self-referential report rewrite. No unobserved corrected report-publication PASS is asserted here.
 
-Unlock decision: corrected application implementation PASS; latest test-image candidate pending full revalidation; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED intentionally unchanged as approved. WP030 remains UNSTARTED and must not be started by this closeout.
+Unlock decision: corrected application implementation PASS; test-image candidate full pre-PR PASS; G12/DONE only on that activation. Frozen manifest/static NOT_STARTED intentionally unchanged as approved. WP030 remains UNSTARTED and must not be started by this closeout.
