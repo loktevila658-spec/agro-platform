@@ -183,7 +183,7 @@ void main() {
     await ws
         .commands(verify: (_) async => true, validate: (_, _) async => true)
         .enqueue(draft, testGrant(identity));
-    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 3);
+    expect((await ws.db.rows('PRAGMA user_version')).single.values.single, 4);
     final before = await ws.db.rows('SELECT * FROM sync_outbox');
     final device = await ws.db.rows('SELECT * FROM local_device');
     await ws.close();
@@ -193,7 +193,7 @@ void main() {
     expect(await ws.db.rows('SELECT * FROM sync_outbox'), before);
     expect(await ws.db.rows('SELECT * FROM local_device'), device);
     expect((await ws.db.rows('PRAGMA foreign_key_check')), isEmpty);
-    await ws.db.customStatement('PRAGMA user_version=4');
+    await ws.db.customStatement('PRAGMA user_version=5');
     await ws.close();
     await expectLater(
       Workspace.open(identity, root: root, secrets: secrets),

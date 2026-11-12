@@ -6,6 +6,66 @@ servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
 paths:
+  /v1/qr/resolve:
+    post:
+      operationId: qrResolve
+      summary: DOC14 qrResolve / DOC18 v1 opaque identification
+      description: LOCAL_PRIMARY; current session, tag policy and Material owner permissions required. QR is not authorization. No sensitive payload or preview audit.
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QrResolveRequest"
+      responses:
+        '200':
+          description: Authorized identity result; unavailable does not disclose foreign entities.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QrResolution"
+        '400':
+          description: Invalid payload or unsupported version/type.
+        '401':
+          description: Authentication required or session revoked.
+        '403':
+          description: Current permissions denied.
+        '409':
+          description: Issuance unavailable or idempotency mismatch.
+  /v1/qr-codes:
+    post:
+      operationId: qrCodeCreate
+      summary: DOC14 qrCodeCreate / DOC18 v1 opaque identification
+      description: LOCAL_PRIMARY; current session, tag policy and Material owner permissions required. QR is not authorization. No sensitive payload or preview audit.
+      parameters:
+        -
+          $ref: "#/components/parameters/IdentityAuthorization"
+        -
+          $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QrIssueRequest"
+      responses:
+        '200':
+          description: Authorized identity result; unavailable does not disclose foreign entities.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QrIssueResponse"
+        '400':
+          description: Invalid payload or unsupported version/type.
+        '401':
+          description: Authentication required or session revoked.
+        '403':
+          description: Current permissions denied.
+        '409':
+          description: Issuance unavailable or idempotency mismatch.
   /v1/sync/devices/register:
     post:
       operationId: "registerSyncDevice"
@@ -983,6 +1043,69 @@ components:
       schema:
         type: string
   schemas:
+    QrResolveRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        payload:
+          type: string
+      required:
+        - payload
+    QrIssueRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        entityType:
+          type: string
+          enum:
+            - Material
+        entityId:
+          type: string
+      required:
+        - entityType
+        - entityId
+    QrResolution:
+      type: object
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+        entityType:
+          type: string
+          enum:
+            - Material
+        entityId:
+          type: string
+        status:
+          type: string
+          enum:
+            - RESOLVED
+            - UNAVAILABLE
+        name:
+          type: string
+        code:
+          type: string
+        active:
+          type: boolean
+      required:
+        - version
+        - entityType
+        - entityId
+        - status
+    QrIssueResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        qrCodeId:
+          type: string
+        payload:
+          type: string
+        version:
+          type: integer
+      required:
+        - qrCodeId
+        - payload
+        - version
     SyncAggregate:
       type: "object"
       additionalProperties: false

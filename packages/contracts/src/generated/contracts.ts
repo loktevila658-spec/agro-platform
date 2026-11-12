@@ -197,6 +197,31 @@ export interface OrganizationUnitResponse {
   readonly unitType: string;
 }
 
+export interface QrIssueRequest {
+  readonly entityId: string;
+  readonly entityType: 'Material';
+}
+
+export interface QrIssueResponse {
+  readonly payload: string;
+  readonly qrCodeId: string;
+  readonly version: number;
+}
+
+export interface QrResolution {
+  readonly active?: boolean;
+  readonly code?: string;
+  readonly entityId: string;
+  readonly entityType: 'Material';
+  readonly name?: string;
+  readonly status: 'RESOLVED' | 'UNAVAILABLE';
+  readonly version: number;
+}
+
+export interface QrResolveRequest {
+  readonly payload: string;
+}
+
 export interface ReadinessResponse {
   readonly databaseStatus: 'current' | 'unavailable' | 'behind' | 'ahead';
   readonly status: 'ready' | 'not_ready';
@@ -1140,6 +1165,60 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "revision"
       ]
     }
+  },
+  {
+    "name": "qr_code.created",
+    "version": "1.0.0",
+    "producer": "identity-tags",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "qrCodeId": {
+          "type": "string"
+        },
+        "entityType": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "qrCodeId",
+        "entityType",
+        "entityId",
+        "version",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
   }
 ];
 
@@ -1407,6 +1486,29 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'GET', headers });
     if (!response.ok) throw new Error(`offlineGisSources failed with HTTP ${response.status}`);
     return await response.json() as OfflineGisSources;
+  }
+
+  async qrCodeCreate(authorization: string, idempotencyKey: string, body: QrIssueRequest): Promise<QrIssueResponse> {
+    const url = new URL(`${this.baseUrl}/v1/qr-codes`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`qrCodeCreate failed with HTTP ${response.status}`);
+    return await response.json() as QrIssueResponse;
+  }
+
+  async qrResolve(authorization: string, body: QrResolveRequest): Promise<QrResolution> {
+    const url = new URL(`${this.baseUrl}/v1/qr/resolve`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`qrResolve failed with HTTP ${response.status}`);
+    return await response.json() as QrResolution;
   }
 
   async ackSync(authorization: string, body: SyncAckRequest): Promise<SyncAckResponse> {

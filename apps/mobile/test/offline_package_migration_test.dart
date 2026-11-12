@@ -54,12 +54,14 @@ void main() {
     raw.execute("PRAGMA key='${secrets.values.values.single}'");
     raw.execute('DROP TABLE offline_package_field');
     raw.execute('DROP TABLE offline_package_state');
+    raw.execute('DROP TABLE qr_unresolved');
+    raw.execute('DROP TABLE qr_cache');
     raw.execute('PRAGMA user_version=2');
     raw.execute('UPDATE local_workspace SET schema_version=2');
     raw.close();
     w = await Workspace.open(identity, root: root, secrets: secrets);
     try {
-      expect((await w.db.rows('PRAGMA user_version')).single.values.single, 3);
+      expect((await w.db.rows('PRAGMA user_version')).single.values.single, 4);
       expect(await w.db.rows('SELECT * FROM sync_outbox'), before);
       expect(await w.db.rows('SELECT * FROM local_attachment'), attachments);
       expect(await w.db.rows('SELECT * FROM sync_command_result'), receipts);

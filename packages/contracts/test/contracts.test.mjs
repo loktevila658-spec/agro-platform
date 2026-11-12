@@ -60,6 +60,8 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     {"method": "GET", "operationId": "offlineGisRead", "path": "/v1/offline-gis/packages/{packageId}", "responseSchemaName": "OfflineGisManifest"},
     {"method": "POST", "operationId": "offlineGisCommand", "path": "/v1/offline-gis/packages/{packageId}/commands/{action}", "responseSchemaName": "SyncPushResponse"},
     {"method": "GET", "operationId": "offlineGisSources", "path": "/v1/offline-gis/sources", "responseSchemaName": "OfflineGisSources"},
+    {method:'POST',operationId:'qrCodeCreate',path:'/v1/qr-codes',responseSchemaName:'QrIssueResponse'},
+    {method:'POST',operationId:'qrResolve',path:'/v1/qr/resolve',responseSchemaName:'QrResolution'},
     { method: 'POST', operationId: 'ackSync', path: '/v1/sync/ack', responseSchemaName: 'SyncAckResponse' },
     { method: 'POST', operationId: 'bootstrapSync', path: '/v1/sync/bootstrap', responseSchemaName: 'SyncBootstrapResponse' },
     { method: 'POST', operationId: 'registerSyncDevice', path: '/v1/sync/devices/register', responseSchemaName: 'SyncRegisterResponse' },
@@ -122,6 +124,7 @@ test('canonical event schema and single YAML catalog validate', async () => {
     { name: 'land.plot.changed', version: '1.0.0', producer: 'land' },
     { name: 'farm.entity.changed', version: '1.0.0', producer: 'farm' },
     { name: 'task.changed', version: '1.0.0', producer: 'tasks' },
+    {name:'qr_code.created',version:'1.0.0',producer:'identity-tags'},
   ]);
   assert.deepEqual(Object.keys(contracts.sources).sort(), [
     'events/catalog/index.yaml',

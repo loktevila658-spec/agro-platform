@@ -1,3 +1,5 @@
+import 'features/qr/qr_page.dart';
+import 'features/qr/qr_repository.dart';
 import 'features/map/offline_package_controller.dart';
 import 'features/map/offline_map_page.dart';
 import 'features/map/maplibre_offline_regions.dart';
@@ -78,6 +80,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
   String? deviceId;
   Workspace? workspace;
   TaskRepository? taskRepository;
+  QrRepository? qrRepository;
   OfflinePackageController? mapController;
   final mapRegions = MapLibreOfflineRegions();
   WorkspaceIdentity? workspaceIdentity;
@@ -145,6 +148,24 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       },
     );
     syncTransport = transport;
+    qrRepository = QrRepository(opened, (path, body, headers) async {
+      final auth = accessToken;
+      if (auth == null)
+        throw const SyncFailure('AUTHENTICATION_REQUIRED', status: 401);
+      if (path == '/v1/qr/resolve')
+        return (await transport.api.qrResolve(
+          authorization: 'Bearer $auth',
+          body: QrResolveRequest(payload: body['payload'] as String),
+        )).toJson();
+      return (await transport.api.qrCodeCreate(
+        authorization: 'Bearer $auth',
+        idempotencyKey: headers['Idempotency-Key']!,
+        body: QrIssueRequest(
+          entityType: body['entityType'] as String,
+          entityId: body['entityId'] as String,
+        ),
+      )).toJson();
+    });
     const publicKey = String.fromEnvironment(
       'SYNC_AUTHORITY_ED25519_PUBLIC_KEY',
     );
@@ -201,6 +222,11 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
           }
           if (!identical(syncEngine, engine)) return;
           await mapController?.reconcile();
+          try {
+            await qrRepository?.retry();
+          } catch (_) {
+            /* retained for authenticated retry */
+          }
           final counts = await opened
               .commands(verify: (_) async => false)
               .counts();
@@ -226,6 +252,8 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
 
   Future<void> stopSync() async {
     syncTimer?.cancel();
+    qrRepository?.close();
+    qrRepository = null;
     syncEngine = null;
     mediaWorker = null;
     syncTransport?.close();
@@ -432,6 +460,18 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Signed in'),
+                    if (qrRepository != null)
+                      Builder(
+                        builder: (context) => TextButton.icon(
+                          onPressed: () => Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) => QrPage(repository: qrRepository!),
+                            ),
+                          ),
+                          icon: const Icon(Icons.qr_code_scanner),
+                          label: const Text('QR'),
+                        ),
+                      ),
                     Builder(
                       builder: (context) => TextButton(
                         onPressed: mapController == null

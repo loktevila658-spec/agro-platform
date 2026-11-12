@@ -620,6 +620,89 @@ class OrganizationUnitResponse {
   final String unitType;
 }
 
+class QrIssueRequest {
+  const QrIssueRequest({
+    required this.entityId,
+    required this.entityType,
+  });
+
+  factory QrIssueRequest.fromJson(Map<String, Object?> json) => QrIssueRequest(
+        entityId: json['entityId'] as String,
+        entityType: json['entityType'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'entityId': entityId, 'entityType': entityType};
+
+  final String entityId;
+  final String entityType;
+}
+
+class QrIssueResponse {
+  const QrIssueResponse({
+    required this.payload,
+    required this.qrCodeId,
+    required this.version,
+  });
+
+  factory QrIssueResponse.fromJson(Map<String, Object?> json) => QrIssueResponse(
+        payload: json['payload'] as String,
+        qrCodeId: json['qrCodeId'] as String,
+        version: (json['version'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'payload': payload, 'qrCodeId': qrCodeId, 'version': version};
+
+  final String payload;
+  final String qrCodeId;
+  final int version;
+}
+
+class QrResolution {
+  const QrResolution({
+    this.active,
+    this.code,
+    required this.entityId,
+    required this.entityType,
+    this.name,
+    required this.status,
+    required this.version,
+  });
+
+  factory QrResolution.fromJson(Map<String, Object?> json) => QrResolution(
+        active: json['active'] == null ? null : json['active'] as bool,
+        code: json['code'] == null ? null : json['code'] as String,
+        entityId: json['entityId'] as String,
+        entityType: json['entityType'] as String,
+        name: json['name'] == null ? null : json['name'] as String,
+        status: json['status'] as String,
+        version: (json['version'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (active != null) 'active': active, if (code != null) 'code': code, 'entityId': entityId, 'entityType': entityType, if (name != null) 'name': name, 'status': status, 'version': version};
+
+  final bool? active;
+  final String? code;
+  final String entityId;
+  final String entityType;
+  final String? name;
+  final String status;
+  final int version;
+}
+
+class QrResolveRequest {
+  const QrResolveRequest({
+    required this.payload,
+  });
+
+  factory QrResolveRequest.fromJson(Map<String, Object?> json) => QrResolveRequest(
+        payload: json['payload'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'payload': payload};
+
+  final String payload;
+}
+
 class ReadinessResponse {
   const ReadinessResponse({
     required this.databaseStatus,
@@ -1616,6 +1699,13 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     producer: 'tasks',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'entityType', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt', 'revision']},
+  ),
+  EventDefinition(
+    name: 'qr_code.created',
+    version: '1.0.0',
+    producer: 'identity-tags',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'qrCodeId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'version': <String, Object?>{'type': 'integer'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'qrCodeId', 'entityType', 'entityId', 'version', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
   )
 ];
 
@@ -1811,6 +1901,20 @@ class AgroPlatformApiClient {
     if (send == null) throw StateError('requestTransport is required for offlineGisSources');
     final json = await send(baseUri.resolve('/v1/offline-gis/sources'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (xCorrelationId != null) 'X-Correlation-Id': xCorrelationId!}, body: null);
     return OfflineGisSources.fromJson(json);
+  }
+
+  Future<QrIssueResponse> qrCodeCreate({required String authorization, required String idempotencyKey, required QrIssueRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for qrCodeCreate');
+    final json = await send(baseUri.resolve('/v1/qr-codes'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return QrIssueResponse.fromJson(json);
+  }
+
+  Future<QrResolution> qrResolve({required String authorization, required QrResolveRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for qrResolve');
+    final json = await send(baseUri.resolve('/v1/qr/resolve'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return QrResolution.fromJson(json);
   }
 
   Future<SyncAckResponse> ackSync({required String authorization, required SyncAckRequest body}) async {

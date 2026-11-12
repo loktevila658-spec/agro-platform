@@ -1,6 +1,6 @@
 import type { PoolClient } from 'pg';
 
-export type EventSource = 'org' | 'identity' | 'master-data' | 'gis' | 'land' | 'farm' | 'tasks';
+export type EventSource = 'org' | 'identity' | 'master-data' | 'gis' | 'land' | 'farm' | 'tasks' | 'identity-tags';
 
 export interface DomainEvent {
   id: string;

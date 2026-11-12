@@ -32,7 +32,7 @@ class LocalDatabase extends GeneratedDatabase {
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
   @override
@@ -40,26 +40,32 @@ class LocalDatabase extends GeneratedDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (_) => transaction(() async {
-      for (final statement in [...schemaV1, ...schemaV2, ...schemaV3]) {
+      for (final statement in [
+        ...schemaV1,
+        ...schemaV2,
+        ...schemaV3,
+        ...schemaV4,
+      ]) {
         await customStatement(statement);
       }
       // Drift normally stores user_version after onCreate returns. Commit it
       // with the DDL so a crash cannot leave a complete v1 schema marked v0.
-      await customStatement('PRAGMA user_version=3');
+      await customStatement('PRAGMA user_version=4');
     }),
     onUpgrade: (_, from, to) async {
-      if ((from != 1 && from != 2) || to != 3) {
+      if ((from < 1 || from > 3) || to != 4) {
         throw StateError('Unsupported local schema migration $from -> $to');
       }
       await transaction(() async {
         for (final statement in [
           ...(from == 1 ? schemaV2 : <String>[]),
-          ...schemaV3,
+          ...(from < 3 ? schemaV3 : <String>[]),
+          ...schemaV4,
         ]) {
           await customStatement(statement);
         }
-        await customStatement('UPDATE local_workspace SET schema_version=3');
-        await customStatement('PRAGMA user_version=3');
+        await customStatement('UPDATE local_workspace SET schema_version=4');
+        await customStatement('PRAGMA user_version=4');
       });
     },
     beforeOpen: (details) async {
@@ -91,6 +97,10 @@ class LocalDatabase extends GeneratedDatabase {
     return action();
   });
 
+  static const schemaV4 = [
+    'CREATE TABLE qr_unresolved(entity_id TEXT PRIMARY KEY,payload TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN (\'PENDING\',\'UNAVAILABLE\',\'DENIED\')))',
+    'CREATE TABLE qr_cache(entity_id TEXT PRIMARY KEY,scope_version INTEGER NOT NULL,projection_json TEXT NOT NULL)',
+  ];
   static const schemaV3 = [
     'CREATE TABLE offline_package_state(id TEXT PRIMARY KEY,scope_version INTEGER NOT NULL,manifest_json TEXT,visible INTEGER NOT NULL DEFAULT 0,active_version INTEGER,native_id INTEGER,native_signature TEXT,native_complete INTEGER NOT NULL DEFAULT 0,bytes INTEGER NOT NULL DEFAULT 0,progress REAL NOT NULL DEFAULT 0,paused INTEGER NOT NULL DEFAULT 0,error TEXT)',
     'CREATE TABLE offline_package_field(package_id TEXT NOT NULL,version INTEGER NOT NULL,id TEXT NOT NULL,projection_json TEXT NOT NULL,min_x REAL,min_y REAL,max_x REAL,max_y REAL,center_json TEXT,name TEXT NOT NULL,target_id TEXT NOT NULL,field_id TEXT NOT NULL,PRIMARY KEY(package_id,version,id))',
