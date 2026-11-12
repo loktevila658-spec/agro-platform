@@ -44,16 +44,20 @@ export class IdentityTagsService implements OnModuleDestroy {
     try {
       await tx.query('BEGIN');
       await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,30))', [`${actor.tenantId}:${context.idempotencyKey}`]);
-      const previous = (await tx.query('SELECT * FROM identity_tags.tag WHERE tenant_id=$1 AND idempotency_key=$2', [actor.tenantId, context.idempotencyKey])).rows[0];
+      const previous = (await tx.query('SELECT * FROM identity_tags.command_idempotency WHERE tenant_id=$1 AND idempotency_key=$2', [actor.tenantId, context.idempotencyKey])).rows[0];
       if (previous && (previous.actor_id !== actor.subjectId || previous.entity_id !== ref.entityId || previous.entity_type !== ref.entityType)) throw new ConflictException('QR_IDEMPOTENCY_CONFLICT');
-      const qrCodeId: string = previous?.id ?? uuidv7();
-      if (!previous) {
+      // DOC10 code uniqueness and DOC18 reprint: repeated requests do not mint a second tag.
+      await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,31))', [`${actor.tenantId}:Material:${ref.entityId}`]);
+      const existing = (await tx.query('SELECT id FROM identity_tags.tag WHERE tenant_id=$1 AND entity_type=$2 AND entity_id=$3', [actor.tenantId, ref.entityType, ref.entityId])).rows[0];
+      const qrCodeId: string = existing?.id ?? uuidv7();
+      if (!existing) {
         await tx.query('INSERT INTO identity_tags.tag(tenant_id,id,entity_type,entity_id,payload,actor_id,idempotency_key,correlation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [actor.tenantId, qrCodeId, ref.entityType, ref.entityId, payload, actor.subjectId, context.idempotencyKey, context.correlationId]);
         await tx.query('INSERT INTO identity_tags.audit(tenant_id,tag_id,actor_id,correlation_id) VALUES($1,$2,$3,$4)', [actor.tenantId, qrCodeId, actor.subjectId, context.correlationId]);
         const eventId = randomUUID(), occurredAt = new Date().toISOString();
         const event = {eventId, qrCodeId, entityType: ref.entityType, entityId: ref.entityId, version: 1, tenantId: actor.tenantId, actorId: actor.subjectId, correlationId: context.correlationId, causationId: context.idempotencyKey, occurredAt};
         await tx.query("INSERT INTO identity_tags.outbox_event(id,tenant_id,event_name,event_version,producer,entity_id,actor_id,correlation_id,causation_id,occurred_at,payload) VALUES($1,$2,'qr_code.created','1.0.0','identity-tags',$3,$4,$5,$6,$7,$8)", [eventId, actor.tenantId, ref.entityId, actor.subjectId, context.correlationId, context.idempotencyKey, occurredAt, event]);
       }
+      if (!previous) await tx.query('INSERT INTO identity_tags.command_idempotency(tenant_id,idempotency_key,actor_id,entity_type,entity_id,tag_id) VALUES($1,$2,$3,$4,$5,$6)', [actor.tenantId, context.idempotencyKey, actor.subjectId, ref.entityType, ref.entityId, qrCodeId]);
       // Replays and in-flight issuance both recheck current permission and owner state.
       await this.registry.authorize(actor, 'identity-tags.issue');
       if ((await this.projection(actor, ref)).status !== 'RESOLVED') throw new ConflictException('QR_ENTITY_UNAVAILABLE');

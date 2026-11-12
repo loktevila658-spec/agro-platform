@@ -5,7 +5,12 @@ CREATE TABLE identity_tags.tag (
  entity_type text NOT NULL CHECK(entity_type='Material'),entity_id uuid NOT NULL CHECK(substring(entity_id::text,15,1)='7'),
  payload varchar(512) NOT NULL,version integer NOT NULL DEFAULT 1 CHECK(version=1),status text NOT NULL DEFAULT 'ACTIVE' CHECK(status='ACTIVE'),
  actor_id uuid NOT NULL,idempotency_key varchar(128) NOT NULL,correlation_id varchar(128) NOT NULL,created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
- PRIMARY KEY(tenant_id,id),UNIQUE(tenant_id,idempotency_key)
+ PRIMARY KEY(tenant_id,id),UNIQUE(tenant_id,idempotency_key),UNIQUE(tenant_id,entity_type,entity_id),UNIQUE(tenant_id,payload)
+);
+CREATE TABLE identity_tags.command_idempotency (
+ tenant_id uuid NOT NULL,idempotency_key varchar(128) NOT NULL,actor_id uuid NOT NULL,
+ entity_type text NOT NULL CHECK(entity_type='Material'),entity_id uuid NOT NULL,tag_id uuid NOT NULL,
+ PRIMARY KEY(tenant_id,idempotency_key),FOREIGN KEY(tenant_id,tag_id) REFERENCES identity_tags.tag(tenant_id,id)
 );
 CREATE INDEX tag_entity ON identity_tags.tag(tenant_id,entity_type,entity_id);
 CREATE TABLE identity_tags.audit (
@@ -19,6 +24,7 @@ CREATE TABLE identity_tags.outbox_event (
 );
 CREATE FUNCTION identity_tags.immutable() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'QR_IMMUTABLE_PROVENANCE'; END $$;
 CREATE TRIGGER immutable_tag BEFORE UPDATE OR DELETE OR TRUNCATE ON identity_tags.tag FOR EACH STATEMENT EXECUTE FUNCTION identity_tags.immutable();
+CREATE TRIGGER immutable_idempotency BEFORE UPDATE OR DELETE OR TRUNCATE ON identity_tags.command_idempotency FOR EACH STATEMENT EXECUTE FUNCTION identity_tags.immutable();
 CREATE TRIGGER immutable_audit BEFORE UPDATE OR DELETE OR TRUNCATE ON identity_tags.audit FOR EACH STATEMENT EXECUTE FUNCTION identity_tags.immutable();
 CREATE TRIGGER immutable_outbox BEFORE UPDATE OR DELETE OR TRUNCATE ON identity_tags.outbox_event FOR EACH STATEMENT EXECUTE FUNCTION identity_tags.immutable();
 ALTER TABLE platform_events.outbox_delivery DROP CONSTRAINT outbox_delivery_source_check;

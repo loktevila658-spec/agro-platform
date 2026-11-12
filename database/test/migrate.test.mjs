@@ -175,4 +175,4 @@ test('Farm migration separates identities and preserves immutable allocation/lin
 
 test('task schema retains execution/audit history and tenant ownership',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));assert.match(m[14].sql,/CREATE TABLE tasks.operation_fact/);assert.match(m[14].sql,/TASK_IMMUTABLE_HISTORY/);assert.match(m[14].sql,/UNIQUE\(tenant_id,task_id\)/);});
 
-test('QR issuance schema is isolated and immutable',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));for(const table of ['tag','audit','outbox_event'])assert.match(m[16].sql,new RegExp('CREATE TABLE identity_tags\\.'+table));assert.doesNotMatch(m[16].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) (?:master_data|farm|land)\./i);});
+test('QR issuance schema is isolated and immutable',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));for(const table of ['tag','command_idempotency','audit','outbox_event'])assert.match(m[16].sql,new RegExp('CREATE TABLE identity_tags\\.'+table));assert.doesNotMatch(m[16].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) (?:master_data|farm|land)\./i);});

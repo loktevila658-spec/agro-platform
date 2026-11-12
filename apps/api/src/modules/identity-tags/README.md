@@ -26,6 +26,8 @@ rotation/revocation policy or split/merge auto-follow is invented. A tag is not
 the canonical business key; label loss does not lose the entity.
 
 `POST /v1/qr-codes` accepts `{entityType,entityId}` and requires Idempotency-Key.
+A tenant/entity has one unique code/tag. Distinct request keys reuse that tag;
+immutable request-key bindings preserve conflict detection and safe retry.
 Issuance checks current tag policy plus owner permission/state on replays and
 before commit. It appends an immutable tag, minimal provenance and catalogued
 qr_code.created outbox atomically in schema17. It never writes master-data.

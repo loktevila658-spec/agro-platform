@@ -131,9 +131,10 @@ test('QR: authorized Material identity, durable issuance and immutable provenanc
     assert.equal(issue.status,200);assert.equal(issue.body.payload,payload);
     const replay=await tags.issue(actor,{entityType:'Material',entityId:material.id},key);
     assert.equal(issue.body.qrCodeId,replay.qrCodeId);
-    const concurrent=await Promise.all(Array.from({length:5},()=>tags.issue(actor,{entityType:'Material',entityId:material.id},{...key,idempotencyKey:'parallel'})));
+    const concurrent=await Promise.all(Array.from({length:5},()=>tags.issue(actor,{entityType:'Material',entityId:material.id},{...key,idempotencyKey:`parallel-${randomUUID()}`})));
     assert.equal(new Set(concurrent.map(v=>v.qrCodeId)).size,1);
-    assert.equal((await pool.query('SELECT count(*) FROM identity_tags.tag')).rows[0].count,'2');
+    assert.equal(concurrent[0].qrCodeId,issue.body.qrCodeId,'distinct request keys must reuse the unique tag');
+    assert.equal((await pool.query('SELECT count(*) FROM identity_tags.tag')).rows[0].count,'1');
     ownerAllowed=false;assert.equal((await post('/v1/qr/resolve',{payload})).status,403);
     await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:material.id},key),/QR_FORBIDDEN/);ownerAllowed=true;
     allowed=false;assert.equal((await post('/v1/qr/resolve',{payload})).status,403);allowed=true;
@@ -142,15 +143,19 @@ test('QR: authorized Material identity, durable issuance and immutable provenanc
     denyAt=policyCalls+2;
     await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:material.id},{...key,idempotencyKey:'permission-race'}),/QR_FORBIDDEN/);
     denyAt=-1;
+    assert.equal((await pool.query("SELECT count(*) FROM identity_tags.command_idempotency WHERE idempotency_key='permission-race'")).rows[0].count,'0');
     assert.equal((await pool.query('SELECT count(*) FROM identity_tags.tag')).rows[0].count,beforeDenied,'mid-flight permission loss must roll back all issuance');
     const otherMaterial=await master.createMaterial(actor,{code:'QR-M2',name:'Other',itemType:'RAW',baseUom:'EA'},context());
     await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:otherMaterial.id},key),/QR_IDEMPOTENCY_CONFLICT/);
+    await tags.issue(actor,{entityType:'Material',entityId:otherMaterial.id},{...key,idempotencyKey:'other-material'});
+    const third=await master.createMaterial(actor,{code:'QR-M3',name:'Rollback target',itemType:'RAW',baseUom:'EA'},context());
     // A database failure after tag insert rolls back issuance, audit and event.
     await pool.query("CREATE FUNCTION identity_tags.test_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fixture_abort'; END $$; CREATE TRIGGER fixture_abort BEFORE INSERT ON identity_tags.outbox_event FOR EACH STATEMENT EXECUTE FUNCTION identity_tags.test_abort()");
-    await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:material.id},{...key,idempotencyKey:'rollback'}),/fixture_abort/);
+    await assert.rejects(tags.issue(actor,{entityType:'Material',entityId:third.id},{...key,idempotencyKey:'rollback'}),/fixture_abort/);
     await pool.query('DROP TRIGGER fixture_abort ON identity_tags.outbox_event');
     assert.equal((await pool.query('SELECT count(*) FROM identity_tags.tag')).rows[0].count,'2');
-    for(const table of ['tag','audit','outbox_event'])await assert.rejects(pool.query(`UPDATE identity_tags.${table} SET tenant_id=tenant_id`),/QR_IMMUTABLE/);
+    for(const table of ['tag','command_idempotency','audit','outbox_event'])await assert.rejects(pool.query(`UPDATE identity_tags.${table} SET tenant_id=tenant_id`),/QR_IMMUTABLE/);
+    await assert.rejects(pool.query('INSERT INTO identity_tags.tag(tenant_id,id,entity_type,entity_id,payload,actor_id,idempotency_key,correlation_id) SELECT tenant_id,$2,entity_type,entity_id,payload,actor_id,$1,correlation_id FROM identity_tags.tag LIMIT 1',['duplicate-fixture','019a7430-0000-7000-8000-000000000099']),/unique constraint/);
     const contracts=await loadAndValidateContracts();
     for(const event of (await pool.query("SELECT payload FROM identity_tags.outbox_event")).rows)assert.deepEqual(contracts.events.events.find(e=>e.name==='qr_code.created').schema.required.filter(k=>!Object.hasOwn(event.payload,k)),[]);
     const seen=[];const inbox=new InboxService(pool);
