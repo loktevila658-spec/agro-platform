@@ -92,24 +92,25 @@ test('SeasonPlan and TechMap real PostGIS deterministic versioning, planning and
     const fs=await farm.createFieldSeason(actor,{fieldId:field.entityId,seasonId:season.entityId,data:{plannedAreaHa:'3',status:'PLANNED'},effectiveAt:at,reason:'Fixture seasonal context'},ctx());
     const registry=new AgronomyRegistry(),service=new AgronomyService(pool,registry,farm,master);
     const opId='019a0000-0000-7000-8000-000000000032',operationId='019a0000-0000-7000-8000-000000000033',referenceRevision='11111111-1111-4111-8111-111111111111';
-    const operation=()=>({id:opId,operationTypeId:operationId,sequence:1,quantity:'3',unit:unit.code,unscheduled:false,window:{start:'2026-11-18T03:00:00+03:00',end:'2026-11-19T00:00:00Z'},resources:[{kind:'MATERIAL',referenceId:material.id,unit:unit.code,normPerArea:'0.1',effectiveArea:'3',reserveFactor:'0.1',formulaVersion:'DOC34-8-MATERIAL-1'}]});
+    const machineId=randomUUID(),laborId=randomUUID(),cropId=randomUUID();
+    const operation=()=>({id:opId,operationTypeId:operationId,sequence:1,quantity:'3',unit:unit.code,unscheduled:false,window:{start:'2026-11-18T03:00:00+03:00',end:'2026-11-19T00:00:00Z'},resources:[{kind:'MATERIAL',referenceId:material.id,unit:unit.code,normPerArea:'0.1',effectiveArea:'3',reserveFactor:'0.1',formulaVersion:'DOC34-8-MATERIAL-1'},{kind:'MACHINE',referenceId:machineId,unit:unit.code,quantity:'1'},{kind:'LABOR',referenceId:laborId,unit:unit.code,quantity:'2'}]});
     const create=(kind,data)=>({kind,organizationId,data,effectiveAt:at,reason:'Explicit fixture plan'});
     const command=(row,data)=>({expectedVersion:row.version,...(data?{data}:{}),effectiveAt:at,reason:'Explicit fixture revision'});
     const pinned=row=>({entityId:row.id,revisionId:row.revisionId});
     let permitted=true,canApprove=true;
-    const templateInput=create('TEMPLATE',{name:'Fixture template',operations:[operation()]});
+    const templateInput=create('TEMPLATE',{name:'Fixture template',cropId,operations:[operation()]});
     await assert.rejects(service.create(actor,templateInput,ctx()),/FORBIDDEN/);
-    registry.install({authorize:async(a,action,org)=>permitted&&a.tenantId===tenantId&&a.subjectId===subjectId&&org===organizationId&&(canApprove||!['agronomy.tech_map.approve','agronomy.season_plan.publish'].includes(action)),reference:async(_tx,_a,kind,id)=>kind==='OPERATION'&&id===operationId?{id,revisionId:referenceRevision}:undefined,formula:async(_a,r)=>r.formulaVersion==='DOC34-8-MATERIAL-1'&&r.unit===unit.code});
+    registry.install({authorize:async(a,action,org)=>permitted&&a.tenantId===tenantId&&a.subjectId===subjectId&&org===organizationId&&(canApprove||!['agronomy.tech_map.approve','agronomy.season_plan.publish'].includes(action)),reference:async(_tx,_a,kind,id)=>((kind==='OPERATION'&&id===operationId)||(kind==='MACHINE'&&id===machineId)||(kind==='LABOR'&&id===laborId)||(kind==='CROP'&&id===cropId))?{id,revisionId:referenceRevision}:undefined,formula:async(_a,r)=>r.formulaVersion==='DOC34-8-MATERIAL-1'&&r.unit===unit.code});
     let template,map,plan;
     await t.test('template versions, exact inherited operation and source-defined resource calculation',async()=>{
       const key=ctx('template-create');const concurrent=await Promise.all([service.create(actor,templateInput,key),service.create(actor,templateInput,key)]);assert.deepEqual(concurrent[0],concurrent[1]);template=concurrent[0];
       assert.equal(template.version,'1');canApprove=false;await assert.rejects(service.command(actor,template.id,'Approve',command(template),ctx()),/FORBIDDEN/);canApprove=true;
       template=await service.command(actor,template.id,'Approve',command(template),ctx());template=await service.command(actor,template.id,'Publish',command(template),ctx());
-      const inherited=await service.create(actor,create('TEMPLATE',{name:'Fixture derived',parent:pinned(template),operations:[]}),ctx());assert.deepEqual(inherited.data.operations,template.data.operations);
-      await assert.rejects(service.command(actor,inherited.id,'Revise',command(inherited,{name:'Cycle',parent:pinned(inherited),operations:[]}),ctx()),/CYCLE|UNAVAILABLE/);
+      const inherited=await service.create(actor,create('TEMPLATE',{name:'Fixture derived',parent:pinned(template),operations:[]}),ctx());assert.deepEqual(inherited.data.operations,template.data.operations);assert.equal(inherited.data.cropId,cropId);
+      await assert.rejects(service.command(actor,inherited.id,'Revise',command(inherited,{name:'Cycle',parent:pinned(inherited),operations:[]}),ctx()),/CYCLE/);
       map=await service.create(actor,create('TECH_MAP',{name:'Fixture applied',fieldSeasonId:fs.entityId,template:pinned(template),operations:[]}),ctx());
       map=await service.command(actor,map.id,'Approve',command(map),ctx());map=await service.command(actor,map.id,'Publish',command(map),ctx());
-      const resources=await service.resources(actor,map.id,map.revisionId);assert.equal(resources.length,1);assert.equal(resources[0].quantity,'0.330000');assert.equal(resources[0].inputs.normPerArea,'0.1');
+      const resources=await service.resources(actor,map.id,map.revisionId);assert.equal(resources.length,3);assert.deepEqual(resources.map(r=>r.kind),['MATERIAL','MACHINE','LABOR']);assert.equal(resources[0].quantity,'0.330000');assert.equal(resources[0].inputs.normPerArea,'0.1');
       assert.equal(map.sourceReferences.fieldSeason.revisionId,fs.revisionId);assert.equal(map.sourceReferences.operations[0].resources[0].reference.revisionId,material.revisionId);
     });
     await t.test('published SeasonPlan pins a map revision and creates only a compatible Task draft',async()=>{
@@ -166,6 +167,7 @@ test('SeasonPlan and TechMap real PostGIS deterministic versioning, planning and
         const read=await fetch(url+'/v1/agronomy/plans/'+created.id,{headers});assert.equal(read.status,200);assert.deepEqual(await read.json(),created);
         const list=await fetch(url+'/v1/agronomy/plans?organizationId='+organizationId,{headers});assert.ok((await list.json()).items.some(r=>r.id===created.id));
         const history=await fetch(url+'/v1/agronomy/plans/'+created.id+'/history',{headers});assert.equal((await history.json()).revisions.length,1);
+        const unavailable=await fetch(url+'/v1/agronomy/plans',{method:'POST',headers:{...headers,'idempotency-key':'closed-context-http'},body:JSON.stringify(create('TECH_MAP',{name:'Closed HTTP context',fieldSeasonId:fs.entityId,template:{entityId:template.id,revisionId:(await service.history(actor,template.id))[2].revisionId},operations:[]}))});assert.equal(unavailable.status,400);
         const denied=await fetch(url+'/v1/agronomy/plans/'+created.id);assert.ok(denied.status>=400);
         const malformed=await fetch(url+'/v1/agronomy/plans',{method:'POST',headers:{...headers,'idempotency-key':'bad-body'},body:JSON.stringify({kind:'INVENTED'})});assert.equal(malformed.status,400);
       }finally{await app.close();}

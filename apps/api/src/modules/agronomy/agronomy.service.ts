@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, OnModuleDestroy } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, OnModuleDestroy } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { Pool, PoolClient } from 'pg';
 import { fingerprint } from '../../../../../packages/connectors/src/index.cjs';
@@ -24,12 +24,22 @@ export class AgronomyService implements OnModuleDestroy {
   id(reference.entityId);id(reference.revisionId);const r=await tx.query<AgronomyRow>('SELECT e.tenant_id,e.id,e.organization_id,e.kind,r.version,r.id AS revision_id,r.state,r.data,r.source_refs,r.author_id,r.approver_id,r.effective_at FROM agronomy.entity e JOIN agronomy.revision r ON r.tenant_id=e.tenant_id AND r.entity_id=e.id WHERE e.tenant_id=$1 AND e.id=$2 AND r.id=$3',[actor.tenantId,reference.entityId,reference.revisionId]);
   const row=r.rows[0];if(!row||row.organization_id!==org||row.kind!==type||!['APPROVED','PUBLISHED'].includes(row.state))fail('PINNED_REVISION_UNAVAILABLE');return row;
  }
+ private async ownerReference<T>(query:()=>Promise<T>):Promise<T>{
+  try{return await query();}catch(e){
+   const message=e instanceof Error?e.message:'';
+   if(/^(?:FARM|MASTER_DATA)_/.test(message)){
+    if(message.includes('FORBIDDEN'))throw new ForbiddenException('AGRONOMY_OWNER_FORBIDDEN');
+    throw new BadRequestException('AGRONOMY_OWNER_REFERENCE_UNAVAILABLE');
+   }
+   throw e;
+  }
+ }
  private async resolve(tx:PoolClient,actor:AgronomyActor,type:AgronomyKind,org:string,data:AgronomyData,entityId:string):Promise<{data:AgronomyData;refs:Record<string,unknown>}>{
   const refs:Record<string,unknown>={};
   if(type==='SEASON_PLAN'){
-   const season=await this.farm.planningReferenceInTransaction(tx,actor,data.seasonId!,'SEASON');if(season.organizationId!==org)fail('SCOPE');refs.season=season;
+   const season=await this.ownerReference(()=>this.farm.planningReferenceInTransaction(tx,actor,data.seasonId!,'SEASON'));if(season.organizationId!==org)fail('SCOPE');refs.season=season;
    const maps=[];for(const reference of data.techMaps!){const map=await this.pinned(tx,actor,reference,org,'TECH_MAP');if(map.state!=='PUBLISHED')fail('MAP_NOT_PUBLISHED');
-    const fs=await this.farm.planningReferenceInTransaction(tx,actor,map.data.fieldSeasonId!,'FIELD_SEASON');if(fingerprint(map.source_refs.fieldSeason)!==fingerprint(fs))throw new ConflictException('AGRONOMY_MAP_CONTEXT_CHANGED');if(fs.organizationId!==org||fs.seasonId!==data.seasonId||(data.siteId&&fs.siteId!==data.siteId))fail('PLAN_CONTEXT');maps.push({reference,fieldSeason:fs});}
+    const fs=await this.ownerReference(()=>this.farm.planningReferenceInTransaction(tx,actor,map.data.fieldSeasonId!,'FIELD_SEASON'));if(fingerprint(map.source_refs.fieldSeason)!==fingerprint(fs))throw new ConflictException('AGRONOMY_MAP_CONTEXT_CHANGED');if(fs.organizationId!==org||fs.seasonId!==data.seasonId||(data.siteId&&fs.siteId!==data.siteId))fail('PLAN_CONTEXT');maps.push({reference,fieldSeason:fs});}
    if(data.siteId&&!maps.length)fail('SITE_CONTEXT_UNAVAILABLE');refs.maps=maps;return {data,refs};
   }
   const inherited=type==='TEMPLATE'?data.parent:data.template;
@@ -37,13 +47,13 @@ export class AgronomyService implements OnModuleDestroy {
    const ancestry=Array.isArray(parent.source_refs.ancestry)?parent.source_refs.ancestry as string[]:[];if(ancestry.includes(entityId)||ancestry.length>=100)fail('INHERITANCE_CYCLE');refs.ancestry=[...ancestry,parent.id];refs.template=inherited;
    const operations=new Map((parent.data.operations??[]).map(o=>[o.id,o]));for(const o of data.operations??[])operations.set(o.id,o);data={...(parent.data.cropId?{cropId:parent.data.cropId}:{}),...data,operations:[...operations.values()].sort((a,b)=>a.sequence-b.sequence)};uniqueOperations(data.operations!);
   }
-  if(type==='TECH_MAP'){const fs=await this.farm.planningReferenceInTransaction(tx,actor,data.fieldSeasonId!,'FIELD_SEASON');if(fs.organizationId!==org)fail('SCOPE');refs.fieldSeason=fs;}
+  if(type==='TECH_MAP'){const fs=await this.ownerReference(()=>this.farm.planningReferenceInTransaction(tx,actor,data.fieldSeasonId!,'FIELD_SEASON'));if(fs.organizationId!==org)fail('SCOPE');refs.fieldSeason=fs;}
   if(data.cropId)refs.crop=await this.registry.reference(tx,actor,'CROP',data.cropId,org);
   const operations=[];
   for(const op of data.operations??[]){
-   const source=await this.registry.reference(tx,actor,'OPERATION',op.operationTypeId,org),unit=await this.master.planningReferenceInTransaction(tx,actor,'UnitOfMeasure',op.unit,org);
-   const resources=[];for(const resource of op.resources){const reference=resource.kind==='MATERIAL'?await this.master.planningReferenceInTransaction(tx,actor,'Material',resource.referenceId,org):await this.registry.reference(tx,actor,resource.kind,resource.referenceId,org);
-    const u=await this.master.planningReferenceInTransaction(tx,actor,'UnitOfMeasure',resource.unit,org);
+   const source=await this.registry.reference(tx,actor,'OPERATION',op.operationTypeId,org),unit=await this.ownerReference(()=>this.master.planningReferenceInTransaction(tx,actor,'UnitOfMeasure',op.unit,org));
+   const resources=[];for(const resource of op.resources){const reference=resource.kind==='MATERIAL'?await this.ownerReference(()=>this.master.planningReferenceInTransaction(tx,actor,'Material',resource.referenceId,org)):await this.registry.reference(tx,actor,resource.kind,resource.referenceId,org);
+    const u=await this.ownerReference(()=>this.master.planningReferenceInTransaction(tx,actor,'UnitOfMeasure',resource.unit,org));
     if(resource.kind==='MATERIAL'&&'baseUom' in reference&&reference.baseUom!==resource.unit)fail('MATERIAL_UNIT_CONVERSION_UNAVAILABLE');
     if(resource.quantity===undefined)await this.registry.formula(actor,resource);
     const quantity=resourceQuantity(resource);this.precision(quantity,Number(u.precision));resources.push({reference,unit:u,quantity,formulaVersion:resource.formulaVersion??null});
