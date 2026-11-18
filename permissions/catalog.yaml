@@ -187,3 +187,27 @@ permissions:
     description: QR issue requires current owner access in the authenticated tenant.
     effect: allow
     scope: tenant
+  - action: agronomy.season_plan.view
+    description: Explicit current tenant and organization planning authority.
+    effect: allow
+    scope: tenant
+  - action: agronomy.season_plan.edit
+    description: Explicit current tenant and organization planning authority.
+    effect: allow
+    scope: tenant
+  - action: agronomy.season_plan.publish
+    description: Explicit current tenant and organization planning authority.
+    effect: allow
+    scope: tenant
+  - action: agronomy.tech_map.edit
+    description: Explicit current tenant and organization planning authority.
+    effect: allow
+    scope: tenant
+  - action: agronomy.tech_map.approve
+    description: Explicit current tenant and organization planning authority.
+    effect: allow
+    scope: tenant
+  - action: agronomy.resource_demand.view
+    description: Explicit current tenant and organization planning authority.
+    effect: allow
+    scope: tenant

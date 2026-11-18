@@ -6,6 +6,253 @@ servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
 paths:
+  "/v1/agronomy/plans":
+    "get":
+      "operationId": "agronomyList"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "organizationId"
+          "in": "query"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "after"
+          "in": "query"
+          "required": false
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyList"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+    "post":
+      "operationId": "agronomyCreate"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "$ref": "#/components/parameters/IdempotencyKey"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyProjection"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/AgronomyCreate"
+  "/v1/agronomy/plans/{id}":
+    "get":
+      "operationId": "agronomyRead"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyProjection"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+  "/v1/agronomy/plans/{id}/commands/{action}":
+    "post":
+      "operationId": "agronomyCommand"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "action"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+            "enum":
+              - "Revise"
+              - "Approve"
+              - "Publish"
+        -
+          "$ref": "#/components/parameters/IdempotencyKey"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyProjection"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/AgronomyCommand"
+  "/v1/agronomy/plans/{id}/history":
+    "get":
+      "operationId": "agronomyHistory"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyHistory"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+  "/v1/agronomy/plans/{id}/resources/{revisionId}":
+    "get":
+      "operationId": "agronomyResources"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "revisionId"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyResources"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+  "/v1/agronomy/plans/{id}/task-draft":
+    "post":
+      "operationId": "agronomyTaskDraft"
+      "description": "Current server tenant/organization policy and Local-primary command authority; explicit version, immutable history and owner references. Draft handoff creates no Task or execution fact."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized planning result."
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/AgronomyTaskDraft"
+        "400":
+          "description": "Invalid planning input or unresolved owner reference."
+        "401":
+          "description": "Authentication required."
+        "403":
+          "description": "Current permission or authority denied."
+        "404":
+          "description": "Entity unavailable."
+        "409":
+          "description": "Version/state/reference/idempotency conflict."
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/AgronomyTaskDraftRequest"
   /v1/qr/resolve:
     post:
       operationId: qrResolve
@@ -1043,6 +1290,346 @@ components:
       schema:
         type: string
   schemas:
+    "AgronomyRevisionRef":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "entityId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+      "required":
+        - "entityId"
+        - "revisionId"
+    "AgronomySource":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "source":
+          "type": "string"
+        "version":
+          "type": "string"
+      "required":
+        - "source"
+        - "version"
+    "AgronomyWindow":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "start":
+          "type": "string"
+        "end":
+          "type": "string"
+      "required":
+        - "start"
+        - "end"
+    "AgronomyResource":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "kind":
+          "type": "string"
+          "enum":
+            - "MATERIAL"
+            - "MACHINE"
+            - "LABOR"
+        "referenceId":
+          "type": "string"
+        "unit":
+          "type": "string"
+        "quantity":
+          "type": "string"
+        "normPerArea":
+          "type": "string"
+        "effectiveArea":
+          "type": "string"
+        "reserveFactor":
+          "type": "string"
+        "formulaVersion":
+          "type": "string"
+      "required":
+        - "kind"
+        - "referenceId"
+        - "unit"
+    "AgronomyOperation":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "id":
+          "type": "string"
+        "operationTypeId":
+          "type": "string"
+        "sequence":
+          "type": "integer"
+        "quantity":
+          "type": "string"
+        "unit":
+          "type": "string"
+        "unscheduled":
+          "type": "boolean"
+        "window":
+          "$ref": "#/components/schemas/AgronomyWindow"
+        "resources":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomyResource"
+      "required":
+        - "id"
+        - "operationTypeId"
+        - "sequence"
+        - "quantity"
+        - "unit"
+        - "unscheduled"
+        - "resources"
+    "AgronomyData":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "name":
+          "type": "string"
+        "seasonId":
+          "type": "string"
+        "siteId":
+          "type": "string"
+        "scenario":
+          "type": "string"
+          "enum":
+            - "BASE"
+            - "OPTIMISTIC"
+            - "CONSERVATIVE"
+        "assumptions":
+          "type": "array"
+          "items":
+            "type": "string"
+        "sourceReferences":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomySource"
+        "techMaps":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomyRevisionRef"
+        "fieldSeasonId":
+          "type": "string"
+        "template":
+          "$ref": "#/components/schemas/AgronomyRevisionRef"
+        "parent":
+          "$ref": "#/components/schemas/AgronomyRevisionRef"
+        "cropId":
+          "type": "string"
+        "operations":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomyOperation"
+      "required":
+        - "name"
+    "AgronomyCreate":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "kind":
+          "type": "string"
+          "enum":
+            - "SEASON_PLAN"
+            - "TEMPLATE"
+            - "TECH_MAP"
+        "organizationId":
+          "type": "string"
+        "data":
+          "$ref": "#/components/schemas/AgronomyData"
+        "effectiveAt":
+          "type": "string"
+        "reason":
+          "type": "string"
+      "required":
+        - "kind"
+        - "organizationId"
+        - "data"
+        - "effectiveAt"
+        - "reason"
+    "AgronomyCommand":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "expectedVersion":
+          "type": "string"
+        "data":
+          "$ref": "#/components/schemas/AgronomyData"
+        "effectiveAt":
+          "type": "string"
+        "reason":
+          "type": "string"
+      "required":
+        - "expectedVersion"
+        - "effectiveAt"
+        - "reason"
+    "AgronomyProjection":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "id":
+          "type": "string"
+        "organizationId":
+          "type": "string"
+        "kind":
+          "type": "string"
+        "version":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "state":
+          "type": "string"
+          "enum":
+            - "DRAFT"
+            - "APPROVED"
+            - "PUBLISHED"
+        "data":
+          "$ref": "#/components/schemas/AgronomyData"
+        "sourceReferences":
+          "type": "object"
+        "authorId":
+          "type": "string"
+        "approverId":
+          "type": "string"
+        "effectiveAt":
+          "type": "string"
+      "required":
+        - "id"
+        - "organizationId"
+        - "kind"
+        - "version"
+        - "revisionId"
+        - "state"
+        - "data"
+        - "sourceReferences"
+        - "authorId"
+        - "effectiveAt"
+    "AgronomyList":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "items":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomyProjection"
+      "required":
+        - "items"
+    "AgronomyHistoryEntry":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "revisionId":
+          "type": "string"
+        "version":
+          "type": "string"
+        "previousRevisionId":
+          "type": "string"
+        "state":
+          "type": "string"
+        "data":
+          "$ref": "#/components/schemas/AgronomyData"
+        "sourceReferences":
+          "type": "object"
+        "authorId":
+          "type": "string"
+        "approverId":
+          "type": "string"
+        "effectiveAt":
+          "type": "string"
+        "reason":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "recordedAt":
+          "type": "string"
+      "required":
+        - "revisionId"
+        - "version"
+        - "state"
+        - "data"
+        - "sourceReferences"
+        - "authorId"
+        - "effectiveAt"
+        - "reason"
+        - "actorId"
+        - "recordedAt"
+    "AgronomyHistory":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "revisions":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomyHistoryEntry"
+      "required":
+        - "revisions"
+    "AgronomyDemand":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "operationId":
+          "type": "string"
+        "index":
+          "type": "integer"
+        "kind":
+          "type": "string"
+        "referenceId":
+          "type": "string"
+        "quantity":
+          "type": "string"
+        "unit":
+          "type": "string"
+        "inputs":
+          "$ref": "#/components/schemas/AgronomyResource"
+      "required":
+        - "operationId"
+        - "index"
+        - "kind"
+        - "referenceId"
+        - "quantity"
+        - "unit"
+        - "inputs"
+    "AgronomyResources":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "resources":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/AgronomyDemand"
+      "required":
+        - "resources"
+    "AgronomyTaskDraftRequest":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "expectedVersion":
+          "type": "string"
+        "mapRevisionId":
+          "type": "string"
+        "operationId":
+          "type": "string"
+      "required":
+        - "expectedVersion"
+        - "mapRevisionId"
+        - "operationId"
+    "AgronomyTaskDraft":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "planRevisionId":
+          "type": "string"
+        "mapRevisionId":
+          "type": "string"
+        "operationId":
+          "type": "string"
+        "definition":
+          "$ref": "#/components/schemas/TaskDefinition"
+      "required":
+        - "planRevisionId"
+        - "mapRevisionId"
+        - "operationId"
+        - "definition"
     QrResolveRequest:
       type: object
       additionalProperties: false

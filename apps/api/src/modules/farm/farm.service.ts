@@ -141,6 +141,29 @@ export class FarmService implements OnModuleDestroy {
    AND ($6::uuid IS NULL OR e.id>$6::uuid) ORDER BY e.id LIMIT 1000`,[actor.tenantId,scope.organizationIds,scope.siteIds??null,scope.fieldIds??null,targets?.map(t=>t.id)??null,after??null]);
   return result.rows.filter(r=>!targets||targets.some(t=>t.id===r.id&&t.kind===r.kind));
  }
+ /** Active planning context resolved and locked by the Farm owner. */
+ async planningReferenceInTransaction(tx:PoolClient,actor:FarmActor,entityId:string,kind:'SEASON'|'FIELD_SEASON'):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);
+  if(kind!=='SEASON'&&kind!=='FIELD_SEASON')throw Error('FARM_INVALID_PLANNING_KIND');
+  const r=await tx.query(`SELECT e.id,e.organization_id,e.current_revision_id,r.metadata,
+   fs.season_id,fs.field_id,fe.current_revision_id AS field_revision_id,fr.metadata AS field_metadata,sr.metadata AS season_metadata,se.current_revision_id AS season_revision_id
+   FROM farm.entity e JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id
+   LEFT JOIN farm.field_season fs ON fs.tenant_id=e.tenant_id AND fs.id=e.id
+   LEFT JOIN farm.entity fe ON fe.tenant_id=e.tenant_id AND fe.id=fs.field_id
+   LEFT JOIN farm.revision fr ON fr.tenant_id=fe.tenant_id AND fr.id=fe.current_revision_id
+   LEFT JOIN farm.entity se ON se.tenant_id=e.tenant_id AND se.id=fs.season_id
+   LEFT JOIN farm.revision sr ON sr.tenant_id=se.tenant_id AND sr.id=se.current_revision_id
+   WHERE e.tenant_id=$1 AND e.id=$2 AND e.kind=$3 FOR SHARE OF e`,[actor.tenantId,entityId,kind]);
+  const row=r.rows[0];if(!row||row.metadata.status==='CLOSED'||row.season_metadata?.status==='CLOSED'||['ARCHIVED','OUT_OF_USE'].includes(row.field_metadata?.status))throw Error('FARM_PLANNING_REFERENCE_UNAVAILABLE');
+  // Lock the related current owners as well, preventing closure/archive races.
+  if(kind==='FIELD_SEASON'){
+   await tx.query('SELECT id FROM farm.entity WHERE tenant_id=$1 AND id=ANY($2::uuid[]) ORDER BY id FOR SHARE',[actor.tenantId,[row.field_id,row.season_id]]);
+   const locked=await tx.query("SELECT e.kind,r.metadata->>'status' AS status,e.current_revision_id,r.metadata FROM farm.entity e JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id WHERE e.tenant_id=$1 AND e.id=ANY($2::uuid[])",[actor.tenantId,[row.field_id,row.season_id]]);
+   if(locked.rowCount!==2||locked.rows.some(r=>['CLOSED','ARCHIVED','OUT_OF_USE'].includes(r.status)))throw Error('FARM_PLANNING_REFERENCE_UNAVAILABLE');
+   row.field_metadata=locked.rows.find(r=>r.kind==='FIELD')!.metadata;row.field_revision_id=locked.rows.find(r=>r.kind==='FIELD')!.current_revision_id;row.season_revision_id=locked.rows.find(r=>r.kind==='SEASON')!.current_revision_id;
+  }
+  return {id:row.id,organizationId:row.organization_id,revisionId:row.current_revision_id,seasonId:row.season_id??row.id,seasonRevisionId:row.season_revision_id??row.current_revision_id,...(row.field_revision_id?{fieldRevisionId:row.field_revision_id}:{}),...(row.field_metadata?.siteId?{siteId:row.field_metadata.siteId}:{}),...(kind==='SEASON'?{year:row.metadata.year}:{})};
+ }
  async taskReferenceInTransaction(tx:PoolClient,actor:FarmActor,entityId:string,kind:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);
   if(!['FIELD','FIELD_SEASON'].includes(kind))throw Error('FARM_INVALID_TASK_TARGET');

@@ -30,6 +30,16 @@ export class MasterDataService implements OnModuleDestroy {
   await this.registry.authorize(actor,'master-data.read');this.identity(type,id);
   const r=await this.pool.query(`SELECT * FROM ${tables[type]} WHERE tenant_id=$1 AND id=$2`,[actor.tenantId,id]);if(!r.rowCount)throw Error('MASTER_DATA_NOT_FOUND');return snapshot(r.rows[0]);
  }
+ /** Transaction-bound planning reference contract; no copied foreign payloads. */
+ async planningReferenceInTransaction(tx:PoolClient,actor:MasterActor,type:MasterKind,reference:string,organizationId:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'master-data.read');kind(type);
+  if(!UUID.test(organizationId))throw Error('MASTER_DATA_INVALID_ORGANIZATION');
+  const byUnit=type==='UnitOfMeasure';if(byUnit){if(!text(reference,16))throw Error('MASTER_DATA_INVALID_UNIT');}else this.identity(type,reference);
+  const r=await tx.query(`SELECT * FROM ${tables[type]} WHERE tenant_id=$1 AND ${byUnit?'code':'id'}=$2 FOR SHARE`,[actor.tenantId,reference]);
+  const row=r.rows[0];if(!row||(!byUnit&&(!row.active||(row.organization_id&&row.organization_id!==organizationId))))throw Error('MASTER_DATA_REFERENCE_UNAVAILABLE');
+  const revision=(await tx.query('SELECT id FROM master_data.revision WHERE tenant_id=$1 AND entity_type=$2 AND entity_id=$3 AND version=$4',[actor.tenantId,type,row.id,row.row_version])).rows[0];if(!revision)throw Error('MASTER_DATA_REFERENCE_REVISION_UNAVAILABLE');
+  return {id:row.id,revisionId:revision.id,version:String(row.row_version),code:row.code,...(byUnit?{dimension:row.dimension,precision:row.precision}:{baseUom:row.base_uom,organizationId:row.organization_id})};
+ }
  async history(actor:MasterActor,type:MasterKind,id:string):Promise<Record<string,unknown>[]> {
   await this.read(actor,type,id);
   return (await this.pool.query('SELECT * FROM master_data.revision WHERE tenant_id=$1 AND entity_type=$2 AND entity_id=$3 ORDER BY version',[actor.tenantId,type,id])).rows;

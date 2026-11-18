@@ -7,6 +7,137 @@ export const OPENAPI_VERSION = '3.1.0' as const;
 export const API_CONTRACT_VERSION = '0.1.0' as const;
 export const EVENT_CATALOG_VERSION = '1.0.0' as const;
 
+export interface AgronomyCommand {
+  readonly data?: AgronomyData;
+  readonly effectiveAt: string;
+  readonly expectedVersion: string;
+  readonly reason: string;
+}
+
+export interface AgronomyCreate {
+  readonly data: AgronomyData;
+  readonly effectiveAt: string;
+  readonly kind: 'SEASON_PLAN' | 'TEMPLATE' | 'TECH_MAP';
+  readonly organizationId: string;
+  readonly reason: string;
+}
+
+export interface AgronomyData {
+  readonly assumptions?: readonly string[];
+  readonly cropId?: string;
+  readonly fieldSeasonId?: string;
+  readonly name: string;
+  readonly operations?: readonly AgronomyOperation[];
+  readonly parent?: AgronomyRevisionRef;
+  readonly scenario?: 'BASE' | 'OPTIMISTIC' | 'CONSERVATIVE';
+  readonly seasonId?: string;
+  readonly siteId?: string;
+  readonly sourceReferences?: readonly AgronomySource[];
+  readonly techMaps?: readonly AgronomyRevisionRef[];
+  readonly template?: AgronomyRevisionRef;
+}
+
+export interface AgronomyDemand {
+  readonly index: number;
+  readonly inputs: AgronomyResource;
+  readonly kind: string;
+  readonly operationId: string;
+  readonly quantity: string;
+  readonly referenceId: string;
+  readonly unit: string;
+}
+
+export interface AgronomyHistory {
+  readonly revisions: readonly AgronomyHistoryEntry[];
+}
+
+export interface AgronomyHistoryEntry {
+  readonly actorId: string;
+  readonly approverId?: string;
+  readonly authorId: string;
+  readonly data: AgronomyData;
+  readonly effectiveAt: string;
+  readonly previousRevisionId?: string;
+  readonly reason: string;
+  readonly recordedAt: string;
+  readonly revisionId: string;
+  readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly state: string;
+  readonly version: string;
+}
+
+export interface AgronomyList {
+  readonly items: readonly AgronomyProjection[];
+}
+
+export interface AgronomyOperation {
+  readonly id: string;
+  readonly operationTypeId: string;
+  readonly quantity: string;
+  readonly resources: readonly AgronomyResource[];
+  readonly sequence: number;
+  readonly unit: string;
+  readonly unscheduled: boolean;
+  readonly window?: AgronomyWindow;
+}
+
+export interface AgronomyProjection {
+  readonly approverId?: string;
+  readonly authorId: string;
+  readonly data: AgronomyData;
+  readonly effectiveAt: string;
+  readonly id: string;
+  readonly kind: string;
+  readonly organizationId: string;
+  readonly revisionId: string;
+  readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly state: 'DRAFT' | 'APPROVED' | 'PUBLISHED';
+  readonly version: string;
+}
+
+export interface AgronomyResource {
+  readonly effectiveArea?: string;
+  readonly formulaVersion?: string;
+  readonly kind: 'MATERIAL' | 'MACHINE' | 'LABOR';
+  readonly normPerArea?: string;
+  readonly quantity?: string;
+  readonly referenceId: string;
+  readonly reserveFactor?: string;
+  readonly unit: string;
+}
+
+export interface AgronomyResources {
+  readonly resources: readonly AgronomyDemand[];
+}
+
+export interface AgronomyRevisionRef {
+  readonly entityId: string;
+  readonly revisionId: string;
+}
+
+export interface AgronomySource {
+  readonly source: string;
+  readonly version: string;
+}
+
+export interface AgronomyTaskDraft {
+  readonly definition: TaskDefinition;
+  readonly mapRevisionId: string;
+  readonly operationId: string;
+  readonly planRevisionId: string;
+}
+
+export interface AgronomyTaskDraftRequest {
+  readonly expectedVersion: string;
+  readonly mapRevisionId: string;
+  readonly operationId: string;
+}
+
+export interface AgronomyWindow {
+  readonly end: string;
+  readonly start: string;
+}
+
 export interface CreateOrganizationRequest {
   readonly code: string;
   readonly name: string;
@@ -1219,6 +1350,256 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "occurredAt"
       ]
     }
+  },
+  {
+    "name": "agronomy.plan.changed",
+    "version": "1.0.0",
+    "producer": "agronomy",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.season_plan.created",
+    "version": "1.0.0",
+    "producer": "agronomy",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.season_plan.published",
+    "version": "1.0.0",
+    "producer": "agronomy",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.tech_map.published",
+    "version": "1.0.0",
+    "producer": "agronomy",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.resource_demand.calculated",
+    "version": "1.0.0",
+    "producer": "agronomy",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
   }
 ];
 
@@ -1346,6 +1727,79 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getSchemaVersion failed with HTTP ${response.status}`);
     return await response.json() as SchemaVersionResponse;
+  }
+
+  async agronomyList(organizationId: string, authorization: string, after?: string): Promise<AgronomyList> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans`);
+    if (after !== undefined) url.searchParams.set("after", String(after));
+    if (organizationId !== undefined) url.searchParams.set("organizationId", String(organizationId));
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`agronomyList failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyList;
+  }
+
+  async agronomyCreate(authorization: string, idempotencyKey: string, body: AgronomyCreate): Promise<AgronomyProjection> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`agronomyCreate failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyProjection;
+  }
+
+  async agronomyRead(id: string, authorization: string): Promise<AgronomyProjection> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans/${encodeURIComponent(String(id))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`agronomyRead failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyProjection;
+  }
+
+  async agronomyCommand(action: string, id: string, authorization: string, idempotencyKey: string, body: AgronomyCommand): Promise<AgronomyProjection> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans/${encodeURIComponent(String(id))}/commands/${encodeURIComponent(String(action))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    if (idempotencyKey !== undefined) headers["Idempotency-Key"] = String(idempotencyKey);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`agronomyCommand failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyProjection;
+  }
+
+  async agronomyHistory(id: string, authorization: string): Promise<AgronomyHistory> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans/${encodeURIComponent(String(id))}/history`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`agronomyHistory failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyHistory;
+  }
+
+  async agronomyResources(id: string, revisionId: string, authorization: string): Promise<AgronomyResources> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans/${encodeURIComponent(String(id))}/resources/${encodeURIComponent(String(revisionId))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`agronomyResources failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyResources;
+  }
+
+  async agronomyTaskDraft(id: string, authorization: string, body: AgronomyTaskDraftRequest): Promise<AgronomyTaskDraft> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/plans/${encodeURIComponent(String(id))}/task-draft`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`agronomyTaskDraft failed with HTTP ${response.status}`);
+    return await response.json() as AgronomyTaskDraft;
   }
 
   async initSyncAttachment(authorization: string, body: SyncAttachmentIntent): Promise<SyncUploadResponse> {
