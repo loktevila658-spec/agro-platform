@@ -1,6 +1,19 @@
 # WP49-032 Completion Report
 
-Date: 2026-11-18 Europe/Moscow. Status: IN PROGRESS, not DONE.
+Date: 2026-11-18 Europe/Moscow.
+Status: **G0–G11 accepted on exact implementation head; DONE activates only when
+all G12 publication/merge/push/closeout conditions below have been observed.**
+No unobserved publication or post-merge CI result is claimed.
+
+Implementation [PR88](https://github.com/loktevila658-spec/agro-platform/pull/88),
+exact tested head `571a5a8eb4ab25c3aee8700e269a4710b7d911b5`;
+[pull_request run44385550688](https://github.com/loktevila658-spec/agro-platform/actions/runs/44385550688)
+completed SUCCESS, all8 jobs individually SUCCESS.
+Ordinary merge `b3e37981bff019fef7fb5d14ee406d36f8289b13`;
+exact source merge [push44387592772](https://github.com/loktevila658-spec/agro-platform/actions/runs/44387592772)
+was IN PROGRESS when this report was prepared; its success is a mandatory G12
+activation condition, not an assumed PASS. Final observed source/report publication
+results are recorded in CR87 before completed closure.
 Baseline live main `7da00394191352fc4ff6005450c44684d948a652`.
 Isolated branch codex/wp49-032, worktree /private/tmp/agro-wp49-032.
 Original dirty checkout unchanged. WP49-033 is not started.
@@ -31,7 +44,7 @@ actual owner source contracts, produced reports and local merge ancestry:
 
 | WP | Implementation merge | Exact push run | Closeout |
 |---|---|---|---|
-| WP49-025 | 73591bc241a4a64d76cbf62cd32dd87259ec2216, PR63 | 41355973494, completed SUCCESS, all8 jobs individually SUCCESS | CR62 CLOSED/completed; produced report on main; report PR64 merge0ba90c70cb2b88556c3c01165fb2ec14ba44b476 |
+| WP49-025 | 73591bc241a4a64d76cbf62cd32dd87259ec2216, PR63 | 41355973494, completed SUCCESS, all8 jobs individually SUCCESS | CR62 CLOSED/completed; produced report on main; report PR64 merge0ba90c70cb2b88556c3c01165fb2ec14ba44b476 / exact push41492980286 all8 SUCCESS |
 | WP49-028 | 5a9afb7bb47ceaca678cf67028ff308df2547793, PR73 | 41689928078, completed SUCCESS, all8 | CR72 CLOSED/completed; final comment6613509081; report PR74 merge5df078ef543d7dfda0ae3ddee8f85404de1fe9de / exact push41701826258 all8 SUCCESS |
 | WP49-031 | 07ae3230e8a514fe39a91fb580b3ca5e89037c38, PR77 | 41812251402, completed SUCCESS, all8 | CR76 CLOSED/completed; final activation6628771238; report PR78 merge1432b7bc81292d5fae7dbc3e4b07bb412a418c3e / exact push41815398666 all8 SUCCESS |
 
@@ -86,49 +99,99 @@ HTTP/codegen are additive; all4 generated outputs come from canonical contracts.
 TaskDefinition handoff returns pinned plan/map/operation identity and never writes
 Task tables or creates execution, consumption, assignment or warehouse facts.
 
-## Validation observed so far
+## Validation and exact evidence
 
-RED acceptance before runtime: missing compiled agronomy.validation module. This is
-a missing-implementation RED, not a claim that domain behavior was exercised then.
-API TypeScript noEmit and compilation PASS after environment recovery. Targeted
-unit/security/contracts/permissions/schema/migration/root/package/architecture61/61
-PASS, no skips. Contract generation and drift PASS; architecture checked608 resolved
-source dependencies with no errors/violations. Lint capability PASS, actual lint N/A
-because no configured repository linter. Full hosted gates remain required.
+RED acceptance before runtime: missing compiled agronomy.validation module. This
+was missing-implementation RED, not an assertion that domain behavior ran then.
+Final local API compile/typecheck, targeted unit/security/contracts/permissions/
+schema/migration/root/package/architecture61/61 PASS without skips; generation/drift
+and diff/scope PASS. Architecture608 resolved source dependencies, zero violations.
+Actual linter N/A (none configured); lint capability PASS.
 
-Local Docker daemon is unavailable; targeted real PostGIS fails at image build before
-DB startup, not at a domain assertion. No local DB/Compose PASS claimed and no repeated
-broken Compose loop. Initial dependency installation hit ENOSPC/TLS resets; stopped
-only task installation processes and removed only task-created cache/download files.
-Filtered offline install lacked metadata; existing unpacked dependencies permitted
-direct compiler/targeted checks. No lockfile/toolchain/gate modification or broad user
-cache cleanup. Full workspace/mobile/native/runtime verification uses normal hosted CI.
+Exact final executable head571a5a8... / pull_request44385550688 completed SUCCESS,
+all8 jobs individually observed: Typecheck, Lint capability, Contracts, Migration,
+Runtime, Unit, Mobile and aggregate. Full API207/207, root15/15, migration units10/10,
+retained package contracts/config/connectors and infrastructure scenarios PASS.
+Flutter58/58, Android debug APK and native5/5 PASS, no skipped acceptance. Native
+profile exercises encrypted persistence/OS keystore/reopen/shared wipe, actual Task,
+MapLibre, offline GIS downloading/rendering and real MLKit QR decoding.
+Existing 14-day/50k queued intents/100k operational rows/20k cached entities scenario
+converged with zero lost IDs; the observed runner duration92027ms is engineering
+regression evidence, not physical-device battery/ANR or production certification.
+Existing real-PG 100-command P95=794.7ms assertion also passed; no new agronomy SLA
+or broad deployment benchmark is invented.
 
-Deterministic fixture source time2026-11-18T00:00:00Z, explicit fixture season/window/
-material/unit/norm/area/reserve and stable operation refs; random IDs isolate test data
-and never choose agronomic behavior. Real PostGIS scenario covers inheritance,
-publication, exact resource demand, pinned handoff without Task write, revision race,
-stale references/approvals, current/revoked owner policy, tenant/org/Local negatives,
-forced audit/outbox rollback, history immutability, actual retry/inbox dedup and HTTP.
-These scenario assertions have not yet been observed passing in hosted CI.
+All6 new real PostGIS deterministic subscenarios PASS on that exact head:
+1. Templates, pinned inheritance/crop context, applied publication, explicit material
+   source formula and exact machine/labor resource totals with registered fixture units.
+2. Published SeasonPlan, pinned TaskDefinition draft with UTC-normalized window,
+   no Task row/fact effect, retained history and concurrent version conflict.
+3. Current/revoked policy and replay, tenant/org/owner/Local negatives, unknown reference,
+   stale owner revision requiring explicit revision, and closed seasonal context refusal.
+4. Injected audit/outbox failures roll back head/revision/receipt/all effects; historical
+   revisions, resources, audit, receipts and events resist delete/update/truncate.
+5. Actual platform dispatcher/inbox failure/retry/dedup and exact catalog validation.
+6. Actual HTTP create/read/list/history/auth boundary, invalid input and unavailable
+   owner reference status, retaining the unchanged Task contract/ownership.
 
-## Gate decisions
+Source/effective fixture time2026-11-18T00:00:00Z, explicit fixture season/window/
+material/unit/norm/area/reserve and stable operation refs. Random IDs isolate fixtures,
+not agronomic decisions. Injected reference/identity policies are test composition,
+not production seeds or a new JWT/device certification claim. Existing actual identity,
+Task, offline and native regressions remain unchanged and passed.
 
-| Gate | Current decision |
+Local Docker daemon is unavailable: targeted real PostGIS failed at image build
+before DB startup, not a domain assertion. No local DB/Compose PASS or repeated broken
+Compose loop. Initial dependency installation hit ENOSPC/TLS resets. Stopped only task
+installation processes; removed only task-created cache/download files. Filtered
+offline install lacked metadata; unpacked dependencies permitted direct local compiler/
+checks. No lockfile/toolchain/gate changes or broad user cache cleanup. Hosted exact-head
+real-database/runtime/mobile/native results above supply the applicable acceptance.
+
+Initial run44385147752 onadbba7130660ce35b99fbade068af572d11c0c87 was superseded
+and CANCELLED after bounded review fixes; it is not full PASS evidence. Its successful
+component jobs do not substitute for final exact-head acceptance. Corrected owner
+error mapping, all three resource-kind scenarios and source-aware draft handling are
+included in final571a5a8... and its full successful run.
+
+## G0–G12
+
+| Gate | Decision and actual evidence |
 |---|---|
-| G0 | PASS — verified compatible dependencies, exact ancestry/CI/closed CRs, pre-code scope decision |
-| G1 | PARTIAL — API compile/typecheck, architecture, targeted checks PASS; full hosted static pending |
-| G2 | PENDING — migration units PASS; real clean/repeated/current schema18 pending |
-| G3 | PARTIAL — targeted61/61 PASS; full hosted Unit pending |
-| G4 | PENDING — local Docker unavailable; real infrastructure hosted checks required |
-| G5 | PARTIAL — canonical contract/codegen drift and existing exact regressions PASS; hosted pending |
-| G6 | PENDING — atomic outbox/inbox scenario must pass real database |
-| G7 | PARTIAL — policy/catalog negatives PASS; real tenant/owner/replay checks pending |
-| G8 | PENDING applicable regressions — no new offline planning write handler; retained Task/mobile/native required |
-| G9 | PENDING — immutable audit/revision/rollback assertions require real database |
-| G10 | PENDING — real deterministic scenario required |
-| G11 | PENDING — targeted bounds/default-deny PASS; hosted security/regressions required |
-| G12 | PENDING — exact-head checks, review, ordinary merge, exact push and completed CR closeout required |
+| G0 | PASS — exact compatible prerequisite merges/reports/CI/closed CRs, baseline and pre-code CR87 scope decision |
+| G1 | PASS — final workspace typecheck/architecture/contracts, exact33-path scope/blob review; lint capability, actual linter N/A |
+| G2 | PASS — real clean/repeated/current/checksum-guarded schema18 migration and API readiness |
+| G3 | PASS — local targeted61/61; full API207/Flutter58/root15/migration10, no skipped acceptance |
+| G4 | PASS — actual PostGIS owner/HTTP/rollback scenarios and retained infrastructure/Compose runtime |
+| G5 | PASS — additive typed API, all4 generated contracts/drift, retained exact old plus new catalog/API regressions |
+| G6 | PASS — atomic revision/audit/receipt/outbox rollback, actual dispatcher/inbox retry/dedup and exact schemas |
+| G7 | PASS — default/current/revoked scope and replay, tenant/org/owner/Local negatives and exact permission catalog |
+| G8 | PASS applicable regressions — no new offline plan writer; stale planning approval conflicts; existing Task/sync/14-day/native encryption regression passed |
+| G9 | PASS — immutable before/after/history/diff, author/approver/source provenance and explicit superseding revisions |
+| G10 | PASS — all6 real deterministic planning/owner/failure/handoff/HTTP subscenarios |
+| G11 | PASS applicable engineering/security/bounds/replay/capacity/native regressions; physical device/WAN/iOS certification unclaimed |
+| G12 | PENDING at report authoring; activates PASS only after every source/report exact-head/merge/push/closeout condition below is observed |
+
+## Review and merge evidence
+
+Self-review only; no independent approval is claimed. Findings corrected before final
+head: related Farm row lock/re-read prevents closure/archive races; exact Master Data
+revision refs; all transition effects receive atomic outbox; owner errors map to
+contracted HTTP statuses without masking database faults; source offset windows
+normalize to Task's UTC wire contract; inheritance retains crop context; explicit
+resource-kind/precision/cycle/stale/replay/rollback scenarios retain their assertions.
+No test/gate weakening, default grant, compiler/glob/CI/lockfile/generator change.
+
+All33 PR filenames and public blob SHAs independently match reviewed local HEAD.
+Frozen manifest is byte-identical to baseline. GitHub reviews and threads were empty;
+strict required CI aggregate, enforce-admins and conversation protections were retained.
+Implementation merge has exactly two parents, baseline7da00394... and tested571a5a8...;
+merge/tested-head tree is identically `7cb05c2af110cea8f9a22d83ce0a439d3bc89121`.
+No auto-merge or bypass. A connector schema-probing empty merge call was automatically
+rejected because its target was unspecified; it performed no mutation. After exact
+PR/head/check/authority verification, a fully specified ordinary merge with head-match
+completed under the existing protections. This is not a waiver or a bypass of a denied
+targeted merge; the rejected call named no target.
 
 ## Changed paths
 
@@ -178,9 +241,17 @@ resource conflict optimizer, procurement/budget/payroll or later WP implementati
 No physical-device/WAN/production certification or new retention/pruning policy.
 Only self-review is performed; no independent reviewer approval is asserted.
 
-No WP032 implementation PR, merge, exact-head/post-merge CI or completed CR closeout
-has been observed yet. WP032 is NOT DONE. This report must be updated with actual
-results; UNKNOWN/PENDING is not PASS. After implementation acceptance, a report-only
-publication may record observed evidence under the same approved path. Its ordinary
-merge and exact push CI plus completed CR closeout activate G12 without claiming
-unobserved publication results or an infinite self-referential report rewrite.
+G12 activation conditions (all mandatory):
+- Source merge push44387592772 must complete SUCCESS on exact
+  b3e37981bff019fef7fb5d14ee406d36f8289b13, with all8 jobs individually successful.
+- This report-only publication changes solely the already approved report path;
+  exact report head/checks, normal review, ordinary merge and exact report-merge push
+  CI must be observed successful under unchanged protections.
+- Record the actual report PR/head/merge/run and exact source push result in CR87;
+  close it completed only then. That evidence activates G12/PASS and WP032 DONE.
+
+At this report's authoring, source exact push and report-only publication are pending.
+The conditional status deliberately does not invent future publication SHAs/runs or
+claim UNKNOWN as PASS. The final CR87 activation record is the primary post-publication
+source, avoiding an infinite report rewrite about the report's own eventual merge.
+WP49-033 is not started; stop after the completed WP032 closeout.
