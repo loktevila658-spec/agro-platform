@@ -1,3 +1,4 @@
+import { AgronomyModule } from './modules/agronomy/agronomy.module';
 import {IdentityTagsModule} from './modules/identity-tags/identity-tags.module';
 import {OfflineGisModule} from './modules/offline-gis/offline-gis.module';
 import { TasksModule } from './modules/tasks/tasks.module';
@@ -23,7 +24,7 @@ import { EventsModule } from './modules/events/events.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [IdentityTagsModule,OfflineGisModule,TasksModule,FarmModule, LandModule, GisModule, MasterDataModule, ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
+  imports: [AgronomyModule,IdentityTagsModule,OfflineGisModule,TasksModule,FarmModule, LandModule, GisModule, MasterDataModule, ReplicationModule, ProvidersModule, OneCModule, IntegrationsModule, OrgModule, IdentityModule, AuditModule, EventsModule, FilesModule, SyncModule],
   controllers: [SchemaVersionController, ObservabilityController],
   providers: [
     SchemaVersionService,

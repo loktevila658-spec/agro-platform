@@ -1,3 +1,4 @@
+import { AGRONOMY_ACTIONS } from '../dist/modules/agronomy/agronomy.types.js';
 import {TAG_ACTIONS} from '../dist/modules/identity-tags/identity-tags.types.js';
 import {OFFLINE_GIS_ACTIONS} from '../dist/modules/offline-gis/offline-gis.types.js';
 import { TASK_ACTIONS } from '../dist/modules/tasks/tasks.types.js';
@@ -65,6 +66,7 @@ test('OrgService action registry stays synchronized with the canonical permissio
   assert.deepEqual([...LAND_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('land.')).map(({action})=>action).sort());
   assert.deepEqual([...TASK_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('task.')).map(({action})=>action).sort());
   assert.deepEqual([...TAG_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('identity-tags.')).map(({action})=>action).sort());
+  assert.deepEqual([...AGRONOMY_ACTIONS].sort(),allPermissions.filter(({action})=>action.startsWith('agronomy.')).map(({action})=>action).sort());
   const actionSet = orgSource.match(/const ACTIONS = new Set\(\[([\s\S]*?)\]\);/);
   assert.ok(actionSet, 'OrgService must keep an explicit action allowlist');
   const actions = [...actionSet[1].matchAll(/'([^']+)'/g)].map((match) => match[1]).sort();
@@ -131,6 +133,13 @@ test('allows configured catalog actions at their declared global or tenant scope
     {action:'offline-gis.package.refresh',effect:'allow',scope:'tenant'},
     {action:'identity-tags.resolve',effect:'allow',scope:'tenant'},
     {action:'identity-tags.issue',effect:'allow',scope:'tenant'},
+    {action:'agronomy.season_plan.view',effect:'allow',scope:'tenant'},
+    {action:'agronomy.season_plan.edit',effect:'allow',scope:'tenant'},
+    {action:'agronomy.season_plan.publish',effect:'allow',scope:'tenant'},
+    {action:'agronomy.tech_map.edit',effect:'allow',scope:'tenant'},
+    {action:'agronomy.tech_map.approve',effect:'allow',scope:'tenant'},
+    {action:'agronomy.resource_demand.view',effect:'allow',scope:'tenant'},
+
 
 
   ]);

@@ -10,6 +10,431 @@ const openApiVersion = '3.1.0';
 const apiContractVersion = '0.1.0';
 const eventCatalogVersion = '1.0.0';
 
+class AgronomyCommand {
+  const AgronomyCommand({
+    this.data,
+    required this.effectiveAt,
+    required this.expectedVersion,
+    required this.reason,
+  });
+
+  factory AgronomyCommand.fromJson(Map<String, Object?> json) => AgronomyCommand(
+        data: json['data'] == null ? null : AgronomyData.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        effectiveAt: json['effectiveAt'] as String,
+        expectedVersion: json['expectedVersion'] as String,
+        reason: json['reason'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (data != null) 'data': data, 'effectiveAt': effectiveAt, 'expectedVersion': expectedVersion, 'reason': reason};
+
+  final AgronomyData? data;
+  final String effectiveAt;
+  final String expectedVersion;
+  final String reason;
+}
+
+class AgronomyCreate {
+  const AgronomyCreate({
+    required this.data,
+    required this.effectiveAt,
+    required this.kind,
+    required this.organizationId,
+    required this.reason,
+  });
+
+  factory AgronomyCreate.fromJson(Map<String, Object?> json) => AgronomyCreate(
+        data: AgronomyData.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        effectiveAt: json['effectiveAt'] as String,
+        kind: json['kind'] as String,
+        organizationId: json['organizationId'] as String,
+        reason: json['reason'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'data': data, 'effectiveAt': effectiveAt, 'kind': kind, 'organizationId': organizationId, 'reason': reason};
+
+  final AgronomyData data;
+  final String effectiveAt;
+  final String kind;
+  final String organizationId;
+  final String reason;
+}
+
+class AgronomyData {
+  const AgronomyData({
+    this.assumptions,
+    this.cropId,
+    this.fieldSeasonId,
+    required this.name,
+    this.operations,
+    this.parent,
+    this.scenario,
+    this.seasonId,
+    this.siteId,
+    this.sourceReferences,
+    this.techMaps,
+    this.template,
+  });
+
+  factory AgronomyData.fromJson(Map<String, Object?> json) => AgronomyData(
+        assumptions: json['assumptions'] == null ? null : (json['assumptions'] as List<Object?>).map((item) => item as String).toList(growable: false),
+        cropId: json['cropId'] == null ? null : json['cropId'] as String,
+        fieldSeasonId: json['fieldSeasonId'] == null ? null : json['fieldSeasonId'] as String,
+        name: json['name'] as String,
+        operations: json['operations'] == null ? null : (json['operations'] as List<Object?>).map((item) => AgronomyOperation.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        parent: json['parent'] == null ? null : AgronomyRevisionRef.fromJson(Map<String, Object?>.from(json['parent'] as Map)),
+        scenario: json['scenario'] == null ? null : json['scenario'] as String,
+        seasonId: json['seasonId'] == null ? null : json['seasonId'] as String,
+        siteId: json['siteId'] == null ? null : json['siteId'] as String,
+        sourceReferences: json['sourceReferences'] == null ? null : (json['sourceReferences'] as List<Object?>).map((item) => AgronomySource.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        techMaps: json['techMaps'] == null ? null : (json['techMaps'] as List<Object?>).map((item) => AgronomyRevisionRef.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        template: json['template'] == null ? null : AgronomyRevisionRef.fromJson(Map<String, Object?>.from(json['template'] as Map)),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (assumptions != null) 'assumptions': assumptions, if (cropId != null) 'cropId': cropId, if (fieldSeasonId != null) 'fieldSeasonId': fieldSeasonId, 'name': name, if (operations != null) 'operations': operations, if (parent != null) 'parent': parent, if (scenario != null) 'scenario': scenario, if (seasonId != null) 'seasonId': seasonId, if (siteId != null) 'siteId': siteId, if (sourceReferences != null) 'sourceReferences': sourceReferences, if (techMaps != null) 'techMaps': techMaps, if (template != null) 'template': template};
+
+  final List<String>? assumptions;
+  final String? cropId;
+  final String? fieldSeasonId;
+  final String name;
+  final List<AgronomyOperation>? operations;
+  final AgronomyRevisionRef? parent;
+  final String? scenario;
+  final String? seasonId;
+  final String? siteId;
+  final List<AgronomySource>? sourceReferences;
+  final List<AgronomyRevisionRef>? techMaps;
+  final AgronomyRevisionRef? template;
+}
+
+class AgronomyDemand {
+  const AgronomyDemand({
+    required this.index,
+    required this.inputs,
+    required this.kind,
+    required this.operationId,
+    required this.quantity,
+    required this.referenceId,
+    required this.unit,
+  });
+
+  factory AgronomyDemand.fromJson(Map<String, Object?> json) => AgronomyDemand(
+        index: (json['index'] as num).toInt(),
+        inputs: AgronomyResource.fromJson(Map<String, Object?>.from(json['inputs'] as Map)),
+        kind: json['kind'] as String,
+        operationId: json['operationId'] as String,
+        quantity: json['quantity'] as String,
+        referenceId: json['referenceId'] as String,
+        unit: json['unit'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'index': index, 'inputs': inputs, 'kind': kind, 'operationId': operationId, 'quantity': quantity, 'referenceId': referenceId, 'unit': unit};
+
+  final int index;
+  final AgronomyResource inputs;
+  final String kind;
+  final String operationId;
+  final String quantity;
+  final String referenceId;
+  final String unit;
+}
+
+class AgronomyHistory {
+  const AgronomyHistory({
+    required this.revisions,
+  });
+
+  factory AgronomyHistory.fromJson(Map<String, Object?> json) => AgronomyHistory(
+        revisions: (json['revisions'] as List<Object?>).map((item) => AgronomyHistoryEntry.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'revisions': revisions};
+
+  final List<AgronomyHistoryEntry> revisions;
+}
+
+class AgronomyHistoryEntry {
+  const AgronomyHistoryEntry({
+    required this.actorId,
+    this.approverId,
+    required this.authorId,
+    required this.data,
+    required this.effectiveAt,
+    this.previousRevisionId,
+    required this.reason,
+    required this.recordedAt,
+    required this.revisionId,
+    required this.sourceReferences,
+    required this.state,
+    required this.version,
+  });
+
+  factory AgronomyHistoryEntry.fromJson(Map<String, Object?> json) => AgronomyHistoryEntry(
+        actorId: json['actorId'] as String,
+        approverId: json['approverId'] == null ? null : json['approverId'] as String,
+        authorId: json['authorId'] as String,
+        data: AgronomyData.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        effectiveAt: json['effectiveAt'] as String,
+        previousRevisionId: json['previousRevisionId'] == null ? null : json['previousRevisionId'] as String,
+        reason: json['reason'] as String,
+        recordedAt: json['recordedAt'] as String,
+        revisionId: json['revisionId'] as String,
+        sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        state: json['state'] as String,
+        version: json['version'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'actorId': actorId, if (approverId != null) 'approverId': approverId, 'authorId': authorId, 'data': data, 'effectiveAt': effectiveAt, if (previousRevisionId != null) 'previousRevisionId': previousRevisionId, 'reason': reason, 'recordedAt': recordedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, 'state': state, 'version': version};
+
+  final String actorId;
+  final String? approverId;
+  final String authorId;
+  final AgronomyData data;
+  final String effectiveAt;
+  final String? previousRevisionId;
+  final String reason;
+  final String recordedAt;
+  final String revisionId;
+  final Map<String, Object?> sourceReferences;
+  final String state;
+  final String version;
+}
+
+class AgronomyList {
+  const AgronomyList({
+    required this.items,
+  });
+
+  factory AgronomyList.fromJson(Map<String, Object?> json) => AgronomyList(
+        items: (json['items'] as List<Object?>).map((item) => AgronomyProjection.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'items': items};
+
+  final List<AgronomyProjection> items;
+}
+
+class AgronomyOperation {
+  const AgronomyOperation({
+    required this.id,
+    required this.operationTypeId,
+    required this.quantity,
+    required this.resources,
+    required this.sequence,
+    required this.unit,
+    required this.unscheduled,
+    this.window,
+  });
+
+  factory AgronomyOperation.fromJson(Map<String, Object?> json) => AgronomyOperation(
+        id: json['id'] as String,
+        operationTypeId: json['operationTypeId'] as String,
+        quantity: json['quantity'] as String,
+        resources: (json['resources'] as List<Object?>).map((item) => AgronomyResource.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        sequence: (json['sequence'] as num).toInt(),
+        unit: json['unit'] as String,
+        unscheduled: json['unscheduled'] as bool,
+        window: json['window'] == null ? null : AgronomyWindow.fromJson(Map<String, Object?>.from(json['window'] as Map)),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'id': id, 'operationTypeId': operationTypeId, 'quantity': quantity, 'resources': resources, 'sequence': sequence, 'unit': unit, 'unscheduled': unscheduled, if (window != null) 'window': window};
+
+  final String id;
+  final String operationTypeId;
+  final String quantity;
+  final List<AgronomyResource> resources;
+  final int sequence;
+  final String unit;
+  final bool unscheduled;
+  final AgronomyWindow? window;
+}
+
+class AgronomyProjection {
+  const AgronomyProjection({
+    this.approverId,
+    required this.authorId,
+    required this.data,
+    required this.effectiveAt,
+    required this.id,
+    required this.kind,
+    required this.organizationId,
+    required this.revisionId,
+    required this.sourceReferences,
+    required this.state,
+    required this.version,
+  });
+
+  factory AgronomyProjection.fromJson(Map<String, Object?> json) => AgronomyProjection(
+        approverId: json['approverId'] == null ? null : json['approverId'] as String,
+        authorId: json['authorId'] as String,
+        data: AgronomyData.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        effectiveAt: json['effectiveAt'] as String,
+        id: json['id'] as String,
+        kind: json['kind'] as String,
+        organizationId: json['organizationId'] as String,
+        revisionId: json['revisionId'] as String,
+        sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        state: json['state'] as String,
+        version: json['version'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (approverId != null) 'approverId': approverId, 'authorId': authorId, 'data': data, 'effectiveAt': effectiveAt, 'id': id, 'kind': kind, 'organizationId': organizationId, 'revisionId': revisionId, 'sourceReferences': sourceReferences, 'state': state, 'version': version};
+
+  final String? approverId;
+  final String authorId;
+  final AgronomyData data;
+  final String effectiveAt;
+  final String id;
+  final String kind;
+  final String organizationId;
+  final String revisionId;
+  final Map<String, Object?> sourceReferences;
+  final String state;
+  final String version;
+}
+
+class AgronomyResource {
+  const AgronomyResource({
+    this.effectiveArea,
+    this.formulaVersion,
+    required this.kind,
+    this.normPerArea,
+    this.quantity,
+    required this.referenceId,
+    this.reserveFactor,
+    required this.unit,
+  });
+
+  factory AgronomyResource.fromJson(Map<String, Object?> json) => AgronomyResource(
+        effectiveArea: json['effectiveArea'] == null ? null : json['effectiveArea'] as String,
+        formulaVersion: json['formulaVersion'] == null ? null : json['formulaVersion'] as String,
+        kind: json['kind'] as String,
+        normPerArea: json['normPerArea'] == null ? null : json['normPerArea'] as String,
+        quantity: json['quantity'] == null ? null : json['quantity'] as String,
+        referenceId: json['referenceId'] as String,
+        reserveFactor: json['reserveFactor'] == null ? null : json['reserveFactor'] as String,
+        unit: json['unit'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (effectiveArea != null) 'effectiveArea': effectiveArea, if (formulaVersion != null) 'formulaVersion': formulaVersion, 'kind': kind, if (normPerArea != null) 'normPerArea': normPerArea, if (quantity != null) 'quantity': quantity, 'referenceId': referenceId, if (reserveFactor != null) 'reserveFactor': reserveFactor, 'unit': unit};
+
+  final String? effectiveArea;
+  final String? formulaVersion;
+  final String kind;
+  final String? normPerArea;
+  final String? quantity;
+  final String referenceId;
+  final String? reserveFactor;
+  final String unit;
+}
+
+class AgronomyResources {
+  const AgronomyResources({
+    required this.resources,
+  });
+
+  factory AgronomyResources.fromJson(Map<String, Object?> json) => AgronomyResources(
+        resources: (json['resources'] as List<Object?>).map((item) => AgronomyDemand.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'resources': resources};
+
+  final List<AgronomyDemand> resources;
+}
+
+class AgronomyRevisionRef {
+  const AgronomyRevisionRef({
+    required this.entityId,
+    required this.revisionId,
+  });
+
+  factory AgronomyRevisionRef.fromJson(Map<String, Object?> json) => AgronomyRevisionRef(
+        entityId: json['entityId'] as String,
+        revisionId: json['revisionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'entityId': entityId, 'revisionId': revisionId};
+
+  final String entityId;
+  final String revisionId;
+}
+
+class AgronomySource {
+  const AgronomySource({
+    required this.source,
+    required this.version,
+  });
+
+  factory AgronomySource.fromJson(Map<String, Object?> json) => AgronomySource(
+        source: json['source'] as String,
+        version: json['version'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'source': source, 'version': version};
+
+  final String source;
+  final String version;
+}
+
+class AgronomyTaskDraft {
+  const AgronomyTaskDraft({
+    required this.definition,
+    required this.mapRevisionId,
+    required this.operationId,
+    required this.planRevisionId,
+  });
+
+  factory AgronomyTaskDraft.fromJson(Map<String, Object?> json) => AgronomyTaskDraft(
+        definition: TaskDefinition.fromJson(Map<String, Object?>.from(json['definition'] as Map)),
+        mapRevisionId: json['mapRevisionId'] as String,
+        operationId: json['operationId'] as String,
+        planRevisionId: json['planRevisionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'definition': definition, 'mapRevisionId': mapRevisionId, 'operationId': operationId, 'planRevisionId': planRevisionId};
+
+  final TaskDefinition definition;
+  final String mapRevisionId;
+  final String operationId;
+  final String planRevisionId;
+}
+
+class AgronomyTaskDraftRequest {
+  const AgronomyTaskDraftRequest({
+    required this.expectedVersion,
+    required this.mapRevisionId,
+    required this.operationId,
+  });
+
+  factory AgronomyTaskDraftRequest.fromJson(Map<String, Object?> json) => AgronomyTaskDraftRequest(
+        expectedVersion: json['expectedVersion'] as String,
+        mapRevisionId: json['mapRevisionId'] as String,
+        operationId: json['operationId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'expectedVersion': expectedVersion, 'mapRevisionId': mapRevisionId, 'operationId': operationId};
+
+  final String expectedVersion;
+  final String mapRevisionId;
+  final String operationId;
+}
+
+class AgronomyWindow {
+  const AgronomyWindow({
+    required this.end,
+    required this.start,
+  });
+
+  factory AgronomyWindow.fromJson(Map<String, Object?> json) => AgronomyWindow(
+        end: json['end'] as String,
+        start: json['start'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'end': end, 'start': start};
+
+  final String end;
+  final String start;
+}
+
 class CreateOrganizationRequest {
   const CreateOrganizationRequest({
     required this.code,
@@ -1708,6 +2133,41 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     producer: 'identity-tags',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'qrCodeId': <String, Object?>{'type': 'string'}, 'entityType': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'version': <String, Object?>{'type': 'integer'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'qrCodeId', 'entityType', 'entityId', 'version', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.plan.changed',
+    version: '1.0.0',
+    producer: 'agronomy',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.season_plan.created',
+    version: '1.0.0',
+    producer: 'agronomy',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.season_plan.published',
+    version: '1.0.0',
+    producer: 'agronomy',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.tech_map.published',
+    version: '1.0.0',
+    producer: 'agronomy',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.resource_demand.calculated',
+    version: '1.0.0',
+    producer: 'agronomy',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
   )
 ];
 
@@ -1813,6 +2273,55 @@ class AgroPlatformApiClient {
       json = await send(url, 'GET', headers: headers, body: null);
     }
     return SchemaVersionResponse.fromJson(json);
+  }
+
+  Future<AgronomyList> agronomyList({String? after, required String organizationId, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyList');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans').replace(queryParameters: <String, String>{if (after != null) 'after': after!.toString(), if (organizationId != null) 'organizationId': organizationId!.toString()}), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return AgronomyList.fromJson(json);
+  }
+
+  Future<AgronomyProjection> agronomyCreate({required String authorization, required String idempotencyKey, required AgronomyCreate body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyCreate');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return AgronomyProjection.fromJson(json);
+  }
+
+  Future<AgronomyProjection> agronomyRead({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyRead');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans/' + Uri.encodeComponent(id) + ''), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return AgronomyProjection.fromJson(json);
+  }
+
+  Future<AgronomyProjection> agronomyCommand({required String action, required String id, required String authorization, required String idempotencyKey, required AgronomyCommand body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyCommand');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans/' + Uri.encodeComponent(id) + '/commands/' + Uri.encodeComponent(action) + ''), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return AgronomyProjection.fromJson(json);
+  }
+
+  Future<AgronomyHistory> agronomyHistory({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyHistory');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans/' + Uri.encodeComponent(id) + '/history'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return AgronomyHistory.fromJson(json);
+  }
+
+  Future<AgronomyResources> agronomyResources({required String id, required String revisionId, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyResources');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans/' + Uri.encodeComponent(id) + '/resources/' + Uri.encodeComponent(revisionId) + ''), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return AgronomyResources.fromJson(json);
+  }
+
+  Future<AgronomyTaskDraft> agronomyTaskDraft({required String id, required String authorization, required AgronomyTaskDraftRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for agronomyTaskDraft');
+    final json = await send(baseUri.resolve('/v1/agronomy/plans/' + Uri.encodeComponent(id) + '/task-draft'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return AgronomyTaskDraft.fromJson(json);
   }
 
   Future<SyncUploadResponse> initSyncAttachment({required String authorization, required SyncAttachmentIntent body}) async {
