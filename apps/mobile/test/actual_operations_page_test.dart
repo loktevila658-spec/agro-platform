@@ -45,6 +45,7 @@ void main() {
         await tester.scrollUntilVisible(
           find.text('Сохранить на устройстве'),
           400,
+          scrollable: find.byType(Scrollable).first,
         );
         await tester.tap(find.text('Сохранить на устройстве'));
         await tester.pumpAndSettle();

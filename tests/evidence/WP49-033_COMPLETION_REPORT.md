@@ -40,6 +40,8 @@ Temporary /private/tmp worktree and uncommitted artifacts were cleared between s
 
 Initial exact PR run45466434459 on head3a7474f0bfb61ce55c8051cbdcaf730d758764b8 failed Unit/Mobile. Migration/Runtime/Typecheck/Contracts/Lint individually passed, but this is not full acceptance. Real PG exposed ambiguous UUID/text reuse of a bind parameter; each typed SQL column now has a separate parameter. HTTP fixture provider lifecycle double-closed its shared pool; the controller receives bound application methods while the fixture retains pool ownership. Strict Flutter analyzer reported14 missing statement braces; all fixed in code without lint suppressions or threshold changes. Assertions and required checks remain intact. Replacement exact-head CI is mandatory.
 
+Replacement run45467116304 on d41eb1ce357528625483fa69496110492e5e96d3 passed Unit (API222/222, no skips), all8 new real actual-operation scenarios, Migration, Runtime, Contracts, Typecheck and Lint. Flutter strict analyzer was clean;64 widget/store/regression tests passed and one form test failed because its implicit Scrollable finder matched text-field scrollables as well as the form. The test now explicitly targets the primary scrollable; its validation/error assertions are unchanged. This run is not full acceptance; final exact-head Mobile/native and aggregate remain required.
+
 ## G0–G12
 
 | Gate | Current decision |
