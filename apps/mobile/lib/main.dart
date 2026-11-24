@@ -1,3 +1,5 @@
+import 'features/agronomy/actual_operation_repository.dart';
+import 'features/agronomy/actual_operations_page.dart';
 import 'features/qr/qr_page.dart';
 import 'features/qr/qr_repository.dart';
 import 'features/map/offline_package_controller.dart';
@@ -80,6 +82,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
   String? deviceId;
   Workspace? workspace;
   TaskRepository? taskRepository;
+  ActualOperationRepository? actualRepository;
   QrRepository? qrRepository;
   OfflinePackageController? mapController;
   final mapRegions = MapLibreOfflineRegions();
@@ -183,6 +186,18 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     taskRepository = TaskRepository(
       opened,
       verify: verifier?.verify ?? (_) async => false,
+    );
+    actualRepository = ActualOperationRepository(
+      opened,
+      verify: verifier?.verify ?? (_) async => false,
+      loadContexts: () async {
+        final auth = accessToken;
+        if (auth == null)
+          throw const SyncFailure('AUTHENTICATION_REQUIRED', status: 401);
+        return (await transport.api.actualOperationContexts(
+          authorization: 'Bearer $auth',
+        )).items;
+      },
     );
     mapController = OfflinePackageController(
       opened,
@@ -452,6 +467,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       mapController?.dispose();
       mapController = null;
       taskRepository = null;
+      actualRepository = null;
       workspace = null;
       workspaceIdentity = null;
       queueCounts = const QueueCounts(0, 0, 0, 0);
@@ -514,6 +530,20 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
                         child: const Text('Карта'),
                       ),
                     ),
+                    if (actualRepository != null)
+                      Builder(
+                        builder: (context) => TextButton(
+                          onPressed: () => Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) => ActualOperationsPage(
+                                repository: actualRepository!,
+                                onQueued: startSync,
+                              ),
+                            ),
+                          ),
+                          child: const Text('Выполненные операции'),
+                        ),
+                      ),
                     if (taskRepository != null)
                       Builder(
                         builder: (context) => TextButton(

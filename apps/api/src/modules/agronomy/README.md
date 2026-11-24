@@ -76,3 +76,32 @@ Historical data is retained; no pruning/retention expiry or destructive DOWN is 
 No WP033+, resource conflict solver, procurement/budget/stock ledger, provider,
 scouting, lab/remote sensing, UI/mobile planning, WAN or physical-device certification
 is included. Reference/policy provisioning is required before production use.
+
+## WP49-033 actual operation facts
+
+ActualOperation is separate from plan and Task execution. Capture requires an
+explicit FieldSeason and trusted operation reference; Task-linked capture reuses
+its immutable completion times/output/subjects through the Task owner port. A
+completion may back only one actual fact. Materials/units use locked Master Data
+owner queries; labor employee references use trusted owner policy and Task assignment.
+No Task lifecycle, planning, payroll, inventory or foreign table writes occur.
+
+Capture -> CAPTURED -> Submit -> PENDING_CONFIRMATION -> Confirm/Reject.
+Confirmed/rejected facts receive reasoned CORRECTED_VERSION revisions, then submit
+and current confirmation again. Original rows and last confirmed revision remain
+available. All writes use existing SyncService auth/version/idempotency/transaction,
+owned audit/outbox and feed. No generic fact patch/delete is exposed.
+
+Capture command aggregate AgronomyCapture:<FieldSeason UUID> is an append context,
+not Farm authority; baseVersion0 and command UUIDv7 create exactly one fact. The
+trusted policy supplies finite allowed contexts, explicit clock tolerance and
+maker/checker rules. Only Capture gets signed O1 offline grants; review/correction
+must carry online context and current Local Server authorization. Flutter uses the
+existing encrypted Workspace/CommandQueue, retains original terminal conflicts and
+never marks a local intent as a confirmed business fact. Server policy defaults deny.
+
+Schema18->19 expands owned storage and delivery sources. API/events are additive;
+all four contracts are generated canonically. Operational-period locking, stock
+movement, labor costing/payroll and specialized application-dose computations are
+outside this package; specialized input must fail the explicit operation policy
+when no authoritative validation exists. Hardware/AI are optional evidence only.
