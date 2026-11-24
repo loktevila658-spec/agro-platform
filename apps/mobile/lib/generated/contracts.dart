@@ -10,6 +10,379 @@ const openApiVersion = '3.1.0';
 const apiContractVersion = '0.1.0';
 const eventCatalogVersion = '1.0.0';
 
+class ActualCapture {
+  const ActualCapture({
+    this.actualQuantity,
+    this.comment,
+    this.completedAt,
+    this.executors,
+    required this.fieldSeasonId,
+    required this.labor,
+    this.location,
+    required this.materials,
+    this.operationTypeId,
+    required this.organizationId,
+    this.plannedOperation,
+    required this.sourceType,
+    this.startedAt,
+    this.taskId,
+    this.unit,
+  });
+
+  factory ActualCapture.fromJson(Map<String, Object?> json) => ActualCapture(
+        actualQuantity: json['actualQuantity'] == null ? null : json['actualQuantity'] as String,
+        comment: json['comment'] == null ? null : json['comment'] as String,
+        completedAt: json['completedAt'] == null ? null : json['completedAt'] as String,
+        executors: json['executors'] == null ? null : (json['executors'] as List<Object?>).map((item) => item as String).toList(growable: false),
+        fieldSeasonId: json['fieldSeasonId'] as String,
+        labor: (json['labor'] as List<Object?>).map((item) => ActualLabor.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        location: json['location'] == null ? null : ActualLocation.fromJson(Map<String, Object?>.from(json['location'] as Map)),
+        materials: (json['materials'] as List<Object?>).map((item) => ActualMaterial.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        operationTypeId: json['operationTypeId'] == null ? null : json['operationTypeId'] as String,
+        organizationId: json['organizationId'] as String,
+        plannedOperation: json['plannedOperation'] == null ? null : ActualPlannedOperation.fromJson(Map<String, Object?>.from(json['plannedOperation'] as Map)),
+        sourceType: json['sourceType'] as String,
+        startedAt: json['startedAt'] == null ? null : json['startedAt'] as String,
+        taskId: json['taskId'] == null ? null : json['taskId'] as String,
+        unit: json['unit'] == null ? null : json['unit'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (actualQuantity != null) 'actualQuantity': actualQuantity, if (comment != null) 'comment': comment, if (completedAt != null) 'completedAt': completedAt, if (executors != null) 'executors': executors, 'fieldSeasonId': fieldSeasonId, 'labor': labor, if (location != null) 'location': location, 'materials': materials, if (operationTypeId != null) 'operationTypeId': operationTypeId, 'organizationId': organizationId, if (plannedOperation != null) 'plannedOperation': plannedOperation, 'sourceType': sourceType, if (startedAt != null) 'startedAt': startedAt, if (taskId != null) 'taskId': taskId, if (unit != null) 'unit': unit};
+
+  final String? actualQuantity;
+  final String? comment;
+  final String? completedAt;
+  final List<String>? executors;
+  final String fieldSeasonId;
+  final List<ActualLabor> labor;
+  final ActualLocation? location;
+  final List<ActualMaterial> materials;
+  final String? operationTypeId;
+  final String organizationId;
+  final ActualPlannedOperation? plannedOperation;
+  final String sourceType;
+  final String? startedAt;
+  final String? taskId;
+  final String? unit;
+}
+
+class ActualCaptureContext {
+  const ActualCaptureContext({
+    required this.fieldSeasonId,
+    required this.organizationId,
+    required this.revisionId,
+  });
+
+  factory ActualCaptureContext.fromJson(Map<String, Object?> json) => ActualCaptureContext(
+        fieldSeasonId: json['fieldSeasonId'] as String,
+        organizationId: json['organizationId'] as String,
+        revisionId: json['revisionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'fieldSeasonId': fieldSeasonId, 'organizationId': organizationId, 'revisionId': revisionId};
+
+  final String fieldSeasonId;
+  final String organizationId;
+  final String revisionId;
+}
+
+class ActualCaptureContexts {
+  const ActualCaptureContexts({
+    required this.items,
+  });
+
+  factory ActualCaptureContexts.fromJson(Map<String, Object?> json) => ActualCaptureContexts(
+        items: (json['items'] as List<Object?>).map((item) => ActualCaptureContext.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'items': items};
+
+  final List<ActualCaptureContext> items;
+}
+
+class ActualLabor {
+  const ActualLabor({
+    required this.employeeId,
+    required this.quantity,
+    required this.unit,
+  });
+
+  factory ActualLabor.fromJson(Map<String, Object?> json) => ActualLabor(
+        employeeId: json['employeeId'] as String,
+        quantity: json['quantity'] as String,
+        unit: json['unit'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'employeeId': employeeId, 'quantity': quantity, 'unit': unit};
+
+  final String employeeId;
+  final String quantity;
+  final String unit;
+}
+
+class ActualLocation {
+  const ActualLocation({
+    required this.accuracyMetres,
+    required this.latitude,
+    required this.longitude,
+    required this.observedAt,
+  });
+
+  factory ActualLocation.fromJson(Map<String, Object?> json) => ActualLocation(
+        accuracyMetres: json['accuracyMetres'] as num,
+        latitude: json['latitude'] as num,
+        longitude: json['longitude'] as num,
+        observedAt: json['observedAt'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'accuracyMetres': accuracyMetres, 'latitude': latitude, 'longitude': longitude, 'observedAt': observedAt};
+
+  final num accuracyMetres;
+  final num latitude;
+  final num longitude;
+  final String observedAt;
+}
+
+class ActualMaterial {
+  const ActualMaterial({
+    required this.materialId,
+    required this.quantity,
+    required this.unit,
+  });
+
+  factory ActualMaterial.fromJson(Map<String, Object?> json) => ActualMaterial(
+        materialId: json['materialId'] as String,
+        quantity: json['quantity'] as String,
+        unit: json['unit'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'materialId': materialId, 'quantity': quantity, 'unit': unit};
+
+  final String materialId;
+  final String quantity;
+  final String unit;
+}
+
+class ActualOperationCommand {
+  const ActualOperationCommand({
+    required this.aggregate,
+    required this.attachments,
+    this.baseVersion,
+    required this.commandVersion,
+    required this.deviceSeq,
+    required this.idempotencyKey,
+    required this.localCommandId,
+    required this.observedAt,
+    required this.offlineAuthId,
+    required this.payload,
+    required this.provenance,
+    required this.type,
+  });
+
+  factory ActualOperationCommand.fromJson(Map<String, Object?> json) => ActualOperationCommand(
+        aggregate: SyncAggregate.fromJson(Map<String, Object?>.from(json['aggregate'] as Map)),
+        attachments: (json['attachments'] as List<Object?>).map((item) => SyncAttachmentIntent.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        baseVersion: json['baseVersion'] == null ? null : (json['baseVersion'] as num).toInt(),
+        commandVersion: (json['commandVersion'] as num).toInt(),
+        deviceSeq: (json['deviceSeq'] as num).toInt(),
+        idempotencyKey: json['idempotencyKey'] as String,
+        localCommandId: json['localCommandId'] as String,
+        observedAt: json['observedAt'] as String,
+        offlineAuthId: json['offlineAuthId'] as String,
+        payload: ActualOperationPayload.fromJson(Map<String, Object?>.from(json['payload'] as Map)),
+        provenance: json['provenance'] as Map<String, Object?>,
+        type: json['type'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'aggregate': aggregate, 'attachments': attachments, if (baseVersion != null) 'baseVersion': baseVersion, 'commandVersion': commandVersion, 'deviceSeq': deviceSeq, 'idempotencyKey': idempotencyKey, 'localCommandId': localCommandId, 'observedAt': observedAt, 'offlineAuthId': offlineAuthId, 'payload': payload, 'provenance': provenance, 'type': type};
+
+  final SyncAggregate aggregate;
+  final List<SyncAttachmentIntent> attachments;
+  final int? baseVersion;
+  final int commandVersion;
+  final int deviceSeq;
+  final String idempotencyKey;
+  final String localCommandId;
+  final String observedAt;
+  final String offlineAuthId;
+  final ActualOperationPayload payload;
+  final Map<String, Object?> provenance;
+  final String type;
+}
+
+class ActualOperationHistory {
+  const ActualOperationHistory({
+    required this.revisions,
+  });
+
+  factory ActualOperationHistory.fromJson(Map<String, Object?> json) => ActualOperationHistory(
+        revisions: (json['revisions'] as List<Object?>).map((item) => ActualOperationRevision.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'revisions': revisions};
+
+  final List<ActualOperationRevision> revisions;
+}
+
+class ActualOperationList {
+  const ActualOperationList({
+    required this.items,
+  });
+
+  factory ActualOperationList.fromJson(Map<String, Object?> json) => ActualOperationList(
+        items: (json['items'] as List<Object?>).map((item) => ActualOperationProjection.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'items': items};
+
+  final List<ActualOperationProjection> items;
+}
+
+class ActualOperationPayload {
+  const ActualOperationPayload({
+    this.data,
+    required this.reason,
+  });
+
+  factory ActualOperationPayload.fromJson(Map<String, Object?> json) => ActualOperationPayload(
+        data: json['data'] == null ? null : ActualCapture.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        reason: json['reason'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{if (data != null) 'data': data, 'reason': reason};
+
+  final ActualCapture? data;
+  final String reason;
+}
+
+class ActualOperationProjection {
+  const ActualOperationProjection({
+    required this.actorId,
+    required this.authorId,
+    this.confirmedRevisionId,
+    required this.data,
+    required this.fieldSeasonId,
+    required this.id,
+    required this.organizationId,
+    required this.recordedAt,
+    required this.revisionId,
+    required this.sourceReferences,
+    required this.state,
+    required this.version,
+  });
+
+  factory ActualOperationProjection.fromJson(Map<String, Object?> json) => ActualOperationProjection(
+        actorId: json['actorId'] as String,
+        authorId: json['authorId'] as String,
+        confirmedRevisionId: json['confirmedRevisionId'] == null ? null : json['confirmedRevisionId'] as String,
+        data: ActualCapture.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        fieldSeasonId: json['fieldSeasonId'] as String,
+        id: json['id'] as String,
+        organizationId: json['organizationId'] as String,
+        recordedAt: json['recordedAt'] as String,
+        revisionId: json['revisionId'] as String,
+        sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        state: json['state'] as String,
+        version: (json['version'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'actorId': actorId, 'authorId': authorId, if (confirmedRevisionId != null) 'confirmedRevisionId': confirmedRevisionId, 'data': data, 'fieldSeasonId': fieldSeasonId, 'id': id, 'organizationId': organizationId, 'recordedAt': recordedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, 'state': state, 'version': version};
+
+  final String actorId;
+  final String authorId;
+  final String? confirmedRevisionId;
+  final ActualCapture data;
+  final String fieldSeasonId;
+  final String id;
+  final String organizationId;
+  final String recordedAt;
+  final String revisionId;
+  final Map<String, Object?> sourceReferences;
+  final String state;
+  final int version;
+}
+
+class ActualOperationRevision {
+  const ActualOperationRevision({
+    required this.actorId,
+    required this.authorId,
+    required this.data,
+    this.previousRevisionId,
+    required this.provenance,
+    required this.reason,
+    required this.recordedAt,
+    required this.revisionId,
+    required this.sourceReferences,
+    required this.state,
+    required this.version,
+  });
+
+  factory ActualOperationRevision.fromJson(Map<String, Object?> json) => ActualOperationRevision(
+        actorId: json['actorId'] as String,
+        authorId: json['authorId'] as String,
+        data: ActualCapture.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        previousRevisionId: json['previousRevisionId'] == null ? null : json['previousRevisionId'] as String,
+        provenance: json['provenance'] as Map<String, Object?>,
+        reason: json['reason'] as String,
+        recordedAt: json['recordedAt'] as String,
+        revisionId: json['revisionId'] as String,
+        sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        state: json['state'] as String,
+        version: json['version'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'actorId': actorId, 'authorId': authorId, 'data': data, if (previousRevisionId != null) 'previousRevisionId': previousRevisionId, 'provenance': provenance, 'reason': reason, 'recordedAt': recordedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, 'state': state, 'version': version};
+
+  final String actorId;
+  final String authorId;
+  final ActualCapture data;
+  final String? previousRevisionId;
+  final Map<String, Object?> provenance;
+  final String reason;
+  final String recordedAt;
+  final String revisionId;
+  final Map<String, Object?> sourceReferences;
+  final String state;
+  final String version;
+}
+
+class ActualOperationSubmitRequest {
+  const ActualOperationSubmitRequest({
+    required this.command,
+    required this.scopeVersion,
+  });
+
+  factory ActualOperationSubmitRequest.fromJson(Map<String, Object?> json) => ActualOperationSubmitRequest(
+        command: ActualOperationCommand.fromJson(Map<String, Object?>.from(json['command'] as Map)),
+        scopeVersion: (json['scopeVersion'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'command': command, 'scopeVersion': scopeVersion};
+
+  final ActualOperationCommand command;
+  final int scopeVersion;
+}
+
+class ActualPlannedOperation {
+  const ActualPlannedOperation({
+    required this.mapId,
+    required this.operationId,
+    required this.revisionId,
+  });
+
+  factory ActualPlannedOperation.fromJson(Map<String, Object?> json) => ActualPlannedOperation(
+        mapId: json['mapId'] as String,
+        operationId: json['operationId'] as String,
+        revisionId: json['revisionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'mapId': mapId, 'operationId': operationId, 'revisionId': revisionId};
+
+  final String mapId;
+  final String operationId;
+  final String revisionId;
+}
+
 class AgronomyCommand {
   const AgronomyCommand({
     this.data,
@@ -2168,6 +2541,41 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     producer: 'agronomy',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.operation.captured',
+    version: '1.0.0',
+    producer: 'agronomy-actual',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.operation.submitted',
+    version: '1.0.0',
+    producer: 'agronomy-actual',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.operation.confirmed',
+    version: '1.0.0',
+    producer: 'agronomy-actual',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.operation.rejected',
+    version: '1.0.0',
+    producer: 'agronomy-actual',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'agronomy.operation.corrected',
+    version: '1.0.0',
+    producer: 'agronomy-actual',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
   )
 ];
 
@@ -2273,6 +2681,48 @@ class AgroPlatformApiClient {
       json = await send(url, 'GET', headers: headers, body: null);
     }
     return SchemaVersionResponse.fromJson(json);
+  }
+
+  Future<ActualOperationList> actualOperationList({String? after, required String organizationId, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for actualOperationList');
+    final json = await send(baseUri.resolve('/v1/agronomy/operations').replace(queryParameters: <String, String>{if (after != null) 'after': after!.toString(), if (organizationId != null) 'organizationId': organizationId!.toString()}), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ActualOperationList.fromJson(json);
+  }
+
+  Future<SyncPushResponse> actualOperationCapture({required String authorization, required ActualOperationSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for actualOperationCapture');
+    final json = await send(baseUri.resolve('/v1/agronomy/operations'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<ActualCaptureContexts> actualOperationContexts({required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for actualOperationContexts');
+    final json = await send(baseUri.resolve('/v1/agronomy/operations/capture-contexts'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ActualCaptureContexts.fromJson(json);
+  }
+
+  Future<ActualOperationProjection> actualOperationRead({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for actualOperationRead');
+    final json = await send(baseUri.resolve('/v1/agronomy/operations/' + Uri.encodeComponent(id) + ''), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ActualOperationProjection.fromJson(json);
+  }
+
+  Future<SyncPushResponse> actualOperationCommand({required String action, required String id, required String authorization, required ActualOperationSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for actualOperationCommand');
+    final json = await send(baseUri.resolve('/v1/agronomy/operations/' + Uri.encodeComponent(id) + '/commands/' + Uri.encodeComponent(action) + ''), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<ActualOperationHistory> actualOperationHistory({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for actualOperationHistory');
+    final json = await send(baseUri.resolve('/v1/agronomy/operations/' + Uri.encodeComponent(id) + '/history'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ActualOperationHistory.fromJson(json);
   }
 
   Future<AgronomyList> agronomyList({String? after, required String organizationId, required String authorization}) async {

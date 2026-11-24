@@ -6,6 +6,202 @@ servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
 paths:
+  "/v1/agronomy/operations":
+    "get":
+      "operationId": "actualOperationList"
+      "description": "WP49-033 WF-03/WF-22 current server permissions, tenant/org, Local-primary validation; original command identity, expected version, immutable history/correction. Only Capture has exact signed offline context grants; review requires Local Server connection."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "organizationId"
+          "in": "query"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "after"
+          "in": "query"
+          "required": false
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ActualOperationList"
+        "400":
+          "description": "Invalid owner input"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Permission denied"
+        "404":
+          "description": "Unavailable"
+        "409":
+          "description": "Conflict"
+    "post":
+      "operationId": "actualOperationCapture"
+      "description": "WP49-033 WF-03/WF-22 current server permissions, tenant/org, Local-primary validation; original command identity, expected version, immutable history/correction. Only Capture has exact signed offline context grants; review requires Local Server connection."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+        "400":
+          "description": "Invalid owner input"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Permission denied"
+        "404":
+          "description": "Unavailable"
+        "409":
+          "description": "Conflict"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/ActualOperationSubmitRequest"
+  "/v1/agronomy/operations/capture-contexts":
+    "get":
+      "operationId": "actualOperationContexts"
+      "description": "WP49-033 WF-03/WF-22 current server permissions, tenant/org, Local-primary validation; original command identity, expected version, immutable history/correction. Only Capture has exact signed offline context grants; review requires Local Server connection."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ActualCaptureContexts"
+        "400":
+          "description": "Invalid owner input"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Permission denied"
+        "404":
+          "description": "Unavailable"
+        "409":
+          "description": "Conflict"
+  "/v1/agronomy/operations/{id}":
+    "get":
+      "operationId": "actualOperationRead"
+      "description": "WP49-033 WF-03/WF-22 current server permissions, tenant/org, Local-primary validation; original command identity, expected version, immutable history/correction. Only Capture has exact signed offline context grants; review requires Local Server connection."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ActualOperationProjection"
+        "400":
+          "description": "Invalid owner input"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Permission denied"
+        "404":
+          "description": "Unavailable"
+        "409":
+          "description": "Conflict"
+  "/v1/agronomy/operations/{id}/history":
+    "get":
+      "operationId": "actualOperationHistory"
+      "description": "WP49-033 WF-03/WF-22 current server permissions, tenant/org, Local-primary validation; original command identity, expected version, immutable history/correction. Only Capture has exact signed offline context grants; review requires Local Server connection."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ActualOperationHistory"
+        "400":
+          "description": "Invalid owner input"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Permission denied"
+        "404":
+          "description": "Unavailable"
+        "409":
+          "description": "Conflict"
+  "/v1/agronomy/operations/{id}/commands/{action}":
+    "post":
+      "operationId": "actualOperationCommand"
+      "description": "WP49-033 WF-03/WF-22 current server permissions, tenant/org, Local-primary validation; original command identity, expected version, immutable history/correction. Only Capture has exact signed offline context grants; review requires Local Server connection."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "action"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+            "enum":
+              - "submit"
+              - "confirm"
+              - "reject"
+              - "correct"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+        "400":
+          "description": "Invalid owner input"
+        "401":
+          "description": "Authentication required"
+        "403":
+          "description": "Permission denied"
+        "404":
+          "description": "Unavailable"
+        "409":
+          "description": "Conflict"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/ActualOperationSubmitRequest"
   "/v1/agronomy/plans":
     "get":
       "operationId": "agronomyList"
@@ -1290,6 +1486,309 @@ components:
       schema:
         type: string
   schemas:
+    "ActualMaterial":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "materialId":
+          "type": "string"
+        "quantity":
+          "type": "string"
+        "unit":
+          "type": "string"
+      "required":
+        - "materialId"
+        - "quantity"
+        - "unit"
+    "ActualLabor":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "employeeId":
+          "type": "string"
+        "quantity":
+          "type": "string"
+        "unit":
+          "type": "string"
+      "required":
+        - "employeeId"
+        - "quantity"
+        - "unit"
+    "ActualPlannedOperation":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "mapId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "operationId":
+          "type": "string"
+      "required":
+        - "mapId"
+        - "revisionId"
+        - "operationId"
+    "ActualLocation":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "latitude":
+          "type": "number"
+        "longitude":
+          "type": "number"
+        "accuracyMetres":
+          "type": "number"
+        "observedAt":
+          "type": "string"
+      "required":
+        - "latitude"
+        - "longitude"
+        - "accuracyMetres"
+        - "observedAt"
+    "ActualCapture":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "organizationId":
+          "type": "string"
+        "fieldSeasonId":
+          "type": "string"
+        "taskId":
+          "type": "string"
+        "operationTypeId":
+          "type": "string"
+        "startedAt":
+          "type": "string"
+        "completedAt":
+          "type": "string"
+        "actualQuantity":
+          "type": "string"
+        "unit":
+          "type": "string"
+        "executors":
+          "type": "array"
+          "items":
+            "type": "string"
+        "materials":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ActualMaterial"
+        "labor":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ActualLabor"
+        "sourceType":
+          "type": "string"
+          "enum":
+            - "USER_WEB"
+            - "USER_MOBILE"
+            - "API"
+        "comment":
+          "type": "string"
+        "plannedOperation":
+          "$ref": "#/components/schemas/ActualPlannedOperation"
+        "location":
+          "$ref": "#/components/schemas/ActualLocation"
+      "required":
+        - "organizationId"
+        - "fieldSeasonId"
+        - "materials"
+        - "labor"
+        - "sourceType"
+    "ActualOperationPayload":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "data":
+          "$ref": "#/components/schemas/ActualCapture"
+        "reason":
+          "type": "string"
+      "required":
+        - "reason"
+    "ActualOperationProjection":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "id":
+          "type": "string"
+        "organizationId":
+          "type": "string"
+        "fieldSeasonId":
+          "type": "string"
+        "version":
+          "type": "integer"
+        "revisionId":
+          "type": "string"
+        "state":
+          "type": "string"
+          "enum":
+            - "CAPTURED"
+            - "PENDING_CONFIRMATION"
+            - "CONFIRMED"
+            - "REJECTED"
+            - "CORRECTED_VERSION"
+        "data":
+          "$ref": "#/components/schemas/ActualCapture"
+        "sourceReferences":
+          "type": "object"
+          "additionalProperties": true
+        "authorId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "recordedAt":
+          "type": "string"
+        "confirmedRevisionId":
+          "type": "string"
+      "required":
+        - "id"
+        - "organizationId"
+        - "fieldSeasonId"
+        - "version"
+        - "revisionId"
+        - "state"
+        - "data"
+        - "sourceReferences"
+        - "authorId"
+        - "actorId"
+        - "recordedAt"
+    "ActualOperationList":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "items":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ActualOperationProjection"
+      "required":
+        - "items"
+    "ActualCaptureContext":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "fieldSeasonId":
+          "type": "string"
+        "organizationId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+      "required":
+        - "fieldSeasonId"
+        - "organizationId"
+        - "revisionId"
+    "ActualCaptureContexts":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "items":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ActualCaptureContext"
+      "required":
+        - "items"
+    "ActualOperationRevision":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "revisionId":
+          "type": "string"
+        "version":
+          "type": "string"
+        "state":
+          "type": "string"
+        "previousRevisionId":
+          "type": "string"
+        "data":
+          "$ref": "#/components/schemas/ActualCapture"
+        "sourceReferences":
+          "type": "object"
+          "additionalProperties": true
+        "provenance":
+          "type": "object"
+          "additionalProperties": true
+        "authorId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "reason":
+          "type": "string"
+        "recordedAt":
+          "type": "string"
+      "required":
+        - "revisionId"
+        - "version"
+        - "state"
+        - "data"
+        - "sourceReferences"
+        - "provenance"
+        - "authorId"
+        - "actorId"
+        - "reason"
+        - "recordedAt"
+    "ActualOperationHistory":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "revisions":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ActualOperationRevision"
+      "required":
+        - "revisions"
+    "ActualOperationCommand":
+      "type": "object"
+      "additionalProperties": false
+      "required":
+        - "localCommandId"
+        - "idempotencyKey"
+        - "deviceSeq"
+        - "aggregate"
+        - "type"
+        - "commandVersion"
+        - "observedAt"
+        - "offlineAuthId"
+        - "payload"
+        - "provenance"
+        - "attachments"
+      "properties":
+        "localCommandId":
+          "type": "string"
+        "idempotencyKey":
+          "type": "string"
+        "deviceSeq":
+          "type": "integer"
+        "aggregate":
+          "$ref": "#/components/schemas/SyncAggregate"
+        "baseVersion":
+          "type": "integer"
+        "type":
+          "type": "string"
+        "commandVersion":
+          "type": "integer"
+        "observedAt":
+          "type": "string"
+        "offlineAuthId":
+          "type": "string"
+        "payload":
+          "$ref": "#/components/schemas/ActualOperationPayload"
+        "provenance":
+          "type": "object"
+          "additionalProperties": true
+        "attachments":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/SyncAttachmentIntent"
+    "ActualOperationSubmitRequest":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "scopeVersion":
+          "type": "integer"
+        "command":
+          "$ref": "#/components/schemas/ActualOperationCommand"
+      "required":
+        - "scopeVersion"
+        - "command"
     "AgronomyRevisionRef":
       "type": "object"
       "additionalProperties": false

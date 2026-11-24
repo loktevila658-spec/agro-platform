@@ -211,3 +211,27 @@ permissions:
     description: Explicit current tenant and organization planning authority.
     effect: allow
     scope: tenant
+  - action: agronomy.operation.view
+    description: Explicit scoped actual operation view.
+    effect: allow
+    scope: tenant
+  - action: agronomy.operation.capture
+    description: Explicit scoped actual operation capture.
+    effect: allow
+    scope: tenant
+  - action: agronomy.operation.submit
+    description: Explicit scoped actual operation submit.
+    effect: allow
+    scope: tenant
+  - action: agronomy.operation.confirm
+    description: Explicit scoped actual operation confirm.
+    effect: allow
+    scope: tenant
+  - action: agronomy.operation.reject
+    description: Explicit scoped actual operation reject.
+    effect: allow
+    scope: tenant
+  - action: agronomy.operation.correct
+    description: Explicit scoped actual operation correct.
+    effect: allow
+    scope: tenant

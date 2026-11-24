@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -178,3 +178,5 @@ test('task schema retains execution/audit history and tenant ownership',async()=
 test('QR issuance schema is isolated and immutable',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));for(const table of ['tag','command_idempotency','audit','outbox_event'])assert.match(m[16].sql,new RegExp('CREATE TABLE identity_tags\\.'+table));assert.doesNotMatch(m[16].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) (?:master_data|farm|land)\./i);});
 
 test('planning schema owns immutable revisions, operations, exact resources and receipts',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));for(const name of ['entity','revision','planned_operation','resource_demand','audit','command_idempotency','outbox_event'])assert.match(m[17].sql,new RegExp('CREATE TABLE agronomy\\.'+name));assert.match(m[17].sql,/AGRONOMY_IMMUTABLE_HISTORY/);assert.match(m[17].sql,/DEFERRABLE INITIALLY DEFERRED/);assert.doesNotMatch(m[17].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) (?:farm|master_data|tasks)\./i);});
+
+test('actual fact schema preserves source uniqueness and immutable ownership',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));assert.match(m[18].sql,/UNIQUE\(tenant_id,task_completion_id\)/);assert.match(m[18].sql,/immutable_actual_revision/);assert.doesNotMatch(m[18].sql,/(?:UPDATE|INSERT INTO|DELETE FROM) (?:tasks|farm|master_data)\./i);});

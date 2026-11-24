@@ -1,0 +1,112 @@
+import {
+  ForbiddenException,
+  Injectable,
+  ServiceUnavailableException,
+} from "@nestjs/common";
+import type { PoolClient } from "pg";
+import type { SyncActor } from "../sync/sync.types";
+import { UUID } from "./agronomy.validation";
+import {
+  ACTUAL_ACTIONS,
+  type ActualPolicy,
+  type ActualCapture,
+} from "./actual-operation.types";
+@Injectable()
+export class ActualOperationRegistry {
+  private policy?: ActualPolicy;
+  install(p: ActualPolicy): void {
+    if (this.policy) throw Error("ACTUAL_POLICY_IMMUTABLE");
+    const r = p?.rules;
+    if (
+      !p ||
+      ["authorize", "reference", "validateOperation", "captureScopes"].some(
+        (k) => typeof p[k as keyof ActualPolicy] !== "function",
+      ) ||
+      !r ||
+      !Number.isSafeInteger(r.maxFutureSkewMs) ||
+      r.maxFutureSkewMs < 0 ||
+      typeof r.requireIndependentConfirmation !== "boolean" ||
+      (r.offlineTtlSeconds !== undefined &&
+        (!Number.isSafeInteger(r.offlineTtlSeconds) ||
+          r.offlineTtlSeconds < 1 ||
+          r.offlineTtlSeconds > 7 * 86400))
+    )
+      throw Error("ACTUAL_POLICY_INVALID");
+    this.policy = Object.freeze({ ...p, rules: Object.freeze({ ...r }) });
+  }
+  rules() {
+    if (!this.policy)
+      throw new ServiceUnavailableException("ACTUAL_POLICY_UNAVAILABLE");
+    return this.policy.rules;
+  }
+  async can(a: SyncActor, action: string, org: string): Promise<boolean> {
+    try {
+      return (
+        UUID.test(a.tenantId) &&
+        UUID.test(a.userId) &&
+        UUID.test(org) &&
+        ACTUAL_ACTIONS.has(action) &&
+        !!(await this.policy?.authorize(Object.freeze({ ...a }), action, org))
+      );
+    } catch {
+      return false;
+    }
+  }
+  async authorize(a: SyncActor, action: string, org: string) {
+    if (!(await this.can(a, action, org)))
+      throw new ForbiddenException("ACTUAL_FORBIDDEN");
+  }
+  async reference(
+    tx: PoolClient,
+    a: SyncActor,
+    k: "OPERATION" | "EMPLOYEE",
+    id: string,
+    org: string,
+  ) {
+    const r = await this.policy?.reference(
+      tx,
+      Object.freeze({ ...a }),
+      k,
+      id,
+      org,
+    );
+    if (
+      !r ||
+      r.id !== id ||
+      !UUID.test(r.revisionId) ||
+      (r.organizationId !== undefined && r.organizationId !== org)
+    )
+      throw new ForbiddenException("ACTUAL_REFERENCE_UNAVAILABLE");
+    return {
+      id: r.id,
+      revisionId: r.revisionId,
+      ...(r.organizationId ? { organizationId: r.organizationId } : {}),
+    };
+  }
+  async validate(
+    tx: PoolClient,
+    a: SyncActor,
+    d: ActualCapture,
+    r: Record<string, unknown>,
+  ) {
+    if (
+      !(await this.policy?.validateOperation(
+        tx,
+        Object.freeze({ ...a }),
+        Object.freeze(structuredClone(d)),
+        Object.freeze(structuredClone(r)),
+      ))
+    )
+      throw new ForbiddenException("ACTUAL_OPERATION_POLICY_UNAVAILABLE");
+  }
+  async scopes(a: SyncActor) {
+    const r = await this.policy?.captureScopes(Object.freeze({ ...a }));
+    if (
+      !Array.isArray(r) ||
+      r.length > 1000 ||
+      r.some((s) => !UUID.test(s.fieldSeasonId) || !UUID.test(s.organizationId))
+    )
+      throw new ForbiddenException("ACTUAL_SCOPE_UNAVAILABLE");
+    return structuredClone(r);
+  }
+}
