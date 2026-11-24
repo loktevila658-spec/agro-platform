@@ -1,9 +1,12 @@
 # WP49-033 Completion Report
 
-Date: 2026-11-24 Europe/Moscow. Status: IN PROGRESS, NOT DONE.
+Date: 2026-11-24 Europe/Moscow.
+Status: **G0–G11 accepted on the exact implementation head. DONE activates only after all G12 publication/merge/push/closeout conditions below are observed.**
 Baseline live main: 53ab786c6e2e49a3a6373707984c449d6afaf547.
-Worktree: /Users/ilia/AgroPlatform-WP008/.worktrees/wp49-033; branch codex/wp49-033.
+Persistent worktree: /Users/ilia/AgroPlatform-WP008/.worktrees/wp49-033. Implementation branch codex/wp49-033; final report-only branch codex/wp49-033-closeout.
 Original dirty checkout untouched. WP034 not started.
+
+Implementation [PR91](https://github.com/loktevila658-spec/agro-platform/pull/91), tested head `06b126b06de72174c46a2c882d3e5db5b391af90`; [exact pull_request run45467863185](https://github.com/loktevila658-spec/agro-platform/actions/runs/45467863185), attempt2 completed SUCCESS, all8 jobs individually SUCCESS. Ordinary source merge `56549252286205884f32dc91e0633e518239a441`; [exact source push45472601671](https://github.com/loktevila658-spec/agro-platform/actions/runs/45472601671) was IN PROGRESS at report authoring and must be observed successful before G12 activation. No unobserved result is asserted.
 
 ## Authority and G0
 
@@ -28,37 +31,52 @@ Every command uses the existing SyncService current auth/permission/version/idem
 
 Trusted operation/reference/current-permission/clock/maker-checker provisioning is explicit and default-deny. Specialized application requirements must be validated by the trusted operation policy; no production seeds, guessed conversions/doses or payroll/stock effects are introduced. Task executor subject references and labor employee references remain distinct source values.
 
-## Validation observed
+## Validation and exact evidence
 
-Initial pre-code RED and restored RED both failed for missing actual validation runtime. Recovered API build PASS; targeted API/planning/Task/permissions/schema/migration/root/package/architecture69/69 PASS, no skips. Architecture658 resolved dependencies, zero violations. Canonical generation and drift PASS. Dart format PASS using isolated SDK3.14.1; local Flutter lint packages/toolchain absent, so format package-resolution warnings are not an analyzer PASS. Actual linter N/A (none configured).
+Pre-code RED and restored RED both failed for missing actual validation runtime. API build/full workspace typecheck PASS; targeted69/69, then final17/17 (overlapping) static/owner/contract assertions PASS without skips. Final architecture683 resolved dependencies, zero violations. Canonical generation/drift and exact scope/diff checks PASS. Dart format PASS using isolated SDK3.14.1. Actual linter N/A (none configured); repository lint-capability gate PASS.
 
-Local Docker daemon unavailable before database startup; no local real-DB/runtime PASS claimed and no repeated Compose loop. Hosted exact-head real database/API, full static/contracts/runtime, Flutter/analyzer/APK and native checks remain mandatory. New real PostGIS scenarios cover capture/replay, immutable review/correction, maker-checker/stale conflict, owner/precision/time/tenant/Local negatives, Task completion reuse, rollback, delivery retry and HTTP/pull/purge. New mobile tests cover scoped/expired/revoked grants, typed draft, cache refresh, encrypted restart/retry/receipt, retained conflict/rejection, widget states and native reopen/shared wipe. These are assertions pending hosted observation.
+Exact final head06b126b... / pull_request45467863185 attempt2 completed SUCCESS. Individually observed all8 jobs: Typecheck, Contracts, Unit, Migration, Runtime, Mobile, Lint capability and aggregate. API222/222, root15/15, migration-unit11/11, package contracts20/20 and retained config/connectors/infrastructure tests PASS, no skipped acceptance. Real clean/repeated/current/checksum-guarded schema19 readiness and Compose runtime PASS. Strict Flutter analyzer clean; Flutter65/65, debug APK and native Android6/6 PASS. Native includes OS-keystore encrypted persistence/reopen/wipe, retained Task/MapLibre/offline GIS/real MLKit QR decoding and the new actual-operation capture persistence/reopen/shared wipe.
 
-Deterministic source time2026-11-18T00:00:00Z and explicit fixture values; random IDs isolate data, not agronomic decisions. No fake production catalogs or physical-device certification claimed.
+All8 new real PostGIS deterministic subscenarios PASS on that exact implementation head:
+1. Capture pins published plan/material/labor owner provenance; original command replay yields exactly one fact and mutates neither Task nor planning.
+2. Submission, independent maker/checker confirmation, reasoned rejection, stale competing version conflict and correction retain original history and last confirmed revision.
+3. Current/revoked permission and replay, cross-tenant, precision, future-time, unknown owner and Local-primary negatives fail closed.
+4. Changed owner material revision refuses stale confirmation; privileged offline correction is refused without losing authoritative state.
+5. Actual Task completion is created through its lifecycle, then reused once through its owner query; times/output/assignment are reused, duplicate source conflicts, Task state and its execution evidence remain unchanged.
+6. Injected audit/outbox failures roll back fact/revision/receipt/feed together; historical rows refuse mutation.
+7. Real platform dispatcher/inbox failure/retry/dedup validates every emitted catalog payload and converges exactly once.
+8. Actual authenticated HTTP capture/read/history/context routes, bounded pull convergence and revoked permission PURGE run against the real database.
 
-Temporary /private/tmp worktree and uncommitted artifacts were cleared between sessions. Initial transient test output is historical only, not final-head evidence. Work was restored in a persistent worktree; checkpoint57360cc saved the server code. Original checkout remains untouched. This recovery does not waive any gate.
+Source fixture time2026-11-18T00:00:00Z and explicit reference/unit/quantity/season/material values; random IDs isolate fixtures, never choose production agronomic behavior. Trusted identity/reference policies are test composition, not production seeds or deployment certification. Mobile store/queue tests cover exact signed scope/expiry, denied grants, context refresh, original restart/retry identity, accepted receipt, conflict/rejection/action-required retention and cache purge. Widget checks retain invalid form values and visible recovery/conflict state.
 
-Initial exact PR run45466434459 on head3a7474f0bfb61ce55c8051cbdcaf730d758764b8 failed Unit/Mobile. Migration/Runtime/Typecheck/Contracts/Lint individually passed, but this is not full acceptance. Real PG exposed ambiguous UUID/text reuse of a bind parameter; each typed SQL column now has a separate parameter. HTTP fixture provider lifecycle double-closed its shared pool; the controller receives bound application methods while the fixture retains pool ownership. Strict Flutter analyzer reported14 missing statement braces; all fixed in code without lint suppressions or threshold changes. Assertions and required checks remain intact. Replacement exact-head CI is mandatory.
+Retained 14-day/50k-intent/100k-operational-row/20k-cache scenario converged with zero lost IDs (171621ms observed in successful Mobile retry); retained real-PG100-command P95=336.8ms assertion passed. These are engineering regression results, not physical-device battery/ANR/WAN/iOS or production certification. No new SLA or threshold is invented.
 
-Replacement run45467116304 on d41eb1ce357528625483fa69496110492e5e96d3 passed Unit (API222/222, no skips), all8 new real actual-operation scenarios, Migration, Runtime, Contracts, Typecheck and Lint. Flutter strict analyzer was clean;64 widget/store/regression tests passed and one form test failed because its implicit Scrollable finder matched text-field scrollables as well as the form. The test now explicitly targets the primary scrollable; its validation/error assertions are unchanged. This run is not full acceptance; final exact-head Mobile/native and aggregate remain required.
+Local Docker was unavailable before database startup; no local DB/Compose PASS or repeated broken loop. Full real acceptance comes from actual hosted exact-head jobs. Local Flutter SDK/analyzer absent; only isolated Dart format ran locally. Dependencies installed with frozen lockfile; no dependency/toolchain/CI/compiler/glob/generator change.
+
+Temporary /private/tmp worktree and uncommitted files were cleared between sessions. Initial transient outputs are historical, not final-head evidence. Implementation was restored in the persistent isolated worktree; checkpoint57360cc saved server code, followed by full source acceptance commits. Original dirty source checkout remains untouched. Recovery waived no gate.
+
+Failed/superseded evidence remains disclosed:
+- Head3a7474f0bfb61ce55c8051cbdcaf730d758764b8 / run45466434459 failed Unit/Mobile. Real PG exposed an ambiguous shared UUID/text bind parameter; separate typed SQL parameters fixed it. HTTP fixture lifecycle double-closed its shared pool; bound application methods preserve fixture pool ownership. Fourteen strict Dart missing-brace diagnostics were fixed in code, with no lint suppressions or weakened assertions.
+- Headd41eb1ce357528625483fa69496110492e5e96d3 / run45467116304 passed API222 and server gates but failed one widget test due to an ambiguous Scrollable finder. It now targets the primary form scrollable; all validation/error assertions remain.
+- Final run45467863185 attempt1 passed Flutter65, analyzer/APK and all server gates, but native never started because SDK installer received a corrupted Android Emulator ZIP. A single failed-job retry on a fresh runner, unchanged head06b126b..., passed native6/6 and the final aggregate. The attempt1 infrastructure failure is not relabeled PASS, no native waiver or CI edit was used.
 
 ## G0–G12
 
-| Gate | Current decision |
+| Gate | Accepted decision and evidence |
 |---|---|
-| G0 | PASS: exact dependency evidence, compatible owners/runtime and pre-code scope approval; live baseline unchanged |
-| G1 | PARTIAL: API compile, architecture and targeted static/contracts PASS; full hosted static/mobile analyzer pending |
-| G2 | PARTIAL: contiguous schema19 unit checks PASS; clean/repeated/current real DB pending |
-| G3 | PARTIAL: targeted69/69 PASS; full API/Flutter pending |
-| G4 | PENDING: actual real infrastructure/HTTP hosted checks required |
-| G5 | PARTIAL: canonical API/codegen/drift and exact regressions PASS; hosted pending |
-| G6 | PENDING: actual transaction/outbox/inbox/replay delivery scenario required |
-| G7 | PARTIAL: default-deny/catalog/validation PASS; real owner/tenant/replay negatives pending |
-| G8 | PENDING: Flutter offline/retry/conflict and real server convergence/native required |
-| G9 | PENDING: immutable corrections/provenance/rollback real DB assertions required |
-| G10 | PENDING: deterministic actual operation scenario required |
-| G11 | PENDING: applicable security/bounds/native/regressions required |
-| G12 | PENDING: review, exact-head checks, ordinary merge, exact push CI and completed CR closeout required |
+| G0 | PASS — exact prerequisite merges/reports/CI/completed CRs, compatible owner contracts, unchanged live baseline and formal pre-code CR90 approval |
+| G1 | PASS — API/workspace typecheck, architecture683/zero violations, canonical contracts, clean exact40-path review; actual linter N/A, lint capability PASS |
+| G2 | PASS — expand-only schema18->19 clean/repeated/current/checksum guards, real PostGIS readiness and retained mobile schema compatibility |
+| G3 | PASS — full API222, Flutter65, root15, migration-unit11 and package/regression suites with no skipped acceptance |
+| G4 | PASS — real owner/PostGIS/HTTP/rollback/infrastructure and Compose runtime jobs |
+| G5 | PASS — six additive typed authenticated operations, unchanged old API, all4 canonical generated artifacts/drift and actual HTTP checks |
+| G6 | PASS — atomic fact/revision/audit/outbox/receipt/feed effects, real dispatcher/inbox retry/dedup and catalog schemas |
+| G7 | PASS — default/current/revoked grants, tenant/org/owner/replay/Local negatives and exact permission catalog; no default role grants |
+| G8 | PASS — real sync/retry/conflict/purge, encrypted Flutter restart/receipt/intent retention, original capacity regression and Android native6 |
+| G9 | PASS — immutable original/correction/review provenance, pinned owner versions, preserved confirmed revision and injected rollback |
+| G10 | PASS — all8 deterministic real actual-operation subscenarios and mobile/native acceptance |
+| G11 | PASS applicable engineering/security/bounds/negative/native regressions; physical-device/WAN/battery/ANR/iOS/production certification unclaimed |
+| G12 | PENDING at report authoring; activates PASS only upon all observed source/report exact-head/merge/push/completed-CR conditions below |
 
 ## Complete approved path inventory
 
@@ -109,7 +127,16 @@ Replacement run45467116304 on d41eb1ce357528625483fa69496110492e5e96d3 passed Un
 
 ## Review, merge and closeout
 
-Self-review only; no independent reviewer approval claimed. Full diff review completed before PR: exactly40 approved paths, unchanged frozen manifest, no foreign storage access or unapproved tooling/CI/lockfile mutation. Only self-review; no outstanding blocking source finding identified. Hosted checks remain mandatory. Exact final PR-head required checks, normal merge commit with head match (no auto-merge/bypass), exact merge-SHA post-merge CI and produced final evidence are mandatory. Source/report publication and completed CR90 closure must record actual SHAs/runs. No unobserved PASS or DONE is asserted.
+Self-review only; no independent reviewer approval claimed. Corrected findings include SQL parameter typing, fixture pool ownership, strict Dart statement blocks and an unambiguous widget scrollable finder. No assertions, thresholds, checks or branch protections were weakened. Every public PR filename exactly equals the pre-code40-path CR90 matrix, no unapproved/unused path; frozen manifest is byte-identical. Current scoped owner policies and specialized operation validation remain explicit/default-deny.
+
+Immediately before source merge: exact head06b126b..., base53ab786..., reviews and threads empty, all8 exact-head jobs SUCCESS, strict required aggregate/enforce-admins/conversation protection retained. Ordinary merge56549252286205884f32dc91e0633e518239a441 has exactly two parents: baseline53ab786c6e2e49a3a6373707984c449d6afaf547 and tested06b126b06de72174c46a2c882d3e5db5b391af90. Its tree `992f47082a359c8a054cfad85b2e209bed2db520` equals tested-head tree. No auto-merge or bypass.
+
+This final report-only publication changes solely the already approved report path. G12 activation conditions, all mandatory:
+- Exact source merge push45472601671 completes SUCCESS on56549252286205884f32dc91e0633e518239a441, all8 applicable jobs individually successful.
+- This report's exact PR-head checks, normal review, ordinary merge and exact report-merge push CI are independently observed successful under unchanged protections.
+- Record actual report PR/head/merge/run, source push result, final live main and report-only path/tree evidence in CR90. Close completed only then. That post-publication evidence activates G12/PASS and WP033 DONE without an infinite rewrite about the report's own eventual merge.
+
+At report authoring, source exact push and report publication are pending. The completed CR90 activation record is the primary final post-publication source. UNKNOWN/PENDING is never counted as PASS.
 
 ## Limitations
 
