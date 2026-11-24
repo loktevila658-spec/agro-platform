@@ -711,6 +711,192 @@ events:
         - "causationId"
         - "occurredAt"
 
+  -
+    "name": "agronomy.operation.captured"
+    "version": "1.0.0"
+    "producer": "agronomy-actual"
+    "consumers": []
+    "schema":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "eventId":
+          "type": "string"
+        "entityId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "revision":
+          "type": "string"
+        "tenantId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "correlationId":
+          "type": "string"
+        "causationId":
+          "type": "string"
+        "occurredAt":
+          "type": "string"
+      "required":
+        - "eventId"
+        - "entityId"
+        - "revisionId"
+        - "revision"
+        - "tenantId"
+        - "actorId"
+        - "correlationId"
+        - "causationId"
+        - "occurredAt"
+  -
+    "name": "agronomy.operation.submitted"
+    "version": "1.0.0"
+    "producer": "agronomy-actual"
+    "consumers": []
+    "schema":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "eventId":
+          "type": "string"
+        "entityId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "revision":
+          "type": "string"
+        "tenantId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "correlationId":
+          "type": "string"
+        "causationId":
+          "type": "string"
+        "occurredAt":
+          "type": "string"
+      "required":
+        - "eventId"
+        - "entityId"
+        - "revisionId"
+        - "revision"
+        - "tenantId"
+        - "actorId"
+        - "correlationId"
+        - "causationId"
+        - "occurredAt"
+  -
+    "name": "agronomy.operation.confirmed"
+    "version": "1.0.0"
+    "producer": "agronomy-actual"
+    "consumers": []
+    "schema":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "eventId":
+          "type": "string"
+        "entityId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "revision":
+          "type": "string"
+        "tenantId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "correlationId":
+          "type": "string"
+        "causationId":
+          "type": "string"
+        "occurredAt":
+          "type": "string"
+      "required":
+        - "eventId"
+        - "entityId"
+        - "revisionId"
+        - "revision"
+        - "tenantId"
+        - "actorId"
+        - "correlationId"
+        - "causationId"
+        - "occurredAt"
+  -
+    "name": "agronomy.operation.rejected"
+    "version": "1.0.0"
+    "producer": "agronomy-actual"
+    "consumers": []
+    "schema":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "eventId":
+          "type": "string"
+        "entityId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "revision":
+          "type": "string"
+        "tenantId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "correlationId":
+          "type": "string"
+        "causationId":
+          "type": "string"
+        "occurredAt":
+          "type": "string"
+      "required":
+        - "eventId"
+        - "entityId"
+        - "revisionId"
+        - "revision"
+        - "tenantId"
+        - "actorId"
+        - "correlationId"
+        - "causationId"
+        - "occurredAt"
+  -
+    "name": "agronomy.operation.corrected"
+    "version": "1.0.0"
+    "producer": "agronomy-actual"
+    "consumers": []
+    "schema":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "eventId":
+          "type": "string"
+        "entityId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "revision":
+          "type": "string"
+        "tenantId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "correlationId":
+          "type": "string"
+        "causationId":
+          "type": "string"
+        "occurredAt":
+          "type": "string"
+      "required":
+        - "eventId"
+        - "entityId"
+        - "revisionId"
+        - "revision"
+        - "tenantId"
+        - "actorId"
+        - "correlationId"
+        - "causationId"
+        - "occurredAt"
+
 sources:
   - DOC02
   - DOC10

@@ -7,6 +7,121 @@ export const OPENAPI_VERSION = '3.1.0' as const;
 export const API_CONTRACT_VERSION = '0.1.0' as const;
 export const EVENT_CATALOG_VERSION = '1.0.0' as const;
 
+export interface ActualCapture {
+  readonly actualQuantity?: string;
+  readonly comment?: string;
+  readonly completedAt?: string;
+  readonly executors?: readonly string[];
+  readonly fieldSeasonId: string;
+  readonly labor: readonly ActualLabor[];
+  readonly location?: ActualLocation;
+  readonly materials: readonly ActualMaterial[];
+  readonly operationTypeId?: string;
+  readonly organizationId: string;
+  readonly plannedOperation?: ActualPlannedOperation;
+  readonly sourceType: 'USER_WEB' | 'USER_MOBILE' | 'API';
+  readonly startedAt?: string;
+  readonly taskId?: string;
+  readonly unit?: string;
+}
+
+export interface ActualCaptureContext {
+  readonly fieldSeasonId: string;
+  readonly organizationId: string;
+  readonly revisionId: string;
+}
+
+export interface ActualCaptureContexts {
+  readonly items: readonly ActualCaptureContext[];
+}
+
+export interface ActualLabor {
+  readonly employeeId: string;
+  readonly quantity: string;
+  readonly unit: string;
+}
+
+export interface ActualLocation {
+  readonly accuracyMetres: number;
+  readonly latitude: number;
+  readonly longitude: number;
+  readonly observedAt: string;
+}
+
+export interface ActualMaterial {
+  readonly materialId: string;
+  readonly quantity: string;
+  readonly unit: string;
+}
+
+export interface ActualOperationCommand {
+  readonly aggregate: SyncAggregate;
+  readonly attachments: readonly SyncAttachmentIntent[];
+  readonly baseVersion?: number;
+  readonly commandVersion: number;
+  readonly deviceSeq: number;
+  readonly idempotencyKey: string;
+  readonly localCommandId: string;
+  readonly observedAt: string;
+  readonly offlineAuthId: string;
+  readonly payload: ActualOperationPayload;
+  readonly provenance: Readonly<Record<string, unknown>>;
+  readonly type: string;
+}
+
+export interface ActualOperationHistory {
+  readonly revisions: readonly ActualOperationRevision[];
+}
+
+export interface ActualOperationList {
+  readonly items: readonly ActualOperationProjection[];
+}
+
+export interface ActualOperationPayload {
+  readonly data?: ActualCapture;
+  readonly reason: string;
+}
+
+export interface ActualOperationProjection {
+  readonly actorId: string;
+  readonly authorId: string;
+  readonly confirmedRevisionId?: string;
+  readonly data: ActualCapture;
+  readonly fieldSeasonId: string;
+  readonly id: string;
+  readonly organizationId: string;
+  readonly recordedAt: string;
+  readonly revisionId: string;
+  readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly state: 'CAPTURED' | 'PENDING_CONFIRMATION' | 'CONFIRMED' | 'REJECTED' | 'CORRECTED_VERSION';
+  readonly version: number;
+}
+
+export interface ActualOperationRevision {
+  readonly actorId: string;
+  readonly authorId: string;
+  readonly data: ActualCapture;
+  readonly previousRevisionId?: string;
+  readonly provenance: Readonly<Record<string, unknown>>;
+  readonly reason: string;
+  readonly recordedAt: string;
+  readonly revisionId: string;
+  readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly state: string;
+  readonly version: string;
+}
+
+export interface ActualOperationSubmitRequest {
+  readonly command: ActualOperationCommand;
+  readonly scopeVersion: number;
+}
+
+export interface ActualPlannedOperation {
+  readonly mapId: string;
+  readonly operationId: string;
+  readonly revisionId: string;
+}
+
 export interface AgronomyCommand {
   readonly data?: AgronomyData;
   readonly effectiveAt: string;
@@ -1600,6 +1715,256 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "occurredAt"
       ]
     }
+  },
+  {
+    "name": "agronomy.operation.captured",
+    "version": "1.0.0",
+    "producer": "agronomy-actual",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.operation.submitted",
+    "version": "1.0.0",
+    "producer": "agronomy-actual",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.operation.confirmed",
+    "version": "1.0.0",
+    "producer": "agronomy-actual",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.operation.rejected",
+    "version": "1.0.0",
+    "producer": "agronomy-actual",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
+  },
+  {
+    "name": "agronomy.operation.corrected",
+    "version": "1.0.0",
+    "producer": "agronomy-actual",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
   }
 ];
 
@@ -1727,6 +2092,66 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'GET', ...(Object.keys(headers).length ? { headers } : {}) });
     if (!response.ok) throw new Error(`getSchemaVersion failed with HTTP ${response.status}`);
     return await response.json() as SchemaVersionResponse;
+  }
+
+  async actualOperationList(organizationId: string, authorization: string, after?: string): Promise<ActualOperationList> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/operations`);
+    if (after !== undefined) url.searchParams.set("after", String(after));
+    if (organizationId !== undefined) url.searchParams.set("organizationId", String(organizationId));
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`actualOperationList failed with HTTP ${response.status}`);
+    return await response.json() as ActualOperationList;
+  }
+
+  async actualOperationCapture(authorization: string, body: ActualOperationSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/operations`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`actualOperationCapture failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async actualOperationContexts(authorization: string): Promise<ActualCaptureContexts> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/operations/capture-contexts`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`actualOperationContexts failed with HTTP ${response.status}`);
+    return await response.json() as ActualCaptureContexts;
+  }
+
+  async actualOperationRead(id: string, authorization: string): Promise<ActualOperationProjection> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/operations/${encodeURIComponent(String(id))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`actualOperationRead failed with HTTP ${response.status}`);
+    return await response.json() as ActualOperationProjection;
+  }
+
+  async actualOperationCommand(action: string, id: string, authorization: string, body: ActualOperationSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/operations/${encodeURIComponent(String(id))}/commands/${encodeURIComponent(String(action))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`actualOperationCommand failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async actualOperationHistory(id: string, authorization: string): Promise<ActualOperationHistory> {
+    const url = new URL(`${this.baseUrl}/v1/agronomy/operations/${encodeURIComponent(String(id))}/history`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`actualOperationHistory failed with HTTP ${response.status}`);
+    return await response.json() as ActualOperationHistory;
   }
 
   async agronomyList(organizationId: string, authorization: string, after?: string): Promise<AgronomyList> {

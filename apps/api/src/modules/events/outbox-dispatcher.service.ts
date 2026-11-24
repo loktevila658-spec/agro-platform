@@ -92,6 +92,8 @@ export class OutboxDispatcherService implements OnModuleInit, OnModuleDestroy {
       SELECT 'identity-tags', id FROM identity_tags.outbox_event
       UNION ALL
       SELECT 'agronomy', id FROM agronomy.outbox_event
+      UNION ALL
+      SELECT 'agronomy-actual', id FROM agronomy.actual_outbox_event
       ON CONFLICT (source, event_id) DO NOTHING
     `);
   }
@@ -120,7 +122,7 @@ export class OutboxDispatcherService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async loadEvent(source: EventSource, eventId: string): Promise<DomainEvent | undefined> {
-    const table = source === 'org' ? 'org.outbox_event' : source === 'identity' ? 'identity.outbox_event' : source === 'master-data' ? 'master_data.outbox_event' : source === 'gis' ? 'gis.outbox_event' : source === 'land' ? 'land.outbox_event' : source === 'farm' ? 'farm.outbox_event' : source === 'tasks' ? 'tasks.outbox_event' : source === 'identity-tags' ? 'identity_tags.outbox_event' : 'agronomy.outbox_event';
+    const table = source === 'org' ? 'org.outbox_event' : source === 'identity' ? 'identity.outbox_event' : source === 'master-data' ? 'master_data.outbox_event' : source === 'gis' ? 'gis.outbox_event' : source === 'land' ? 'land.outbox_event' : source === 'farm' ? 'farm.outbox_event' : source === 'tasks' ? 'tasks.outbox_event' : source === 'identity-tags' ? 'identity_tags.outbox_event' : source === 'agronomy-actual' ? 'agronomy.actual_outbox_event' : 'agronomy.outbox_event';
     const actorColumn = source === 'org' ? "payload->>'actorId'" : 'actor_id';
     const result = await this.pool.query<{
       id: string;
