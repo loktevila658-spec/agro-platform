@@ -401,7 +401,7 @@ export class ActualOperationService {
       throw e;
     }
     const result = await tx.query(
-      "INSERT INTO agronomy.actual_revision(tenant_id,fact_id,id,version,previous_revision_id,state,data,source_refs,provenance,author_id,actor_id,reason,command_id,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$13::text) RETURNING recorded_at",
+      "INSERT INTO agronomy.actual_revision(tenant_id,fact_id,id,version,previous_revision_id,state,data,source_refs,provenance,author_id,actor_id,reason,command_id,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING recorded_at",
       [
         a.tenantId,
         key,
@@ -417,6 +417,7 @@ export class ActualOperationService {
         c.payload.reason,
         c.localCommandId,
         correlation,
+        c.localCommandId,
       ],
     );
     const row: ActualRow = {
@@ -438,7 +439,7 @@ export class ActualOperationService {
       },
       canonical = actualProjection(row);
     await tx.query(
-      "INSERT INTO agronomy.actual_audit(id,tenant_id,fact_id,revision_id,action,actor_id,before_value,after_value,reason,command_id,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$10::text)",
+      "INSERT INTO agronomy.actual_audit(id,tenant_id,fact_id,revision_id,action,actor_id,before_value,after_value,reason,command_id,correlation_id,causation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
       [
         randomUUID(),
         a.tenantId,
@@ -451,6 +452,7 @@ export class ActualOperationService {
         c.payload.reason,
         c.localCommandId,
         correlation,
+        c.localCommandId,
       ],
     );
     const eventId = randomUUID(),

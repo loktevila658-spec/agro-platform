@@ -38,6 +38,8 @@ Deterministic source time2026-11-18T00:00:00Z and explicit fixture values; rando
 
 Temporary /private/tmp worktree and uncommitted artifacts were cleared between sessions. Initial transient test output is historical only, not final-head evidence. Work was restored in a persistent worktree; checkpoint57360cc saved the server code. Original checkout remains untouched. This recovery does not waive any gate.
 
+Initial exact PR run45466434459 on head3a7474f0bfb61ce55c8051cbdcaf730d758764b8 failed Unit/Mobile. Migration/Runtime/Typecheck/Contracts/Lint individually passed, but this is not full acceptance. Real PG exposed ambiguous UUID/text reuse of a bind parameter; each typed SQL column now has a separate parameter. HTTP fixture provider lifecycle double-closed its shared pool; the controller receives bound application methods while the fixture retains pool ownership. Strict Flutter analyzer reported14 missing statement braces; all fixed in code without lint suppressions or threshold changes. Assertions and required checks remain intact. Replacement exact-head CI is mandatory.
+
 ## G0–G12
 
 | Gate | Current decision |

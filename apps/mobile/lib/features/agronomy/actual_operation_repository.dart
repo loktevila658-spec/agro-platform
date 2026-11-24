@@ -49,8 +49,9 @@ class ActualOperationRepository {
               !actualUuid.hasMatch(r.fieldSeasonId) ||
               !actualUuid.hasMatch(r.organizationId) ||
               !actualUuid.hasMatch(r.revisionId),
-        ))
+        )) {
       throw StateError('INVALID_CONTEXT');
+    }
     await workspace.db.write(() async {
       await workspace.db.customStatement(
         "DELETE FROM entity_cache WHERE entity_type='AgronomyCapture'",
@@ -82,8 +83,9 @@ class ActualOperationRepository {
           now.isBefore(g.expiresAt) &&
           g.allowedCommands.contains('ActualOperation.Capture') &&
           g.allowedOwners.contains('AgronomyCapture:$field') &&
-          await verify(g))
+          await verify(g)) {
         return g;
+      }
     }
     return null;
   }
@@ -91,8 +93,9 @@ class ActualOperationRepository {
   Future<bool> validate(CommandDraft draft, OfflineGrant grant) async {
     if (draft.aggregateType != 'AgronomyCapture' ||
         draft.commandType != 'ActualOperation.Capture' ||
-        draft.expectedVersion != 0)
+        draft.expectedVersion != 0) {
       return false;
+    }
     try {
       final payload = jsonDecode(draft.payloadJson) as Map<String, dynamic>,
           d = ActualCapture.fromJson(

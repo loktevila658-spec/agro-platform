@@ -35,16 +35,18 @@ class _ActualOperationsPageState extends State<ActualOperationsPage> {
       if (online) await widget.repository.refreshContexts();
       final c = await widget.repository.contexts(),
           i = await widget.repository.intents();
-      if (mounted)
+      if (mounted) {
         setState(() {
           contexts = c;
           intents = i;
         });
+      }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => error = 'Не удалось обновить данные. Повторите при связи с локальным сервером.',
         );
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -255,8 +257,9 @@ class _ActualCaptureFormState extends State<ActualCaptureForm> {
           [
             'start',
             'end',
-          ].any((k) => !RegExp(r'(Z|[+-][0-9]{2}:[0-9]{2})$').hasMatch(v(k))))
+          ].any((k) => !RegExp(r'(Z|[+-][0-9]{2}:[0-9]{2})$').hasMatch(v(k)))) {
         throw StateError('TIMEZONE_REQUIRED');
+      }
       final p = [v('map'), v('revision'), v('planned')];
       final d = ActualCapture(
         organizationId: c.organizationId,
@@ -305,12 +308,13 @@ class _ActualCaptureFormState extends State<ActualCaptureForm> {
       await widget.repository.capture(d);
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => error = e.toString().contains('OFFLINE_PERMISSION_DENIED')
               ? 'Нет действующего разрешения. Обновите разрешения на локальном сервере. Введённые значения сохранены в форме.'
               : 'Проверьте поле, ссылки, время с часовым поясом, объём и единицы. Введённые значения сохранены в форме.',
         );
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }

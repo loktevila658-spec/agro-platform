@@ -848,7 +848,15 @@ test(
               controllers: [ActualOperationController],
               providers: [
                 { provide: ActualOperationService, useValue: service },
-                { provide: SyncService, useValue: sync },
+                {
+                  provide: SyncService,
+                  useValue: Object.fromEntries(
+                    ["actor", "registeredActor", "push"].map((name) => [
+                      name,
+                      sync[name].bind(sync),
+                    ]),
+                  ),
+                },
               ],
             })(FixtureModule);
             const app = await NestFactory.create(FixtureModule, {

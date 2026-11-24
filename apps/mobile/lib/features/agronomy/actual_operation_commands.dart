@@ -12,8 +12,9 @@ void validateActualCapture(ActualCapture d) {
   bool unit(String? s) => s != null && s.trim().isNotEmpty && s.length <= 16;
   if (!id(d.organizationId) ||
       !id(d.fieldSeasonId) ||
-      d.sourceType != 'USER_MOBILE')
+      d.sourceType != 'USER_MOBILE') {
     throw StateError('ACTUAL_CONTEXT');
+  }
   if (d.taskId != null) {
     if (!id(d.taskId) ||
         [
@@ -23,8 +24,9 @@ void validateActualCapture(ActualCapture d) {
           d.actualQuantity,
           d.unit,
           d.executors,
-        ].any((v) => v != null))
+        ].any((v) => v != null)) {
       throw StateError('ACTUAL_TASK_REENTRY');
+    }
   } else {
     final start = DateTime.tryParse(d.startedAt ?? ''),
         end = DateTime.tryParse(d.completedAt ?? '');
@@ -40,8 +42,9 @@ void validateActualCapture(ActualCapture d) {
         d.executors!.isEmpty ||
         d.executors!.length > 100 ||
         d.executors!.any((v) => !id(v)) ||
-        d.executors!.toSet().length != d.executors!.length)
+        d.executors!.toSet().length != d.executors!.length) {
       throw StateError('ACTUAL_INVALID_FACT');
+    }
   }
   if (d.materials.length > 100 ||
       d.labor.length > 100 ||
@@ -59,14 +62,17 @@ void validateActualCapture(ActualCapture d) {
       ) ||
       d.materials.map((r) => r.materialId).toSet().length !=
           d.materials.length ||
-      d.labor.map((r) => r.employeeId).toSet().length != d.labor.length)
+      d.labor.map((r) => r.employeeId).toSet().length != d.labor.length) {
     throw StateError('ACTUAL_RESOURCES');
+  }
   final p = d.plannedOperation;
-  if (p != null && (!id(p.mapId) || !id(p.revisionId) || !id(p.operationId)))
+  if (p != null && (!id(p.mapId) || !id(p.revisionId) || !id(p.operationId))) {
     throw StateError('ACTUAL_PLAN');
+  }
   if (d.comment != null &&
-      (d.comment!.trim().isEmpty || d.comment!.length > 2000))
+      (d.comment!.trim().isEmpty || d.comment!.length > 2000)) {
     throw StateError('ACTUAL_COMMENT');
+  }
 }
 
 CommandDraft actualCaptureDraft(ActualCapture d, {DateTime? observedAt}) {

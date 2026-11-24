@@ -192,8 +192,9 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       verify: verifier?.verify ?? (_) async => false,
       loadContexts: () async {
         final auth = accessToken;
-        if (auth == null)
+        if (auth == null) {
           throw const SyncFailure('AUTHENTICATION_REQUIRED', status: 401);
+        }
         return (await transport.api.actualOperationContexts(
           authorization: 'Bearer $auth',
         )).items;
