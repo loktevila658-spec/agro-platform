@@ -75,7 +75,7 @@ test('baseline, organization, identity, and audit framework migrations are order
   const migrations = await discoverMigrations(
     new URL('../migrations', import.meta.url),
   );
-  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+  assert.deepEqual(migrations.map(({ version }) => version), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
   assert.match(migrations[0].sql, /CREATE EXTENSION IF NOT EXISTS postgis/i);
   assert.doesNotMatch(
     migrations[0].sql,
@@ -180,3 +180,5 @@ test('QR issuance schema is isolated and immutable',async()=>{const m=await disc
 test('planning schema owns immutable revisions, operations, exact resources and receipts',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));for(const name of ['entity','revision','planned_operation','resource_demand','audit','command_idempotency','outbox_event'])assert.match(m[17].sql,new RegExp('CREATE TABLE agronomy\\.'+name));assert.match(m[17].sql,/AGRONOMY_IMMUTABLE_HISTORY/);assert.match(m[17].sql,/DEFERRABLE INITIALLY DEFERRED/);assert.doesNotMatch(m[17].sql,/(?:INSERT INTO|UPDATE|DELETE FROM) (?:farm|master_data|tasks)\./i);});
 
 test('actual fact schema preserves source uniqueness and immutable ownership',async()=>{const m=await discoverMigrations(new URL('../migrations',import.meta.url));assert.match(m[18].sql,/UNIQUE\(tenant_id,task_completion_id\)/);assert.match(m[18].sql,/immutable_actual_revision/);assert.doesNotMatch(m[18].sql,/(?:UPDATE|INSERT INTO|DELETE FROM) (?:tasks|farm|master_data)\./i);});
+
+test('scouting migration preserves immutable revisions and typed optional evidence',async()=>{const migrations=await discoverMigrations(new URL('../migrations',import.meta.url));const s=migrations[19].sql;for(const table of ['observation','revision','audit','outbox_event'])assert.match(s,new RegExp('CREATE TABLE scouting\\.'+table));assert.match(s,/geography\(Point,4326\)/);assert.match(s,/UNIQUE\(tenant_id,task_id\)/);assert.match(s,/immutable_revision/);assert.match(s,/DEFERRABLE INITIALLY DEFERRED/);});

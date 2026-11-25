@@ -235,3 +235,19 @@ permissions:
     description: Explicit scoped actual operation correct.
     effect: allow
     scope: tenant
+  - action: scouting.read
+    effect: allow
+    scope: tenant
+    description: Scouting read; current explicit organization-scoped policy required.
+  - action: scouting.capture
+    effect: allow
+    scope: tenant
+    description: Scouting capture; current explicit organization-scoped policy required.
+  - action: scouting.correct
+    effect: allow
+    scope: tenant
+    description: Scouting correct; current explicit organization-scoped policy required.
+  - action: scouting.create-work
+    effect: allow
+    scope: tenant
+    description: Scouting create-work; current explicit organization-scoped policy required.

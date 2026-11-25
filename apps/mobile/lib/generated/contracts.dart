@@ -1591,6 +1591,267 @@ class SchemaVersionUnavailableResponse {
   final int statusCode;
 }
 
+class ScoutingContext {
+  const ScoutingContext({
+    required this.fieldId,
+    required this.fieldRevisionId,
+    required this.fieldSeasonId,
+    this.geometryProvenance,
+    required this.organizationId,
+    required this.revisionId,
+    required this.seasonId,
+    required this.seasonRevisionId,
+  });
+
+  factory ScoutingContext.fromJson(Map<String, Object?> json) => ScoutingContext(
+        fieldId: json['fieldId'] as String,
+        fieldRevisionId: json['fieldRevisionId'] as String,
+        fieldSeasonId: json['fieldSeasonId'] as String,
+        geometryProvenance: json['geometryProvenance'] == null ? null : json['geometryProvenance'] as Map<String, Object?>,
+        organizationId: json['organizationId'] as String,
+        revisionId: json['revisionId'] as String,
+        seasonId: json['seasonId'] as String,
+        seasonRevisionId: json['seasonRevisionId'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'fieldId': fieldId, 'fieldRevisionId': fieldRevisionId, 'fieldSeasonId': fieldSeasonId, if (geometryProvenance != null) 'geometryProvenance': geometryProvenance, 'organizationId': organizationId, 'revisionId': revisionId, 'seasonId': seasonId, 'seasonRevisionId': seasonRevisionId};
+
+  final String fieldId;
+  final String fieldRevisionId;
+  final String fieldSeasonId;
+  final Map<String, Object?>? geometryProvenance;
+  final String organizationId;
+  final String revisionId;
+  final String seasonId;
+  final String seasonRevisionId;
+}
+
+class ScoutingContextList {
+  const ScoutingContextList({
+    required this.items,
+  });
+
+  factory ScoutingContextList.fromJson(Map<String, Object?> json) => ScoutingContextList(
+        items: (json['items'] as List<Object?>).map((item) => ScoutingContext.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'items': items};
+
+  final List<ScoutingContext> items;
+}
+
+class ScoutingForm {
+  const ScoutingForm({
+    required this.answers,
+    required this.id,
+    required this.version,
+  });
+
+  factory ScoutingForm.fromJson(Map<String, Object?> json) => ScoutingForm(
+        answers: json['answers'] as Map<String, Object?>,
+        id: json['id'] as String,
+        version: json['version'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'answers': answers, 'id': id, 'version': version};
+
+  final Map<String, Object?> answers;
+  final String id;
+  final String version;
+}
+
+class ScoutingHistory {
+  const ScoutingHistory({
+    required this.revisions,
+  });
+
+  factory ScoutingHistory.fromJson(Map<String, Object?> json) => ScoutingHistory(
+        revisions: (json['revisions'] as List<Object?>).map((item) => ScoutingRevision.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'revisions': revisions};
+
+  final List<ScoutingRevision> revisions;
+}
+
+class ScoutingList {
+  const ScoutingList({
+    required this.items,
+  });
+
+  factory ScoutingList.fromJson(Map<String, Object?> json) => ScoutingList(
+        items: (json['items'] as List<Object?>).map((item) => ScoutingProjection.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'items': items};
+
+  final List<ScoutingProjection> items;
+}
+
+class ScoutingLocation {
+  const ScoutingLocation({
+    required this.accuracyMetres,
+    required this.latitude,
+    required this.longitude,
+    required this.observedAt,
+    required this.provider,
+  });
+
+  factory ScoutingLocation.fromJson(Map<String, Object?> json) => ScoutingLocation(
+        accuracyMetres: json['accuracyMetres'] as num,
+        latitude: json['latitude'] as num,
+        longitude: json['longitude'] as num,
+        observedAt: json['observedAt'] as String,
+        provider: json['provider'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'accuracyMetres': accuracyMetres, 'latitude': latitude, 'longitude': longitude, 'observedAt': observedAt, 'provider': provider};
+
+  final num accuracyMetres;
+  final num latitude;
+  final num longitude;
+  final String observedAt;
+  final String provider;
+}
+
+class ScoutingObservationData {
+  const ScoutingObservationData({
+    required this.anomaly,
+    required this.fieldSeasonId,
+    this.form,
+    this.location,
+    required this.note,
+    required this.observationType,
+    required this.organizationId,
+    this.severity,
+    required this.sourceType,
+  });
+
+  factory ScoutingObservationData.fromJson(Map<String, Object?> json) => ScoutingObservationData(
+        anomaly: json['anomaly'] as bool,
+        fieldSeasonId: json['fieldSeasonId'] as String,
+        form: json['form'] == null ? null : ScoutingForm.fromJson(Map<String, Object?>.from(json['form'] as Map)),
+        location: json['location'] == null ? null : ScoutingLocation.fromJson(Map<String, Object?>.from(json['location'] as Map)),
+        note: json['note'] as String,
+        observationType: json['observationType'] as String,
+        organizationId: json['organizationId'] as String,
+        severity: json['severity'] == null ? null : json['severity'] as String,
+        sourceType: json['sourceType'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'anomaly': anomaly, 'fieldSeasonId': fieldSeasonId, if (form != null) 'form': form, if (location != null) 'location': location, 'note': note, 'observationType': observationType, 'organizationId': organizationId, if (severity != null) 'severity': severity, 'sourceType': sourceType};
+
+  final bool anomaly;
+  final String fieldSeasonId;
+  final ScoutingForm? form;
+  final ScoutingLocation? location;
+  final String note;
+  final String observationType;
+  final String organizationId;
+  final String? severity;
+  final String sourceType;
+}
+
+class ScoutingProjection {
+  const ScoutingProjection({
+    required this.actorId,
+    required this.attachments,
+    required this.authorId,
+    required this.data,
+    required this.fieldSeasonId,
+    required this.id,
+    required this.observedAt,
+    required this.organizationId,
+    required this.receivedAt,
+    required this.revisionId,
+    required this.sourceReferences,
+    this.taskId,
+    required this.version,
+  });
+
+  factory ScoutingProjection.fromJson(Map<String, Object?> json) => ScoutingProjection(
+        actorId: json['actorId'] as String,
+        attachments: (json['attachments'] as List<Object?>).map((item) => SyncAttachmentIntent.fromJson(Map<String, Object?>.from(item as Map))).toList(growable: false),
+        authorId: json['authorId'] as String,
+        data: ScoutingObservationData.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        fieldSeasonId: json['fieldSeasonId'] as String,
+        id: json['id'] as String,
+        observedAt: json['observedAt'] as String,
+        organizationId: json['organizationId'] as String,
+        receivedAt: json['receivedAt'] as String,
+        revisionId: json['revisionId'] as String,
+        sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        taskId: json['taskId'] == null ? null : json['taskId'] as String,
+        version: (json['version'] as num).toInt(),
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'actorId': actorId, 'attachments': attachments, 'authorId': authorId, 'data': data, 'fieldSeasonId': fieldSeasonId, 'id': id, 'observedAt': observedAt, 'organizationId': organizationId, 'receivedAt': receivedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, if (taskId != null) 'taskId': taskId, 'version': version};
+
+  final String actorId;
+  final List<SyncAttachmentIntent> attachments;
+  final String authorId;
+  final ScoutingObservationData data;
+  final String fieldSeasonId;
+  final String id;
+  final String observedAt;
+  final String organizationId;
+  final String receivedAt;
+  final String revisionId;
+  final Map<String, Object?> sourceReferences;
+  final String? taskId;
+  final int version;
+}
+
+class ScoutingRevision {
+  const ScoutingRevision({
+    required this.action,
+    required this.actorId,
+    required this.authorId,
+    required this.data,
+    required this.observedAt,
+    this.previousRevisionId,
+    required this.provenance,
+    required this.reason,
+    required this.receivedAt,
+    required this.revisionId,
+    required this.sourceReferences,
+    this.taskId,
+    required this.version,
+  });
+
+  factory ScoutingRevision.fromJson(Map<String, Object?> json) => ScoutingRevision(
+        action: json['action'] as String,
+        actorId: json['actorId'] as String,
+        authorId: json['authorId'] as String,
+        data: ScoutingObservationData.fromJson(Map<String, Object?>.from(json['data'] as Map)),
+        observedAt: json['observedAt'] as String,
+        previousRevisionId: json['previousRevisionId'] == null ? null : json['previousRevisionId'] as String,
+        provenance: json['provenance'] as Map<String, Object?>,
+        reason: json['reason'] as String,
+        receivedAt: json['receivedAt'] as String,
+        revisionId: json['revisionId'] as String,
+        sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        taskId: json['taskId'] == null ? null : json['taskId'] as String,
+        version: json['version'] as String,
+      );
+
+  Map<String, Object?> toJson() => <String, Object?>{'action': action, 'actorId': actorId, 'authorId': authorId, 'data': data, 'observedAt': observedAt, if (previousRevisionId != null) 'previousRevisionId': previousRevisionId, 'provenance': provenance, 'reason': reason, 'receivedAt': receivedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, if (taskId != null) 'taskId': taskId, 'version': version};
+
+  final String action;
+  final String actorId;
+  final String authorId;
+  final ScoutingObservationData data;
+  final String observedAt;
+  final String? previousRevisionId;
+  final Map<String, Object?> provenance;
+  final String reason;
+  final String receivedAt;
+  final String revisionId;
+  final Map<String, Object?> sourceReferences;
+  final String? taskId;
+  final String version;
+}
+
 class SessionListResponse {
   const SessionListResponse({
     required this.sessions,
@@ -2576,6 +2837,13 @@ const List<EventDefinition> eventDefinitions = <EventDefinition>[
     producer: 'agronomy-actual',
     consumers: <String>[],
     schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
+  ),
+  EventDefinition(
+    name: 'scouting.observation.changed',
+    version: '1.0.0',
+    producer: 'scouting',
+    consumers: <String>[],
+    schema: <String, Object?>{'type': 'object', 'additionalProperties': false, 'properties': <String, Object?>{'eventId': <String, Object?>{'type': 'string'}, 'entityId': <String, Object?>{'type': 'string'}, 'revisionId': <String, Object?>{'type': 'string'}, 'revision': <String, Object?>{'type': 'string'}, 'tenantId': <String, Object?>{'type': 'string'}, 'actorId': <String, Object?>{'type': 'string'}, 'correlationId': <String, Object?>{'type': 'string'}, 'causationId': <String, Object?>{'type': 'string'}, 'occurredAt': <String, Object?>{'type': 'string'}}, 'required': <Object?>['eventId', 'entityId', 'revisionId', 'revision', 'tenantId', 'actorId', 'correlationId', 'causationId', 'occurredAt']},
   )
 ];
 
@@ -2876,6 +3144,55 @@ class AgroPlatformApiClient {
     if (send == null) throw StateError('requestTransport is required for qrResolve');
     final json = await send(baseUri.resolve('/v1/qr/resolve'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
     return QrResolution.fromJson(json);
+  }
+
+  Future<ScoutingList> scoutingList({String? after, required String organizationId, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingList');
+    final json = await send(baseUri.resolve('/v1/scouting/observations').replace(queryParameters: <String, String>{if (after != null) 'after': after!.toString(), if (organizationId != null) 'organizationId': organizationId!.toString()}), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ScoutingList.fromJson(json);
+  }
+
+  Future<SyncPushResponse> scoutingCapture({required String authorization, required TaskSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingCapture');
+    final json = await send(baseUri.resolve('/v1/scouting/observations'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<ScoutingContextList> scoutingContexts({required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingContexts');
+    final json = await send(baseUri.resolve('/v1/scouting/observations/capture-contexts'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ScoutingContextList.fromJson(json);
+  }
+
+  Future<ScoutingProjection> scoutingRead({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingRead');
+    final json = await send(baseUri.resolve('/v1/scouting/observations/' + Uri.encodeComponent(id) + ''), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ScoutingProjection.fromJson(json);
+  }
+
+  Future<SyncPushResponse> scoutingCorrect({required String id, required String authorization, required TaskSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingCorrect');
+    final json = await send(baseUri.resolve('/v1/scouting/observations/' + Uri.encodeComponent(id) + '/commands/correct'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<SyncPushResponse> scoutingCreatework({required String id, required String authorization, required TaskSubmitRequest body}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingCreatework');
+    final json = await send(baseUri.resolve('/v1/scouting/observations/' + Uri.encodeComponent(id) + '/commands/creatework'), 'POST', headers: <String, String>{if (authorization != null) 'Authorization': authorization, 'Content-Type': 'application/json'}, body: jsonEncode(body.toJson()));
+    return SyncPushResponse.fromJson(json);
+  }
+
+  Future<ScoutingHistory> scoutingHistory({required String id, required String authorization}) async {
+    final send = requestTransport;
+    if (send == null) throw StateError('requestTransport is required for scoutingHistory');
+    final json = await send(baseUri.resolve('/v1/scouting/observations/' + Uri.encodeComponent(id) + '/history'), 'GET', headers: <String, String>{if (authorization != null) 'Authorization': authorization}, body: null);
+    return ScoutingHistory.fromJson(json);
   }
 
   Future<SyncAckResponse> ackSync({required String authorization, required SyncAckRequest body}) async {
