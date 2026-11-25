@@ -12,6 +12,16 @@ void main() {
     () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(ScoutingCapture.channel, null),
   );
+  test('form cleanup sends an explicit recorder cancellation', () async {
+    final calls = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(ScoutingCapture.channel, (call) async {
+          calls.add(call.method);
+          return null;
+        });
+    await const ScoutingCapture().cancelRecording();
+    expect(calls, ['recordCancel']);
+  });
   test('denied GPS/cancelled media never manufactures evidence', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(ScoutingCapture.channel, (call) async {

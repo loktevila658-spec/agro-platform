@@ -31,12 +31,13 @@ class ScoutingCapture(private val activity: Activity, channel: MethodChannel) : 
     private var photo: File? = null
     private var mediaKind = ""
     private var recorder: MediaRecorder? = null
+    private var recordingRequested = false
     private var audio: File? = null
     private var listener: LocationListener? = null
     private val handler = Handler(Looper.getMainLooper())
     private val directory: File get() = File(activity.cacheDir, "scouting").apply { mkdirs() }
     init { channel.setMethodCallHandler(this) }
-    private fun error(code: String) { val r = pending; pending = null; pendingAction = null; r?.error(code, code, null) }
+    private fun error(code: String) { recordingRequested = false; val r = pending; pending = null; pendingAction = null; r?.error(code, code, null) }
     private fun success(value: Any?) { val r = pending; pending = null; pendingAction = null; r?.success(value) }
     private fun permission(name: String, fn: () -> Unit) {
         if (activity.checkSelfPermission(name) == PackageManager.PERMISSION_GRANTED) fn()
@@ -50,12 +51,19 @@ class ScoutingCapture(private val activity: Activity, channel: MethodChannel) : 
         } else error("PERMISSION_DENIED")
     }
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        if (call.method == "recordCancel") {
+            if (recordingRequested) { recordingRequested = false; error("CAPTURE_CANCELLED") }
+            pause(); result.success(null); return
+        }
         if (pending != null) { result.error("CAPTURE_BUSY", "Capture is busy", null); return }
         pending = result
         try {
             when (call.method) {
                 "location" -> permission(Manifest.permission.ACCESS_FINE_LOCATION) { locate() }
-                "recordStart" -> permission(Manifest.permission.RECORD_AUDIO) { record() }
+                "recordStart" -> {
+                    recordingRequested = true
+                    permission(Manifest.permission.RECORD_AUDIO) { record() }
+                }
                 "recordStop" -> stopRecording()
                 "media" -> {
                     mediaKind = call.argument<String>("kind") ?: ""
@@ -111,7 +119,7 @@ class ScoutingCapture(private val activity: Activity, channel: MethodChannel) : 
         try {
             r.setAudioSource(MediaRecorder.AudioSource.MIC); r.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             r.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); r.setOutputFile(f.absolutePath)
-            r.setMaxDuration(300000); r.prepare(); r.start(); success(null)
+            r.setMaxDuration(300000); r.prepare(); r.start(); recordingRequested = false; success(null)
         } catch (e: Exception) { r.release(); recorder = null; f.delete(); throw e }
     }
     private fun stopRecording() {

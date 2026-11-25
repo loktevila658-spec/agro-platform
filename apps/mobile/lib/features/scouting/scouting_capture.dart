@@ -8,6 +8,16 @@ import '../../persistence.dart';
 class ScoutingCapture {
   const ScoutingCapture();
   static const channel = MethodChannel('agroplatform/scouting');
+  Future<void> cancelRecording() async {
+    try {
+      await channel.invokeMethod<void>('recordCancel');
+    } on PlatformException {
+      return;
+    } on MissingPluginException {
+      return;
+    }
+  }
+
   Future<ScoutingLocation?> location() async {
     final value = await channel.invokeMapMethod<String, Object?>('location');
     return value == null ? null : ScoutingLocation.fromJson(value);

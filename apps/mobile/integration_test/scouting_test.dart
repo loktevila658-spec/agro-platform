@@ -41,6 +41,7 @@ void main() {
   testWidgets(
     'native scouting channel rejects unsupported capture without hardware',
     (tester) async {
+      await const ScoutingCapture().cancelRecording();
       await expectLater(
         ScoutingCapture.channel.invokeMethod<void>('media', {
           'kind': 'UNSUPPORTED',

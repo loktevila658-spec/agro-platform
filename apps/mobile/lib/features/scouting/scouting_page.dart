@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../generated/contracts.dart';
@@ -220,6 +222,7 @@ class _ScoutingFormPageState extends State<ScoutingFormPage> {
 
   @override
   void dispose() {
+    unawaited(widget.capture.cancelRecording());
     note.dispose();
     super.dispose();
   }
