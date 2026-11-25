@@ -190,6 +190,7 @@ class _ScoutingFormPageState extends State<ScoutingFormPage> {
     try {
       await fn();
     } catch (_) {
+      recording = false;
       if (mounted) {
         setState(
           () => error = 'Действие недоступно или разрешение не выдано. Можно сохранить текст без GPS, фото и голоса.',
