@@ -6,7 +6,14 @@ import '../tasks/task_commands.dart';
 import 'scouting_commands.dart';
 
 class ScoutingIntent {
-  const ScoutingIntent(this.id, this.status, this.data, this.result);
+  const ScoutingIntent(
+    this.id,
+    this.status,
+    this.data,
+    this.result, [
+    this.attachments = const [],
+  ]);
+  final List<Map<String, Object?>> attachments;
   final String id, status;
   final Map<String, Object?> data;
   final Map<String, Object?>? result;
@@ -145,17 +152,23 @@ class ScoutingRepository {
         rows = await workspace.db.rows(
           "SELECT q.local_command_id,q.aggregate_id,q.status,q.payload_json,r.result_json FROM sync_outbox q LEFT JOIN sync_command_result r ON r.local_command_id=q.local_command_id WHERE q.command_type='Scouting.Capture' ORDER BY q.device_seq DESC",
         );
-    return rows.where((r) => fields.contains(r['aggregate_id'])).map((r) {
-      final payload =
-          jsonDecode(r['payload_json'] as String) as Map<String, dynamic>;
-      return ScoutingIntent(
-        r['local_command_id'] as String,
-        r['status'] as String,
-        Map<String, Object?>.from(payload['data'] as Map),
-        r['result_json'] == null
-            ? null
-            : jsonDecode(r['result_json'] as String) as Map<String, Object?>,
-      );
-    }).toList();
+    return Future.wait(
+      rows.where((r) => fields.contains(r['aggregate_id'])).map((r) async {
+        final payload =
+            jsonDecode(r['payload_json'] as String) as Map<String, dynamic>;
+        return ScoutingIntent(
+          r['local_command_id'] as String,
+          r['status'] as String,
+          Map<String, Object?>.from(payload['data'] as Map),
+          r['result_json'] == null
+              ? null
+              : jsonDecode(r['result_json'] as String) as Map<String, Object?>,
+          await workspace.db.rows(
+            'SELECT a.id,a.evidence_type,a.upload_state,a.error_code FROM command_attachment c JOIN local_attachment a ON a.id=c.attachment_id WHERE c.command_id=? ORDER BY a.id',
+            [r['local_command_id']],
+          ),
+        );
+      }).toList(),
+    );
   }
 }

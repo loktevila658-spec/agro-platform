@@ -43,7 +43,8 @@ export class ScoutingService implements OnModuleDestroy {
  const evidence=c.attachments.map(x=>{if(x.required||!['PHOTO','VOICE'].includes(x.evidenceType)||(x.evidenceType==='PHOTO'&&!['image/jpeg','image/png'].includes(x.mime))||(x.evidenceType==='VOICE'&&!['audio/mpeg','audio/mp4'].includes(x.mime)))fail();return structuredClone(x);});
  // Metadata retains immutable staged references even when upload is pending or rejected.
  // SyncFiles alone binds usable remote references after content/hash/malware checks.
- const provenance={deviceId:a.deviceId,sessionId:a.sessionId,offlineAuthId:c.offlineAuthId,intent:c.provenance,attachments:action==='CreateWork'?before!.provenance.attachments:evidence};
+ const provenance={deviceId:a.deviceId,sessionId:a.sessionId,offlineAuthId:c.offlineAuthId,intent:c.provenance,attachments:action==='Capture'?evidence:[...((before!.provenance.attachments??[]) as unknown[]),...evidence]};
+ if((provenance.attachments as unknown[]).length>100)fail();
  const observedAt=action==='CreateWork'?new Date(before!.observed_at).toISOString():c.observedAt,author=action==='Capture'?a.userId:before!.author_id;
  if(before)await tx.query('UPDATE scouting.observation SET version=$3,current_revision_id=$4,task_id=$5 WHERE tenant_id=$1 AND id=$2',[a.tenantId,key,v,rid,taskId]);
  else await tx.query('INSERT INTO scouting.observation(tenant_id,id,organization_id,field_season_id,version,current_revision_id) VALUES($1,$2,$3,$4,$5,$6)',[a.tenantId,key,d!.organizationId,d!.fieldSeasonId,v,rid]);

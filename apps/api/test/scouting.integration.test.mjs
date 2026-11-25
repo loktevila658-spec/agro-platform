@@ -290,7 +290,7 @@ test(
        c.attachments=[{localAttachmentId:uuidv7(),ownerRef:`ScoutingCapture:${fs.entityId}`,evidenceType:'PHOTO',sha256:'a'.repeat(64),mime:'image/jpeg',sizeBytes:123,required:false},{localAttachmentId:uuidv7(),ownerRef:`ScoutingCapture:${fs.entityId}`,evidenceType:'VOICE',sha256:'b'.repeat(64),mime:'audio/mp4',sizeBytes:456,required:false}];
        const r=await accept(c);assert.equal(r.attachments.length,2);assert.equal(r.data.location.accuracyMetres,8.21);assert.deepEqual((await send(c)).canonical,r);
        assert.equal((await pool.query('SELECT ST_X(geom::geometry) AS x,ST_Y(geom::geometry) AS y FROM scouting.revision WHERE tenant_id=$1 AND id=$2',[tenantId,r.revisionId])).rows[0].x,36.123456789);
-       const corrected=await accept(intent('Correct',{data:{...r.data,note:'Reasoned correction'},reason:'Clarification'},r.id,1));assert.equal(corrected.version,2);const h=await service.history(actor,r.id);assert.equal(h.length,2);assert.equal(h[0].data.note,'Manual field evidence');assert.equal(h[1].reason,'Clarification');
+       const corrected=await accept(intent('Correct',{data:{...r.data,note:'Reasoned correction'},reason:'Clarification'},r.id,1));assert.equal(corrected.version,2);assert.equal(corrected.attachments.length,2);const h=await service.history(actor,r.id);assert.equal(h.length,2);assert.equal(h[0].data.note,'Manual field evidence');assert.equal(h[1].reason,'Clarification');
        await assert.rejects(pool.query('DELETE FROM scouting.revision WHERE id=$1',[r.revisionId]),/SCOUTING_IMMUTABLE/);
        assert.equal((await send(intent('Correct',{data:r.data,reason:'Stale'},r.id,1))).status,'CONFLICT');
       });

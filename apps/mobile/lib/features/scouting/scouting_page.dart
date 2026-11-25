@@ -75,6 +75,24 @@ class _ScoutingPageState extends State<ScoutingPage> {
     }
   }
 
+  Future<void> retryMedia(BuildContext dialog, String id) async {
+    try {
+      await widget.repository.workspace.attachments.retryFailed(id);
+      widget.onQueued?.call();
+      if (dialog.mounted) {
+        Navigator.pop(dialog);
+      }
+      await reload();
+    } catch (_) {
+      if (mounted) {
+        setState(
+          () => error =
+              'Не удалось повторить загрузку. Исходное наблюдение сохранено.',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
@@ -130,8 +148,32 @@ class _ScoutingPageState extends State<ScoutingPage> {
                     builder: (c) => AlertDialog(
                       title: const Text('Наблюдение'),
                       content: SingleChildScrollView(
-                        child: Text(
-                          '${i.data['note']}\nПоле/сезон: ${i.data['fieldSeasonId']}\n${i.data['location'] == null ? 'GPS не добавлен' : 'GPS сохранён с точностью и временем'}\nФото и голос загружаются отдельно. Исходная запись сохранена.',
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${i.data['note']}\nПоле/сезон: ${i.data['fieldSeasonId']}\n${i.data['location'] == null ? 'GPS не добавлен' : 'GPS сохранён с точностью и временем'}\nФото и голос загружаются отдельно. Исходная запись сохранена.',
+                            ),
+                            for (final a in i.attachments)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${a['evidence_type']}: ${a['upload_state']}${a['error_code'] == null ? '' : ' · ${a['error_code']}'}',
+                                    ),
+                                    if (a['upload_state'] == 'failed')
+                                      TextButton(
+                                        onPressed: () =>
+                                            retryMedia(c, a['id'] as String),
+                                        child: const Text('Повторить загрузку'),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       actions: [

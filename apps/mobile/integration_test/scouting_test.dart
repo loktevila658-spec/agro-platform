@@ -1,3 +1,6 @@
+import 'package:flutter/services.dart';
+import 'package:agroplatform_mobile/features/scouting/scouting_capture.dart';
+
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +12,17 @@ import '../test/scouting_repository_test.dart' as f;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  testWidgets(
+    'native scouting channel rejects unsupported capture without hardware',
+    (tester) async {
+      await expectLater(
+        ScoutingCapture.channel.invokeMethod<void>('media', {
+          'kind': 'UNSUPPORTED',
+        }),
+        throwsA(isA<PlatformException>()),
+      );
+    },
+  );
   testWidgets(
     'native encrypted scouting capture reopens unchanged and shared-device wipe removes it',
     (tester) async {
