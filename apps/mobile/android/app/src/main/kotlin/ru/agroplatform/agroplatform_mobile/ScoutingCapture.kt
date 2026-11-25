@@ -41,7 +41,14 @@ class ScoutingCapture(private val activity: Activity, channel: MethodChannel) : 
     private fun success(value: Any?) { val r = pending; pending = null; pendingAction = null; r?.success(value) }
     private fun permission(name: String, fn: () -> Unit) {
         if (activity.checkSelfPermission(name) == PackageManager.PERMISSION_GRANTED) fn()
-        else { pendingAction = fn; activity.requestPermissions(arrayOf(name), 3401) }
+        else {
+            pendingAction = fn
+            // Android12+ requires a combined fine/coarse foreground request.
+            val names = if (name == Manifest.permission.ACCESS_FINE_LOCATION)
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                else arrayOf(name)
+            activity.requestPermissions(names, 3401)
+        }
     }
     fun permissionResult(code: Int, results: IntArray) {
         if (code != 3401) return
@@ -90,6 +97,7 @@ class ScoutingCapture(private val activity: Activity, channel: MethodChannel) : 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { error("GPS_UNAVAILABLE"); return }
         val l = object : LocationListener {
             override fun onLocationChanged(location: Location) {
+                if (listener !== this) return
                 manager.removeUpdates(this); listener = null
                 if (!location.hasAccuracy()) { error("GPS_ACCURACY_UNAVAILABLE"); return }
                 success(mapOf("latitude" to location.latitude, "longitude" to location.longitude,
