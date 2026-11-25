@@ -10,7 +10,8 @@ approved in Scope CR93 before implementation (decision7166250756).
 `Scouting.Capture` uses the existing SyncService transaction/receipt/version/
 current permission boundary, with `ScoutingCapture:FieldSeason` finite signed
 O1 grants. The original command UUIDv7 becomes observation identity. Manual
-text-only capture is valid; optional GPS retains lat/lon, accuracy, provider and
+text-only capture is valid; the note is optional (DOC10 nullable note), and
+typed observations may omit it without manufacturing media; optional GPS retains lat/lon, accuracy, provider and
 original device time. Server receipt, actor/session/device and trusted current
 employee reference are separate provenance. FieldSeason, Field, season and pinned
 geometry references come through Farm's transaction-bound authorized owner port.

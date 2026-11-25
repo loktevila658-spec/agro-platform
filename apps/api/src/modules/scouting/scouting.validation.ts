@@ -10,7 +10,7 @@ export const timestamp=(x:unknown):x is string=>typeof x==='string'&&/^\d{4}-.*Z
 export function keys(x:unknown,allowed:string[]):asserts x is Record<string,unknown>{if(!x||typeof x!=='object'||Array.isArray(x)||Object.keys(x).some(k=>!allowed.includes(k)))fail();}
 export function validateObservation(x:unknown):ObservationData{
  keys(x,['organizationId','fieldSeasonId','observationType','note','anomaly','sourceType','severity','location','form']);
- id(x.organizationId);id(x.fieldSeasonId);text(x.note);
+ id(x.organizationId);id(x.fieldSeasonId);if(x.note!==undefined)text(x.note);
  if(!['GENERAL','SOIL','EMERGENCE','WEED','PEST','DISEASE'].includes(String(x.observationType))||typeof x.anomaly!=='boolean'||!['USER_MOBILE','USER_WEB','API'].includes(String(x.sourceType)))fail();
  if(x.severity!==undefined&&!['LOW','MEDIUM','HIGH'].includes(String(x.severity)))fail();
  if(x.location!==undefined){keys(x.location,['latitude','longitude','accuracyMetres','observedAt','provider']);const l=x.location;

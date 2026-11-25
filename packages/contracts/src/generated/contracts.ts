@@ -536,7 +536,7 @@ export interface ScoutingObservationData {
   readonly fieldSeasonId: string;
   readonly form?: ScoutingForm;
   readonly location?: ScoutingLocation;
-  readonly note: string;
+  readonly note?: string;
   readonly observationType: 'GENERAL' | 'SOIL' | 'EMERGENCE' | 'WEED' | 'PEST' | 'DISEASE';
   readonly organizationId: string;
   readonly severity?: 'LOW' | 'MEDIUM' | 'HIGH';

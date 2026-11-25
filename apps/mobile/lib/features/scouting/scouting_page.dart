@@ -135,7 +135,7 @@ class _ScoutingPageState extends State<ScoutingPage> {
                         ? Icons.check_circle_outline
                         : Icons.schedule,
                   ),
-                  title: Text(i.data['note'] as String? ?? ''),
+                  title: Text(i.data['note'] as String? ?? 'Наблюдение поля'),
                   subtitle: Text(
                     i.status == 'confirmed'
                         ? 'Принято сервером'
@@ -153,7 +153,7 @@ class _ScoutingPageState extends State<ScoutingPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${i.data['note']}\nПоле/сезон: ${i.data['fieldSeasonId']}\n${i.data['location'] == null ? 'GPS не добавлен' : 'GPS сохранён с точностью и временем'}\nФото и голос загружаются отдельно. Исходная запись сохранена.',
+                              '${i.data['note'] ?? 'Без комментария'}\nПоле/сезон: ${i.data['fieldSeasonId']}\n${i.data['location'] == null ? 'GPS не добавлен' : 'GPS сохранён с точностью и временем'}\nФото и голос загружаются отдельно. Исходная запись сохранена.',
                             ),
                             for (final a in i.attachments)
                               Padding(
@@ -269,7 +269,7 @@ class _ScoutingFormPageState extends State<ScoutingFormPage> {
         organizationId: s.organizationId,
         fieldSeasonId: s.fieldSeasonId,
         observationType: type,
-        note: note.text,
+        note: note.text.trim().isEmpty ? null : note.text,
         anomaly: anomaly,
         sourceType: 'USER_MOBILE',
         location: location,
@@ -329,7 +329,7 @@ class _ScoutingFormPageState extends State<ScoutingFormPage> {
           minLines: 3,
           maxLines: 8,
           decoration: const InputDecoration(
-            labelText: 'Что вы наблюдаете',
+            labelText: 'Комментарий (необязательно)',
             helperText: 'Опишите признаки. Наблюдение не является диагнозом.',
           ),
         ),

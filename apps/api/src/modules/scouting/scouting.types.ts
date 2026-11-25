@@ -4,7 +4,7 @@ export const SCOUTING_ACTIONS=new Set(['scouting.read','scouting.capture','scout
 export const SCOUTING_COMMANDS=['Capture','Correct','CreateWork'] as const;
 export type ScoutingAction=typeof SCOUTING_COMMANDS[number];
 export interface ObservationData {
- organizationId:string;fieldSeasonId:string;observationType:'GENERAL'|'SOIL'|'EMERGENCE'|'WEED'|'PEST'|'DISEASE';note:string;anomaly:boolean;sourceType:'USER_MOBILE'|'USER_WEB'|'API';
+ organizationId:string;fieldSeasonId:string;observationType:'GENERAL'|'SOIL'|'EMERGENCE'|'WEED'|'PEST'|'DISEASE';note?:string;anomaly:boolean;sourceType:'USER_MOBILE'|'USER_WEB'|'API';
  severity?:'LOW'|'MEDIUM'|'HIGH';
  location?:{latitude:number;longitude:number;accuracyMetres:number;observedAt:string;provider:string;};
  form?:{id:string;version:string;answers:Record<string,string|number|boolean>;};

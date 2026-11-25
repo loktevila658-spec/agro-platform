@@ -1718,7 +1718,7 @@ class ScoutingObservationData {
     required this.fieldSeasonId,
     this.form,
     this.location,
-    required this.note,
+    this.note,
     required this.observationType,
     required this.organizationId,
     this.severity,
@@ -1730,20 +1730,20 @@ class ScoutingObservationData {
         fieldSeasonId: json['fieldSeasonId'] as String,
         form: json['form'] == null ? null : ScoutingForm.fromJson(Map<String, Object?>.from(json['form'] as Map)),
         location: json['location'] == null ? null : ScoutingLocation.fromJson(Map<String, Object?>.from(json['location'] as Map)),
-        note: json['note'] as String,
+        note: json['note'] == null ? null : json['note'] as String,
         observationType: json['observationType'] as String,
         organizationId: json['organizationId'] as String,
         severity: json['severity'] == null ? null : json['severity'] as String,
         sourceType: json['sourceType'] as String,
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'anomaly': anomaly, 'fieldSeasonId': fieldSeasonId, if (form != null) 'form': form, if (location != null) 'location': location, 'note': note, 'observationType': observationType, 'organizationId': organizationId, if (severity != null) 'severity': severity, 'sourceType': sourceType};
+  Map<String, Object?> toJson() => <String, Object?>{'anomaly': anomaly, 'fieldSeasonId': fieldSeasonId, if (form != null) 'form': form, if (location != null) 'location': location, if (note != null) 'note': note, 'observationType': observationType, 'organizationId': organizationId, if (severity != null) 'severity': severity, 'sourceType': sourceType};
 
   final bool anomaly;
   final String fieldSeasonId;
   final ScoutingForm? form;
   final ScoutingLocation? location;
-  final String note;
+  final String? note;
   final String observationType;
   final String organizationId;
   final String? severity;

@@ -10,8 +10,7 @@ void validateScouting(ScoutingObservationData d) {
   if (!scoutingUuid.hasMatch(d.organizationId) ||
       !scoutingUuid.hasMatch(d.fieldSeasonId) ||
       d.sourceType != 'USER_MOBILE' ||
-      d.note.trim().isEmpty ||
-      d.note.length > 4000 ||
+      (d.note != null && (d.note!.trim().isEmpty || d.note!.length > 4000)) ||
       !{
         'GENERAL',
         'SOIL',
