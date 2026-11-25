@@ -1,33 +1,64 @@
 # WP49-034 Completion Report
 
 Date: 2026-11-25 Europe/Moscow.
-Status: IMPLEMENTATION IN PROGRESS — gates below are pending until exact hosted evidence is observed. NOT DONE.
+Status at authoring: **G0–G11 PASS on accepted code. G12 and WP49-034 DONE activate only after the observed publication/merge/push conditions below are recorded in completed CR93.**
 Baseline live main: `68ec7345e270867b2cb7a555310610d282b6f1b2`.
-Branch/worktree: `codex/wp49-034`, `/private/tmp/agro-wp49-034-work`.
-Scope [CR93](https://github.com/loktevila658-spec/agro-platform/issues/93); formal delegated approval7166250756 before implementation. Original dirty checkout untouched.
+Accepted executable head: `98f70face2122896d78182f32aae6e8919ad99f8`.
+Implementation/report [PR94](https://github.com/loktevila658-spec/agro-platform/pull/94).
+Exact accepted-code [pull_request run45650302364](https://github.com/loktevila658-spec/agro-platform/actions/runs/45650302364): completed SUCCESS, all8 jobs individually SUCCESS.
+Scope [CR93](https://github.com/loktevila658-spec/agro-platform/issues/93), [delegated approval before code](https://github.com/loktevila658-spec/agro-platform/issues/93#issuecomment-7166250756), [explicit public implementation/report/closeout authorization](https://github.com/loktevila658-spec/agro-platform/issues/93#issuecomment-7166988186).
+
+Initially clean separate worktree `/private/tmp/agro-wp49-034-work`, branch `codex/wp49-034`, from an independent clone. Original dirty checkout untouched. This final report publication changes only its already approved path. Its exact head/checks/ordinary merge/push/final main are recorded in CR93 after observation, avoiding an infinite rewrite about the report's own eventual merge.
 
 ## Authority and G0
 
-DOC50 > DOC48 > DOC47 > DOC49 > product/domain contracts; no latest-document-wins. AGENTS/CODEX_INSTRUCTIONS, authority/release/order/gates/change classes/invariants and applicable frozen/source contracts were inspected. Frozen WP49-034 W4/V1, depends026/028/031, literal `/apps/api/modules/scouting /apps/mobile`, exit `GPS/photo/voice observations, anomaly->task loop.` are byte-identical. Static NOT_STARTED is not completion evidence.
+DOC50 execution > DOC48 frozen scope/RTM > DOC47 reconciliation > DOC49 build graph > product/domain contracts. No latest-document-wins. AGENTS/CODEX_INSTRUCTIONS, authority/release/order/gates/change classes/invariants and applicable scouting/field/season/GIS/task/work-fact/file/offline/security/correction sources inspected before implementation. Mapping: DOC34 §11, AGR34-052–061/063/064/066 and AT34-018–025 observation slice; DOC10 context/observer/time/optional GPS/note/GENERAL/OPEN/full severity vocabulary; DOC11 immutable observation, correction and source-linked Task; DOC12 O1, original device vs server time, independent attachments and retained rejected intent; DOC47 shared File ownership and distinct domain state machines. No MASTER-wide completion claim.
 
-G0 implementation entry PASS before code: separate clean worktree, unchanged live baseline rechecked after approval; no competing WP034 PR/branch/CR. Runtime src-only compiler, AppModule, current schema19, contract generator, permission/event catalogs, real Farm/FieldSeason/Task/ActualOperation/File/Sync/Flutter owner boundaries and all existing globs/gates inspected.
+G0 entry PASS before code: exact live baseline reconfirmed after approval; clean separate worktree; competing WP034 PR/branch/CR searches clear. Reports, completed CR activations, merge ancestry and exact push metadata/all8 successful jobs independently checked. Static NOT_STARTED is not completion evidence.
 
-| Dependency | Exact merged source/report evidence | Governance |
+| Dependency | Exact source/report merge and successful push | Governance |
 |---|---|---|
-|026|PR67 merge97574a4768085ec8e9c72bc96dd7372527f356f5 / push41516292979|CR65 CLOSED/completed|
-|028|PR73 merge5a9afb7bb47ceaca678cf67028ff308df2547793 / push41689928078; report PR74 merge5df078ef543d7dfda0ae3ddee8f85404de1fe9de / push41701826258|CR72 completed final activation read|
-|031|PR77 merge07ae3230e8a514fe39a91fb580b3ca5e89037c38 / push41812251402; report PR78 merge1432b7bc81292d5fae7dbc3e4b07bb412a418c3e / push41815398666|CR76 completed final activation read|
-|033 current owner contracts|PR92 report merge baseline68ec7345... / push45609064962|CR90 completed final activation read|
+|026|PR67 merge97574a4768085ec8e9c72bc96dd7372527f356f5 / push41516292979|CR65 completed|
+|028|PR73 merge5a9afb7bb47ceaca678cf67028ff308df2547793 / push41689928078; PR74 report merge5df078ef543d7dfda0ae3ddee8f85404de1fe9de / push41701826258|CR72 completed activation inspected|
+|031|PR77 merge07ae3230e8a514fe39a91fb580b3ca5e89037c38 / push41812251402; PR78 report merge1432b7bc81292d5fae7dbc3e4b07bb412a418c3e / push41815398666|CR76 completed activation inspected|
+|033 owner contracts|PR92 report merge baseline68ec7345e270867b2cb7a555310610d282b6f1b2 / push45609064962|CR90 completed activation inspected|
 
-Every listed merge is a baseline ancestor. Exact push SHA/event/conclusion and all8 jobs individually successful were independently checked, not inferred from general CI.
+Every merge is a baseline ancestor; exact run SHA/push event/conclusion and all8 jobs checked, not general CI. Inspected src-only compiler/AppModule/Docker layout, schema19 baseline, contracts/codegen/catalog assertions, actual Farm/FieldSeason/GIS/Task/ActualOperation/File/Sync owner ports, encrypted Flutter storage/queues and all globs/gates.
 
-One complete pre-code45-path matrix was prepared. Initial public issue publication was rejected by automatic review; owner explicitly authorized this exact CR93 payload/public destination and delegated approval in control chat. The identical proposal was then published normally, with no bypass. Formal delegated decision is agent-recorded, not a separate independent human approval. Frozen API root remains uncompiled and unchanged; additional compiled paths below are explicitly approved.
+Frozen manifest remains byte-identical, including static status:
+```yaml
+id: WP49-034
+title: Scouting
+wave: W4
+release: V1
+depends_on:
+  - WP49-026
+  - WP49-028
+  - WP49-031
+allowed_paths_raw: /apps/api/modules/scouting /apps/mobile
+exit_criteria: GPS/photo/voice observations, anomaly->task loop.
+```
+Literal API root was not reinterpreted: compiled runtime/companions have explicit CR93 approval. One complete45-path matrix before code; no additional CR, frozen/dependency/release/exit change, compiler broadening or gate waiver.
 
-## Scope and changed paths
+Initial public CR publication was auto-review rejected; owner explicitly authorized the exact payload/destination, then the same proposal was published and delegated approval recorded before code. Public PR publication was separately held; owner explicitly authorized source/tests/contracts/PR/report/CI/governance. Connector retry failed at transport; CLI completed the same authorized action. No rejection bypass. Delegated decisions are agent-recorded, not independent human reviews.
 
-Manual observation, optional original GPS/provider/accuracy/time, human reported type/anomaly/note and versioned configurable form answers. Farm-owned transaction query pins FieldSeason/Field/season/revisions/available geometry. Trusted employee provenance, original observed time and server receipt remain separate. Immutable reasoned corrections and expected-version conflicts preserve history. Explicit anomaly create-work calls Task.apply in the same transaction, with both current permissions and original source trace, confirms a DRAFT Task, and records one handoff identity. No automatic planning/assignment/dispatch.
+## Resulting behavior
 
-Mobile capture reuses encrypted Workspace/entity cache/CommandQueue/AttachmentQueue and existing sync/upload workers. GPS/photo/audio are optional; denied/unavailable device leaves manual text capture. Media pending/failure never gates metadata, bypasses File Service or becomes authoritative by device origin. Correct/handoff are online owner commands via HTTP/Sync; the mobile form captures observations. There is no transcription/diagnosis/recommendation/remote-sensing implementation.
+Human observation on an authorized FieldSeason; Field/season/revisions/available pinned geometry resolve through a Farm transaction-bound owner query. Optional original GPS lat/lon/accuracy/provider/time retain precision and are never replaced by zeros. Manual text-only or typed observation without note/media works. GENERAL/OPEN and LOW/MEDIUM/HIGH/CRITICAL follow DOC10. Configured scalar answers retain form id/version and require trusted current form approval. Server actor/trusted employee/session/device, original observed time and server receipt remain distinct provenance.
+
+Expected-version/reasoned correction appends immutable history, retains identity and previous media intents. No observation delete/resolve workflow; revisions/audit/outbox cannot be updated/deleted/truncated. Human signs/GPS/media do not become a diagnosis or an actual-operation fact.
+
+Explicit online Scouting.CreateWork requires reported anomaly, current scouting.create-work plus Task owner task.create permissions and expected version. FieldSeason is inherited. Existing Task.apply validates operation/target/permissions in the same transaction, confirms a DRAFT Task and stores the exact observation/revision trace in Task transition provenance. One handoff per observation; replay returns its identity, fresh duplicate conflicts, and concurrent devices create one Task. No planning/assignment/dispatch or foreign business SQL.
+
+Mobile reuses encrypted Workspace/entity cache/CommandQueue/AttachmentQueue and existing sync/upload workers. Cached field/season selection, type/optional note/anomaly, optional GPS, photo capture/import and voice recording; visible metadata state, retained conflicts and independent upload status/retry. Correction/handoff are canonical online HTTP/Sync owner commands; this mobile form captures observations. No parallel DB or queue.
+
+Non-required immutable PHOTO/VOICE staged intents never gate valid metadata. Existing SyncFiles/File Service alone binds usable remote references after multipart/hash/content/malware validation. Scouting never marks pending media clean, stores canonical raw paths/bytes or changes file retention/deletion/legal hold. New tests cover staged references/current owner policy; shared real MinIO/ClamAV tests cover validation/scan enforcement.
+
+Android permissions/hardware are optional; denied/unavailable devices preserve manual capture. Microphone cancels on form exit/background; stale location callbacks are ignored; Android12 fine/coarse permissions are requested together. Own AAC-only recordings are finalized as M4A only after MediaExtractor verifies one AAC track and ftyp; imported files are never relabelled. Final bytes are encrypted/hashed and still undergo unchanged server checks. Primary Android references are in module README. No transcription/diagnosis/recommendation/provider/remote-sensing/AI/CV.
+
+## Complete approved changed paths
+
+All45 public filenames/blob SHAs matched the local accepted head. Every listed path changed; no outside/unused path, dependency/lockfile, shared Sync/File implementation, CI configuration or glob change.
 
 | Path | Purpose | Owner | Authorization | Verification |
 |---|---|---|---|---|
@@ -77,30 +108,58 @@ Mobile capture reuses encrypted Workspace/entity cache/CommandQueue/AttachmentQu
 | apps/mobile/integration_test/scouting_test.dart | Native encrypted restart/queue persistence and optional channel/device-unavailable smoke | Android tests | Frozen /apps/mobile | G8/G10 |
 | tests/evidence/WP49-034_COMPLETION_REPORT.md | Complete pre-code matrix, G0-G12, exact dependency/head/PR/CR/run/merge/closeout evidence and limitations | Evidence | CR93 | G12 |
 
-## Compatibility and verification
+## Database, contracts and authority
 
-Expand-only schema20, owned typed optional geography(Point,4326), GiST, tenant composite references, immutable revision/audit/outbox, guarded head and single Task handoff. Existing SyncService provides auth/current permissions, version, actor/device-bound idempotency receipt, transactional feed and rollback. New scouting event1.0.0 is delivered by the existing dispatcher/inbox; no foreign business-table SQL. Canonical OpenAPI/codegen and permission catalogs updated together; no new default grants, dependency/lockfile/compiler/glob/CI mutation.
+Expand-only0020/schema20: owned OPEN observation heads/single handoff, immutable revisions/reasons/actor/time/source/form/media, optional geography(Point,4326)/GiST, tenant composite refs, audit/outbox and guarded head/version/current revision. No existing authoritative domain table change. Expanded event source CHECK; existing dispatcher/inbox leases/retry/replay retained.
 
-Acceptance fixtures were RED on missing scouting module before runtime. Initial local targeted4/4 passed; later targeted14/14 including current-schema and exact permission regressions passed. Full workspace install failed ENOSPC; only task-created incomplete install/store was removed, and existing matching dependency trees were used read-only. Docker daemon unavailable; no repeated Docker loop or local real-service PASS claimed. Flutter unavailable locally; existing task-local Dart SDK formats source. Hosted real-service/native checks must resolve these limits. Pending run metadata will be recorded after observation.
+SyncService supplies current authentication/permissions, actor/device idempotency receipt, expected version, transaction/rollback and atomic feed. Scout/Task mutations, both audits/outboxes and deltas commit or roll back together. Additive scouting.observation.changed@1.0.0 and explicit default-deny actions, no default grants. Canonical HTTP contracts and all4 generated TypeScript/Dart/mobile/hash outputs align; old contracts remain asserted.
 
-| Gate | Current verdict |
+Trusted current Scouting/Farm/Task policies, employee/form refs, finite capture scopes/signing keys and private existing storage/scanner endpoints must be provisioned. Missing policy denies. Only Capture receives signed O1 ScoutingCapture:FieldSeason grants; correction/handoff online-only. LOCAL_PRIMARY enforced by Sync and owner application commands.
+
+## Verification
+
+Initial acceptance fixtures RED on missing module before runtime. Local compile and targeted domain/permission/schema/contract/architecture checks passed. Broader local72:71 PASS, one web runtime failure because built web shell unavailable, never called PASS. Full install failed ENOSPC; only task-created incomplete install/store removed and matching existing dependencies used read-only. Docker daemon unavailable; targeted integration failed before service scenarios, no repeat loop/local real-service PASS. Flutter unavailable locally; pre-existing task-local Dart SDK formatted source. Hosted gates resolve these limits.
+
+Exact accepted-code run45650302364 on98f70face2122896d78182f32aae6e8919ad99f8: pull_request, completed SUCCESS, all8 jobs. API238/238 (no skips), Flutter73/73, Android native9/9; format0 changes/analyze clean/enforce-lockfile/APK, real migration/PostGIS/Compose/runtime/MinIO/ClamAV/contracts/architecture passed. Native metadata P95≤250ms assertion passed. Deterministic scenario covers original owner/GPS/media refs, immutable correction, Task DRAFT/source trace, replay/fresh/concurrent duplicates, current permissions/tenant/owner negatives, rollback after Task effects, real dispatcher/inbox retry, signed finite grants/pull convergence/revoke purge and authenticated HTTP.
+
+| Gate | Accepted implementation evidence |
 |---|---|
-|G0|PASS — dependency/contract/runtime/path/approval evidence above|
-|G1|PENDING — local compile/targeted/static supplement; hosted exact head required|
-|G2|PENDING — schema20 real migration gate|
-|G3|PENDING — complete unit/API/Flutter suites|
-|G4|PENDING — real database/File/Task/Sync/runtime|
-|G5|PENDING — contracts/codegen/compatibility|
-|G6|PENDING — transactional outbox/inbox/retry/idempotency|
-|G7|PENDING — current permissions/isolation/negative suites|
-|G8|PENDING — encrypted restart/independent media/retry/conflict/native|
-|G9|PENDING — immutable corrections/provenance/rollback|
-|G10|PENDING — deterministic observation-to-Task scenario/native|
-|G11|PENDING — relevant file/security/native regressions|
-|G12|PENDING — review/exact head checks/ordinary merge/exact push/report/CR closeout|
+|G0|PASS — exact dependencies/ancestry/closed CRs and compatible contracts/runtime/approved pre-code matrix|
+|G1|PASS — Typecheck, applicable format/analyze/static/architecture; Lint capability (no configured application linter)|
+|G2|PASS — clean/repeated/current/checksum-negative real PostGIS schema20, immutable/index/constraint checks|
+|G3|PASS — API238/238, Flutter73/73, no skips; strict negatives retained|
+|G4|PASS — real PostGIS/Farm/Task/Sync/HTTP/rollback, shared MinIO/ClamAV and Compose runtime|
+|G5|PASS — canonical API/codegen/drift/backward regression and regenerated4 artifacts|
+|G6|PASS — combined transaction/outboxes/feed, dispatcher/inbox retry/replay and actor/device idempotency|
+|G7|PASS — current/revoked/default-deny/tenant/owner/Task permission negatives|
+|G8|PASS — encrypted restart/response-loss identity, independent media, retained conflict/rejection, signed scopes/convergence/purge, native persistence/wipe|
+|G9|PASS — immutable reasoned history/source/time/employee/actor/media and rollback|
+|G10|PASS — deterministic observation→Task and native9/9/channel/persistence|
+|G11|PASS applicable gates — file hash/content/malware/quarantine, device-denial/mic lifecycle, native P95 and unchanged upstream offline/NFR regression|
+|G12|PENDING at authoring; activates only after all observed publication/merge/push/closeout conditions below|
 
-## Review and limitations
+Earlier/superseded runs retained, never substituted for final acceptance:
+-45644123222/d41695b and45644492569/48aacb7: Mobile fatal analyzer unnecessary import; source import fixed, fatal check retained. Overall runs later cancelled/superseded.
+-45644359855/18c8d69,45645646910/d69e15b,45646107245/b2b68a0,45646640450/40ae761: cancelled/superseded by bounded review fixes, no final-head PASS claim.
+-45644765741/71b30dc: core jobs/API235/Flutter72 passed; cancelled during Android build by necessary fixes.
+-45647209169/d2ac520: API238/Flutter73/native9 test assertions passed; emulator-runner hung after adb emu kill returned OK. Superseded/cancelled; whole Mobile never called PASS. Final45650302364 completed emulator cleanup and all8 jobs normally, no workflow/assertion/threshold workaround.
+-One non-force push98f70fa hit GitHub Internal Server Error; identical retry succeeded.
 
-No independent reviewer approval is claimed. All assertions/thresholds/protections remain in force. Source PR/head/run/merge/post-merge checks and final report publication/closeout must be observed before DONE. UNKNOWN/PENDING is never PASS.
+Self-review only, no independent reviewer claim. Public path/blob/SQL ownership/mutation/permissions/retention/future-scope review complete. Fixes included fixture pool lifecycle, optional note/dictionary defaults/severity, media retention/retry, cross-device concurrency, recorder cleanup/M4A and Android12 permission pairing. No assertion, threshold or protection weakened.
 
-Production policies/employee/form references, finite scopes/signing keys and private File storage/scanner provisioning remain mandatory and default-deny. No production deployment, physical-device/WAN/battery/iOS certification. No separate ScoutingTask state machine, problem-zone/route engine, AI/CV/diagnosis/treatment, actual-operation/planning/inventory/payroll/accounting/1C changes or later WP. WP49-035 not started.
+## G12 activation and closeout
+
+Mandatory observed conditions, recorded in this same CR93:
+1. Report finalization changes only this already approved path relative to accepted executable98f70fa; product/runtime/test/contract blobs identical.
+2. Exact final PR94 report-publication head checks SUCCESS, all8 jobs, under unchanged strict CI quality gates/enforce-admins/conversation protections; scope/reviews/threads clear.
+3. Ordinary merge only, no auto-merge/admin/check bypass. Record final head/run, live base, merge SHA/parents and tested-head tree equality.
+4. Exact merge-SHA event=push CI SUCCESS, all8 jobs individually verified; recheck final live main, metadata and report blob.
+5. Record final G0–G12 acceptance and all exact publication facts in CR93, close completed; only then WP49-034 DONE.
+
+Publication/merge/push are pending at authoring, not PASS. Completed CR93's activation record is the primary final post-publication evidence resolving this explicit condition without an infinite self-referential rewrite. Frozen manifest/status unchanged. No separate report PR/additional Scope CR required.
+
+## Limitations
+
+No production deployment/default policy/reference provisioning, independent review or physical-device/WAN/battery/ANR/iOS certification. Native tests cover encrypted persistence/queue budget/channel lifecycle; actual GPS/camera/microphone hardware certification not claimed. Voice is attachment, never transcript. File deletion/retention/legal hold unchanged.
+
+No separate ScoutingTask lifecycle, auto route/polygon problem-zone engine, disease knowledge/diagnosis/treatment/AI/CV/provider, automatic dispatch, actual-operation/planning/GIS mutation, inventory/payroll/accounting/1C or later WP. Stop after closeout; WP49-035 not started.
