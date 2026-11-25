@@ -139,17 +139,19 @@ Exact accepted-code run45650302364 on98f70face2122896d78182f32aae6e8919ad99f8: p
 |G12|PENDING at authoring; activates only after all observed publication/merge/push/closeout conditions below|
 
 Earlier/superseded runs retained, never substituted for final acceptance:
--45644123222/d41695b and45644492569/48aacb7: Mobile fatal analyzer unnecessary import; source import fixed, fatal check retained. Overall runs later cancelled/superseded.
--45644359855/18c8d69,45645646910/d69e15b,45646107245/b2b68a0,45646640450/40ae761: cancelled/superseded by bounded review fixes, no final-head PASS claim.
--45644765741/71b30dc: core jobs/API235/Flutter72 passed; cancelled during Android build by necessary fixes.
--45647209169/d2ac520: API238/Flutter73/native9 test assertions passed; emulator-runner hung after adb emu kill returned OK. Superseded/cancelled; whole Mobile never called PASS. Final45650302364 completed emulator cleanup and all8 jobs normally, no workflow/assertion/threshold workaround.
--One non-force push98f70fa hit GitHub Internal Server Error; identical retry succeeded.
+
+- 45644123222/d41695b and45644492569/48aacb7: Mobile fatal analyzer unnecessary import; source import fixed, fatal check retained. Overall runs later cancelled/superseded.
+- 45644359855/18c8d69,45645646910/d69e15b,45646107245/b2b68a0,45646640450/40ae761: cancelled/superseded by bounded review fixes, no final-head PASS claim.
+- 45644765741/71b30dc: core jobs/API235/Flutter72 passed; cancelled during Android build by necessary fixes.
+- 45647209169/d2ac520: API238/Flutter73/native9 test assertions passed; emulator-runner hung after adb emu kill returned OK. Superseded/cancelled; whole Mobile never called PASS. Final45650302364 completed emulator cleanup and all8 jobs normally, no workflow/assertion/threshold workaround.
+- One non-force push98f70fa hit GitHub Internal Server Error; identical retry succeeded.
 
 Self-review only, no independent reviewer claim. Public path/blob/SQL ownership/mutation/permissions/retention/future-scope review complete. Fixes included fixture pool lifecycle, optional note/dictionary defaults/severity, media retention/retry, cross-device concurrency, recorder cleanup/M4A and Android12 permission pairing. No assertion, threshold or protection weakened.
 
 ## G12 activation and closeout
 
 Mandatory observed conditions, recorded in this same CR93:
+
 1. Report finalization changes only this already approved path relative to accepted executable98f70fa; product/runtime/test/contract blobs identical.
 2. Exact final PR94 report-publication head checks SUCCESS, all8 jobs, under unchanged strict CI quality gates/enforce-admins/conversation protections; scope/reviews/threads clear.
 3. Ordinary merge only, no auto-merge/admin/check bypass. Record final head/run, live base, merge SHA/parents and tested-head tree equality.
