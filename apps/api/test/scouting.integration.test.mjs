@@ -271,8 +271,9 @@ test(
       registry.install({authorize:async(a,_k,org)=>allowed&&a.tenantId===tenantId&&a.userId===subjectId&&org===organizationId,captureScopes:async()=>[{organizationId,fieldSeasonId:fs.entityId}],observer:async()=>referenceAllowed?{employeeId,revisionId:referenceRevision}:undefined,form:async()=>referenceAllowed,offlineTtlSeconds:300});
       const service=new ScoutingService(pool,registry,farm,tasks);new ScoutingSync(sr,service).onModuleInit();new TasksSync(sr,tasks).onModuleInit();
       const oldCursor=process.env.SYNC_CURSOR_KEY;process.env.SYNC_CURSOR_KEY='wp034-fixture-cursor-key-32-bytes-minimum';
-      const auth='Bearer fixture',sync=new SyncService(pool,sr,{async authenticate(token){if(token!==auth)throw new UnauthorizedException();return {...actor};}});
+      const auth='Bearer fixture',secondAuth='Bearer second-device',secondActor={...actor,deviceId:randomUUID()},sync=new SyncService(pool,sr,{async authenticate(token){if(token===secondAuth)return {...secondActor};if(token!==auth)throw new UnauthorizedException();return {...actor};}});
       await sync.register(auth,{deviceId,installationId:randomUUID(),schemaVersion:1});
+      await sync.register(secondAuth,{deviceId:secondActor.deviceId,installationId:randomUUID(),schemaVersion:1});
       let seq=0;
       const data=()=>({organizationId,fieldSeasonId:fs.entityId,observationType:'GENERAL',note:'Manual field evidence',anomaly:true,sourceType:'USER_MOBILE'});
       function intent(action,payload,key=fs.entityId,version=0){const cid=uuidv7();return {localCommandId:cid,idempotencyKey:cid,deviceSeq:++seq,aggregate:{type:action==='Capture'?'ScoutingCapture':'Observation',id:key},baseVersion:version,type:`Scouting.${action}`,commandVersion:1,observedAt:at,offlineAuthId:action==='Capture'?'fixture-offline':'online',payload,provenance:{source:'manual',correlationId:'wp034-fixed-demo'},attachments:[]};}
@@ -294,7 +295,7 @@ test(
        await assert.rejects(pool.query('DELETE FROM scouting.revision WHERE id=$1',[r.revisionId]),/SCOUTING_IMMUTABLE/);
        assert.equal((await send(intent('Correct',{data:r.data,reason:'Stale'},r.id,1))).status,'CONFLICT');
       });
-      await t.test('explicit anomaly handoff confirms one Task DRAFT and source provenance; replay/concurrency cannot duplicate',async()=>{
+      await t.test('explicit anomaly handoff confirms one Task DRAFT and source provenance; replay and fresh duplicate cannot duplicate',async()=>{
        const c=intent('CreateWork',{task:{operationTypeId,priority:70},reason:'Human follow-up'},captured.id,1);
        const r=await accept(c);assert.ok(r.taskId);const task=await tasks.read(actor,r.taskId);assert.equal(task.status,'DRAFT');assert.equal(task.definition.targetId,fs.entityId);assert.deepEqual((await send(c)).canonical,r);
        const trace=(await pool.query('SELECT provenance FROM tasks.transition WHERE tenant_id=$1 AND task_id=$2',[tenantId,r.taskId])).rows[0].provenance.intent.sourceObservation;assert.deepEqual(trace,{id:captured.id,revisionId:captured.revisionId,fieldSeasonId:fs.entityId});
@@ -314,6 +315,13 @@ test(
        const c=intent('Capture',{data:data(),reason:'Media cannot gate metadata'});c.attachments=[{localAttachmentId:uuidv7(),ownerRef:`ScoutingCapture:${fs.entityId}`,evidenceType:'VOICE',sha256:'c'.repeat(64),mime:'audio/mp4',sizeBytes:12,required:true}];const result=await send(c);assert.notEqual(result.status,'ACCEPTED');
        const noAnomaly=await accept(intent('Capture',{data:{...data(),anomaly:false},reason:'Normal observation'}));assert.equal((await send(intent('CreateWork',{task:{operationTypeId},reason:'No anomaly'},noAnomaly.id,1))).status,'CONFLICT');
        assert.equal(await sr.authorize({tenantId:otherTenant,actorId:subjectId,action:'file.upload',ownerRef:`ScoutingCapture:${fs.entityId}`}),false);assert.equal(await sr.authorize({tenantId,actorId:subjectId,action:'file.upload',ownerRef:`ScoutingCapture:${fs.entityId}`}),true);
+      });
+      await t.test('concurrent explicit handoff from independent devices creates exactly one Task',async()=>{
+       const obs=await accept(intent('Capture',{data:data(),reason:'Concurrency fixture'}));
+       const first=intent('CreateWork',{task:{operationTypeId},reason:'First device'},obs.id,1),cid=uuidv7(),second={...first,localCommandId:cid,idempotencyKey:cid,deviceSeq:1,payload:{task:{operationTypeId},reason:'Second device'}};
+       const count=Number((await pool.query('SELECT count(*) FROM tasks.work_order')).rows[0].count);
+       const results=await Promise.all([send(first),sync.push(secondAuth,{deviceId:secondActor.deviceId,scopeVersion:1,schemaVersion:1,commands:[second]}).then(r=>r.results[0])]);
+       assert.deepEqual(results.map(r=>r.status).sort(),['ACCEPTED','CONFLICT']);assert.equal(Number((await pool.query('SELECT count(*) FROM tasks.work_order')).rows[0].count),count+1);assert.equal((await service.read(actor,obs.id)).taskId,results.find(r=>r.status==='ACCEPTED').canonical.taskId);
       });
       await t.test('outbox retry/inbox replay delivers immutable scouting metadata',async()=>{
        const inbox=new InboxService(pool);let deliveries=0,fail=true;
