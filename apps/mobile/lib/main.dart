@@ -19,7 +19,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'persistence.dart';
-import 'generated/contracts.dart' show ScoutingContext;
 import 'sync.dart';
 import 'widgets/queue_status.dart';
 
