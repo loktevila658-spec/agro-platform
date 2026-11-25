@@ -10,3 +10,5 @@ test('strict observation and bounded versioned forms reject unsafe fields',()=>{
 test('policy defaults deny; current rights, identity and immutable installation are checked',async()=>{const r=new ScoutingRegistry(),a={tenantId:id,userId:id,deviceId:id,sessionId:id};assert.equal(await r.can(a,'scouting.capture',id),false);let allow=true;r.install({authorize:async()=>allow,captureScopes:async()=>[{organizationId:id,fieldSeasonId:id}],observer:async()=>({employeeId:id,revisionId:id}),form:async()=>true,offlineTtlSeconds:300});assert.equal(await r.can(a,'scouting.capture',id),true);allow=false;assert.equal(await r.can(a,'scouting.capture',id),false);assert.equal(await r.can(a,'scouting.*',id),false);assert.throws(()=>r.install({}));});
 
 test('optional note may be omitted without manufacturing media or coordinates',()=>{const d=data();delete d.note;assert.deepEqual(validateObservation(d),d);});
+
+test('dictionary GENERAL default and CRITICAL severity are preserved',()=>{const d=data();delete d.observationType;assert.equal(validateObservation(d).observationType,'GENERAL');assert.equal(validateObservation({...data(),severity:'CRITICAL'}).severity,'CRITICAL');});

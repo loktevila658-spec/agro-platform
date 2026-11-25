@@ -8,7 +8,7 @@ import { ScoutingRegistry } from './scouting.registry';
 import { SCOUTING_COMMANDS, type ScoutingAction, type ObservationRow } from './scouting.types';
 import { fail, id, keys, text, timestamp, uuidv7, V7, validateObservation } from './scouting.validation';
 export const SCOUTING_POOL=Symbol('SCOUTING_POOL');
-export function projection(r:ObservationRow):Record<string,unknown>{return {id:r.id,organizationId:r.organization_id,fieldSeasonId:r.field_season_id,version:Number(r.version),revisionId:r.current_revision_id,data:r.data,attachments:r.provenance.attachments??[],sourceReferences:r.source_refs,authorId:r.author_id,actorId:r.actor_id,observedAt:new Date(r.observed_at).toISOString(),receivedAt:new Date(r.recorded_at).toISOString(),...(r.task_id?{taskId:r.task_id}:{})};}
+export function projection(r:ObservationRow):Record<string,unknown>{return {status:'OPEN',id:r.id,organizationId:r.organization_id,fieldSeasonId:r.field_season_id,version:Number(r.version),revisionId:r.current_revision_id,data:r.data,attachments:r.provenance.attachments??[],sourceReferences:r.source_refs,authorId:r.author_id,actorId:r.actor_id,observedAt:new Date(r.observed_at).toISOString(),receivedAt:new Date(r.recorded_at).toISOString(),...(r.task_id?{taskId:r.task_id}:{})};}
 @Injectable()
 export class ScoutingService implements OnModuleDestroy {
  constructor(@Inject(SCOUTING_POOL)readonly pool:Pool,readonly registry:ScoutingRegistry,private readonly farm:FarmService,private readonly tasks:TasksService){}

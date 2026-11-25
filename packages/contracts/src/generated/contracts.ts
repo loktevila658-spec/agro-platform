@@ -539,7 +539,7 @@ export interface ScoutingObservationData {
   readonly note?: string;
   readonly observationType: 'GENERAL' | 'SOIL' | 'EMERGENCE' | 'WEED' | 'PEST' | 'DISEASE';
   readonly organizationId: string;
-  readonly severity?: 'LOW' | 'MEDIUM' | 'HIGH';
+  readonly severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   readonly sourceType: 'USER_MOBILE' | 'USER_WEB' | 'API';
 }
 
@@ -555,6 +555,7 @@ export interface ScoutingProjection {
   readonly receivedAt: string;
   readonly revisionId: string;
   readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly status: 'OPEN';
   readonly taskId?: string;
   readonly version: number;
 }

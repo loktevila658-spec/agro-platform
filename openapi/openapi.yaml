@@ -1696,6 +1696,7 @@ components:
             - "WEED"
             - "PEST"
             - "DISEASE"
+          "default": "GENERAL"
         "note":
           "type": "string"
         "anomaly":
@@ -1712,6 +1713,7 @@ components:
             - "LOW"
             - "MEDIUM"
             - "HIGH"
+            - "CRITICAL"
         "location":
           "$ref": "#/components/schemas/ScoutingLocation"
         "form":
@@ -1794,6 +1796,10 @@ components:
           "type": "array"
           "items":
             "$ref": "#/components/schemas/SyncAttachmentIntent"
+        "status":
+          "type": "string"
+          "enum":
+            - "OPEN"
       "required":
         - "id"
         - "organizationId"
@@ -1807,6 +1813,7 @@ components:
         - "data"
         - "sourceReferences"
         - "attachments"
+        - "status"
     "ScoutingList":
       "type": "object"
       "additionalProperties": false

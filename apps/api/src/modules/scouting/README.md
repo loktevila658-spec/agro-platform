@@ -15,6 +15,8 @@ typed observations may omit it without manufacturing media; optional GPS retains
 original device time. Server receipt, actor/session/device and trusted current
 employee reference are separate provenance. FieldSeason, Field, season and pinned
 geometry references come through Farm's transaction-bound authorized owner port.
+Observation type defaults to GENERAL; severity retains LOW/MEDIUM/HIGH/CRITICAL
+from DOC10. Captured observations remain OPEN; no resolution workflow is claimed.
 Observation type describes human-reported signs, never inferred diagnosis. Optional
 configured form answers require trusted form/version approval and retain a snapshot.
 

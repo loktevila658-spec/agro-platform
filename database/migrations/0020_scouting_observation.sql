@@ -2,7 +2,7 @@
 CREATE SCHEMA scouting;
 CREATE TABLE scouting.observation (
  tenant_id uuid NOT NULL,id uuid NOT NULL,organization_id uuid NOT NULL,field_season_id uuid NOT NULL,
- version bigint NOT NULL CHECK(version>0),current_revision_id uuid NOT NULL,task_id uuid,
+ status text NOT NULL DEFAULT 'OPEN' CHECK(status='OPEN'),version bigint NOT NULL CHECK(version>0),current_revision_id uuid NOT NULL,task_id uuid,
  PRIMARY KEY(tenant_id,id),UNIQUE(tenant_id,task_id),FOREIGN KEY(organization_id,tenant_id) REFERENCES org.organization(id,tenant_id)
 );
 CREATE TABLE scouting.revision (
@@ -24,7 +24,7 @@ CREATE TABLE scouting.outbox_event (
 );
 CREATE FUNCTION scouting.immutable() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'SCOUTING_IMMUTABLE'; END $$;
 CREATE FUNCTION scouting.guard_head() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
- IF NEW.tenant_id IS DISTINCT FROM OLD.tenant_id OR NEW.id IS DISTINCT FROM OLD.id OR NEW.organization_id IS DISTINCT FROM OLD.organization_id OR NEW.field_season_id IS DISTINCT FROM OLD.field_season_id OR (OLD.task_id IS NOT NULL AND NEW.task_id IS DISTINCT FROM OLD.task_id) OR NEW.version<>OLD.version+1 OR NEW.current_revision_id=OLD.current_revision_id THEN RAISE EXCEPTION 'SCOUTING_HEAD_IMMUTABLE'; END IF;RETURN NEW;
+ IF NEW.status IS DISTINCT FROM OLD.status OR NEW.tenant_id IS DISTINCT FROM OLD.tenant_id OR NEW.id IS DISTINCT FROM OLD.id OR NEW.organization_id IS DISTINCT FROM OLD.organization_id OR NEW.field_season_id IS DISTINCT FROM OLD.field_season_id OR (OLD.task_id IS NOT NULL AND NEW.task_id IS DISTINCT FROM OLD.task_id) OR NEW.version<>OLD.version+1 OR NEW.current_revision_id=OLD.current_revision_id THEN RAISE EXCEPTION 'SCOUTING_HEAD_IMMUTABLE'; END IF;RETURN NEW;
 END $$;
 CREATE TRIGGER guard_head BEFORE UPDATE ON scouting.observation FOR EACH ROW EXECUTE FUNCTION scouting.guard_head();
 CREATE TRIGGER preserve_head BEFORE DELETE OR TRUNCATE ON scouting.observation FOR EACH STATEMENT EXECUTE FUNCTION scouting.immutable();

@@ -19,7 +19,8 @@ void validateScouting(ScoutingObservationData d) {
         'PEST',
         'DISEASE',
       }.contains(d.observationType) ||
-      (d.severity != null && !{'LOW', 'MEDIUM', 'HIGH'}.contains(d.severity))) {
+      (d.severity != null &&
+          !{'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'}.contains(d.severity))) {
     throw StateError('SCOUTING_INVALID');
   }
   final l = d.location;

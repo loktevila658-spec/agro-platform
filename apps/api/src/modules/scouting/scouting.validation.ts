@@ -11,12 +11,12 @@ export function keys(x:unknown,allowed:string[]):asserts x is Record<string,unkn
 export function validateObservation(x:unknown):ObservationData{
  keys(x,['organizationId','fieldSeasonId','observationType','note','anomaly','sourceType','severity','location','form']);
  id(x.organizationId);id(x.fieldSeasonId);if(x.note!==undefined)text(x.note);
- if(!['GENERAL','SOIL','EMERGENCE','WEED','PEST','DISEASE'].includes(String(x.observationType))||typeof x.anomaly!=='boolean'||!['USER_MOBILE','USER_WEB','API'].includes(String(x.sourceType)))fail();
- if(x.severity!==undefined&&!['LOW','MEDIUM','HIGH'].includes(String(x.severity)))fail();
+ if(!['GENERAL','SOIL','EMERGENCE','WEED','PEST','DISEASE'].includes(String(x.observationType===undefined?'GENERAL':x.observationType))||typeof x.anomaly!=='boolean'||!['USER_MOBILE','USER_WEB','API'].includes(String(x.sourceType)))fail();
+ if(x.severity!==undefined&&!['LOW','MEDIUM','HIGH','CRITICAL'].includes(String(x.severity)))fail();
  if(x.location!==undefined){keys(x.location,['latitude','longitude','accuracyMetres','observedAt','provider']);const l=x.location;
  if(typeof l.latitude!=='number'||!Number.isFinite(l.latitude)||Math.abs(l.latitude)>90||typeof l.longitude!=='number'||!Number.isFinite(l.longitude)||Math.abs(l.longitude)>180||typeof l.accuracyMetres!=='number'||!Number.isFinite(l.accuracyMetres)||l.accuracyMetres<0||!timestamp(l.observedAt))fail();text(l.provider,64);}
  if(x.form!==undefined){keys(x.form,['id','version','answers']);id(x.form.id);text(x.form.version,64);const answers=x.form.answers;
  if(!answers||typeof answers!=='object'||Array.isArray(answers)||Object.keys(answers).length>100)fail();
  for(const [k,v]of Object.entries(answers)){text(k,64);if(!['string','number','boolean'].includes(typeof v)||(typeof v==='number'&&!Number.isFinite(v))||(typeof v==='string'&&v.length>2000))fail();}}
- return structuredClone(x) as unknown as ObservationData;
+ return structuredClone({...x,observationType:x.observationType??'GENERAL'}) as unknown as ObservationData;
 }

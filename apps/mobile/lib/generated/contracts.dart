@@ -1765,6 +1765,7 @@ class ScoutingProjection {
     required this.receivedAt,
     required this.revisionId,
     required this.sourceReferences,
+    required this.status,
     this.taskId,
     required this.version,
   });
@@ -1781,11 +1782,12 @@ class ScoutingProjection {
         receivedAt: json['receivedAt'] as String,
         revisionId: json['revisionId'] as String,
         sourceReferences: json['sourceReferences'] as Map<String, Object?>,
+        status: json['status'] as String,
         taskId: json['taskId'] == null ? null : json['taskId'] as String,
         version: (json['version'] as num).toInt(),
       );
 
-  Map<String, Object?> toJson() => <String, Object?>{'actorId': actorId, 'attachments': attachments, 'authorId': authorId, 'data': data, 'fieldSeasonId': fieldSeasonId, 'id': id, 'observedAt': observedAt, 'organizationId': organizationId, 'receivedAt': receivedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, if (taskId != null) 'taskId': taskId, 'version': version};
+  Map<String, Object?> toJson() => <String, Object?>{'actorId': actorId, 'attachments': attachments, 'authorId': authorId, 'data': data, 'fieldSeasonId': fieldSeasonId, 'id': id, 'observedAt': observedAt, 'organizationId': organizationId, 'receivedAt': receivedAt, 'revisionId': revisionId, 'sourceReferences': sourceReferences, 'status': status, if (taskId != null) 'taskId': taskId, 'version': version};
 
   final String actorId;
   final List<SyncAttachmentIntent> attachments;
@@ -1798,6 +1800,7 @@ class ScoutingProjection {
   final String receivedAt;
   final String revisionId;
   final Map<String, Object?> sourceReferences;
+  final String status;
   final String? taskId;
   final int version;
 }
