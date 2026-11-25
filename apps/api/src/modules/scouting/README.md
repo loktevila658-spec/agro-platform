@@ -56,3 +56,10 @@ form policy or permissive default. Trusted provisioning must install ScoutingPol
 Farm and Task policies, signing keys and existing private storage/scanner endpoints.
 Missing policy denies capture/handoff. No source specification, CI assertion,
 compiler glob, dependency/lockfile or unrelated WP is changed.
+
+Native audio compatibility: Android's [MPEG4Writer ftyp implementation](https://android.googlesource.com/platform/frameworks/av/+/22831131c9d770933ac68d83588691ff3878e33e/media/libstagefright/MPEG4Writer.cpp)
+uses mp42 for MPEG4 output, while the unchanged File Service deliberately accepts
+audio MP4/M4A rather than generic video containers. The adapter finalizes only its
+own AAC-only recording as M4A after MediaExtractor verifies exactly one AAC audio
+track and a valid ftyp box. Imported files are never relabelled. Final bytes are
+then encrypted/hashed/staged and still undergo server content/malware validation.

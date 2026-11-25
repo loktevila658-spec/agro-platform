@@ -8,6 +8,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.media.MediaRecorder
+import android.media.MediaExtractor
+import android.media.MediaFormat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +18,7 @@ import androidx.core.content.FileProvider
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
+import java.io.RandomAccessFile
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -114,9 +117,34 @@ class ScoutingCapture(private val activity: Activity, channel: MethodChannel) : 
     private fun stopRecording() {
         val r = recorder ?: run { error("RECORDING_UNAVAILABLE"); return }
         recorder = null
-        try { r.stop(); success(mapOf("path" to audio!!.absolutePath, "mime" to "audio/mp4", "kind" to "VOICE")) }
+        try {
+            r.stop()
+            val file = audio!!
+            finishRecordedM4a(file)
+            success(mapOf("path" to file.absolutePath, "mime" to "audio/mp4", "kind" to "VOICE"))
+        }
         catch (_: Exception) { audio?.delete(); error("RECORDING_FAILED") }
         finally { r.release(); audio = null }
+    }
+    /** Android MPEG4Writer uses mp42 even for AAC-only recording. Finish our own
+     * recorder output as M4A after checking the actual tracks. Imported files are
+     * never relabelled. Hashing/encryption happens only after this finalization;
+     * the server's unchanged content/hash/malware checks still apply. */
+    private fun finishRecordedM4a(file: File) {
+        val extractor = MediaExtractor()
+        try {
+            extractor.setDataSource(file.absolutePath)
+            require(extractor.trackCount == 1)
+            require(extractor.getTrackFormat(0).getString(MediaFormat.KEY_MIME) == "audio/mp4a-latm")
+        } finally { extractor.release() }
+        RandomAccessFile(file, "rw").use { out ->
+            require(out.length() >= 16)
+            val boxSize = out.readInt()
+            require(boxSize >= 16 && boxSize.toLong() <= out.length())
+            val type = ByteArray(4); out.readFully(type)
+            require(String(type, Charsets.US_ASCII) == "ftyp")
+            out.seek(8); out.write("M4A ".toByteArray(Charsets.US_ASCII))
+        }
     }
     fun activityResult(code: Int, status: Int, data: Intent?) {
         if (code != 3402 && code != 3403) return
