@@ -12,6 +12,32 @@ import '../test/scouting_repository_test.dart' as f;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  testWidgets('native scouting metadata persistence P95 stays within250ms', (
+    tester,
+  ) async {
+    final w = await Workspace.open(
+      const WorkspaceIdentity(
+        'scouting-tenant',
+        'scouting-user',
+        'scouting-budget',
+      ),
+    );
+    try {
+      await f.seed(w);
+      final r = ScoutingRepository(w, verify: (_) async => true),
+          samples = <int>[];
+      for (var i = 0; i < 20; i++) {
+        final watch = Stopwatch()..start();
+        await r.capture(f.fixture(note: 'Budget observation $i'));
+        samples.add(watch.elapsedMicroseconds);
+      }
+      samples.sort();
+      expect(samples[18], lessThanOrEqualTo(250000));
+      expect((await r.intents()).length, 20);
+    } finally {
+      await w.wipeShared();
+    }
+  });
   testWidgets(
     'native scouting channel rejects unsupported capture without hardware',
     (tester) async {

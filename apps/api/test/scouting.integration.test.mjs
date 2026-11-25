@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { generateKeyPairSync, randomUUID } from "node:crypto";
 import test from "node:test";
 import pg from "pg";
 import { NestFactory } from "@nestjs/core";
@@ -320,6 +320,12 @@ test(
        const dispatcher=new OutboxDispatcherService(pool,[{name:'wp034-fixture',async handle(_tx,event){if(event.source!=='scouting')return;if(fail){fail=false;throw Error('retry fixture');}deliveries++;}}],inbox);
        // Use the existing dispatcher contract, including real durable delivery/inbox state.
        await dispatcher.dispatchAvailable();await pool.query("UPDATE platform_events.outbox_delivery SET next_attempt_at=clock_timestamp() WHERE source='scouting' AND delivered_at IS NULL");await dispatcher.dispatchAvailable();const n=deliveries;await dispatcher.dispatchAvailable();assert.equal(deliveries,n);assert.ok(deliveries>0);
+      });
+      await t.test('signed finite capture grants and observation pull converge, then current revoke purges',async()=>{
+       const old=process.env.SYNC_GRANT_PRIVATE_KEY;process.env.SYNC_GRANT_PRIVATE_KEY=generateKeyPairSync('ed25519').privateKey.export({type:'pkcs8',format:'pem'}).toString();
+       try{const b=await sync.bootstrap(auth,{deviceId,schemaVersion:1});const grant=b.grants.find(g=>g.commands.includes('Scouting.Capture'));assert.ok(grant.signedEnvelope);assert.deepEqual(grant.owners,[`ScoutingCapture:${fs.entityId}`]);assert.ok(!b.grants.some(g=>g.commands.includes('Scouting.CreateWork')));
+       const p=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:b.initialCursor,limit:500});assert.ok(p.changes.some(x=>x.entityType==='Observation'&&x.entityId===captured.id&&x.op==='UPSERT'));allowed=false;const denied=await sync.pull(auth,{deviceId,scopeVersion:1,cursor:b.initialCursor,limit:500});assert.ok(denied.changes.filter(x=>x.entityType==='Observation').every(x=>x.op==='PURGE'));allowed=true;
+       }finally{if(old===undefined)delete process.env.SYNC_GRANT_PRIVATE_KEY;else process.env.SYNC_GRANT_PRIVATE_KEY=old;}
       });
       await t.test('authenticated HTTP reads/history and canonical contract are wired',async()=>{
        class Fixture{};Module({controllers:[ScoutingController],providers:[{provide:ScoutingService,useValue:Object.fromEntries(['read','history','contexts','list'].map(name=>[name,service[name].bind(service)]))},{provide:SyncService,useValue:Object.fromEntries(['actor','registeredActor','push'].map(name=>[name,sync[name].bind(sync)]))}]})(Fixture);const app=await NestFactory.create(Fixture,{logger:false});await app.listen(0,'127.0.0.1');try{const base=await app.getUrl();assert.equal((await fetch(`${base}/v1/scouting/observations/${captured.id}`)).status,401);const r=await fetch(`${base}/v1/scouting/observations/${captured.id}`,{headers:{authorization:auth}});assert.equal(r.status,200);assert.equal((await r.json()).taskId,(await service.read(actor,captured.id)).taskId);assert.equal((await(await fetch(`${base}/v1/scouting/observations/${captured.id}/history`,{headers:{authorization:auth}})).json()).revisions.length,2);}finally{await app.close();}
