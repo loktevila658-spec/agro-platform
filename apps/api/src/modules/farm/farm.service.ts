@@ -164,6 +164,11 @@ export class FarmService implements OnModuleDestroy {
   }
   return {id:row.id,organizationId:row.organization_id,revisionId:row.current_revision_id,seasonId:row.season_id??row.id,seasonRevisionId:row.season_revision_id??row.current_revision_id,...(row.field_revision_id?{fieldRevisionId:row.field_revision_id}:{}),...(row.field_metadata?.siteId?{siteId:row.field_metadata.siteId}:{}),...(kind==='SEASON'?{year:row.metadata.year}:{})};
  }
+ async scoutingReferenceInTransaction(tx:PoolClient,actor:FarmActor,fieldSeasonId:string):Promise<Record<string,unknown>>{
+  actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(fieldSeasonId);
+  const r=await tx.query(`SELECT fs.id AS "fieldSeasonId",fs.organization_id AS "organizationId",e.current_revision_id AS "revisionId",fs.field_id AS "fieldId",fs.season_id AS "seasonId",fs.field_revision_id AS "fieldRevisionId",fs.season_revision_id AS "seasonRevisionId",fr.geometry_provenance AS "geometryProvenance" FROM farm.field_season fs JOIN farm.entity e ON e.tenant_id=fs.tenant_id AND e.id=fs.id JOIN farm.revision r ON r.tenant_id=e.tenant_id AND r.id=e.current_revision_id JOIN farm.entity f ON f.tenant_id=fs.tenant_id AND f.id=fs.field_id JOIN farm.revision current_field ON current_field.tenant_id=f.tenant_id AND current_field.id=f.current_revision_id JOIN farm.revision fr ON fr.tenant_id=fs.tenant_id AND fr.id=fs.field_revision_id WHERE fs.tenant_id=$1 AND fs.id=$2 AND COALESCE(r.metadata->>'status','ACTIVE')<>'ARCHIVED' AND COALESCE(current_field.metadata->>'status','ACTIVE')<>'ARCHIVED' FOR SHARE OF e,f`,[actor.tenantId,fieldSeasonId]);
+  if(!r.rowCount)throw Error('FARM_SCOUTING_CONTEXT_UNAVAILABLE');return r.rows[0];
+ }
  async taskReferenceInTransaction(tx:PoolClient,actor:FarmActor,entityId:string,kind:string):Promise<Record<string,unknown>>{
   actor=Object.freeze({...actor});await this.registry.authorize(actor,'field.read');id(entityId);
   if(!['FIELD','FIELD_SEASON'].includes(kind))throw Error('FARM_INVALID_TASK_TARGET');

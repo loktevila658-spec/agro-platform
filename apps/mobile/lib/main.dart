@@ -1,3 +1,5 @@
+import 'features/scouting/scouting_repository.dart';
+import 'features/scouting/scouting_page.dart';
 import 'features/agronomy/actual_operation_repository.dart';
 import 'features/agronomy/actual_operations_page.dart';
 import 'features/qr/qr_page.dart';
@@ -83,6 +85,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
   Workspace? workspace;
   TaskRepository? taskRepository;
   ActualOperationRepository? actualRepository;
+  ScoutingRepository? scoutingRepository;
   QrRepository? qrRepository;
   OfflinePackageController? mapController;
   final mapRegions = MapLibreOfflineRegions();
@@ -186,6 +189,22 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
     taskRepository = TaskRepository(
       opened,
       verify: verifier?.verify ?? (_) async => false,
+    );
+    scoutingRepository = ScoutingRepository(
+      opened,
+      verify: verifier?.verify ?? (_) async => false,
+      loadContexts: () async {
+        final response = await apiRequest(
+          '/v1/scouting/observations/capture-contexts',
+          accessToken: accessToken,
+        );
+        return (response['items'] as List)
+            .map(
+              (r) =>
+                  ScoutingContext.fromJson(Map<String, Object?>.from(r as Map)),
+            )
+            .toList();
+      },
     );
     actualRepository = ActualOperationRepository(
       opened,
@@ -469,6 +488,7 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
       mapController = null;
       taskRepository = null;
       actualRepository = null;
+      scoutingRepository = null;
       workspace = null;
       workspaceIdentity = null;
       queueCounts = const QueueCounts(0, 0, 0, 0);
@@ -531,6 +551,20 @@ class _AgroPlatformShellState extends State<AgroPlatformShell>
                         child: const Text('Карта'),
                       ),
                     ),
+                    if (scoutingRepository != null)
+                      Builder(
+                        builder: (context) => TextButton(
+                          onPressed: () => Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) => ScoutingPage(
+                                repository: scoutingRepository!,
+                                onQueued: startSync,
+                              ),
+                            ),
+                          ),
+                          child: const Text('Наблюдения полей'),
+                        ),
+                      ),
                     if (actualRepository != null)
                       Builder(
                         builder: (context) => TextButton(

@@ -897,6 +897,43 @@ events:
         - "causationId"
         - "occurredAt"
 
+  - name: scouting.observation.changed
+    version: 1.0.0
+    producer: scouting
+    consumers: []
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        eventId:
+          type: string
+        entityId:
+          type: string
+        revisionId:
+          type: string
+        revision:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        correlationId:
+          type: string
+        causationId:
+          type: string
+        occurredAt:
+          type: string
+      required:
+        - eventId
+        - entityId
+        - revisionId
+        - revision
+        - tenantId
+        - actorId
+        - correlationId
+        - causationId
+        - occurredAt
+
 sources:
   - DOC02
   - DOC10

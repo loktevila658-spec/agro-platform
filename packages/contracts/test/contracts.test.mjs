@@ -75,6 +75,13 @@ test('canonical OpenAPI declares the bootstrap and WP49-011 operations with exac
     {"method": "GET", "operationId": "offlineGisSources", "path": "/v1/offline-gis/sources", "responseSchemaName": "OfflineGisSources"},
     {method:'POST',operationId:'qrCodeCreate',path:'/v1/qr-codes',responseSchemaName:'QrIssueResponse'},
     {method:'POST',operationId:'qrResolve',path:'/v1/qr/resolve',responseSchemaName:'QrResolution'},
+    {"method":"GET","operationId":"scoutingList","path":"/v1/scouting/observations","responseSchemaName":"ScoutingList"},
+    {"method":"POST","operationId":"scoutingCapture","path":"/v1/scouting/observations","responseSchemaName":"SyncPushResponse"},
+    {"method":"GET","operationId":"scoutingContexts","path":"/v1/scouting/observations/capture-contexts","responseSchemaName":"ScoutingContextList"},
+    {"method":"GET","operationId":"scoutingRead","path":"/v1/scouting/observations/{id}","responseSchemaName":"ScoutingProjection"},
+    {"method":"POST","operationId":"scoutingCorrect","path":"/v1/scouting/observations/{id}/commands/correct","responseSchemaName":"SyncPushResponse"},
+    {"method":"POST","operationId":"scoutingCreatework","path":"/v1/scouting/observations/{id}/commands/creatework","responseSchemaName":"SyncPushResponse"},
+    {"method":"GET","operationId":"scoutingHistory","path":"/v1/scouting/observations/{id}/history","responseSchemaName":"ScoutingHistory"},
     { method: 'POST', operationId: 'ackSync', path: '/v1/sync/ack', responseSchemaName: 'SyncAckResponse' },
     { method: 'POST', operationId: 'bootstrapSync', path: '/v1/sync/bootstrap', responseSchemaName: 'SyncBootstrapResponse' },
     { method: 'POST', operationId: 'registerSyncDevice', path: '/v1/sync/devices/register', responseSchemaName: 'SyncRegisterResponse' },
@@ -148,6 +155,7 @@ test('canonical event schema and single YAML catalog validate', async () => {
     {"name":"agronomy.operation.confirmed","version":"1.0.0","producer":"agronomy-actual"},
     {"name":"agronomy.operation.rejected","version":"1.0.0","producer":"agronomy-actual"},
     {"name":"agronomy.operation.corrected","version":"1.0.0","producer":"agronomy-actual"},
+    {"name":"scouting.observation.changed","version":"1.0.0","producer":"scouting"},
   ]);
   assert.deepEqual(Object.keys(contracts.sources).sort(), [
     'events/catalog/index.yaml',

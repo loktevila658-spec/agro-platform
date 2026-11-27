@@ -494,6 +494,88 @@ export interface SchemaVersionUnavailableResponse {
   readonly statusCode: number;
 }
 
+export interface ScoutingContext {
+  readonly fieldId: string;
+  readonly fieldRevisionId: string;
+  readonly fieldSeasonId: string;
+  readonly geometryProvenance?: Readonly<Record<string, unknown>>;
+  readonly organizationId: string;
+  readonly revisionId: string;
+  readonly seasonId: string;
+  readonly seasonRevisionId: string;
+}
+
+export interface ScoutingContextList {
+  readonly items: readonly ScoutingContext[];
+}
+
+export interface ScoutingForm {
+  readonly answers: Readonly<Record<string, unknown>>;
+  readonly id: string;
+  readonly version: string;
+}
+
+export interface ScoutingHistory {
+  readonly revisions: readonly ScoutingRevision[];
+}
+
+export interface ScoutingList {
+  readonly items: readonly ScoutingProjection[];
+}
+
+export interface ScoutingLocation {
+  readonly accuracyMetres: number;
+  readonly latitude: number;
+  readonly longitude: number;
+  readonly observedAt: string;
+  readonly provider: string;
+}
+
+export interface ScoutingObservationData {
+  readonly anomaly: boolean;
+  readonly fieldSeasonId: string;
+  readonly form?: ScoutingForm;
+  readonly location?: ScoutingLocation;
+  readonly note?: string;
+  readonly observationType: 'GENERAL' | 'SOIL' | 'EMERGENCE' | 'WEED' | 'PEST' | 'DISEASE';
+  readonly organizationId: string;
+  readonly severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  readonly sourceType: 'USER_MOBILE' | 'USER_WEB' | 'API';
+}
+
+export interface ScoutingProjection {
+  readonly actorId: string;
+  readonly attachments: readonly SyncAttachmentIntent[];
+  readonly authorId: string;
+  readonly data: ScoutingObservationData;
+  readonly fieldSeasonId: string;
+  readonly id: string;
+  readonly observedAt: string;
+  readonly organizationId: string;
+  readonly receivedAt: string;
+  readonly revisionId: string;
+  readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly status: 'OPEN';
+  readonly taskId?: string;
+  readonly version: number;
+}
+
+export interface ScoutingRevision {
+  readonly action: string;
+  readonly actorId: string;
+  readonly authorId: string;
+  readonly data: ScoutingObservationData;
+  readonly observedAt: string;
+  readonly previousRevisionId?: string;
+  readonly provenance: Readonly<Record<string, unknown>>;
+  readonly reason: string;
+  readonly receivedAt: string;
+  readonly revisionId: string;
+  readonly sourceReferences: Readonly<Record<string, unknown>>;
+  readonly taskId?: string;
+  readonly version: string;
+}
+
 export interface SessionListResponse {
   readonly sessions: readonly SessionSummary[];
 }
@@ -1965,6 +2047,56 @@ export const EVENT_DEFINITIONS: readonly EventDefinition[] = [
         "occurredAt"
       ]
     }
+  },
+  {
+    "name": "scouting.observation.changed",
+    "version": "1.0.0",
+    "producer": "scouting",
+    "consumers": [],
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "causationId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "entityId",
+        "revisionId",
+        "revision",
+        "tenantId",
+        "actorId",
+        "correlationId",
+        "causationId",
+        "occurredAt"
+      ]
+    }
   }
 ];
 
@@ -2388,6 +2520,77 @@ export class AgroPlatformApiClient {
     const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
     if (!response.ok) throw new Error(`qrResolve failed with HTTP ${response.status}`);
     return await response.json() as QrResolution;
+  }
+
+  async scoutingList(organizationId: string, authorization: string, after?: string): Promise<ScoutingList> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations`);
+    if (after !== undefined) url.searchParams.set("after", String(after));
+    if (organizationId !== undefined) url.searchParams.set("organizationId", String(organizationId));
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`scoutingList failed with HTTP ${response.status}`);
+    return await response.json() as ScoutingList;
+  }
+
+  async scoutingCapture(authorization: string, body: TaskSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`scoutingCapture failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async scoutingContexts(authorization: string): Promise<ScoutingContextList> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations/capture-contexts`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`scoutingContexts failed with HTTP ${response.status}`);
+    return await response.json() as ScoutingContextList;
+  }
+
+  async scoutingRead(id: string, authorization: string): Promise<ScoutingProjection> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations/${encodeURIComponent(String(id))}`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`scoutingRead failed with HTTP ${response.status}`);
+    return await response.json() as ScoutingProjection;
+  }
+
+  async scoutingCorrect(id: string, authorization: string, body: TaskSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations/${encodeURIComponent(String(id))}/commands/correct`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`scoutingCorrect failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async scoutingCreatework(id: string, authorization: string, body: TaskSubmitRequest): Promise<SyncPushResponse> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations/${encodeURIComponent(String(id))}/commands/creatework`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    headers['Content-Type'] = 'application/json';
+    const requestBody = JSON.stringify(body);
+    const response = await this.transport(url.toString(), { method: 'POST', headers, body: requestBody });
+    if (!response.ok) throw new Error(`scoutingCreatework failed with HTTP ${response.status}`);
+    return await response.json() as SyncPushResponse;
+  }
+
+  async scoutingHistory(id: string, authorization: string): Promise<ScoutingHistory> {
+    const url = new URL(`${this.baseUrl}/v1/scouting/observations/${encodeURIComponent(String(id))}/history`);
+    const headers: Record<string, string> = {};
+    if (authorization !== undefined) headers["Authorization"] = String(authorization);
+    const response = await this.transport(url.toString(), { method: 'GET', headers });
+    if (!response.ok) throw new Error(`scoutingHistory failed with HTTP ${response.status}`);
+    return await response.json() as ScoutingHistory;
   }
 
   async ackSync(authorization: string, body: SyncAckRequest): Promise<SyncAckResponse> {

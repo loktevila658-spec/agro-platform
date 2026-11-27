@@ -6,6 +6,157 @@ servers:
   - url: http://localhost:3000
     description: WP49-001 local bootstrap shell
 paths:
+  "/v1/scouting/observations":
+    "get":
+      "operationId": "scoutingList"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "organizationId"
+          "in": "query"
+          "required": true
+          "schema":
+            "type": "string"
+        -
+          "name": "after"
+          "in": "query"
+          "required": false
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ScoutingList"
+    "post":
+      "operationId": "scoutingCapture"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/TaskSubmitRequest"
+  "/v1/scouting/observations/capture-contexts":
+    "get":
+      "operationId": "scoutingContexts"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ScoutingContextList"
+  "/v1/scouting/observations/{id}":
+    "get":
+      "operationId": "scoutingRead"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ScoutingProjection"
+  "/v1/scouting/observations/{id}/history":
+    "get":
+      "operationId": "scoutingHistory"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ScoutingHistory"
+  "/v1/scouting/observations/{id}/commands/correct":
+    "post":
+      "operationId": "scoutingCorrect"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/TaskSubmitRequest"
+  "/v1/scouting/observations/{id}/commands/creatework":
+    "post":
+      "operationId": "scoutingCreatework"
+      "description": "WP49-034 current tenant permission and Local-primary command validation; only Capture accepts signed offline scope. Metadata independent of media upload; corrections immutable; explicit CreateWork confirms a Task DRAFT."
+      "parameters":
+        -
+          "$ref": "#/components/parameters/IdentityAuthorization"
+        -
+          "name": "id"
+          "in": "path"
+          "required": true
+          "schema":
+            "type": "string"
+      "responses":
+        "200":
+          "description": "Authorized result"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SyncPushResponse"
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/TaskSubmitRequest"
   "/v1/agronomy/operations":
     "get":
       "operationId": "actualOperationList"
@@ -1486,6 +1637,247 @@ components:
       schema:
         type: string
   schemas:
+    "ScoutingLocation":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "latitude":
+          "type": "number"
+        "longitude":
+          "type": "number"
+        "accuracyMetres":
+          "type": "number"
+        "observedAt":
+          "type": "string"
+        "provider":
+          "type": "string"
+      "required":
+        - "latitude"
+        - "longitude"
+        - "accuracyMetres"
+        - "observedAt"
+        - "provider"
+    "ScoutingForm":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "id":
+          "type": "string"
+        "version":
+          "type": "string"
+        "answers":
+          "type": "object"
+          "additionalProperties":
+            "oneOf":
+              -
+                "type": "string"
+              -
+                "type": "number"
+              -
+                "type": "boolean"
+      "required":
+        - "id"
+        - "version"
+        - "answers"
+    "ScoutingObservationData":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "organizationId":
+          "type": "string"
+        "fieldSeasonId":
+          "type": "string"
+        "observationType":
+          "type": "string"
+          "enum":
+            - "GENERAL"
+            - "SOIL"
+            - "EMERGENCE"
+            - "WEED"
+            - "PEST"
+            - "DISEASE"
+          "default": "GENERAL"
+        "note":
+          "type": "string"
+        "anomaly":
+          "type": "boolean"
+        "sourceType":
+          "type": "string"
+          "enum":
+            - "USER_MOBILE"
+            - "USER_WEB"
+            - "API"
+        "severity":
+          "type": "string"
+          "enum":
+            - "LOW"
+            - "MEDIUM"
+            - "HIGH"
+            - "CRITICAL"
+        "location":
+          "$ref": "#/components/schemas/ScoutingLocation"
+        "form":
+          "$ref": "#/components/schemas/ScoutingForm"
+      "required":
+        - "organizationId"
+        - "fieldSeasonId"
+        - "observationType"
+        - "anomaly"
+        - "sourceType"
+    "ScoutingContext":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "organizationId":
+          "type": "string"
+        "fieldSeasonId":
+          "type": "string"
+        "fieldId":
+          "type": "string"
+        "seasonId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "fieldRevisionId":
+          "type": "string"
+        "seasonRevisionId":
+          "type": "string"
+        "geometryProvenance":
+          "type": "object"
+          "additionalProperties": true
+      "required":
+        - "organizationId"
+        - "fieldSeasonId"
+        - "fieldId"
+        - "seasonId"
+        - "revisionId"
+        - "fieldRevisionId"
+        - "seasonRevisionId"
+    "ScoutingContextList":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "items":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ScoutingContext"
+      "required":
+        - "items"
+    "ScoutingProjection":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "id":
+          "type": "string"
+        "organizationId":
+          "type": "string"
+        "fieldSeasonId":
+          "type": "string"
+        "revisionId":
+          "type": "string"
+        "authorId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "observedAt":
+          "type": "string"
+        "receivedAt":
+          "type": "string"
+        "taskId":
+          "type": "string"
+        "version":
+          "type": "integer"
+        "data":
+          "$ref": "#/components/schemas/ScoutingObservationData"
+        "sourceReferences":
+          "type": "object"
+          "additionalProperties": true
+        "attachments":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/SyncAttachmentIntent"
+        "status":
+          "type": "string"
+          "enum":
+            - "OPEN"
+      "required":
+        - "id"
+        - "organizationId"
+        - "fieldSeasonId"
+        - "revisionId"
+        - "authorId"
+        - "actorId"
+        - "observedAt"
+        - "receivedAt"
+        - "version"
+        - "data"
+        - "sourceReferences"
+        - "attachments"
+        - "status"
+    "ScoutingList":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "items":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ScoutingProjection"
+      "required":
+        - "items"
+    "ScoutingHistory":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "revisions":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ScoutingRevision"
+      "required":
+        - "revisions"
+    "ScoutingRevision":
+      "type": "object"
+      "additionalProperties": false
+      "properties":
+        "revisionId":
+          "type": "string"
+        "reason":
+          "type": "string"
+        "action":
+          "type": "string"
+        "observedAt":
+          "type": "string"
+        "receivedAt":
+          "type": "string"
+        "authorId":
+          "type": "string"
+        "actorId":
+          "type": "string"
+        "version":
+          "type": "string"
+        "data":
+          "$ref": "#/components/schemas/ScoutingObservationData"
+        "sourceReferences":
+          "type": "object"
+          "additionalProperties": true
+        "provenance":
+          "type": "object"
+          "additionalProperties": true
+        "previousRevisionId":
+          "type": "string"
+        "taskId":
+          "type": "string"
+      "required":
+        - "revisionId"
+        - "version"
+        - "data"
+        - "reason"
+        - "action"
+        - "observedAt"
+        - "receivedAt"
+        - "authorId"
+        - "actorId"
+        - "sourceReferences"
+        - "provenance"
     "ActualMaterial":
       "type": "object"
       "additionalProperties": false
